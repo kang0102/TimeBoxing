@@ -130,6 +130,7 @@
         function startTimer() {
             if (!running) {
                 running = true;
+                document.getElementById("status").textContent = "進行中";
                 timer = setInterval(() => {
                     seconds++;
                     updateTimerDisplay();
@@ -139,11 +140,13 @@
 
         function pauseTimer() {
             running = false;
+            document.getElementById("status").textContent = "已暫停";
             clearInterval(timer);
         }
 
         function clearFields() {
             running = false;
+            document.getElementById("status").textContent = "未開始";
             clearInterval(timer);
             seconds = 0;
             updateTimerDisplay();
