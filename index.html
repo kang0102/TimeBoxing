@@ -17,13 +17,45 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
+            position: relative;
         }
         h1 {
             color: #333;
         }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .input-group label {
+            min-width: 150px;
+            text-align: left;
+        }
+        .input-group input {
+            padding: 5px;
+            font-size: 1em;
+            width: 120px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-group input[type="range"] {
+            width: 200px;  /* 控制滑桿的長度 */
+            accent-color: #007BFF; /* 滑桿顏色 */
+            cursor: pointer;
+        }
+
+        #timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
         #timer {
             font-size: 2.5em;
-            margin: 20px;
             font-weight: bold;
             color: #007BFF;
         }
@@ -45,66 +77,37 @@
             background: #007BFF;
             color: white;
         }
-        .input-group {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+        #taskName {
+            margin-left: -80px;
         }
-        input[type="text"], input[type="number"] {
-            padding: 8px;
-            font-size: 1em;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 80px;
-            text-align: center;
+        .single-label-left {
+            justify-content: flex-start;
         }
-        #history {
-            margin-top: 20px;
-            text-align: left;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-        }
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .history-item:hover {
-            background: #f0f0f0;
-        }
-        .delete-btn {
-            background: none;
-            border: none;
-            color: red;
-            font-size: 1.2em;
-            cursor: pointer;
-        }
+
     </style>
 </head>
 <body>
     <div id="container">
-        <img src="https://raw.githubusercontent.com/kang0102/TimeBoxing/main/images/Kapibara-removebg_R.png"
-             alt="水豚 Logo"
-             width="100" height="100";"> 
+        <img src="https://raw.githubusercontent.com/kang0102/TimeBoxing/main/images/Kapibara-removebg_R.png" alt="水豚 Logo" width="100" height="100" style="margin-bottom: 10px;">
         <h1>任務計時器</h1>
         <div class="input-group">
             <label for="taskName">任務名稱:</label>
             <input type="text" id="taskName" placeholder="輸入任務名稱">
-        </div>
+        </div>  
         <div class="input-group">
             <label for="targetMinutes">設定目標時間:</label>
-            <input type="number" id="targetMinutes" min="0" value="1"> 分
-            <input type="number" id="targetSeconds" min="0" max="59" value="0"> 秒
         </div>
-        <div id="timer">00:00:00</div>
+        <div class="input-group">
+            <input type="range" id="targetMinutesSlider" min="0" max="60" value="1" oninput="updateMinutesValue(this.value)">
+            <span id="minutesValue">1</span> 分
+        </div>
+        <div class="input-group">
+            <input type="range" id="targetSecondsSlider" min="0" max="59" value="0" oninput="updateSecondsValue(this.value)">
+            <span id="secondsValue">0</span> 秒
+        </div>
+        <div id="timer-container">
+            <div id="timer">00:00:00</div>
+        </div>
         <div id="status">未開始</div>
         <button onclick="startTimer()">開始</button>
         <button onclick="pauseTimer()">暫停</button>
@@ -153,17 +156,21 @@
         }
 
         function saveHistory() {
-            let taskName = document.getElementById('taskName').value.trim();
-            if (!taskName) {
-                alert("請輸入任務名稱後再儲存!");
-                return;
-            }
-            let minutes = parseInt(document.getElementById('targetMinutes').value, 10);
-            let sec = parseInt(document.getElementById('targetSeconds').value, 10);
-            let targetTime = minutes * 60 + sec;
-            
-            let record = { name: taskName, targetTime: targetTime, actualTime: seconds };
+            let targetMinutes = parseInt(document.getElementById('targetMinutes')?.value || 0, 10);
+            let targetSeconds = parseInt(document.getElementById('targetSeconds')?.value || 0, 10);
+            let targetTime = targetMinutes * 60 + targetSeconds;
+            let taskName = document.getElementById('taskName')?.value.trim() || '未命名任務';
+            let difference = seconds - targetTime;
+            let statusText = difference < 0 ? `提前 ${Math.abs(difference)} 秒` : `延遲 ${difference} 秒`;
+            let statusColor = difference < 0 ? 'green' : 'red';
+            let record = { name: taskName, targetTime: targetTime, actualTime: seconds, status: statusText, statusColor: statusColor };
             historyRecords.unshift(record);
+            localStorage.setItem('history', JSON.stringify(historyRecords));
+            updateHistoryDisplay();
+        }
+
+        function deleteHistory(index) {
+            historyRecords.splice(index, 1);
             localStorage.setItem('history', JSON.stringify(historyRecords));
             updateHistoryDisplay();
         }
@@ -172,25 +179,25 @@
             let historyList = document.getElementById('history');
             historyList.innerHTML = '';
             historyRecords.forEach((record, index) => {
-                let difference = record.actualTime - record.targetTime;
-                let statusText = difference < 0 ? `提前 ${Math.abs(difference)} 秒` : `延遲 ${difference} 秒`;
-                let statusColor = difference < 0 ? 'green' : 'red';
-                
                 let li = document.createElement('li');
-                li.classList.add('history-item');
                 li.innerHTML = `${record.name}: 目標 ${Math.floor(record.targetTime / 60)} 分 ${record.targetTime % 60} 秒, 
                                 實際 ${Math.floor(record.actualTime / 60)} 分 ${record.actualTime % 60} 秒 
-                                <br><span style="color:${statusColor};">(${statusText})</span>
-                                <button class="delete-btn" onclick="deleteHistory(${index})">❌</button>`;
+                                <br><span style='color:${record.statusColor};'>(${record.status})</span>` +
+                               ` <button class='delete-btn' onclick='deleteHistory(${index})'>❌</button>`;
                 historyList.appendChild(li);
             });
+        }  
+
+        function updateMinutesValue(value) {
+            document.getElementById("minutesValue").textContent = value;
+            document.getElementById("targetMinutes").value = value;  // 讓隱藏的 input 也更新
         }
 
-        function deleteHistory(index) {
-            historyRecords.splice(index, 1);
-            localStorage.setItem('history', JSON.stringify(historyRecords));
-            updateHistoryDisplay();
+      function updateSecondsValue(value) {
+            document.getElementById("secondsValue").textContent = value;
+            document.getElementById("targetSeconds").value = value;  // 讓隱藏的 input 也更新
         }
+
 
         updateHistoryDisplay();
     </script>
