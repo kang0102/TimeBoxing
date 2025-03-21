@@ -156,8 +156,8 @@
         }
 
         function saveHistory() {
-            let targetMinutes = parseInt(document.getElementById('targetMinutes')?.value || 0, 10);
-            let targetSeconds = parseInt(document.getElementById('targetSeconds')?.value || 0, 10);
+            let targetMinutes = parseInt(document.getElementById('targetMinutesSlider')?.value || 0, 10);
+            let targetSeconds = parseInt(document.getElementById('targetSecondsSlider')?.value || 0, 10);
             let targetTime = targetMinutes * 60 + targetSeconds;
             let taskName = document.getElementById('taskName')?.value.trim() || '未命名任務';
             let difference = seconds - targetTime;
