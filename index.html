@@ -46,7 +46,6 @@
             accent-color: #007BFF; /* 滑桿顏色 */
             cursor: pointer;
         }
-
         #timer-container {
             display: flex;
             align-items: center;
@@ -83,7 +82,6 @@
         .single-label-left {
             justify-content: flex-start;
         }
-
     </style>
 </head>
 <body>
@@ -93,6 +91,11 @@
         <div class="input-group">
             <label for="taskName">任務名稱:</label>
             <input type="text" id="taskName" placeholder="輸入任務名稱">
+            <datalist id="taskList">
+              <option value="撰寫報告">
+              <option value="開會">
+              <option value="健身">
+            </datalist>
         </div>  
         <div class="input-group">
             <label for="targetMinutes">設定目標時間:</label>
@@ -105,6 +108,13 @@
             <input type="range" id="targetSecondsSlider" min="0" max="59" value="0" oninput="updateSecondsValue(this.value)">
             <span id="secondsValue">0</span> 秒
         </div>
+        <div class="input-group">
+            <label><input type="checkbox" id="enableSound" checked> 啟用鈴聲</label>
+            <label for="soundVolume">音量：</label>
+        </div>
+        <div class="input-group">
+            <input type="range" id="soundVolume" min="0" max="1" step="0.1" value="0.8">
+        </div>
         <div id="timer-container">
             <div id="timer">00:00:00</div>
         </div>
@@ -116,6 +126,8 @@
     </div>
     <h2>歷史紀錄</h2>
     <ul id="history"></ul>
+
+    <audio id="alarmSound" src="https://raw.githubusercontent.com/kang0102/TimeBoxing/main/sounds/mixkit-digital-clock-digital-alarm-buzzer-992.wav" preload="auto"></audio>
 
     <script>
         let timer;
@@ -134,9 +146,24 @@
             if (!running) {
                 running = true;
                 document.getElementById("status").textContent = "進行中";
+                let targetMinutes = parseInt(document.getElementById('targetMinutesSlider').value, 10);
+                let targetSeconds = parseInt(document.getElementById('targetSecondsSlider').value, 10);
+                let targetTime = targetMinutes * 60 + targetSeconds;
+                let alarmPlayed = false;
+                
                 timer = setInterval(() => {
                     seconds++;
                     updateTimerDisplay();
+                  
+                    if (seconds >= targetTime && !alarmPlayed) {
+                        if (document.getElementById("enableSound").checked) {
+                            const alarm = document.getElementById("alarmSound");
+                            alarm.volume = parseFloat(document.getElementById("soundVolume").value);
+                            alarm.play();
+                        }
+                        document.getElementById("status").textContent = "完成";
+                        alarmPlayed = true;
+                    }
                 }, 1000);
             }
         }
@@ -145,6 +172,10 @@
             running = false;
             document.getElementById("status").textContent = "已暫停";
             clearInterval(timer);
+          
+            const alarm = document.getElementById("alarmSound");  // ⏹ 停止鈴聲播放並重設音訊到開頭
+            alarm.pause();
+            alarm.currentTime = 0;
         }
 
         function clearFields() {
@@ -160,10 +191,20 @@
             let targetSeconds = parseInt(document.getElementById('targetSecondsSlider')?.value || 0, 10);
             let targetTime = targetMinutes * 60 + targetSeconds;
             let taskName = document.getElementById('taskName')?.value.trim() || '未命名任務';
+            let commitMessage = prompt("請輸入 Commit 訊息（可留空）") || "";
             let difference = seconds - targetTime;
             let statusText = difference < 0 ? `提前 ${Math.abs(difference)} 秒` : `延遲 ${difference} 秒`;
             let statusColor = difference < 0 ? 'green' : 'red';
-            let record = { name: taskName, targetTime: targetTime, actualTime: seconds, status: statusText, statusColor: statusColor };
+
+            let record = {
+                name: taskName,
+                targetTime: targetTime,
+                actualTime: seconds,
+                status: statusText,
+                statusColor: statusColor,
+                commit: commitMessage
+            };
+
             historyRecords.unshift(record);
             localStorage.setItem('history', JSON.stringify(historyRecords));
             updateHistoryDisplay();
@@ -183,21 +224,18 @@
                 li.innerHTML = `${record.name}: 目標 ${Math.floor(record.targetTime / 60)} 分 ${record.targetTime % 60} 秒, 
                                 實際 ${Math.floor(record.actualTime / 60)} 分 ${record.actualTime % 60} 秒 
                                 <br><span style='color:${record.statusColor};'>(${record.status})</span>` +
-                               ` <button class='delete-btn' onclick='deleteHistory(${index})'>❌</button>`;
+                    ` <button class='delete-btn' onclick='deleteHistory(${index})'>❌</button>`;
                 historyList.appendChild(li);
             });
-        }  
+        }
 
         function updateMinutesValue(value) {
             document.getElementById("minutesValue").textContent = value;
-            document.getElementById("targetMinutes").value = value;  // 讓隱藏的 input 也更新
         }
 
-      function updateSecondsValue(value) {
+        function updateSecondsValue(value) {
             document.getElementById("secondsValue").textContent = value;
-            document.getElementById("targetSeconds").value = value;  // 讓隱藏的 input 也更新
         }
-
 
         updateHistoryDisplay();
     </script>
