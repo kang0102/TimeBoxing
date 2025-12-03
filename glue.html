@@ -18,13 +18,15 @@
 
         /* 左側工具欄 */
         #sidebar {
-            width: 250px;
+            width: 260px;
             background-color: #2b2b2b;
             padding: 15px;
+            padding-top: 60px; /* 預留空間給回首頁按鈕 */
             display: flex;
             flex-direction: column;
             gap: 10px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            z-index: 10;
         }
 
         /* 右側畫布區 */
@@ -50,13 +52,16 @@
             border-radius: 4px;
             transition: 0.2s;
             text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         button:hover { background-color: #666; }
         button.active { background-color: #007bff; border-color: #007bff; }
         
         .separator { height: 1px; background: #555; margin: 5px 0; }
         
-        input[type="range"] { width: 100%; }
+        input[type="range"] { width: 100%; margin: 10px 0; }
         
         .info-box {
             background: #111;
@@ -65,38 +70,70 @@
             font-family: monospace;
             font-size: 12px;
             color: #00ff00;
+            line-height: 1.6;
+            margin-top: auto;
         }
+
+        /* 回首頁按鈕樣式 */
+        .home-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            text-decoration: none;
+            background: #444;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #666;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .home-btn:hover { background: #666; }
 
         /* 畫布樣式 */
         canvas {
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             cursor: crosshair;
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
 <body>
 
+    <a href="index.html" class="home-btn">🏠 回首頁</a>
+
     <div id="sidebar">
-        <h2>膠體分析工具箱 Web</h2>
+        <h2>🧩 膠體分析工具</h2>
         
         <button onclick="document.getElementById('fileInput').click()">📂 載入圖片</button>
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="loadImage(this)">
         
         <div class="separator"></div>
         
-        <button id="btnRect" onclick="setTool('rect')">⬜ 矩形選取</button>
-        <button id="btnPoly" onclick="setTool('poly')">⬡ 多邊形 (點擊多點)</button>
+        <button id="btnRect" onclick="setTool('rect')" class="active">⬜ 矩形選取</button>
+        <button id="btnPoly" onclick="setTool('poly')">⬡ 多邊形 (連點)</button>
         <button onclick="resetROI()">🔄 清除選取</button>
         
         <div class="separator"></div>
         
-        <label>閾值 (模擬 OTSU): <span id="threshVal">128</span></label>
+        <label>閾值 (深色過濾): <span id="threshVal">128</span></label>
         <input type="range" id="thresholdSlider" min="0" max="255" value="128" oninput="updateThreshold(this.value)">
-        
-        <button onclick="calculateArea()" style="background-color: #43A047;">▶ 開始計算面積</button>
+        <div style="font-size: 12px; color: #888;">調整滑桿以改變識別敏感度</div>
+
+        <div class="separator"></div>
+
+        <button onclick="calculateArea()" style="background-color: #43A047; border-color: #2E7D32; justify-content: center;">
+            ▶ 開始計算面積
+        </button>
         
         <div class="info-box" id="resultBox">
-            等待計算...
+            等待計算...<br>
+            請載入圖片並選取範圍。
         </div>
     </div>
 
@@ -119,12 +156,13 @@
         let roiMask = null; // 用來存儲選取區域
         let threshold = 128;
 
-        // 初始化
+        // 初始化畫布文字
         canvas.width = 800;
         canvas.height = 600;
         ctx.fillStyle = "#555";
-        ctx.font = "20px Arial";
-        ctx.fillText("請從左側載入圖片", 320, 300);
+        ctx.font = "20px Microsoft JhengHei";
+        ctx.textAlign = "center";
+        ctx.fillText("請從左側載入圖片", canvas.width/2, canvas.height/2);
 
         // 1. 載入圖片
         function loadImage(input) {
@@ -132,6 +170,7 @@
                 let reader = new FileReader();
                 reader.onload = function(e) {
                     img.onload = function() {
+                        // 調整畫布大小以適應圖片，但不要太大以免當機
                         canvas.width = img.width;
                         canvas.height = img.height;
                         resetROI();
@@ -148,21 +187,20 @@
             currentTool = tool;
             document.getElementById('btnRect').classList.toggle('active', tool === 'rect');
             document.getElementById('btnPoly').classList.toggle('active', tool === 'poly');
-            // 重置多邊形狀態
-            if(tool === 'rect') polyPoints = [];
+            // 切換工具時不強制清除，保留彈性
         }
 
         function resetROI() {
             polyPoints = [];
             roiMask = null;
             draw();
-            document.getElementById('resultBox').innerText = "區域已重置";
+            document.getElementById('resultBox').innerHTML = "區域已重置";
         }
 
         function updateThreshold(val) {
             threshold = parseInt(val);
             document.getElementById('threshVal').innerText = val;
-            // 如果已經有選區，即時預覽效果可以在這裡做（稍微複雜，先略過）
+            if(roiMask) calculateArea(); // 如果有選區，直接即時計算預覽
         }
 
         // 3. 繪圖與滑鼠事件
@@ -172,26 +210,36 @@
             // 畫底圖
             if (img.src) ctx.drawImage(img, 0, 0);
 
-            // 畫目前的 ROI
+            // 設定繪圖樣式
             ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 2;
-            ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
 
+            // 畫多邊形
             if (currentTool === 'poly' && polyPoints.length > 0) {
                 ctx.beginPath();
                 ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
                 for (let i = 1; i < polyPoints.length; i++) {
                     ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
                 }
-                if (isDrawing && currentTool === 'poly') {
-                   // 預覽線
-                } else if (roiMask && currentTool === 'poly') {
+                // 如果正在畫，連線到滑鼠位置（這裡簡化，直接畫出已有點）
+                if (roiMask && currentTool === 'poly') {
                     ctx.closePath();
-                    ctx.stroke();
                     ctx.fill();
                 }
                 ctx.stroke();
+                
+                // 畫出頂點
+                ctx.fillStyle = 'yellow';
+                for(let p of polyPoints){
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.15)'; // 還原填色
+
             } else if (roiMask && currentTool === 'rect') {
+                // 畫矩形
                 ctx.strokeRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
                 ctx.fillRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
             }
@@ -201,14 +249,23 @@
         canvas.addEventListener('mousedown', e => {
             if (!img.src) return;
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // 計算縮放比例 (因為 CSS 可能讓 canvas 縮小顯示)
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
 
             if (currentTool === 'rect') {
                 isDrawing = true;
                 startX = x;
                 startY = y;
+                roiMask = null; // 重畫矩形時清除舊的
             } else if (currentTool === 'poly') {
+                if(roiMask === true) { // 如果已經畫完一個，再點擊則重新開始
+                    polyPoints = [];
+                    roiMask = null;
+                }
                 polyPoints.push({x, y});
                 draw();
             }
@@ -216,13 +273,16 @@
 
         canvas.addEventListener('mousemove', e => {
             if (!img.src) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
             if (currentTool === 'rect' && isDrawing) {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                draw(); // 重繪圖
-                // 畫拖曳中的框
+                draw(); // 重繪圖 (清除舊的拖曳框)
                 ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = 3;
                 ctx.strokeRect(startX, startY, x - startX, y - startY);
             }
         });
@@ -230,54 +290,62 @@
         canvas.addEventListener('mouseup', e => {
             if (currentTool === 'rect' && isDrawing) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                
                 isDrawing = false;
+                // 修正寬高為負值的狀況
+                let w = x - startX;
+                let h = y - startY;
+                let rx = startX;
+                let ry = startY;
+                if(w < 0) { rx = x; w = Math.abs(w); }
+                if(h < 0) { ry = y; h = Math.abs(h); }
+
                 // 儲存矩形區域
-                roiMask = { x: Math.min(startX, x), y: Math.min(startY, y), w: Math.abs(x - startX), h: Math.abs(y - startY) };
+                roiMask = { x: rx, y: ry, w: w, h: h };
                 draw();
             }
         });
         
         // 多邊形雙擊結束
         canvas.addEventListener('dblclick', e => {
-            if (currentTool === 'poly') {
-                roiMask = true; // 標記完成
-                // 閉合路徑
-                draw();
-                // 重新畫閉合
-                ctx.beginPath();
-                ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
-                for (let i = 1; i < polyPoints.length; i++) {
-                    ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
-                }
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
-                ctx.fill();
-                ctx.stroke();
+            if (currentTool === 'poly' && polyPoints.length > 2) {
+                roiMask = true; // 標記為完成狀態
+                draw(); // 會觸發 fill()
             }
         });
 
-        // 4. 計算面積邏輯 (模擬 cv2.threshold + mask)
+        // 4. 計算面積邏輯
         function calculateArea() {
             if (!img.src || !roiMask) {
                 alert("請先載入圖片並選取區域");
                 return;
             }
 
-            // 取得畫布像素數據
+            // 重新繪製乾淨的圖片以取得數據
+            draw(); 
+            // 這裡必須重畫一次不帶綠色遮罩的原始圖來計算像素? 
+            // 不，getImageData 會抓到綠色遮罩。
+            // 解決方法：用另一個隱藏的 canvas 畫原始圖 + Mask，或者直接操作數據。
+            
+            // 簡單解法：先畫原始圖
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            
+            // 取得原始像素數據
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-            let gluePixels = 0;
-            let totalRoiPixels = 0;
-
-            // 建立一個臨時 Canvas 來畫 Mask，用於判斷像素是否在 ROI 內
+            const data = imageData.data; // R, G, B, A...
+            
+            // 建立 Mask Canvas
             const maskCanvas = document.createElement('canvas');
             maskCanvas.width = canvas.width;
             maskCanvas.height = canvas.height;
             const maskCtx = maskCanvas.getContext('2d');
             
-            maskCtx.fillStyle = 'white';
+            maskCtx.fillStyle = 'white'; // Mask 區域為白色
             maskCtx.beginPath();
             if (currentTool === 'rect') {
                 maskCtx.rect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
@@ -290,45 +358,62 @@
                 maskCtx.closePath();
             }
             maskCtx.fill();
-            
             const maskData = maskCtx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-            // 遍歷所有像素
+            // 開始計算
+            let gluePixels = 0;
+            let totalRoiPixels = 0;
+            
+            // 視覺化陣列 (最後要畫回去)
+            // 我們直接在 imageData 上修改顏色來顯示結果
             for (let i = 0; i < data.length; i += 4) {
-                // Alpha 通道在 maskData[i+3]
-                // 檢查是否在 ROI 遮罩內 (Alpha > 0)
-                if (maskData[i+3] > 0) {
+                // maskData 的 Alpha 通道 > 0 表示在選區內
+                // 注意：getImageData 的 Alpha 在 i+3
+                // maskCtx 畫白色，所以 R(i)=255, G(i+1)=255, B(i+2)=255
+                if (maskData[i] > 128) { // 簡單判斷是否為白色
                     totalRoiPixels++;
                     
-                    // 灰階化 (簡單平均)
                     const r = data[i];
                     const g = data[i+1];
                     const b = data[i+2];
                     const gray = 0.299 * r + 0.587 * g + 0.114 * b;
 
-                    // 閾值判斷 (模擬 threshold)
-                    // 假設膠體是深色 (小於閾值)，如果是亮色膠體請改為 gray > threshold
-                    // 這裡預設膠體是 "黑色/深色"
+                    // 閾值判斷 (假設膠體比背景黑)
                     if (gray < threshold) {
                         gluePixels++;
-                        // 標記偵測到的部分為黃色 (視覺化)
-                        data[i] = 255;   // R
-                        data[i+1] = 255; // G
-                        data[i+2] = 0;   // B
+                        // 將偵測到的膠體標記為顯眼的黃色
+                        data[i] = 255;   
+                        data[i+1] = 255; 
+                        data[i+2] = 0;   
                     }
                 }
             }
             
-            // 將標記後的結果畫回去
+            // 將標記後的結果畫回主畫布
             ctx.putImageData(imageData, 0, 0);
 
+            // 補上綠色外框 (因為 putImageData 蓋掉了)
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            if (currentTool === 'rect') {
+                ctx.strokeRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
+                for (let i = 1; i < polyPoints.length; i++) {
+                    ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+
             // 顯示結果
+            const percent = totalRoiPixels > 0 ? ((gluePixels/totalRoiPixels)*100).toFixed(2) : 0;
             document.getElementById('resultBox').innerHTML = 
                 `ROI 面積: ${totalRoiPixels} px<br>` +
                 `膠體面積: ${gluePixels} px<br>` +
-                `佔比: ${((gluePixels/totalRoiPixels)*100).toFixed(2)}%`;
+                `覆蓋比例: <span style="font-size:16px; color:yellow">${percent}%</span>`;
         }
-
     </script>
 </body>
 </html>
