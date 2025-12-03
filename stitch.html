@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖片拼接工具</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ddd;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 左側控制面板 */
+        #sidebar {
+            width: 280px;
+            background-color: #2b2b2b;
+            padding: 15px;
+            padding-top: 60px; /* 留給回首頁按鈕的空間 */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* 右側畫布區 */
+        #main-area {
+            flex-grow: 1;
+            background-color: #333;
+            /* 繪製網格背景方便對齊 */
+            background-image: linear-gradient(#444 1px, transparent 1px), linear-gradient(90deg, #444 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        h2 { margin: 0 0 10px 0; color: #FFB74D; font-size: 18px; }
+
+        .control-group {
+            background: #222;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #bbb; }
+        
+        button {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            width: 100%;
+            transition: 0.2s;
+        }
+        button:hover { background-color: #666; }
+        
+        /* 特別強調的按鈕 */
+        .btn-primary { background-color: #43A047; border-color: #2E7D32; font-weight: bold; }
+        .btn-blue { background-color: #1976D2; border-color: #1565C0; }
+
+        input[type="range"] { width: 100%; margin: 5px 0; }
+
+        .home-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            text-decoration: none;
+            background: #444;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #666;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .home-btn:hover { background: #666; }
+
+        canvas {
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            cursor: grab; /* 游標顯示為手型 */
+        }
+        canvas:active { cursor: grabbing; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="home-btn">🏠 回首頁</a>
+
+    <div id="sidebar">
+        <h2>🧩 手動拼接合成</h2>
+        
+        <div class="control-group">
+            <label>1. 載入底圖 (固定)</label>
+            <button onclick="document.getElementById('file1').click()">📂 選擇底圖 (Image 1)</button>
+            <input type="file" id="file1" accept="image/*" style="display:none" onchange="loadImg(1, this)">
+        </div>
+
+        <div class="control-group">
+            <label>2. 載入上層圖 (可拖曳)</label>
+            <button onclick="document.getElementById('file2').click()">📂 選擇上層圖 (Image 2)</button>
+            <input type="file" id="file2" accept="image/*" style="display:none" onchange="loadImg(2, this)">
+        </div>
+
+        <div class="control-group">
+            <label>透明度 (用於檢查對齊)</label>
+            <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="0.6" oninput="draw()">
+            <div style="font-size:12px; color:#888; text-align:right;">拖曳滑桿調整透明度</div>
+        </div>
+
+        <div class="control-group">
+            <label>鍵盤微調 (X / Y)</label>
+            <div style="display: flex; gap: 5px;">
+                <button onclick="nudge(-1, 0)">⬅️</button>
+                <button onclick="nudge(0, -1)">⬆️</button>
+                <button onclick="nudge(0, 1)">⬇️</button>
+                <button onclick="nudge(1, 0)">➡️</button>
+            </div>
+            <div style="font-size: 12px; margin-top: 5px; color: #888;">
+                位置: <span id="valX">0</span>, <span id="valY">0</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="saveResult()">💾 下載合成圖</button>
+        <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
+            *存檔時會自動設為不透明
+        </div>
+    </div>
+
+    <div id="main-area">
+        <canvas id="stitchCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stitchCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 圖片物件
+        let img1 = new Image();
+        let img2 = new Image();
+        let loaded1 = false;
+        let loaded2 = false;
+
+        // 位置狀態
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        // 拖曳狀態
+        let isDragging = false;
+        let lastMouseX, lastMouseY;
+
+        // 初始化文字
+        canvas.width = 800;
+        canvas.height = 600;
+        ctx.fillStyle = "#aaa";
+        ctx.font = "20px Microsoft JhengHei";
+        ctx.textAlign = "center";
+        ctx.fillText("請先載入底圖，再載入上層圖進行拼接", 400, 300);
+
+        // 載入圖片邏輯
+        function loadImg(idx, input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (idx === 1) {
+                        img1.onload = () => { loaded1 = true; checkInit(); };
+                        img1.src = e.target.result;
+                    } else {
+                        img2.onload = () => { loaded2 = true; checkInit(); };
+                        img2.src = e.target.result;
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function checkInit() {
+            if (loaded1) {
+                // 如果只載入第一張，初始化畫布
+                if (!loaded2) {
+                    canvas.width = img1.width + 400; // 預留一些操作空間
+                    canvas.height = img1.height + 400;
+                }
+                draw();
+            }
+        }
+
+        // 核心繪圖函數
+        function draw(forSave = false) {
+            if (!loaded1) return;
+
+            // 1. 自動計算需要的畫布大小 (包圍盒)
+            // 以 img1 為 (0,0)，img2 為 (offsetX, offsetY)
+            let minX = Math.min(0, offsetX);
+            let minY = Math.min(0, offsetY);
+            let maxX = Math.max(img1.width, offsetX + (loaded2 ? img2.width : 0));
+            let maxY = Math.max(img1.height, offsetY + (loaded2 ? img2.height : 0));
+
+            // 設定畫布尺寸
+            canvas.width = maxX - minX;
+            canvas.height = maxY - minY;
+
+            // 清空畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 平移座標系 (處理負座標，確保圖都在畫布內)
+            ctx.save();
+            ctx.translate(-minX, -minY);
+
+            // 2. 畫底圖 (img1)
+            ctx.globalAlpha = 1.0;
+            ctx.drawImage(img1, 0, 0);
+
+            // 3. 畫上層圖 (img2)
+            if (loaded2) {
+                // 如果是存檔模式，強制不透明；否則使用滑桿數值
+                ctx.globalAlpha = forSave ? 1.0 : parseFloat(document.getElementById('alphaSlider').value);
+                ctx.drawImage(img2, offsetX, offsetY);
+            }
+
+            ctx.restore();
+
+            // 更新介面數值
+            document.getElementById('valX').innerText = parseInt(offsetX);
+            document.getElementById('valY').innerText = parseInt(offsetY);
+        }
+
+        // --- 滑鼠拖曳功能 ---
+        canvas.addEventListener('mousedown', e => {
+            if (!loaded2) return;
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', e => {
+            if (isDragging) {
+                const dx = e.clientX - lastMouseX;
+                const dy = e.clientY - lastMouseY;
+                offsetX += dx;
+                offsetY += dy;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                draw();
+            }
+        });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+
+        // --- 按鈕微調 ---
+        function nudge(dx, dy) {
+            offsetX += dx;
+            offsetY += dy;
+            draw();
+        }
+
+        // --- 存檔功能 ---
+        function saveResult() {
+            if (!loaded1) return;
+            // 1. 重畫一次 (完全不透明)
+            draw(true);
+            // 2. 建立下載連結
+            const link = document.createElement('a');
+            link.download = 'stitched_result.jpg'; // 預設檔名
+            link.href = canvas.toDataURL('image/jpeg', 0.9); // 0.9 品質
+            link.click();
+            // 3. 畫回原本狀態 (恢復半透明) 以便繼續編輯
+            draw(false);
+        }
+    </script>
+</body>
+</html>
