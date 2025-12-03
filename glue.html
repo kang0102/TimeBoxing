@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -419,6 +419,23 @@
                 `膠體面積: ${gluePixels} px<br>` +
                 `覆蓋比例: <span style="font-size:16px; color:yellow">${percent}%</span>`;
         }
+
+            // --- 5. 存檔功能 (新增) ---
+            function saveAnalysis() {
+                if (!img.src) {
+                    alert("請先載入圖片");
+                    return;
+                }
+            // 確保標記線有畫上去
+            calculateArea(); 
+    
+            // 下載圖片
+            const link = document.createElement('a');
+            link.download = 'glue_analysis_result.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        }
+        
     </script>
 </body>
 </html>
