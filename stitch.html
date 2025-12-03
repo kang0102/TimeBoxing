@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多圖連續拼接工作站</title>
+    <title>多圖連續拼接工作站 (含縮放功能)</title>
     <script async src="https://docs.opencv.org/4.5.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     <style>
         /* --- 基礎佈局 --- */
@@ -38,11 +38,14 @@
             background-color: #222;
             background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
             background-size: 20px 20px;
-            overflow: hidden;
+            /* 允許捲動，因為放大後可能會超出視窗 */
+            overflow: auto; 
             display: flex;
-            justify-content: center;
-            align-items: center;
+            /* 讓畫布預設置中 */
+            justify-content: center; 
+            align-items: flex-start; /* 改為從上方開始，配合 transform-origin */
             position: relative;
+            padding: 20px; /* 留點邊距 */
         }
 
         /* 右側：圖片佇列 */
@@ -97,9 +100,8 @@
         .img-card:hover { background: #444; }
         .img-card.dragging { opacity: 0.5; border: 2px dashed #888; }
         
-        /* 標示目前正在使用的圖片 */
-        .img-card.is-base { border-color: #2196F3; background: #192c3d; } /* 藍色：底圖 */
-        .img-card.is-active { border-color: #FFC107; background: #3d3419; } /* 黃色：上層圖 */
+        .img-card.is-base { border-color: #2196F3; background: #192c3d; } 
+        .img-card.is-active { border-color: #FFC107; background: #3d3419; } 
 
         .thumb {
             width: 50px;
@@ -128,7 +130,6 @@
             display: inline-block;
         }
 
-        /* 刪除按鈕 */
         .btn-del {
             color: #666;
             cursor: pointer;
@@ -137,7 +138,6 @@
         }
         .btn-del:hover { color: #ff5252; }
 
-        /* --- 一般 UI 元件 --- */
         h2 { margin: 0 0 5px 0; color: #FFB74D; font-size: 18px; }
         button {
             padding: 10px;
@@ -154,16 +154,9 @@
         button:hover { background-color: #666; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 小按鈕樣式 */
-        .btn-sm {
-            width: auto; 
-            padding: 5px 10px; 
-            margin:0; 
-            font-size: 12px;
-        }
+        .btn-sm { width: auto; padding: 5px 10px; margin:0; font-size: 12px; }
         .btn-danger-sm { background-color: #c62828; border-color: #b71c1c; }
         .btn-danger-sm:hover { background-color: #d32f2f; }
-
 
         .btn-primary { background-color: #1976D2; border-color: #1565C0; font-weight: bold; }
         .btn-success { background-color: #43A047; border-color: #2E7D32; font-weight: bold; }
@@ -171,7 +164,6 @@
         
         #multi-file-input { display: none; }
 
-        /* 回首頁按鈕 */
         .home-btn {
             position: absolute;
             top: 15px;
@@ -186,9 +178,13 @@
             z-index: 100;
         }
 
+        /* 畫布樣式更新 */
         canvas {
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
             cursor: grab;
+            /* 關鍵：設定變形原點為左上角，配合 scale 使用 */
+            transform-origin: top center;
+            transition: transform 0.1s ease-out; /* 讓縮放平滑一點 */
         }
         canvas:active { cursor: grabbing; }
 
@@ -196,6 +192,22 @@
             font-size: 12px; color: #81D4FA; background: #263238;
             padding: 10px; border-radius: 4px; border-left: 3px solid #0288D1;
             display: none; margin-top: 10px; line-height: 1.5;
+        }
+        
+        /* 縮放資訊浮動標籤 */
+        #zoom-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
     </style>
 </head>
@@ -225,388 +237,3 @@
             <button onclick="nudge(-1, 0)">⬅️</button>
             <button onclick="nudge(0, -1)">⬆️</button>
             <button onclick="nudge(0, 1)">⬇️</button>
-            <button onclick="nudge(1, 0)">➡️</button>
-        </div>
-        <div style="text-align: center; font-size: 12px; color: #888;">
-            X: <span id="valX">0</span>, Y: <span id="valY">0</span>
-        </div>
-
-        <div style="margin-top: auto;"></div>
-
-        <button class="btn-success" onclick="mergeAndNext()">✅ 合併並換下一張</button>
-        <div style="font-size:11px; color:#888; text-align:center; margin-bottom: 10px;">
-            合併後，結果將變成新的底圖
-        </div>
-
-        <button onclick="saveResult()">💾 下載目前結果</button>
-    </div>
-
-    <div id="main-area">
-        <canvas id="stitchCanvas"></canvas>
-    </div>
-
-    <div id="right-panel">
-        <div class="panel-header">
-            <span>📚 待處理圖片</span>
-            <div class="header-actions">
-                <button class="btn-sm btn-danger-sm" onclick="clearQueue()" title="清空列表">🗑️</button>
-                <button class="btn-sm" onclick="document.getElementById('multi-file-input').click()">➕ 加入</button>
-            </div>
-        </div>
-        
-        <input type="file" id="multi-file-input" multiple accept="image/*" onchange="handleFiles(this.files)">
-        
-        <div id="image-list">
-            <div style="text-align:center; color:#666; margin-top:50px; font-size:14px;">
-                👆 點擊右上角加入圖片<br>或是將圖片拖曳進來<br><br>可拖曳卡片調整順序
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let queue = [];
-        let cvReady = false;
-        
-        const canvas = document.getElementById('stitchCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let baseImg = null;
-        let activeImg = null;
-        let baseImgObj = new Image();
-        let activeImgObj = new Image();
-        let isBaseLoaded = false;
-        let isActiveLoaded = false;
-
-        let offsetX = 0;
-        let offsetY = 0;
-        let isDragging = false;
-        let lastMouseX, lastMouseY;
-
-        canvas.width = 800;
-        canvas.height = 600;
-        drawEmptyState();
-
-        function onOpenCvReady() {
-            cvReady = true;
-            document.getElementById('cv-status').innerText = "已就緒";
-            document.getElementById('cv-status').style.color = "#4CAF50";
-            checkAutoButton();
-        }
-
-        function handleFiles(files) {
-            if (!files.length) return;
-            if (queue.length === 0) document.getElementById('image-list').innerHTML = '';
-
-            Array.from(files).forEach(file => {
-                const item = {
-                    id: Date.now() + Math.random(),
-                    file: file,
-                    url: URL.createObjectURL(file),
-                    name: file.name
-                };
-                queue.push(item);
-            });
-            
-            renderList();
-            loadCurrentPair();
-        }
-
-        // --- 新增：清空列表功能 ---
-        function clearQueue() {
-            if(queue.length > 0 && !confirm("確定要清空所有圖片嗎？")) return;
-            
-            // 釋放記憶體
-            queue.forEach(item => URL.revokeObjectURL(item.url));
-            queue = [];
-            
-            renderList();
-            loadCurrentPair();
-        }
-        // -----------------------
-
-        function renderList() {
-            const listEl = document.getElementById('image-list');
-            listEl.innerHTML = '';
-
-            if (queue.length === 0) {
-                listEl.innerHTML = '<div style="text-align:center; color:#666; margin-top:50px; font-size:14px;">👆 點擊右上角加入圖片<br>或是將圖片拖曳進來</div>';
-                return;
-            }
-
-            queue.forEach((item, index) => {
-                const div = document.createElement("div");
-                div.className = 'img-card';
-                div.draggable = true;
-                
-                if (index === 0) div.classList.add('is-base');
-                if (index === 1) div.classList.add('is-active');
-
-                div.innerHTML = `
-                    <div style="font-size:14px; color:#aaa; font-weight:bold;">${index + 1}</div>
-                    <img src="${item.url}" class="thumb">
-                    <div class="card-info">
-                        <div class="filename" title="${item.name}">${item.name}</div>
-                        ${index === 0 ? '<span class="role-tag" style="background:#2196F3; color:white;">底圖 (Base)</span>' : ''}
-                        ${index === 1 ? '<span class="role-tag" style="background:#FFC107; color:black;">移動中 (Top)</span>' : ''}
-                    </div>
-                    <div class="btn-del" onclick="removeFromQueue(${index})">×</div>
-                `;
-
-                div.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('text/plain', index);
-                    div.classList.add('dragging');
-                });
-                div.addEventListener('dragend', () => div.classList.remove('dragging'));
-                div.addEventListener('dragover', e => { e.preventDefault(); });
-                div.addEventListener('drop', e => {
-                    e.preventDefault();
-                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-                    const toIndex = index;
-                    if (fromIndex !== toIndex) {
-                        const movedItem = queue.splice(fromIndex, 1)[0];
-                        queue.splice(toIndex, 0, movedItem);
-                        renderList();
-                        loadCurrentPair();
-                    }
-                });
-
-                listEl.appendChild(div);
-            });
-        }
-
-        function removeFromQueue(index) {
-            URL.revokeObjectURL(queue[index].url); // 釋放記憶體
-            queue.splice(index, 1);
-            renderList();
-            loadCurrentPair();
-        }
-
-        function loadCurrentPair() {
-            isBaseLoaded = false;
-            isActiveLoaded = false;
-            checkAutoButton();
-
-            if (queue.length === 0) {
-                drawEmptyState();
-                return;
-            }
-
-            baseImg = queue[0];
-            baseImgObj.onload = () => {
-                isBaseLoaded = true;
-                if (queue.length === 1) {
-                    resetCanvasSize();
-                    draw();
-                } else {
-                    checkAllLoaded();
-                }
-            };
-            baseImgObj.src = baseImg.url;
-
-            if (queue.length > 1) {
-                activeImg = queue[1];
-                activeImgObj.onload = () => {
-                    isActiveLoaded = true;
-                    offsetX = 0; 
-                    offsetY = 0;
-                    checkAllLoaded();
-                };
-                activeImgObj.src = activeImg.url;
-            }
-        }
-
-        function checkAllLoaded() {
-            if (isBaseLoaded && isActiveLoaded) {
-                resetCanvasSize();
-                draw();
-                checkAutoButton();
-            }
-        }
-
-        function resetCanvasSize() {
-            canvas.width = baseImgObj.width + 400;
-            canvas.height = baseImgObj.height + 400;
-        }
-
-        function drawEmptyState() {
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-            ctx.fillStyle = "#666";
-            ctx.font = "20px Microsoft JhengHei";
-            ctx.textAlign = "center";
-            ctx.fillText("請從右側加入圖片", canvas.width/2, canvas.height/2);
-        }
-
-        function checkAutoButton() {
-            const btn = document.getElementById('btnAuto');
-            btn.disabled = !(cvReady && isBaseLoaded && isActiveLoaded);
-        }
-
-        function draw(forSave = false) {
-            if (!isBaseLoaded) return;
-
-            let w = baseImgObj.width;
-            let h = baseImgObj.height;
-            if (isActiveLoaded) {
-                const minX = Math.min(0, offsetX);
-                const minY = Math.min(0, offsetY);
-                const maxX = Math.max(w, offsetX + activeImgObj.width);
-                const maxY = Math.max(h, offsetY + activeImgObj.height);
-                
-                canvas.width = maxX - minX;
-                canvas.height = maxY - minY;
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.save();
-                ctx.translate(-minX, -minY);
-            } else {
-                canvas.width = w;
-                canvas.height = h;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.save();
-            }
-
-            ctx.globalAlpha = 1.0;
-            ctx.drawImage(baseImgObj, 0, 0);
-
-            if (isActiveLoaded) {
-                ctx.globalAlpha = forSave ? 1.0 : parseFloat(document.getElementById('alphaSlider').value);
-                ctx.drawImage(activeImgObj, offsetX, offsetY);
-            }
-
-            ctx.restore();
-            
-            document.getElementById('valX').innerText = Math.round(offsetX);
-            document.getElementById('valY').innerText = Math.round(offsetY);
-        }
-
-        canvas.addEventListener('mousedown', e => {
-            if (!isActiveLoaded) return;
-            isDragging = true;
-            lastMouseX = e.clientX;
-            lastMouseY = e.clientY;
-        });
-        window.addEventListener('mousemove', e => {
-            if (isDragging) {
-                const dx = e.clientX - lastMouseX;
-                const dy = e.clientY - lastMouseY;
-                offsetX += dx;
-                offsetY += dy;
-                lastMouseX = e.clientX;
-                lastMouseY = e.clientY;
-                draw();
-            }
-        });
-        window.addEventListener('mouseup', () => isDragging = false);
-
-        function mergeAndNext() {
-            if (!isBaseLoaded) return;
-            if (queue.length < 2) {
-                alert("沒有下一張圖片可以合併囉！");
-                return;
-            }
-
-            draw(true);
-            const mergedUrl = canvas.toDataURL('image/png');
-
-            const newItem = {
-                id: Date.now(),
-                file: null,
-                url: mergedUrl,
-                name: `合併結果_${queue.length - 1}`
-            };
-
-            // 釋放舊圖記憶體
-            URL.revokeObjectURL(queue[0].url);
-            URL.revokeObjectURL(queue[1].url);
-
-            queue.splice(0, 2, newItem);
-            renderList();
-            loadCurrentPair();
-        }
-
-        function runAutoStitch() {
-            if (!cvReady || !isBaseLoaded || !isActiveLoaded) return;
-            
-            const report = document.getElementById('analysis-report');
-            report.style.display = 'block';
-            report.innerHTML = "⏳ 計算中...";
-
-            setTimeout(() => {
-                try {
-                    let mat1 = cv.imread(baseImgObj);
-                    let mat2 = cv.imread(activeImgObj);
-                    
-                    let gray1 = new cv.Mat();
-                    let gray2 = new cv.Mat();
-                    cv.cvtColor(mat1, gray1, cv.COLOR_RGBA2GRAY);
-                    cv.cvtColor(mat2, gray2, cv.COLOR_RGBA2GRAY);
-
-                    let orb = new cv.ORB(1000);
-                    let kp1 = new cv.KeyPointVector();
-                    let kp2 = new cv.KeyPointVector();
-                    let des1 = new cv.Mat();
-                    let des2 = new cv.Mat();
-
-                    orb.detectAndCompute(gray1, new cv.Mat(), kp1, des1);
-                    orb.detectAndCompute(gray2, new cv.Mat(), kp2, des2);
-
-                    let bf = new cv.BFMatcher(cv.NORM_HAMMING, true);
-                    let matches = new cv.DMatchVector();
-                    bf.match(des1, des2, matches);
-
-                    let goodMatches = [];
-                    let sumX = 0, sumY = 0;
-                    const searchRadius = 200;
-
-                    for (let i = 0; i < matches.size(); i++) {
-                        let m = matches.get(i);
-                        let pt1 = kp1.get(m.queryIdx).pt;
-                        let pt2 = kp2.get(m.trainIdx).pt;
-                        let pdx = pt1.x - pt2.x;
-                        let pdy = pt1.y - pt2.y;
-                        
-                        let dist = Math.sqrt(Math.pow(pdx - offsetX, 2) + Math.pow(pdy - offsetY, 2));
-                        if (dist < searchRadius) {
-                            goodMatches.push(m);
-                            sumX += pdx;
-                            sumY += pdy;
-                        }
-                    }
-
-                    if (goodMatches.length < 3) {
-                        report.innerHTML = `<span style="color:salmon">❌ 失敗</span>: 附近特徵點不足`;
-                    } else {
-                        offsetX = Math.round(sumX / goodMatches.length);
-                        offsetY = Math.round(sumY / goodMatches.length);
-                        draw();
-                        report.innerHTML = `<span style="color:#4CAF50">✅ 成功</span>: 依據 ${goodMatches.length} 個特徵點吸附`;
-                    }
-                    
-                    mat1.delete(); mat2.delete(); gray1.delete(); gray2.delete();
-                    kp1.delete(); kp2.delete(); des1.delete(); des2.delete();
-                    bf.delete(); matches.delete(); orb.delete();
-                } catch(e) {
-                    console.error(e);
-                    report.innerHTML = "❌ 發生錯誤";
-                }
-            }, 50);
-        }
-
-        function nudge(dx, dy) {
-            offsetX += dx;
-            offsetY += dy;
-            draw();
-        }
-
-        function saveResult() {
-            if (!isBaseLoaded) return;
-            draw(true);
-            const link = document.createElement('a');
-            link.download = 'merge_result.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            draw();
-        }
-    </script>
-</body>
-</html>
