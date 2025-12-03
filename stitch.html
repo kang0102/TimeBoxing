@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>圖片拼接工具</title>
+    <title>智慧圖片拼接工具</title>
+    <script async src="https://docs.opencv.org/4.5.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     <style>
         body {
             font-family: "Microsoft JhengHei", Arial, sans-serif;
@@ -15,24 +16,22 @@
             overflow: hidden;
         }
 
-        /* 左側控制面板 */
         #sidebar {
-            width: 280px;
+            width: 300px;
             background-color: #2b2b2b;
             padding: 15px;
-            padding-top: 60px; /* 留給回首頁按鈕的空間 */
+            padding-top: 60px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.5);
             z-index: 10;
+            overflow-y: auto;
         }
 
-        /* 右側畫布區 */
         #main-area {
             flex-grow: 1;
             background-color: #333;
-            /* 繪製網格背景方便對齊 */
             background-image: linear-gradient(#444 1px, transparent 1px), linear-gradient(90deg, #444 1px, transparent 1px);
             background-size: 20px 20px;
             overflow: auto;
@@ -42,7 +41,7 @@
             position: relative;
         }
 
-        h2 { margin: 0 0 10px 0; color: #FFB74D; font-size: 18px; }
+        h2 { margin: 0 0 5px 0; color: #FFB74D; font-size: 18px; }
 
         .control-group {
             background: #222;
@@ -63,12 +62,15 @@
             border-radius: 4px;
             width: 100%;
             transition: 0.2s;
+            margin-bottom: 5px;
         }
         button:hover { background-color: #666; }
-        
-        /* 特別強調的按鈕 */
-        .btn-primary { background-color: #43A047; border-color: #2E7D32; font-weight: bold; }
-        .btn-blue { background-color: #1976D2; border-color: #1565C0; }
+        button:disabled { background-color: #333; color: #666; cursor: not-allowed; }
+
+        .btn-auto { background-color: #7B1FA2; border-color: #4A148C; color: white; font-weight: bold;}
+        .btn-auto:hover { background-color: #9C27B0; }
+
+        .btn-save { background-color: #43A047; border-color: #2E7D32; font-weight: bold; margin-top: 10px;}
 
         input[type="range"] { width: 100%; margin: 5px 0; }
 
@@ -85,47 +87,75 @@
             font-size: 14px;
             border: 1px solid #666;
             z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
-        .home-btn:hover { background: #666; }
+
+        /* 分析報告區塊 */
+        #analysis-report {
+            font-size: 12px;
+            color: #81D4FA;
+            background: #1a1a1a;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #0288D1;
+            display: none; /* 預設隱藏 */
+            line-height: 1.5;
+        }
 
         canvas {
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            cursor: grab; /* 游標顯示為手型 */
+            cursor: grab;
         }
         canvas:active { cursor: grabbing; }
+        
+        /* 載入遮罩 */
+        #loading-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
 
+    <div id="loading-overlay">
+        <div style="font-size: 24px;">🔧 正在初始化影像引擎 (OpenCV)...</div>
+        <div style="font-size: 14px; color: #aaa; margin-top: 10px;">首次載入可能需要幾秒鐘</div>
+    </div>
+
     <a href="index.html" class="home-btn">🏠 回首頁</a>
 
     <div id="sidebar">
-        <h2>🧩 手動拼接合成</h2>
-        
-        <div class="control-group">
-            <label>1. 載入底圖 (固定)</label>
-            <button onclick="document.getElementById('file1').click()">📂 選擇底圖 (Image 1)</button>
-            <input type="file" id="file1" accept="image/*" style="display:none" onchange="loadImg(1, this)">
-        </div>
+        <h2>🧩 智慧圖片拼接</h2>
+        <div id="cv-status" style="font-size:10px; color:#666; margin-bottom:10px;">OpenCV 狀態: 載入中...</div>
 
         <div class="control-group">
-            <label>2. 載入上層圖 (可拖曳)</label>
-            <button onclick="document.getElementById('file2').click()">📂 選擇上層圖 (Image 2)</button>
+            <label>1. 圖片來源</label>
+            <button onclick="document.getElementById('file1').click()">📂 載入底圖 (Image 1)</button>
+            <input type="file" id="file1" accept="image/*" style="display:none" onchange="loadImg(1, this)">
+            
+            <button onclick="document.getElementById('file2').click()">📂 載入上層圖 (Image 2)</button>
             <input type="file" id="file2" accept="image/*" style="display:none" onchange="loadImg(2, this)">
         </div>
 
-        <div class="control-group">
-            <label>透明度 (用於檢查對齊)</label>
-            <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="0.6" oninput="draw()">
-            <div style="font-size:12px; color:#888; text-align:right;">拖曳滑桿調整透明度</div>
+        <div class="control-group" style="border-color: #7B1FA2;">
+            <label style="color: #E1BEE7;">🤖 自動化操作</label>
+            <button id="btnAuto" class="btn-auto" onclick="runAutoStitch()" disabled>🪄 執行自動對齊</button>
+            
+            <div id="analysis-report">
+                尚未執行分析...
+            </div>
         </div>
 
         <div class="control-group">
-            <label>鍵盤微調 (X / Y)</label>
-            <div style="display: flex; gap: 5px;">
+            <label>🛠️ 手動微調 (X / Y)</label>
+            <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="0.6" oninput="draw()" title="透明度">
+            
+            <div style="display: flex; gap: 5px; margin-top:5px;">
                 <button onclick="nudge(-1, 0)">⬅️</button>
                 <button onclick="nudge(0, -1)">⬆️</button>
                 <button onclick="nudge(0, 1)">⬇️</button>
@@ -136,10 +166,7 @@
             </div>
         </div>
 
-        <button class="btn-primary" onclick="saveResult()">💾 下載合成圖</button>
-        <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
-            *存檔時會自動設為不透明
-        </div>
+        <button class="btn-save" onclick="saveResult()">💾 下載合成圖</button>
     </div>
 
     <div id="main-area">
@@ -150,40 +177,51 @@
         const canvas = document.getElementById('stitchCanvas');
         const ctx = canvas.getContext('2d');
         
-        // 圖片物件
         let img1 = new Image();
         let img2 = new Image();
         let loaded1 = false;
         let loaded2 = false;
+        let cvReady = false;
 
-        // 位置狀態
         let offsetX = 0;
         let offsetY = 0;
         
-        // 拖曳狀態
         let isDragging = false;
         let lastMouseX, lastMouseY;
 
-        // 初始化文字
+        // 初始化
         canvas.width = 800;
         canvas.height = 600;
         ctx.fillStyle = "#aaa";
         ctx.font = "20px Microsoft JhengHei";
         ctx.textAlign = "center";
-        ctx.fillText("請先載入底圖，再載入上層圖進行拼接", 400, 300);
+        ctx.fillText("系統準備中...", 400, 300);
 
-        // 載入圖片邏輯
+        // --- OpenCV 載入監聽 ---
+        function onOpenCvReady() {
+            cvReady = true;
+            document.getElementById('loading-overlay').style.display = 'none';
+            document.getElementById('cv-status').innerText = "OpenCV 狀態: ✅ 已就緒 (v4.5.0)";
+            document.getElementById('cv-status').style.color = "#4CAF50";
+            checkButtons();
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillText("請依序載入兩張圖片", 400, 300);
+        }
+
         function loadImg(idx, input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    if (idx === 1) {
-                        img1.onload = () => { loaded1 = true; checkInit(); };
-                        img1.src = e.target.result;
-                    } else {
-                        img2.onload = () => { loaded2 = true; checkInit(); };
-                        img2.src = e.target.result;
-                    }
+                    const tempImg = new Image();
+                    tempImg.onload = () => {
+                        if (idx === 1) { 
+                            img1 = tempImg; loaded1 = true; 
+                        } else { 
+                            img2 = tempImg; loaded2 = true; 
+                        }
+                        checkInit();
+                    };
+                    tempImg.src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -191,56 +229,171 @@
 
         function checkInit() {
             if (loaded1) {
-                // 如果只載入第一張，初始化畫布
                 if (!loaded2) {
-                    canvas.width = img1.width + 400; // 預留一些操作空間
+                    canvas.width = img1.width + 400;
                     canvas.height = img1.height + 400;
                 }
                 draw();
             }
+            checkButtons();
         }
 
-        // 核心繪圖函數
+        function checkButtons() {
+            const btn = document.getElementById('btnAuto');
+            if(cvReady && loaded1 && loaded2) {
+                btn.disabled = false;
+                btn.innerText = "🪄 執行自動對齊";
+            } else {
+                btn.disabled = true;
+                if(!cvReady) btn.innerText = "等待引擎...";
+                else btn.innerText = "需載入兩張圖";
+            }
+        }
+
+        // --- 核心：自動合成邏輯 ---
+        function runAutoStitch() {
+            if (!cvReady || !loaded1 || !loaded2) return;
+            
+            const report = document.getElementById('analysis-report');
+            report.style.display = 'block';
+            report.innerHTML = "⏳ 計算中，請稍候...";
+
+            // 使用 setTimeout 讓 UI 有機會渲染 "計算中" 文字
+            setTimeout(() => {
+                try {
+                    // 1. 讀取圖片到 OpenCV 格式
+                    let mat1 = cv.imread(img1);
+                    let mat2 = cv.imread(img2);
+                    
+                    // 2. 轉灰階 (特徵匹配不需要顏色)
+                    let gray1 = new cv.Mat();
+                    let gray2 = new cv.Mat();
+                    cv.cvtColor(mat1, gray1, cv.COLOR_RGBA2GRAY);
+                    cv.cvtColor(mat2, gray2, cv.COLOR_RGBA2GRAY);
+
+                    // 3. 創建 ORB 特徵偵測器
+                    let orb = new cv.ORB(500); // 尋找最多 500 個特徵點
+                    let keypoints1 = new cv.KeyPointVector();
+                    let keypoints2 = new cv.KeyPointVector();
+                    let descriptors1 = new cv.Mat();
+                    let descriptors2 = new cv.Mat();
+
+                    // 4. 偵測與計算特徵
+                    orb.detectAndCompute(gray1, new cv.Mat(), keypoints1, descriptors1);
+                    orb.detectAndCompute(gray2, new cv.Mat(), keypoints2, descriptors2);
+
+                    // 5. 特徵匹配 (使用 Hamming 距離)
+                    let bf = new cv.BFMatcher(cv.NORM_HAMMING, true);
+                    let matches = new cv.DMatchVector();
+                    bf.match(descriptors1, descriptors2, matches);
+
+                    // 6. 過濾良好的匹配點 (計算位移)
+                    let goodMatches = [];
+                    let sumDX = 0;
+                    let sumDY = 0;
+                    // 只取距離小於特定閾值的點
+                    let minDist = 1000;
+                    for (let i = 0; i < matches.size(); i++) {
+                        let dist = matches.get(i).distance;
+                        if(dist < minDist) minDist = dist;
+                    }
+                    
+                    // 寬鬆閾值：最小距離的 3 倍，但不超過 50
+                    let threshold = Math.max(3 * minDist, 50);
+
+                    for (let i = 0; i < matches.size(); i++) {
+                        let m = matches.get(i);
+                        if (m.distance <= threshold) {
+                            goodMatches.push(m);
+                            // 取得這兩個點的座標
+                            let pt1 = keypoints1.get(m.queryIdx).pt; // 底圖點
+                            let pt2 = keypoints2.get(m.trainIdx).pt; // 上層圖點
+                            
+                            // 算出位移: 底圖座標 - 上層圖座標 = 上層圖應該移動的距離
+                            sumDX += (pt1.x - pt2.x);
+                            sumDY += (pt1.y - pt2.y);
+                        }
+                    }
+
+                    // 7. 判斷與回饋
+                    let count = goodMatches.length;
+                    let totalFeatures = Math.min(keypoints1.size(), keypoints2.size());
+                    // 簡單信心指數：(匹配點 / 偵測點) * 加權
+                    let confidence = totalFeatures > 0 ? (count / totalFeatures) * 100 : 0;
+                    confidence = Math.min(confidence * 2, 100); // 加權調整顯示
+
+                    if (count < 4) {
+                        // 失敗：點太少
+                        report.innerHTML = 
+                            `<span style="color:#FF5252">❌ 自動合成失敗</span><br>` +
+                            `特徵點不足 (僅 ${count} 點)<br>` +
+                            `系統已切換至手動模式，請自行拖曳圖片。`;
+                        report.style.borderLeftColor = "#FF5252";
+                    } else {
+                        // 成功：計算平均位移
+                        let avgX = sumDX / count;
+                        let avgY = sumDY / count;
+                        
+                        offsetX = Math.round(avgX);
+                        offsetY = Math.round(avgY);
+                        draw(); // 更新畫面
+
+                        let qualityText = "尚可";
+                        let qualityColor = "yellow";
+                        if(confidence > 60) { qualityText = "完美"; qualityColor = "#00E676"; }
+                        else if(confidence < 20) { qualityText = "低 (建議檢查)"; qualityColor = "#FF5252"; }
+
+                        report.innerHTML = 
+                            `<span style="color:#00E676">✅ 自動對齊成功</span><br>` +
+                            `匹配點數: <b>${count}</b> / ${matches.size()}<br>` +
+                            `吻合信心度: <span style="color:${qualityColor}">${confidence.toFixed(1)}% (${qualityText})</span><br>` +
+                            `判斷依據: 透過 ORB 特徵點幾何距離計算<br>` +
+                            `位移結果: X=${offsetX}, Y=${offsetY}`;
+                        report.style.borderLeftColor = "#00E676";
+                    }
+
+                    // 釋放記憶體
+                    mat1.delete(); mat2.delete(); gray1.delete(); gray2.delete();
+                    keypoints1.delete(); keypoints2.delete();
+                    descriptors1.delete(); descriptors2.delete();
+                    bf.delete(); matches.delete(); orb.delete();
+
+                } catch (err) {
+                    console.error(err);
+                    report.innerHTML = `<span style="color:red">❌ 發生錯誤</span><br>OpenCV 處理失敗，請改用手動。`;
+                }
+            }, 100); // 延遲結束
+        }
+
+        // --- 繪圖與手動操作 ---
         function draw(forSave = false) {
             if (!loaded1) return;
 
-            // 1. 自動計算需要的畫布大小 (包圍盒)
-            // 以 img1 為 (0,0)，img2 為 (offsetX, offsetY)
             let minX = Math.min(0, offsetX);
             let minY = Math.min(0, offsetY);
             let maxX = Math.max(img1.width, offsetX + (loaded2 ? img2.width : 0));
             let maxY = Math.max(img1.height, offsetY + (loaded2 ? img2.height : 0));
 
-            // 設定畫布尺寸
             canvas.width = maxX - minX;
             canvas.height = maxY - minY;
 
-            // 清空畫布
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 平移座標系 (處理負座標，確保圖都在畫布內)
             ctx.save();
             ctx.translate(-minX, -minY);
 
-            // 2. 畫底圖 (img1)
             ctx.globalAlpha = 1.0;
             ctx.drawImage(img1, 0, 0);
 
-            // 3. 畫上層圖 (img2)
             if (loaded2) {
-                // 如果是存檔模式，強制不透明；否則使用滑桿數值
                 ctx.globalAlpha = forSave ? 1.0 : parseFloat(document.getElementById('alphaSlider').value);
                 ctx.drawImage(img2, offsetX, offsetY);
             }
-
             ctx.restore();
 
-            // 更新介面數值
             document.getElementById('valX').innerText = parseInt(offsetX);
             document.getElementById('valY').innerText = parseInt(offsetY);
         }
 
-        // --- 滑鼠拖曳功能 ---
         canvas.addEventListener('mousedown', e => {
             if (!loaded2) return;
             isDragging = true;
@@ -262,24 +415,19 @@
 
         window.addEventListener('mouseup', () => isDragging = false);
 
-        // --- 按鈕微調 ---
         function nudge(dx, dy) {
             offsetX += dx;
             offsetY += dy;
             draw();
         }
 
-        // --- 存檔功能 ---
         function saveResult() {
             if (!loaded1) return;
-            // 1. 重畫一次 (完全不透明)
             draw(true);
-            // 2. 建立下載連結
             const link = document.createElement('a');
-            link.download = 'stitched_result.jpg'; // 預設檔名
-            link.href = canvas.toDataURL('image/jpeg', 0.9); // 0.9 品質
+            link.download = 'stitched_auto_result.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
             link.click();
-            // 3. 畫回原本狀態 (恢復半透明) 以便繼續編輯
             draw(false);
         }
     </script>
