@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>半自動精準拼接工具</title>
+    <title>半自動精準拼接工具 (可調寬度版)</title>
     <script async src="https://docs.opencv.org/4.5.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     <style>
+        /* --- 基礎設定 --- */
         body {
             font-family: "Microsoft JhengHei", Arial, sans-serif;
             background-color: #1e1e1e;
@@ -14,21 +15,55 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            /* 避免拖曳時選取到文字 */
+            user-select: none; 
         }
 
+        /* --- 左側工具列 --- */
         #sidebar {
-            width: 320px; /*稍微加寬以容納更多資訊*/
+            width: 320px; /* 預設寬度 */
+            min-width: 250px; /* 最小寬度 */
+            max-width: 600px; /* 最大寬度 */
             background-color: #2b2b2b;
             padding: 15px;
             padding-top: 60px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            box-sizing: border-box; /* 包含 padding 在寬度內 */
             z-index: 10;
             overflow-y: auto;
+            flex-shrink: 0; /* 禁止被壓縮 */
         }
 
+        /* --- 新增：拖曳調整桿 (Resizer) --- */
+        #resizer {
+            width: 8px;
+            background-color: #1e1e1e;
+            cursor: col-resize;
+            z-index: 20;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        /* 裝飾：在調整桿中間加一條細線 */
+        #resizer::after {
+            content: "";
+            width: 2px;
+            height: 40px;
+            background-color: #444;
+            border-radius: 1px;
+        }
+        #resizer:hover, #resizer.active {
+            background-color: #007bff; /* 拖曳時變色 */
+        }
+        #resizer:hover::after, #resizer.active::after {
+            background-color: white;
+        }
+
+        /* --- 右側畫布區 --- */
         #main-area {
             flex-grow: 1;
             background-color: #333;
@@ -51,7 +86,6 @@
             position: relative;
         }
         
-        /* 輔助標籤 */
         .step-tag {
             position: absolute;
             top: -8px;
@@ -113,6 +147,7 @@
             display: none;
             line-height: 1.5;
             margin-top: 8px;
+            word-break: break-all; /* 防止長文字撐破 */
         }
 
         canvas {
@@ -160,18 +195,18 @@
             <span class="step-tag">Step 2</span>
             <label>粗略對齊 (拖曳畫布)</label>
             <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">
-                請先將圖片拖曳到<b>大致重疊</b>的位置，這能大幅提高自動對齊的準確率。
+                請先拖曳至<b>大致重疊</b>，再使用 AI 吸附。
             </div>
             <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="0.6" oninput="draw()" title="透明度">
             <div style="font-size: 12px; margin-top: 2px; color: #888;">
-                目前位置: X=<span id="valX">0</span>, Y=<span id="valY">0</span>
+                位置: X=<span id="valX">0</span>, Y=<span id="valY">0</span>
             </div>
         </div>
 
         <div class="control-group" style="border-color: #7B1FA2;">
             <span class="step-tag" style="background: #7B1FA2; color:white;">Step 3</span>
             <label style="color: #E1BEE7;">AI 精準吸附</label>
-            <button id="btnAuto" class="btn-auto" onclick="runAutoStitch()" disabled>🪄 執行自動對齊</button>
+            <button id="btnAuto" class="btn-auto" onclick="runAutoStitch()" disabled>🪄 以目前位置自動對齊</button>
             
             <div id="analysis-report"></div>
         </div>
@@ -188,6 +223,8 @@
 
         <button class="btn-save" onclick="saveResult()">💾 下載合成圖</button>
     </div>
+
+    <div id="resizer"></div>
 
     <div id="main-area">
         <canvas id="stitchCanvas"></canvas>
@@ -226,6 +263,37 @@
             ctx.fillText("請依序載入兩張圖片", 400, 300);
         }
 
+        // --- 拖曳調整 Sidebar 寬度邏輯 ---
+        const sidebar = document.getElementById('sidebar');
+        const resizer = document.getElementById('resizer');
+        let isResizingSidebar = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizingSidebar = true;
+            resizer.classList.add('active');
+            document.body.style.cursor = 'col-resize'; // 強制滑鼠樣式
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isResizingSidebar) return;
+            
+            // 計算新寬度 (限制在 250px ~ 600px 之間)
+            let newWidth = e.clientX;
+            if (newWidth < 250) newWidth = 250;
+            if (newWidth > 600) newWidth = 600;
+
+            sidebar.style.width = newWidth + 'px';
+        });
+
+        window.addEventListener('mouseup', () => {
+            if(isResizingSidebar) {
+                isResizingSidebar = false;
+                resizer.classList.remove('active');
+                document.body.style.cursor = 'default';
+            }
+        });
+        // --------------------------------
+
         function loadImg(idx, input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -260,7 +328,7 @@
             const btn = document.getElementById('btnAuto');
             if(cvReady && loaded1 && loaded2) {
                 btn.disabled = false;
-                btn.innerText = "🪄 以目前位置為中心自動對齊";
+                btn.innerText = "🪄 以目前位置自動對齊";
             } else {
                 btn.disabled = true;
                 if(!cvReady) btn.innerText = "等待引擎...";
@@ -268,7 +336,6 @@
             }
         }
 
-        // --- 核心：區域搜索與自動合成邏輯 ---
         function runAutoStitch() {
             if (!cvReady || !loaded1 || !loaded2) return;
             
@@ -286,7 +353,6 @@
                     cv.cvtColor(mat1, gray1, cv.COLOR_RGBA2GRAY);
                     cv.cvtColor(mat2, gray2, cv.COLOR_RGBA2GRAY);
 
-                    // 增加特徵點數量以提高捕捉率
                     let orb = new cv.ORB(1000); 
                     let keypoints1 = new cv.KeyPointVector();
                     let keypoints2 = new cv.KeyPointVector();
@@ -300,28 +366,21 @@
                     let matches = new cv.DMatchVector();
                     bf.match(descriptors1, descriptors2, matches);
 
-                    // --- 關鍵修改：區域過濾邏輯 ---
                     let goodMatches = [];
                     let sumDX = 0;
                     let sumDY = 0;
                     
-                    // 設定搜索半徑 (容許範圍)
-                    // 程式只會採納計算結果在 "目前手動位置" 附近 200px 內的點
                     const searchRadius = 200; 
 
                     for (let i = 0; i < matches.size(); i++) {
                         let m = matches.get(i);
-                        let pt1 = keypoints1.get(m.queryIdx).pt; // 底圖特徵
-                        let pt2 = keypoints2.get(m.trainIdx).pt; // 上層圖特徵
+                        let pt1 = keypoints1.get(m.queryIdx).pt; 
+                        let pt2 = keypoints2.get(m.trainIdx).pt; 
                         
-                        // 該特徵點計算出的 "建議位移量"
                         let proposedDX = pt1.x - pt2.x;
                         let proposedDY = pt1.y - pt2.y;
-
-                        // 計算這個建議位移量，跟使用者目前手動的位置差多遠
                         let distFromCurrent = Math.sqrt(Math.pow(proposedDX - offsetX, 2) + Math.pow(proposedDY - offsetY, 2));
 
-                        // 只有當這個點建議的位置，離你手動放的位置不遠時，才採納 (過濾掉遠處的雜訊)
                         if (distFromCurrent < searchRadius) {
                             goodMatches.push(m);
                             sumDX += proposedDX;
@@ -334,36 +393,31 @@
                     if (count < 3) {
                         report.innerHTML = 
                             `<span style="color:#FF5252">❌ 無法對齊</span><br>` +
-                            `在您指定的位置附近找不到足夠特徵點 (僅 ${count} 點)。<br>` +
-                            `建議：請先手動拖曳得更靠近一點，再試一次。`;
+                            `在您指定的位置附近找不到足夠特徵點。<br>` +
+                            `請先手動拖曳得更靠近一點。`;
                         report.style.borderLeftColor = "#FF5252";
                     } else {
-                        // 計算平均位移
                         let avgX = sumDX / count;
                         let avgY = sumDY / count;
-                        
-                        // 計算移動距離 (看看程式幫你微調了多少)
                         let moveDist = Math.sqrt(Math.pow(avgX - offsetX, 2) + Math.pow(avgY - offsetY, 2));
 
                         offsetX = Math.round(avgX);
                         offsetY = Math.round(avgY);
                         draw();
 
-                        // 顯示分析資訊
                         let qualityText = "高";
                         let qualityColor = "#00E676";
                         if(count < 10) { qualityText = "中"; qualityColor = "yellow"; }
 
                         report.innerHTML = 
                             `<span style="color:#00E676">✅ 已精準吸附</span><br>` +
-                            `採納特徵點: <b>${count}</b> 個 (已過濾遠處雜訊)<br>` +
-                            `判斷範圍: 您的游標半徑 ${searchRadius}px 內<br>` +
-                            `微調距離: ${moveDist.toFixed(1)} px<br>` +
+                            `採納特徵點: <b>${count}</b> 個<br>` +
+                            `搜索半徑: ${searchRadius}px<br>` +
+                            `自動微調: ${moveDist.toFixed(1)} px<br>` +
                             `吻合度: <span style="color:${qualityColor}">${qualityText}</span>`;
                         report.style.borderLeftColor = "#00E676";
                     }
 
-                    // 釋放記憶體
                     mat1.delete(); mat2.delete(); gray1.delete(); gray2.delete();
                     keypoints1.delete(); keypoints2.delete();
                     descriptors1.delete(); descriptors2.delete();
@@ -406,6 +460,7 @@
         }
 
         canvas.addEventListener('mousedown', e => {
+            if (isResizingSidebar) return; // 如果正在調整寬度，不要觸發畫布拖曳
             if (!loaded2) return;
             isDragging = true;
             lastMouseX = e.clientX;
