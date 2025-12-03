@@ -38,14 +38,14 @@
             background-color: #222;
             background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
             background-size: 20px 20px;
-            overflow: hidden; /* 改為 hidden，用 transform 縮放 */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
         }
 
-        /* 右側：圖片佇列 (你要求的大區塊) */
+        /* 右側：圖片佇列 */
         #right-panel {
             width: 300px;
             min-width: 200px;
@@ -58,13 +58,18 @@
 
         /* 右側標題區 */
         .panel-header {
-            padding: 15px;
+            padding: 10px 15px;
             background: #252525;
             border-bottom: 1px solid #333;
             font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 5px;
         }
 
         /* 圖片列表容器 */
@@ -149,11 +154,21 @@
         button:hover { background-color: #666; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        /* 小按鈕樣式 */
+        .btn-sm {
+            width: auto; 
+            padding: 5px 10px; 
+            margin:0; 
+            font-size: 12px;
+        }
+        .btn-danger-sm { background-color: #c62828; border-color: #b71c1c; }
+        .btn-danger-sm:hover { background-color: #d32f2f; }
+
+
         .btn-primary { background-color: #1976D2; border-color: #1565C0; font-weight: bold; }
         .btn-success { background-color: #43A047; border-color: #2E7D32; font-weight: bold; }
         .btn-auto { background-color: #7B1FA2; border-color: #4A148C; color: white; }
         
-        /* 檔案上傳隱藏 */
         #multi-file-input { display: none; }
 
         /* 回首頁按鈕 */
@@ -198,7 +213,9 @@
         <label>透明度 (檢查對齊)</label>
         <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="0.6" oninput="draw()">
 
-        <div style="height: 10px;"></div> <button id="btnAuto" class="btn-auto" onclick="runAutoStitch()" disabled>🪄 AI 自動吸附 (目前位置)</button>
+        <div style="height: 10px;"></div>
+
+        <button id="btnAuto" class="btn-auto" onclick="runAutoStitch()" disabled>🪄 AI 自動吸附 (目前位置)</button>
         <div id="analysis-report"></div>
 
         <div style="height: 10px;"></div>
@@ -214,7 +231,9 @@
             X: <span id="valX">0</span>, Y: <span id="valY">0</span>
         </div>
 
-        <div style="margin-top: auto;"></div> <button class="btn-success" onclick="mergeAndNext()">✅ 合併並換下一張</button>
+        <div style="margin-top: auto;"></div>
+
+        <button class="btn-success" onclick="mergeAndNext()">✅ 合併並換下一張</button>
         <div style="font-size:11px; color:#888; text-align:center; margin-bottom: 10px;">
             合併後，結果將變成新的底圖
         </div>
@@ -229,9 +248,10 @@
     <div id="right-panel">
         <div class="panel-header">
             <span>📚 待處理圖片</span>
-            <button style="width: auto; padding: 5px 10px; margin:0;" onclick="document.getElementById('multi-file-input').click()">
-                ➕ 加入圖片
-            </button>
+            <div class="header-actions">
+                <button class="btn-sm btn-danger-sm" onclick="clearQueue()" title="清空列表">🗑️</button>
+                <button class="btn-sm" onclick="document.getElementById('multi-file-input').click()">➕ 加入</button>
+            </div>
         </div>
         
         <input type="file" id="multi-file-input" multiple accept="image/*" onchange="handleFiles(this.files)">
@@ -244,34 +264,28 @@
     </div>
 
     <script>
-        // --- 變數與狀態 ---
-        let queue = []; // 存放所有圖片物件 {id, file, url, name}
+        let queue = [];
         let cvReady = false;
         
-        // 畫布與 Context
         const canvas = document.getElementById('stitchCanvas');
         const ctx = canvas.getContext('2d');
         
-        // 目前正在拼接的兩張圖
-        let baseImg = null;  // 底圖 (通常是 Index 0)
-        let activeImg = null; // 上層圖 (通常是 Index 1)
+        let baseImg = null;
+        let activeImg = null;
         let baseImgObj = new Image();
         let activeImgObj = new Image();
         let isBaseLoaded = false;
         let isActiveLoaded = false;
 
-        // 位移狀態
         let offsetX = 0;
         let offsetY = 0;
         let isDragging = false;
         let lastMouseX, lastMouseY;
 
-        // 初始化
         canvas.width = 800;
         canvas.height = 600;
         drawEmptyState();
 
-        // --- OpenCV ---
         function onOpenCvReady() {
             cvReady = true;
             document.getElementById('cv-status').innerText = "已就緒";
@@ -279,11 +293,8 @@
             checkAutoButton();
         }
 
-        // --- 檔案處理 (佇列邏輯) ---
         function handleFiles(files) {
             if (!files.length) return;
-            
-            // 清除預設提示
             if (queue.length === 0) document.getElementById('image-list').innerHTML = '';
 
             Array.from(files).forEach(file => {
@@ -297,24 +308,39 @@
             });
             
             renderList();
-            loadCurrentPair(); // 嘗試載入前兩張
+            loadCurrentPair();
         }
 
-        // --- 渲染右側列表 ---
+        // --- 新增：清空列表功能 ---
+        function clearQueue() {
+            if(queue.length > 0 && !confirm("確定要清空所有圖片嗎？")) return;
+            
+            // 釋放記憶體
+            queue.forEach(item => URL.revokeObjectURL(item.url));
+            queue = [];
+            
+            renderList();
+            loadCurrentPair();
+        }
+        // -----------------------
+
         function renderList() {
             const listEl = document.getElementById('image-list');
             listEl.innerHTML = '';
 
+            if (queue.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center; color:#666; margin-top:50px; font-size:14px;">👆 點擊右上角加入圖片<br>或是將圖片拖曳進來</div>';
+                return;
+            }
+
             queue.forEach((item, index) => {
-                const div = document.createElement('div');
+                const div = document.createElement("div");
                 div.className = 'img-card';
                 div.draggable = true;
                 
-                // 標記狀態
                 if (index === 0) div.classList.add('is-base');
                 if (index === 1) div.classList.add('is-active');
 
-                // 卡片內容
                 div.innerHTML = `
                     <div style="font-size:14px; color:#aaa; font-weight:bold;">${index + 1}</div>
                     <img src="${item.url}" class="thumb">
@@ -326,25 +352,21 @@
                     <div class="btn-del" onclick="removeFromQueue(${index})">×</div>
                 `;
 
-                // --- 拖曳排序事件 ---
                 div.addEventListener('dragstart', e => {
                     e.dataTransfer.setData('text/plain', index);
                     div.classList.add('dragging');
                 });
                 div.addEventListener('dragend', () => div.classList.remove('dragging'));
-                
-                // 允許放置
                 div.addEventListener('dragover', e => { e.preventDefault(); });
                 div.addEventListener('drop', e => {
                     e.preventDefault();
                     const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
                     const toIndex = index;
                     if (fromIndex !== toIndex) {
-                        // 交換陣列元素
                         const movedItem = queue.splice(fromIndex, 1)[0];
                         queue.splice(toIndex, 0, movedItem);
                         renderList();
-                        loadCurrentPair(); // 順序改變，重新載入
+                        loadCurrentPair();
                     }
                 });
 
@@ -353,14 +375,13 @@
         }
 
         function removeFromQueue(index) {
+            URL.revokeObjectURL(queue[index].url); // 釋放記憶體
             queue.splice(index, 1);
             renderList();
             loadCurrentPair();
         }
 
-        // --- 載入目前要拼接的一對 (Index 0 和 Index 1) ---
         function loadCurrentPair() {
-            // 重置狀態
             isBaseLoaded = false;
             isActiveLoaded = false;
             checkAutoButton();
@@ -370,11 +391,9 @@
                 return;
             }
 
-            // 載入底圖 (Index 0)
             baseImg = queue[0];
             baseImgObj.onload = () => {
                 isBaseLoaded = true;
-                // 如果沒有第二張圖，就只畫第一張並調整畫布
                 if (queue.length === 1) {
                     resetCanvasSize();
                     draw();
@@ -384,12 +403,10 @@
             };
             baseImgObj.src = baseImg.url;
 
-            // 載入上層圖 (Index 1)
             if (queue.length > 1) {
                 activeImg = queue[1];
                 activeImgObj.onload = () => {
                     isActiveLoaded = true;
-                    // 預設位置歸零 (或是可以保留上次的位置策略，這裡先歸零)
                     offsetX = 0; 
                     offsetY = 0;
                     checkAllLoaded();
@@ -400,7 +417,6 @@
 
         function checkAllLoaded() {
             if (isBaseLoaded && isActiveLoaded) {
-                // 初始化畫布大小
                 resetCanvasSize();
                 draw();
                 checkAutoButton();
@@ -408,7 +424,6 @@
         }
 
         function resetCanvasSize() {
-            // 預設畫布大小為底圖大小 + 邊距
             canvas.width = baseImgObj.width + 400;
             canvas.height = baseImgObj.height + 400;
         }
@@ -426,15 +441,12 @@
             btn.disabled = !(cvReady && isBaseLoaded && isActiveLoaded);
         }
 
-        // --- 繪圖核心 ---
         function draw(forSave = false) {
             if (!isBaseLoaded) return;
 
-            // 動態調整畫布大小 (包圍盒)
             let w = baseImgObj.width;
             let h = baseImgObj.height;
             if (isActiveLoaded) {
-                // 計算兩張圖的最大範圍
                 const minX = Math.min(0, offsetX);
                 const minY = Math.min(0, offsetY);
                 const maxX = Math.max(w, offsetX + activeImgObj.width);
@@ -453,11 +465,9 @@
                 ctx.save();
             }
 
-            // 畫底圖
             ctx.globalAlpha = 1.0;
             ctx.drawImage(baseImgObj, 0, 0);
 
-            // 畫上層圖
             if (isActiveLoaded) {
                 ctx.globalAlpha = forSave ? 1.0 : parseFloat(document.getElementById('alphaSlider').value);
                 ctx.drawImage(activeImgObj, offsetX, offsetY);
@@ -465,12 +475,10 @@
 
             ctx.restore();
             
-            // 更新 UI
             document.getElementById('valX').innerText = Math.round(offsetX);
             document.getElementById('valY').innerText = Math.round(offsetY);
         }
 
-        // --- 滑鼠拖曳 ---
         canvas.addEventListener('mousedown', e => {
             if (!isActiveLoaded) return;
             isDragging = true;
@@ -490,7 +498,6 @@
         });
         window.addEventListener('mouseup', () => isDragging = false);
 
-        // --- 功能：合併並換下一張 (關鍵功能) ---
         function mergeAndNext() {
             if (!isBaseLoaded) return;
             if (queue.length < 2) {
@@ -498,28 +505,25 @@
                 return;
             }
 
-            // 1. 產生合併後的圖片 DataURL
-            draw(true); // 強制不透明繪製
+            draw(true);
             const mergedUrl = canvas.toDataURL('image/png');
 
-            // 2. 更新佇列
-            // 把 Index 0 和 Index 1 移除，將合併結果插入變成新的 Index 0
             const newItem = {
                 id: Date.now(),
-                file: null, // 這是生成的，沒有原始 File 物件
+                file: null,
                 url: mergedUrl,
-                name: `合併結果_${queue.length}`
+                name: `合併結果_${queue.length - 1}`
             };
 
-            // 移除前兩個，插入新的
-            queue.splice(0, 2, newItem);
+            // 釋放舊圖記憶體
+            URL.revokeObjectURL(queue[0].url);
+            URL.revokeObjectURL(queue[1].url);
 
-            // 3. 更新介面
+            queue.splice(0, 2, newItem);
             renderList();
-            loadCurrentPair(); // 這會自動載入新的 Index 0 (剛合併的) 和原本的 Index 2 (現在變成 Index 1)
+            loadCurrentPair();
         }
 
-        // --- 功能：AI 自動對齊 (保留原本邏輯) ---
         function runAutoStitch() {
             if (!cvReady || !isBaseLoaded || !isActiveLoaded) return;
             
@@ -578,7 +582,6 @@
                         report.innerHTML = `<span style="color:#4CAF50">✅ 成功</span>: 依據 ${goodMatches.length} 個特徵點吸附`;
                     }
                     
-                    // 清理
                     mat1.delete(); mat2.delete(); gray1.delete(); gray2.delete();
                     kp1.delete(); kp2.delete(); des1.delete(); des2.delete();
                     bf.delete(); matches.delete(); orb.delete();
