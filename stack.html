@@ -613,34 +613,28 @@
             link.click();
         }
 
-        // --- PPT 輸出功能 (修正版：解決文字消失問題) ---
+        // --- PPT 輸出功能 (修正版：解決文字消失與中文問題) ---
         function downloadPPT() {
             let pres = new PptxGenJS();
             
-            // 1. 準備數據與單位
+            // 1. 準備數據
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
 
-            // 2. 計算版面配置 (Layout Calculation)
-            // 找出最大的 offset (標註線最遠距離)
+            // 2. 計算版面配置
             let maxOffset = 20;
             dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
 
-            // [關鍵修正]：大幅增加左邊距給 PPT 標註文字 (Extra Padding)
-            // 畫布上我們只留一點，但 PPT 需要更多空間放文字
-            const pptPaddingLeft = maxOffset + 180; // 預留 180px 給左側文字
+            // 預留左側空間給標註文字
+            const pptPaddingLeft = maxOffset + 150; 
             const pptPaddingTop = 50;
             
-            // 為了適應新邊距，將投影片寬度加大
             const scaleFactor = 100; // 100px = 1 inch
-            // 畫布原始內容寬度
             const contentWidth = canvas.width - (maxOffset + 40) - 20; 
-            // 投影片總寬 = 左邊距 + 內容寬 + 右邊距
             const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             
-            // 計算高度
             const availableHeightPx = Math.max(500, layers.length * 40);
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
@@ -657,7 +651,6 @@
             layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
                 
-                // 轉換座標到 PPT (Inches)
                 const x = pptPaddingLeft / scaleFactor;
                 const y = currentYPx / scaleFactor;
                 const w = contentWidth / scaleFactor;
@@ -665,10 +658,11 @@
                 
                 yPositions.push({ top: y, bottom: y + h });
 
-                // [關鍵修正] 處理文字顏色，確保移除 # 號
+                // 顏色處理
+                const safeFillColor = cleanHex(layer.color);
                 let txtColor = "000000";
                 if (layer.textColor && layer.textColor !== '#000000') {
-                     txtColor = layer.textColor.replace('#', '');
+                     txtColor = cleanHex(layer.textColor);
                 } else {
                      txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
                 }
@@ -676,19 +670,21 @@
                 const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                 const isBold = layer.fontStyle === 'bold';
 
-                // 繪製矩形與文字
+                // 繪製矩形
                 slide.addShape(pres.ShapeType.rect, {
                     x: x, y: y, w: w, h: h,
-                    fill: { color: layer.color.replace('#', '') },
+                    fill: { color: safeFillColor },
                     line: { color: "333333", width: 1 },
                     text: {
                         text: `${layer.name} ${layer.thickness}${unit}`,
                         options: { 
                             color: txtColor, 
                             fontSize: fs, 
+                            fontFace: "Microsoft JhengHei", // [關鍵] 強制中文字體
                             align: 'center', 
-                            valign: 'middle', // [新增] 垂直置中
-                            bold: isBold 
+                            valign: 'middle',
+                            bold: isBold,
+                            margin: 0 // [關鍵] 讓薄層也能顯示文字
                         }
                     }
                 });
@@ -702,35 +698,47 @@
                 const y1 = yPositions[dim.start].top;
                 const y2 = yPositions[dim.end].bottom;
                 
-                // 線條 X 座標
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
                 
-                // 數值計算
                 let val = 0;
                 for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
 
-                // 畫紅線
+                // 紅線
                 slide.addShape(pres.ShapeType.line, {
                     x: xLine, y: y1, w: 0, h: y2 - y1,
                     line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' }
                 });
 
-                // [關鍵修正] 畫文字：確保 X 座標不會是負的，並留足夠寬度
-                // xLine 是線的位置，文字放在線的左邊 (減去文字寬度)
-                const textWidth = 1.5; // 給文字 1.5 inch 的空間
-                slide.addText(txt, {
-                    x: xLine - textWidth - 0.1, // 在線的左邊稍微留點空隙
-                    y: (y1 + y2)/2 - 0.2, 
+                // 標註文字 (使用透明矩形裝載，定位更穩)
+                const textWidth = 2.0; 
+                slide.addShape(pres.ShapeType.rect, {
+                    x: xLine - textWidth - 0.1, 
+                    y: (y1 + y2)/2 - 0.3, // 垂直置中
                     w: textWidth, 
-                    h: 0.4,
-                    color: "D32F2F", 
-                    fontSize: 12, 
-                    align: 'right' // 靠右對齊 (靠近線條)
+                    h: 0.6,
+                    fill: { type: 'none' }, // 透明背景
+                    line: { type: 'none' }, // 無邊框
+                    text: {
+                        text: txt,
+                        options: {
+                            color: "D32F2F", 
+                            fontSize: 12, 
+                            fontFace: "Microsoft JhengHei", // [關鍵] 中文字體
+                            align: 'right',
+                            valign: 'middle'
+                        }
+                    }
                 });
             });
 
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
+        }
+
+        // [新增] 安全的顏色轉換函式
+        function cleanHex(hex) {
+            if(!hex) return "FFFFFF";
+            return hex.replace('#', '').toUpperCase();
         }
     </script>
 </body>
