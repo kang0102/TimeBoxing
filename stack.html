@@ -519,38 +519,45 @@
             link.click();
         }
 
-        // --- PPT 輸出功能 (完整修復版) ---
+        // --- PPT 輸出功能 (圖文分離保險版) ---
         function downloadPPT() {
             let pres = new PptxGenJS();
             
+            // 1. 準備數據
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
 
+            // 2. 計算版面
             let maxOffset = 20;
             dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
 
+            // 調整邊距與比例
             const pptPaddingLeft = maxOffset + 150; 
             const pptPaddingTop = 50;
             const scaleFactor = 100; 
             const contentWidth = canvas.width - (maxOffset + 40) - 20; 
-            const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             
+            // 計算投影片總寬高
+            const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             const availableHeightPx = Math.max(500, layers.length * 40);
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
 
+            // 設定投影片
             pres.defineLayout({ name:'CUST', width: slideW, height: slideH });
             pres.layout = 'CUST';
             let slide = pres.addSlide();
 
-            // Layers
+            // 3. 繪製層次 (改為：先畫框，再畫字)
             let currentYPx = pptPaddingTop;
             let yPositions = [];
 
             layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
+                
+                // 座標換算
                 const x = pptPaddingLeft / scaleFactor;
                 const y = currentYPx / scaleFactor;
                 const w = contentWidth / scaleFactor;
@@ -558,29 +565,46 @@
                 
                 yPositions.push({ top: y, bottom: y + h });
 
+                // 顏色處理
                 const safeFillColor = cleanHex(layer.color);
+                
+                // 文字顏色
                 let txtColor = "000000";
-                if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor);
-                else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
+                if (layer.textColor && layer.textColor !== '#000000') {
+                     txtColor = cleanHex(layer.textColor);
+                } else {
+                     txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
+                }
                 
                 const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                 const isBold = layer.fontStyle === 'bold';
+                const textContent = `${layer.name} ${layer.thickness}${unit}`;
 
+                // 【步驟A】畫純色塊 (不含文字)
                 slide.addShape(pres.ShapeType.rect, {
                     x: x, y: y, w: w, h: h,
                     fill: { color: safeFillColor },
-                    line: { color: "333333", width: 1 },
-                    text: {
-                        text: `${layer.name} ${layer.thickness}${unit}`,
-                        options: { color: txtColor, fontSize: fs, fontFace: "Microsoft JhengHei", align: 'center', valign: 'middle', bold: isBold, margin: 0 }
-                    }
+                    line: { color: "333333", width: 1 }
                 });
+
+                // 【步驟B】畫獨立文字框 (疊在上面)
+                // 使用 addText 確保文字絕對顯示，不受圖形邊距影響
+                slide.addText(textContent, {
+                    x: x, y: y, w: w, h: h,
+                    color: txtColor,
+                    fontSize: fs,
+                    align: 'center',
+                    valign: 'middle',
+                    bold: isBold
+                });
+
                 currentYPx += hPx;
             });
 
-            // Dimensions
+            // 4. 繪製標註
             dimensions.forEach(dim => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
+                
                 const y1 = yPositions[dim.start].top;
                 const y2 = yPositions[dim.end].bottom;
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
@@ -589,25 +613,44 @@
                 for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
 
-                // Vertical Line
+                // 畫紅線
                 slide.addShape(pres.ShapeType.line, {
                     x: xLine, y: y1, w: 0, h: y2 - y1,
                     line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' }
                 });
 
-                // Connector lines
-                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0.1, h: 0, line: { color: "CCCCCC", width: 1 } });
-                slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: 0.1, h: 0, line: { color: "CCCCCC", width: 1 } });
+                // 畫兩條水平引導線 (讓標註更清楚)
+                const connectorLen = 0.15; // 引導線長度
+                slide.addShape(pres.ShapeType.line, { 
+                    x: xLine, y: y1, w: connectorLen, h: 0, 
+                    line: { color: "CCCCCC", width: 1 } 
+                });
+                slide.addShape(pres.ShapeType.line, { 
+                    x: xLine, y: y2, w: connectorLen, h: 0, 
+                    line: { color: "CCCCCC", width: 1 } 
+                });
 
-                // Label Text
-                slide.addShape(pres.ShapeType.rect, {
-                    x: xLine - 2.1, y: (y1 + y2)/2 - 0.3, w: 2.0, h: 0.6,
-                    fill: { type: 'none' }, line: { type: 'none' },
-                    text: { text: txt, options: { color: "D32F2F", fontSize: 12, fontFace: "Microsoft JhengHei", align: 'right', valign: 'middle' } }
+                // 畫標註文字 (使用 addText)
+                const textWidth = 2.0; 
+                slide.addText(txt, {
+                    x: xLine - textWidth - 0.1, // 文字放在線的左邊
+                    y: (y1 + y2)/2 - 0.3,       // 垂直置中
+                    w: textWidth, 
+                    h: 0.6,
+                    color: "D32F2F", 
+                    fontSize: 12, 
+                    align: 'right',             // 靠右對齊 (靠近線條)
+                    valign: 'middle'
                 });
             });
 
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
+        }
+
+        // 確保 helper 函式存在
+        function cleanHex(hex) {
+            if(!hex) return "FFFFFF";
+            return hex.replace('#', '').toUpperCase();
         }
     </script>
 </body>
