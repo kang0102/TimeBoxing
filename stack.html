@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Project)</title>
+    <title>工程疊構圖產生器 (Project DB)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎佈局 --- */
@@ -62,7 +62,7 @@
             padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px;
         }
 
-        /* --- 層次列表 (支援拖曳) --- */
+        /* --- 層次列表 --- */
         #layer-list { display: flex; flex-direction: column; gap: 6px; }
         
         .layer-item {
@@ -78,7 +78,6 @@
 
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
 
-        /* 進階設定區塊 */
         .layer-details {
             display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555;
             grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end;
@@ -112,13 +111,8 @@
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
         .btn-img { background-color: #1976D2; border-color: #1565C0; }
         .btn-add { background-color: #43A047; border-color: #2E7D32; }
-        
-        /* 專案管理按鈕樣式 */
-        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
-        .btn-proj:hover { background-color: #607D8B; }
-        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
-        .btn-clear:hover { background-color: #E53935; }
+        .btn-save-local { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
+        .btn-del-local { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
 
         .home-btn {
             position: absolute; top: 15px; left: 15px;
@@ -138,13 +132,27 @@
     <a href="index.html" class="home-btn">🏠 回首頁</a>
 
     <div id="sidebar">
-        <h2>📚 疊構圖設定 (Project)</h2>
+        <h2>📚 疊構資料庫</h2>
 
-        <div class="project-btns">
-            <button class="btn-clear" onclick="newProject()">📄 開新專案</button>
-            <button class="btn-proj" onclick="saveProject()">📥 儲存設定</button>
-            <button class="btn-proj" onclick="document.getElementById('fileInput').click()">📤 讀取設定</button>
-            <input type="file" id="fileInput" accept=".json" onchange="loadProject(this)">
+        <div class="control-group" style="border-color: #00897B;">
+            <label style="color:#80CBC4">💾 專案存取 (下拉選單)</label>
+            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                <input type="text" id="projName" placeholder="輸入名稱 (例: 5層板A款)" style="flex:1">
+                <button class="btn-save-local" onclick="saveToLocal()">儲存</button>
+            </div>
+            <div style="display:flex; gap:5px;">
+                <select id="savedProjects" onchange="loadFromLocal()" style="flex:1">
+                    <option value="">-- 選擇已存專案 --</option>
+                </select>
+                <button class="btn-del-local" onclick="deleteFromLocal()" title="刪除選定專案">🗑️</button>
+            </div>
+        </div>
+        
+        <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <button onclick="newProject()" style="background:#555">📄 清空</button>
+            <button onclick="exportJSON()" style="background:#555">📤 備份檔案</button>
+            <button onclick="document.getElementById('fileInput').click()" style="background:#555">📥 讀取檔案</button>
+            <input type="file" id="fileInput" accept=".json" onchange="importJSON(this)">
         </div>
 
         <div class="control-group">
@@ -157,10 +165,7 @@
         </div>
 
         <h3>1. 層次 (可拖曳排序)</h3>
-        <div style="display: flex; gap: 5px;">
-            <button class="btn-add" onclick="addLayer()" style="flex:2;">➕ 新增一層 (Top)</button>
-            <button onclick="loadExample(false)" style="margin-top:5px; flex:1;">📂 範例</button>
-        </div>
+        <button class="btn-add" onclick="addLayer()">➕ 新增一層 (Top)</button>
         
         <div id="layer-list" style="margin-top:5px;"></div>
 
@@ -181,7 +186,7 @@
         
         <h3>3. 輸出</h3>
         <button class="btn-img" onclick="downloadImage()">💾 下載圖片 (PNG)</button>
-        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (圖文分離修復版)</button>
+        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (圖文分離版)</button>
     </div>
 
     <div id="resizer"></div>
@@ -196,6 +201,7 @@
         const ctx = canvas.getContext('2d');
         const listEl = document.getElementById('layer-list');
         const dimListEl = document.getElementById('dim-list');
+        const STORAGE_KEY = 'stack_diagram_projects'; // LocalStorage Key
 
         // 資料結構
         let layers = [];
@@ -205,9 +211,7 @@
         let dragTargetType = null; 
         let dragIndex = -1;
         let isDraggingCanvas = false;
-        let lastMouseY = 0;
-        let lastMouseX = 0;
-        
+        let lastMouseY = 0; let lastMouseX = 0;
         let hitRegions = { layers: [], dims: [] };
 
         // UI 調整
@@ -216,18 +220,101 @@
         let isResizingSidebar = false;
 
         // 初始化
-        loadExample(true); 
+        refreshProjectList(); // 載入儲存的專案列表
+        // 如果沒有任何專案，載入預設範例
+        if (Object.keys(getStoredProjects()).length === 0) {
+            loadExample(true);
+        } else {
+            // 嘗試載入最後一個專案，或者保持空白
+            loadExample(true); 
+        }
         
-        // --- 0. 專案管理功能 (新) ---
-        function newProject() {
-            if(!confirm("確定要清空所有內容開新專案嗎？未儲存的設定將消失。")) return;
-            layers = [];
-            dimensions = [];
-            renderList();
-            draw();
+        // --- 0. 本機專案資料庫 (LocalStorage) ---
+        function getStoredProjects() {
+            const str = localStorage.getItem(STORAGE_KEY);
+            return str ? JSON.parse(str) : {};
         }
 
-        function saveProject() {
+        function refreshProjectList() {
+            const projects = getStoredProjects();
+            const select = document.getElementById('savedProjects');
+            // 保留第一項提示
+            select.innerHTML = '<option value="">-- 選擇已存專案 --</option>';
+            
+            Object.keys(projects).forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                select.appendChild(opt);
+            });
+        }
+
+        function saveToLocal() {
+            const name = document.getElementById('projName').value.trim();
+            if (!name) { alert("請輸入專案名稱！"); return; }
+            
+            const config = {
+                layers: layers,
+                dimensions: dimensions,
+                settings: {
+                    unit: document.getElementById('unitInput').value,
+                    width: document.getElementById('canvasWidth').value,
+                    fontSize: document.getElementById('globalFontSize').value
+                },
+                timestamp: Date.now()
+            };
+
+            const projects = getStoredProjects();
+            if(projects[name] && !confirm(`專案 "${name}" 已存在，確定要覆蓋嗎？`)) return;
+
+            projects[name] = config;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+            
+            refreshProjectList();
+            // 自動選取剛存的
+            document.getElementById('savedProjects').value = name;
+            alert(`專案 "${name}" 儲存成功！`);
+        }
+
+        function loadFromLocal() {
+            const name = document.getElementById('savedProjects').value;
+            if (!name) return;
+
+            const projects = getStoredProjects();
+            const config = projects[name];
+            if (config) {
+                applyConfig(config);
+                document.getElementById('projName').value = name; // 同步名稱框
+            }
+        }
+
+        function deleteFromLocal() {
+            const name = document.getElementById('savedProjects').value;
+            if (!name) { alert("請先選擇要刪除的專案"); return; }
+            if (!confirm(`確定要永久刪除 "${name}" 嗎？`)) return;
+
+            const projects = getStoredProjects();
+            delete projects[name];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+            
+            refreshProjectList();
+            document.getElementById('projName').value = "";
+        }
+
+        // 通用：套用設定檔
+        function applyConfig(config) {
+            layers = config.layers || [];
+            dimensions = config.dimensions || [];
+            if(config.settings) {
+                document.getElementById('unitInput').value = config.settings.unit || "um";
+                document.getElementById('canvasWidth').value = config.settings.width || 450;
+                document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
+            }
+            resizeCanvas(); renderList(); draw();
+        }
+
+        // 通用：匯出 JSON (備份用)
+        function exportJSON() {
             const config = {
                 layers: layers,
                 dimensions: dimensions,
@@ -240,39 +327,34 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
             const link = document.createElement('a');
             link.href = dataStr;
-            link.download = "stack_config.json";
+            link.download = "stack_backup.json";
             link.click();
         }
-
-        function loadProject(input) {
+        
+        function importJSON(input) {
             const file = input.files[0];
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const config = JSON.parse(e.target.result);
-                    // 還原資料
-                    layers = config.layers || [];
-                    dimensions = config.dimensions || [];
-                    
-                    // 還原設定
-                    if(config.settings) {
-                        document.getElementById('unitInput').value = config.settings.unit || "um";
-                        document.getElementById('canvasWidth').value = config.settings.width || 450;
-                        document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
-                    }
-                    
-                    resizeCanvas();
-                    renderList();
-                    draw();
-                    alert("設定讀取成功！");
+                    applyConfig(config);
+                    alert("檔案讀取成功！");
                 } catch(err) {
-                    alert("讀取失敗，檔案格式可能錯誤。");
                     console.error(err);
+                    alert("檔案格式錯誤");
                 }
-                input.value = ''; // 重置 input 以便重複讀取同個檔案
+                input.value = '';
             };
             reader.readAsText(file);
+        }
+
+        function newProject() {
+            if(!confirm("確定清空畫面？")) return;
+            layers = []; dimensions = [];
+            document.getElementById('projName').value = "";
+            document.getElementById('savedProjects').value = "";
+            renderList(); draw();
         }
 
         // --- 1. 左側列表邏輯 ---
@@ -574,7 +656,7 @@
         }
 
         function cleanHex(hex) {
-            if(!hex) return "000000";
+            if(!hex) return "FFFFFF";
             return hex.replace('#', '').toUpperCase();
         }
 
