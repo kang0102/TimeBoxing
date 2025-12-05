@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (PPT修復版)</title>
+    <title>工程疊構圖產生器 (Project)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎佈局 --- */
@@ -112,6 +112,13 @@
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
         .btn-img { background-color: #1976D2; border-color: #1565C0; }
         .btn-add { background-color: #43A047; border-color: #2E7D32; }
+        
+        /* 專案管理按鈕樣式 */
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
+        .btn-proj:hover { background-color: #607D8B; }
+        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
+        .btn-clear:hover { background-color: #E53935; }
 
         .home-btn {
             position: absolute; top: 15px; left: 15px;
@@ -119,6 +126,9 @@
             border-radius: 20px; color: #fff; font-size: 12px;
             border: 1px solid #666; z-index: 100;
         }
+
+        /* 隱藏的檔案上傳輸入框 */
+        #fileInput { display: none; }
 
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; }
     </style>
@@ -128,7 +138,14 @@
     <a href="index.html" class="home-btn">🏠 回首頁</a>
 
     <div id="sidebar">
-        <h2>📚 疊構圖設定 (Pro)</h2>
+        <h2>📚 疊構圖設定 (Project)</h2>
+
+        <div class="project-btns">
+            <button class="btn-clear" onclick="newProject()">📄 開新專案</button>
+            <button class="btn-proj" onclick="saveProject()">📥 儲存設定</button>
+            <button class="btn-proj" onclick="document.getElementById('fileInput').click()">📤 讀取設定</button>
+            <input type="file" id="fileInput" accept=".json" onchange="loadProject(this)">
+        </div>
 
         <div class="control-group">
             <label>全域設定</label>
@@ -139,13 +156,15 @@
             </div>
         </div>
 
-        <h3>1. 層次 (可拖曳排序 / 畫布調整)</h3>
-        <button class="btn-add" onclick="addLayer()">➕ 新增一層 (Top)</button>
-        <button onclick="loadExample()" style="margin-bottom:10px;">📂 載入範例</button>
+        <h3>1. 層次 (可拖曳排序)</h3>
+        <div style="display: flex; gap: 5px;">
+            <button class="btn-add" onclick="addLayer()" style="flex:2;">➕ 新增一層 (Top)</button>
+            <button onclick="loadExample(false)" style="margin-top:5px; flex:1;">📂 範例</button>
+        </div>
         
-        <div id="layer-list"></div>
+        <div id="layer-list" style="margin-top:5px;"></div>
 
-        <h3>2. 標註 (可於畫布拖曳)</h3>
+        <h3>2. 標註 (拖曳紅線調整)</h3>
         <div class="control-group">
             <div style="display:flex; gap:5px; margin-bottom:5px;">
                 <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
@@ -162,7 +181,7 @@
         
         <h3>3. 輸出</h3>
         <button class="btn-img" onclick="downloadImage()">💾 下載圖片 (PNG)</button>
-        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (向量可編輯)</button>
+        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (圖文分離修復版)</button>
     </div>
 
     <div id="resizer"></div>
@@ -199,6 +218,63 @@
         // 初始化
         loadExample(true); 
         
+        // --- 0. 專案管理功能 (新) ---
+        function newProject() {
+            if(!confirm("確定要清空所有內容開新專案嗎？未儲存的設定將消失。")) return;
+            layers = [];
+            dimensions = [];
+            renderList();
+            draw();
+        }
+
+        function saveProject() {
+            const config = {
+                layers: layers,
+                dimensions: dimensions,
+                settings: {
+                    unit: document.getElementById('unitInput').value,
+                    width: document.getElementById('canvasWidth').value,
+                    fontSize: document.getElementById('globalFontSize').value
+                }
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
+            const link = document.createElement('a');
+            link.href = dataStr;
+            link.download = "stack_config.json";
+            link.click();
+        }
+
+        function loadProject(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    // 還原資料
+                    layers = config.layers || [];
+                    dimensions = config.dimensions || [];
+                    
+                    // 還原設定
+                    if(config.settings) {
+                        document.getElementById('unitInput').value = config.settings.unit || "um";
+                        document.getElementById('canvasWidth').value = config.settings.width || 450;
+                        document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
+                    }
+                    
+                    resizeCanvas();
+                    renderList();
+                    draw();
+                    alert("設定讀取成功！");
+                } catch(err) {
+                    alert("讀取失敗，檔案格式可能錯誤。");
+                    console.error(err);
+                }
+                input.value = ''; // 重置 input 以便重複讀取同個檔案
+            };
+            reader.readAsText(file);
+        }
+
         // --- 1. 左側列表邏輯 ---
 
         function renderList() {
@@ -522,42 +598,33 @@
         // --- PPT 輸出功能 (圖文分離保險版) ---
         function downloadPPT() {
             let pres = new PptxGenJS();
-            
-            // 1. 準備數據
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
 
-            // 2. 計算版面
             let maxOffset = 20;
             dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
 
-            // 調整邊距與比例
             const pptPaddingLeft = maxOffset + 150; 
             const pptPaddingTop = 50;
             const scaleFactor = 100; 
             const contentWidth = canvas.width - (maxOffset + 40) - 20; 
             
-            // 計算投影片總寬高
             const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             const availableHeightPx = Math.max(500, layers.length * 40);
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
 
-            // 設定投影片
             pres.defineLayout({ name:'CUST', width: slideW, height: slideH });
             pres.layout = 'CUST';
             let slide = pres.addSlide();
 
-            // 3. 繪製層次 (改為：先畫框，再畫字)
             let currentYPx = pptPaddingTop;
             let yPositions = [];
 
             layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
-                
-                // 座標換算
                 const x = pptPaddingLeft / scaleFactor;
                 const y = currentYPx / scaleFactor;
                 const w = contentWidth / scaleFactor;
@@ -565,30 +632,23 @@
                 
                 yPositions.push({ top: y, bottom: y + h });
 
-                // 顏色處理
                 const safeFillColor = cleanHex(layer.color);
-                
-                // 文字顏色
                 let txtColor = "000000";
-                if (layer.textColor && layer.textColor !== '#000000') {
-                     txtColor = cleanHex(layer.textColor);
-                } else {
-                     txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
-                }
+                if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor);
+                else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
                 
                 const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                 const isBold = layer.fontStyle === 'bold';
                 const textContent = `${layer.name} ${layer.thickness}${unit}`;
 
-                // 【步驟A】畫純色塊 (不含文字)
+                // A. 純色塊
                 slide.addShape(pres.ShapeType.rect, {
                     x: x, y: y, w: w, h: h,
                     fill: { color: safeFillColor },
                     line: { color: "333333", width: 1 }
                 });
 
-                // 【步驟B】畫獨立文字框 (疊在上面)
-                // 使用 addText 確保文字絕對顯示，不受圖形邊距影響
+                // B. 獨立文字框
                 slide.addText(textContent, {
                     x: x, y: y, w: w, h: h,
                     color: txtColor,
@@ -601,10 +661,9 @@
                 currentYPx += hPx;
             });
 
-            // 4. 繪製標註
+            // Dimensions
             dimensions.forEach(dim => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                
                 const y1 = yPositions[dim.start].top;
                 const y2 = yPositions[dim.end].bottom;
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
@@ -613,44 +672,24 @@
                 for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
 
-                // 畫紅線
+                // Line
                 slide.addShape(pres.ShapeType.line, {
                     x: xLine, y: y1, w: 0, h: y2 - y1,
                     line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' }
                 });
+                const connectorLen = 0.15;
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
 
-                // 畫兩條水平引導線 (讓標註更清楚)
-                const connectorLen = 0.15; // 引導線長度
-                slide.addShape(pres.ShapeType.line, { 
-                    x: xLine, y: y1, w: connectorLen, h: 0, 
-                    line: { color: "CCCCCC", width: 1 } 
-                });
-                slide.addShape(pres.ShapeType.line, { 
-                    x: xLine, y: y2, w: connectorLen, h: 0, 
-                    line: { color: "CCCCCC", width: 1 } 
-                });
-
-                // 畫標註文字 (使用 addText)
+                // Text
                 const textWidth = 2.0; 
                 slide.addText(txt, {
-                    x: xLine - textWidth - 0.1, // 文字放在線的左邊
-                    y: (y1 + y2)/2 - 0.3,       // 垂直置中
-                    w: textWidth, 
-                    h: 0.6,
-                    color: "D32F2F", 
-                    fontSize: 12, 
-                    align: 'right',             // 靠右對齊 (靠近線條)
-                    valign: 'middle'
+                    x: xLine - textWidth - 0.1, y: (y1 + y2)/2 - 0.3, w: textWidth, h: 0.6,
+                    color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle'
                 });
             });
 
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
-        }
-
-        // 確保 helper 函式存在
-        function cleanHex(hex) {
-            if(!hex) return "FFFFFF";
-            return hex.replace('#', '').toUpperCase();
         }
     </script>
 </body>
