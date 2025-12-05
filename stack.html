@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Ultimate)</title>
+    <title>工程疊構圖產生器 (PPT修復版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎佈局 --- */
@@ -68,23 +68,17 @@
         .layer-item {
             background: #333; border-radius: 4px; padding: 6px;
             border-left: 4px solid #666; font-size: 13px;
-            cursor: grab; /* 提示可拖曳 */
-            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
         }
         .layer-item.dragging { opacity: 0.5; border: 2px dashed #888; }
         
-        /* 層次內容佈局 */
-        .layer-main-row {
-            display: flex; align-items: center; gap: 6px;
-        }
+        .layer-main-row { display: flex; align-items: center; gap: 6px; }
         .drag-handle { cursor: grab; color: #666; font-size: 16px; padding: 0 4px; }
         .drag-handle:hover { color: #fff; }
 
-        .layer-inputs {
-            flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px;
-        }
+        .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
 
-        /* 進階設定區塊 (隱藏式) */
+        /* 進階設定區塊 */
         .layer-details {
             display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555;
             grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end;
@@ -134,7 +128,7 @@
     <a href="index.html" class="home-btn">🏠 回首頁</a>
 
     <div id="sidebar">
-        <h2>📚 疊構圖設定 (Ultimate)</h2>
+        <h2>📚 疊構圖設定 (Pro)</h2>
 
         <div class="control-group">
             <label>全域設定</label>
@@ -158,7 +152,7 @@
             </div>
             <div style="display:flex; gap:5px;">
                 <input type="text" id="dimLabel" placeholder="文字 (選填)">
-                <input type="number" id="dimOffset" value="50" placeholder="偏移" title="距離左側的距離">
+                <input type="number" id="dimOffset" value="50" placeholder="偏移">
             </div>
             <button onclick="addDimension()">➕ 新增標註</button>
         </div>
@@ -189,17 +183,13 @@
         let dimensions = [];
 
         // 互動狀態
-        let dragTargetType = null; // 'dimension' or 'layer'
+        let dragTargetType = null; 
         let dragIndex = -1;
         let isDraggingCanvas = false;
         let lastMouseY = 0;
         let lastMouseX = 0;
         
-        // 紀錄畫布上的物件位置 (用於 Hit Test)
-        let hitRegions = {
-            layers: [], // {index, y, h}
-            dims: []    // {index, x, yStart, yEnd}
-        };
+        let hitRegions = { layers: [], dims: [] };
 
         // UI 調整
         const sidebar = document.getElementById('sidebar');
@@ -207,11 +197,9 @@
         let isResizingSidebar = false;
 
         // 初始化
-        loadExample(true); // 預設載入範例但不確認
+        loadExample(true); 
         
-        // --- 1. 左側列表拖曳 (Sidebar Drag & Drop) ---
-        // 由於 HTML5 DragDrop 對於複雜 input 較麻煩，這裡使用原生 JS 模擬簡易 Sort
-        // 為了簡單，我們直接在 renderList 綁定事件
+        // --- 1. 左側列表邏輯 ---
 
         function renderList() {
             listEl.innerHTML = '';
@@ -221,10 +209,9 @@
                 const item = document.createElement('div');
                 item.className = 'layer-item';
                 if(layer.showDetails) item.classList.add('open');
-                item.draggable = true; // 開啟拖曳
+                item.draggable = true;
                 item.style.borderLeftColor = layer.color;
 
-                // 文字顏色選擇 (如果沒設就用 'auto')
                 const txtColorVal = layer.textColor || "#000000";
                 
                 item.innerHTML = `
@@ -234,42 +221,24 @@
                             <input type="text" value="${layer.name}" oninput="updateLayer(${index}, 'name', this.value)" placeholder="名稱">
                             <input type="number" value="${layer.thickness}" oninput="updateLayer(${index}, 'thickness', this.value)" placeholder="厚度">
                         </div>
-                        <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" title="區塊顏色">
+                        <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)">
                         <div class="btn-toggle-details ${layer.showDetails?'active':''}" onclick="toggleDetails(${index})">⚙️</div>
                         <div class="btn-icon btn-del" onclick="deleteLayer(${index})">×</div>
                     </div>
-                    
                     <div class="layer-details">
-                        <div>
-                            <label>文字顏色</label>
-                            <input type="color" value="${txtColorVal}" oninput="updateLayer(${index}, 'textColor', this.value)" style="width:100%">
-                        </div>
-                        <div>
-                            <label>字體大小</label>
-                            <input type="number" value="${layer.fontSize || ''}" placeholder="全域" oninput="updateLayer(${index}, 'fontSize', this.value)">
-                        </div>
-                         <div>
-                            <label>樣式</label>
-                            <select onchange="updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;">
-                                <option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option>
-                                <option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option>
-                            </select>
-                        </div>
+                        <div><label>顏色</label><input type="color" value="${txtColorVal}" oninput="updateLayer(${index}, 'textColor', this.value)" style="width:100%"></div>
+                        <div><label>字體</label><input type="number" value="${layer.fontSize || ''}" placeholder="全域" oninput="updateLayer(${index}, 'fontSize', this.value)"></div>
+                        <div><label>樣式</label><select onchange="updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
                 `;
 
-                // 綁定拖曳事件
-                item.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('text/plain', index);
-                    item.classList.add('dragging');
-                });
+                item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); });
                 item.addEventListener('dragend', () => item.classList.remove('dragging'));
                 item.addEventListener('dragover', e => e.preventDefault());
                 item.addEventListener('drop', e => {
                     e.preventDefault();
                     const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
                     if (fromIdx !== index) {
-                        // 移動陣列元素
                         const moved = layers.splice(fromIdx, 1)[0];
                         layers.splice(index, 0, moved);
                         renderList(); draw();
@@ -283,13 +252,12 @@
         function updateLayer(index, key, value) {
             if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0;
             layers[index][key] = value;
-            if(key === 'color') renderList(); // 更新邊框色
+            if(key === 'color') renderList();
             draw();
         }
 
         function toggleDetails(index) {
-            layers[index].showDetails = !layers[index].showDetails;
-            renderList();
+            layers[index].showDetails = !layers[index].showDetails; renderList();
         }
 
         function addLayer() {
@@ -297,10 +265,7 @@
             renderList(); draw();
         }
 
-        function deleteLayer(index) {
-            layers.splice(index, 1);
-            renderList(); draw();
-        }
+        function deleteLayer(index) { layers.splice(index, 1); renderList(); draw(); }
 
         function loadExample(silent = false) {
             if(!silent && !confirm("確定覆蓋設定？")) return;
@@ -309,7 +274,7 @@
                 { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' },
                 { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' },
                 { name: "Ad", thickness: 25, color: "#eeeeee", fontSize: 0, fontStyle:'normal', textColor:'#000000' },
-                { name: "PI", thickness: 100, color: "#a8a8a8", fontSize: 28, fontStyle:'bold', textColor:'#ffffff' }, // 大字
+                { name: "PI", thickness: 100, color: "#a8a8a8", fontSize: 28, fontStyle:'bold', textColor:'#ffffff' },
                 { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' },
                 { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' }
             ];
@@ -328,8 +293,7 @@
                 const opt = `<option value="${i}">${i+1}. ${l.name}</option>`;
                 s1.innerHTML += opt; s2.innerHTML += opt;
             });
-            if(v1) s1.value = v1; 
-            if(v2) s2.value = v2; else if(layers.length>0) s2.value = layers.length-1;
+            if(v1) s1.value = v1; if(v2) s2.value = v2; else if(layers.length>0) s2.value = layers.length-1;
         }
 
         function addDimension() {
@@ -359,59 +323,43 @@
         function deleteDim(i) { dimensions.splice(i, 1); renderDims(); draw(); }
 
 
-        // --- 2. 畫布互動邏輯 (Canvas Interactions) ---
-        
+        // --- 2. 畫布互動邏輯 ---
         canvas.addEventListener('mousedown', e => {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // 1. 檢查是否點到 Dimension (紅色線) -> 優先
-            // 判定範圍寬一點方便點選
             for (let i = 0; i < hitRegions.dims.length; i++) {
                 const d = hitRegions.dims[i];
-                if (Math.abs(x - d.x) < 10 && y >= d.yStart && y <= d.yEnd) {
-                    dragTargetType = 'dimension';
-                    dragIndex = d.index;
-                    isDraggingCanvas = true;
-                    lastMouseX = x;
-                    document.body.style.cursor = 'ew-resize'; // 左右拖曳游標
-                    return;
+                if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) {
+                    dragTargetType = 'dimension'; dragIndex = d.index;
+                    isDraggingCanvas = true; lastMouseX = x;
+                    document.body.style.cursor = 'ew-resize'; return;
                 }
             }
 
-            // 2. 檢查是否點到 Layer (色塊)
             for (let i = 0; i < hitRegions.layers.length; i++) {
                 const l = hitRegions.layers[i];
-                if (y >= l.y && y <= l.y + l.h && x > 50) { // 簡單避開左邊界
-                    dragTargetType = 'layer';
-                    dragIndex = l.index;
-                    isDraggingCanvas = true;
-                    lastMouseY = y;
-                    document.body.style.cursor = 'ns-resize'; // 上下拖曳游標
-                    return;
+                if (y >= l.y && y <= l.y + l.h && x > 50) {
+                    dragTargetType = 'layer'; dragIndex = l.index;
+                    isDraggingCanvas = true; lastMouseY = y;
+                    document.body.style.cursor = 'ns-resize'; return;
                 }
             }
         });
 
         window.addEventListener('mousemove', e => {
             if (!isDraggingCanvas) {
-                // Hover 效果 cursor
                 const rect = canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 let hover = false;
-                // Check dims
                 for(let d of hitRegions.dims) {
-                    if (Math.abs(x - d.x) < 10 && y >= d.yStart && y <= d.yEnd) {
-                        canvas.style.cursor = 'ew-resize'; hover=true; break;
-                    }
+                    if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) { canvas.style.cursor = 'ew-resize'; hover=true; break; }
                 }
                 if(!hover) {
                      for(let l of hitRegions.layers) {
-                        if (y >= l.y && y <= l.y + l.h && x > 50) {
-                            canvas.style.cursor = 'ns-resize'; hover=true; break;
-                        }
+                        if (y >= l.y && y <= l.y + l.h && x > 50) { canvas.style.cursor = 'ns-resize'; hover=true; break; }
                     }
                 }
                 if(!hover) canvas.style.cursor = 'default';
@@ -423,44 +371,22 @@
             const y = e.clientY - rect.top;
 
             if (dragTargetType === 'dimension') {
-                // 拖曳標註線：改變 offset
-                // offset 是相對於 padding.left 的反向值，這裡簡化計算
-                // 我們知道 lineX = paddingLeft - offset
-                // 所以 offset = paddingLeft - currentX
-                // 但 paddingLeft 本身會隨 maxOffset 變動，這樣會造成回圈。
-                // 比較簡單的做法：直接修改 offset += (lastMouseX - x)
                 const dx = lastMouseX - x;
                 dimensions[dragIndex].offset += dx;
-                // 限制最小 offset 避免重疊太誇張
                 if(dimensions[dragIndex].offset < 20) dimensions[dragIndex].offset = 20;
-                
                 lastMouseX = x;
-                draw(); // 重畫
-                renderDims(); // 更新列表數值 (雖然列表只顯示概略)
+                draw(); renderDims();
             } else if (dragTargetType === 'layer') {
-                // 拖曳層次：交換順序
-                // 判斷是否跨越了另一個層次的中線
-                const dy = y - lastMouseY;
-                // 簡單邏輯：如果移動超過一定距離，檢查目前滑鼠在哪一層上面
-                // 遍歷 regions 找目前滑鼠在哪個 index
                 let hoveredIndex = -1;
                 for (let l of hitRegions.layers) {
-                    if (y >= l.y && y <= l.y + l.h) {
-                        hoveredIndex = l.index;
-                        break;
-                    }
+                    if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
                 }
-
                 if (hoveredIndex !== -1 && hoveredIndex !== dragIndex) {
-                    // 交換
                     const temp = layers[dragIndex];
                     layers[dragIndex] = layers[hoveredIndex];
                     layers[hoveredIndex] = temp;
-                    
-                    // 更新 index
                     dragIndex = hoveredIndex; 
-                    renderList();
-                    draw();
+                    renderList(); draw();
                 }
                 lastMouseY = y;
             }
@@ -468,19 +394,15 @@
 
         window.addEventListener('mouseup', () => {
             if (isDraggingCanvas) {
-                isDraggingCanvas = false;
-                dragTargetType = null;
-                document.body.style.cursor = 'default';
-                canvas.style.cursor = 'default';
+                isDraggingCanvas = false; dragTargetType = null;
+                document.body.style.cursor = 'default'; canvas.style.cursor = 'default';
             }
         });
-
 
         // --- 繪圖核心 ---
         function resizeCanvas() {
             const w = parseInt(document.getElementById('canvasWidth').value) || 450;
-            canvas.width = w;
-            draw();
+            canvas.width = w; draw();
         }
 
         function draw() {
@@ -489,7 +411,6 @@
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) return;
 
-            // 計算邊距
             let maxOffset = 20;
             dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
             const padding = { top: 40, bottom: 40, left: maxOffset + 40, right: 20 };
@@ -502,40 +423,27 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
-            // 重置 Hit Regions
-            hitRegions.layers = [];
-            hitRegions.dims = [];
-
+            hitRegions.layers = []; hitRegions.dims = [];
             let currentY = padding.top;
             let yPositions = [];
 
             // 1. 畫層次
             layers.forEach((layer, idx) => {
                 const h = layer.thickness * scale;
-                
-                // 紀錄 Hit Region
                 hitRegions.layers.push({ index: idx, y: currentY, h: h });
                 yPositions.push({ top: currentY, bottom: currentY + h });
 
-                ctx.fillStyle = layer.color;
-                ctx.fillRect(padding.left, currentY, drawWidth, h);
-                ctx.strokeStyle = "#333"; ctx.lineWidth = 1;
-                ctx.strokeRect(padding.left, currentY, drawWidth, h);
+                ctx.fillStyle = layer.color; ctx.fillRect(padding.left, currentY, drawWidth, h);
+                ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.strokeRect(padding.left, currentY, drawWidth, h);
 
                 if (h > 12) {
-                    // 文字顏色
-                    if (layer.textColor && layer.textColor !== '#000000') {
-                         ctx.fillStyle = layer.textColor;
-                    } else {
-                         ctx.fillStyle = isColorDark(layer.color) ? "white" : "black";
-                    }
+                    if (layer.textColor && layer.textColor !== '#000000') ctx.fillStyle = layer.textColor;
+                    else ctx.fillStyle = isColorDark(layer.color) ? "white" : "black";
 
                     const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                     const style = layer.fontStyle === 'bold' ? 'bold' : '';
-                    ctx.font = `${style} ${fs}px Arial`;
-                    
-                    const text = `${layer.name} ${layer.thickness}${unit}`;
-                    ctx.fillText(text, padding.left + drawWidth / 2, currentY + h / 2);
+                    ctx.font = `${style} ${fs}px "Microsoft JhengHei", Arial`;
+                    ctx.fillText(`${layer.name} ${layer.thickness}${unit}`, padding.left + drawWidth / 2, currentY + h / 2);
                 }
                 currentY += h;
             });
@@ -551,12 +459,8 @@
                 for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
                 
-                // 計算 X (因為 drag 功能會修改 dim.offset)
                 const x = padding.left - dim.offset;
-                
-                // 紀錄 Hit Region (加上寬度以便滑鼠抓取)
                 hitRegions.dims.push({ index: idx, x: x, yStart: y1, yEnd: y2 });
-
                 drawDimensionLine(x, y1, h, txt);
             });
         }
@@ -566,14 +470,12 @@
             ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
             ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x, yStart + height); ctx.stroke();
             
-            // 橫向引線
             ctx.strokeStyle = "#ccc"; ctx.lineWidth = 1;
             ctx.beginPath(); 
             ctx.moveTo(x, yStart); ctx.lineTo(x + 10, yStart);
             ctx.moveTo(x, yStart + height); ctx.lineTo(x + 10, yStart + height);
             ctx.stroke();
 
-            // 箭頭
             ctx.fillStyle = "#D32F2F";
             drawArrow(x, yStart, "up"); drawArrow(x, yStart + height, "down");
 
@@ -595,6 +497,11 @@
             return ((r*299 + g*587 + b*114)/1000) < 128;
         }
 
+        function cleanHex(hex) {
+            if(!hex) return "000000";
+            return hex.replace('#', '').toUpperCase();
+        }
+
         // --- Sidebar Resize ---
         resizer.addEventListener('mousedown', () => { isResizingSidebar = true; resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
         window.addEventListener('mousemove', (e) => {
@@ -605,7 +512,6 @@
         });
         window.addEventListener('mouseup', () => { isResizingSidebar = false; resizer.classList.remove('active'); document.body.style.cursor = 'default'; });
 
-
         function downloadImage() {
             const link = document.createElement('a');
             link.download = 'stack_diagram.png';
@@ -613,25 +519,21 @@
             link.click();
         }
 
-        // --- PPT 輸出功能 (修正版：解決文字消失與中文問題) ---
+        // --- PPT 輸出功能 (完整修復版) ---
         function downloadPPT() {
             let pres = new PptxGenJS();
             
-            // 1. 準備數據
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
 
-            // 2. 計算版面配置
             let maxOffset = 20;
             dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
 
-            // 預留左側空間給標註文字
             const pptPaddingLeft = maxOffset + 150; 
             const pptPaddingTop = 50;
-            
-            const scaleFactor = 100; // 100px = 1 inch
+            const scaleFactor = 100; 
             const contentWidth = canvas.width - (maxOffset + 40) - 20; 
             const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             
@@ -639,18 +541,16 @@
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
 
-            // 設定投影片大小
             pres.defineLayout({ name:'CUST', width: slideW, height: slideH });
             pres.layout = 'CUST';
             let slide = pres.addSlide();
 
-            // 3. 繪製層次 (Layers)
+            // Layers
             let currentYPx = pptPaddingTop;
             let yPositions = [];
 
             layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
-                
                 const x = pptPaddingLeft / scaleFactor;
                 const y = currentYPx / scaleFactor;
                 const w = contentWidth / scaleFactor;
@@ -658,87 +558,56 @@
                 
                 yPositions.push({ top: y, bottom: y + h });
 
-                // 顏色處理
                 const safeFillColor = cleanHex(layer.color);
                 let txtColor = "000000";
-                if (layer.textColor && layer.textColor !== '#000000') {
-                     txtColor = cleanHex(layer.textColor);
-                } else {
-                     txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
-                }
+                if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor);
+                else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
                 
                 const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                 const isBold = layer.fontStyle === 'bold';
 
-                // 繪製矩形
                 slide.addShape(pres.ShapeType.rect, {
                     x: x, y: y, w: w, h: h,
                     fill: { color: safeFillColor },
                     line: { color: "333333", width: 1 },
                     text: {
                         text: `${layer.name} ${layer.thickness}${unit}`,
-                        options: { 
-                            color: txtColor, 
-                            fontSize: fs, 
-                            fontFace: "Microsoft JhengHei", // [關鍵] 強制中文字體
-                            align: 'center', 
-                            valign: 'middle',
-                            bold: isBold,
-                            margin: 0 // [關鍵] 讓薄層也能顯示文字
-                        }
+                        options: { color: txtColor, fontSize: fs, fontFace: "Microsoft JhengHei", align: 'center', valign: 'middle', bold: isBold, margin: 0 }
                     }
                 });
                 currentYPx += hPx;
             });
 
-            // 4. 繪製標註 (Dimensions)
+            // Dimensions
             dimensions.forEach(dim => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                
                 const y1 = yPositions[dim.start].top;
                 const y2 = yPositions[dim.end].bottom;
-                
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
                 
                 let val = 0;
                 for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
 
-                // 紅線
+                // Vertical Line
                 slide.addShape(pres.ShapeType.line, {
                     x: xLine, y: y1, w: 0, h: y2 - y1,
                     line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' }
                 });
 
-                // 標註文字 (使用透明矩形裝載，定位更穩)
-                const textWidth = 2.0; 
+                // Connector lines
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0.1, h: 0, line: { color: "CCCCCC", width: 1 } });
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: 0.1, h: 0, line: { color: "CCCCCC", width: 1 } });
+
+                // Label Text
                 slide.addShape(pres.ShapeType.rect, {
-                    x: xLine - textWidth - 0.1, 
-                    y: (y1 + y2)/2 - 0.3, // 垂直置中
-                    w: textWidth, 
-                    h: 0.6,
-                    fill: { type: 'none' }, // 透明背景
-                    line: { type: 'none' }, // 無邊框
-                    text: {
-                        text: txt,
-                        options: {
-                            color: "D32F2F", 
-                            fontSize: 12, 
-                            fontFace: "Microsoft JhengHei", // [關鍵] 中文字體
-                            align: 'right',
-                            valign: 'middle'
-                        }
-                    }
+                    x: xLine - 2.1, y: (y1 + y2)/2 - 0.3, w: 2.0, h: 0.6,
+                    fill: { type: 'none' }, line: { type: 'none' },
+                    text: { text: txt, options: { color: "D32F2F", fontSize: 12, fontFace: "Microsoft JhengHei", align: 'right', valign: 'middle' } }
                 });
             });
 
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
-        }
-
-        // [新增] 安全的顏色轉換函式
-        function cleanHex(hex) {
-            if(!hex) return "FFFFFF";
-            return hex.replace('#', '').toUpperCase();
         }
     </script>
 </body>
