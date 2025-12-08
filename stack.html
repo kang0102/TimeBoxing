@@ -3,54 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Auto-Load)</title>
+    <title>工程疊構圖產生器 (Project DB)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
-        /* (樣式保持不變，為了節省篇幅，這裡省略重複 CSS，請直接保留上一版所有的 CSS) */
-        /* 請保留上一版 <style> 到 </style> 之間的所有內容 */
-        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
-        #sidebar { width: 400px; min-width: 320px; max-width: 800px; background-color: #1e1e1e; padding: 15px; padding-top: 60px; display: flex; flex-direction: column; gap: 12px; z-index: 10; overflow-y: auto; flex-shrink: 0; box-sizing: border-box; }
-        #resizer { width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+        /* --- 基礎佈局 --- */
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: #121212;
+            color: #ddd;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* 左側控制面板 */
+        #sidebar {
+            width: 400px;
+            min-width: 320px;
+            max-width: 800px;
+            background-color: #1e1e1e;
+            padding: 15px;
+            padding-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        /* 拖曳調整桿 */
+        #resizer {
+            width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+        }
         #resizer::after { content: ""; width: 2px; height: 30px; background: #444; }
         #resizer:hover, #resizer.active { background: #1976D2; }
-        #main-area { flex-grow: 1; background-color: #222; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; cursor: default; }
+
+        /* 右側畫布區 */
+        #main-area {
+            flex-grow: 1; background-color: #222;
+            display: flex; justify-content: center; align-items: center;
+            overflow: auto; padding: 20px; cursor: default;
+        }
+
+        /* 文字與輸入框樣式 */
         h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
         h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
+        
         .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
         label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
-        input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
+        
+        input[type="text"], input[type="number"], select {
+            background: #333; border: 1px solid #555; color: white;
+            padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px;
+        }
+
+        /* --- 層次列表 --- */
         #layer-list { display: flex; flex-direction: column; gap: 6px; }
-        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; cursor: grab; transition: transform 0.2s, box-shadow 0.2s; }
+        
+        .layer-item {
+            background: #333; border-radius: 4px; padding: 6px;
+            border-left: 4px solid #666; font-size: 13px;
+            cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
+        }
         .layer-item.dragging { opacity: 0.5; border: 2px dashed #888; }
+        
         .layer-main-row { display: flex; align-items: center; gap: 6px; }
         .drag-handle { cursor: grab; color: #666; font-size: 16px; padding: 0 4px; }
         .drag-handle:hover { color: #fff; }
+
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
-        .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
+
+        .layer-details {
+            display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555;
+            grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end;
+        }
         .layer-item.open .layer-details { display: grid; }
-        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; }
+        
+        .btn-toggle-details {
+            cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a;
+        }
         .btn-toggle-details:hover { background: #444; color: white; }
         .btn-toggle-details.active { background: #1976D2; color: white; }
+
         input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
         .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
         .btn-del:hover { color: #ff5252; }
-        .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
-        button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
+
+        /* 標註清單 */
+        .dim-item {
+            background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px;
+            border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; color: #bbb;
+        }
+
+        button {
+            padding: 8px; font-size: 13px; cursor: pointer;
+            background-color: #444; color: white;
+            border: 1px solid #555; border-radius: 4px; width: 100%;
+            transition: 0.2s; margin-top: 5px;
+        }
         button:hover { background-color: #666; }
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
         .btn-img { background-color: #1976D2; border-color: #1565C0; }
         .btn-add { background-color: #43A047; border-color: #2E7D32; }
         .btn-save-local { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
         .btn-del-local { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
-        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
+
+        .home-btn {
+            position: absolute; top: 15px; left: 15px;
+            text-decoration: none; background: #444; padding: 6px 12px;
+            border-radius: 20px; color: #fff; font-size: 12px;
+            border: 1px solid #666; z-index: 100;
+        }
+
+        /* 隱藏的檔案上傳輸入框 */
         #fileInput { display: none; }
+
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; }
-        
-        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
-        .btn-proj:hover { background-color: #607D8B; }
-        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
-        .btn-clear:hover { background-color: #E53935; }
     </style>
 </head>
 <body>
