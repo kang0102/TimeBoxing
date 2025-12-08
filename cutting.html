@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cutting Layout v9.1 (Measure Added)</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
+        #sidebar { width: 360px; background-color: #1e1e1e; padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 10; overflow-y: auto; border-right: 1px solid #333; }
+        #main-area { flex-grow: 1; background-color: #e0e0e0; position: relative; overflow: hidden; cursor: default; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* UI 元件 */
+        h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
+        .section-title { font-weight: bold; margin-top: 10px; color: #bbb; border-bottom: 1px solid #444; padding-bottom: 2px; }
+        .row { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+        label { width: 80px; font-size: 13px; color: #aaa; }
+        input[type="text"] { background: #333; border: 1px solid #555; color: white; padding: 4px; border-radius: 4px; flex: 1; font-size: 13px; }
+        input[type="checkbox"] { margin-right: 5px; cursor: pointer; }
+        .unit { width: 30px; font-size: 12px; color: #888; }
+        button { padding: 6px; background: #444; color: white; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        button:hover { background: #666; }
+        button.active { background: #00897B; border-color: #00695C; color: white; }
+        .btn-group { display: flex; gap: 5px; }
+        .btn-group button { flex: 1; }
+        
+        /* 彈窗樣式 */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 999; }
+        .modal { background: #222; padding: 20px; border-radius: 8px; width: 600px; max-height: 80vh; display: flex; flex-direction: column; gap: 10px; border: 1px solid #444; }
+        .modal textarea { background: #333; color: white; border: 1px solid #555; padding: 5px; height: 100px; resize: vertical; }
+        #changelog-list { overflow-y: auto; flex: 1; background: #1a1a1a; padding: 10px; border: 1px solid #333; max-height: 300px; }
+        .log-entry { margin-bottom: 10px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
+        .log-ver { color: #4FC3F7; font-weight: bold; }
+        .log-date { color: #888; font-size: 12px; margin-left: 10px; }
+        .log-content { margin-top: 4px; color: #ddd; white-space: pre-wrap; font-size: 13px; padding-left: 10px; }
+
+        .home-btn { text-decoration: none; background: #444; padding: 6px 12px; border-radius: 4px; color: #fff; font-size: 12px; display:inline-block; text-align:center; margin-bottom: 10px; border: 1px solid #555; }
+        .home-btn:hover { background: #666; }
+    </style>
+</head>
+<body>
+
+<div id="changelog-modal" class="modal-overlay">
+    <div class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>📋 Changelog / 版本紀錄</h3>
+            <button onclick="closeChangelog()" style="width:auto; padding:2px 8px;">×</button>
+        </div>
+        <div id="changelog-list"></div>
+        <div style="border-top:1px solid #444; padding-top:10px;">
+            <div class="row">
+                <input type="text" id="new-ver" placeholder="版本 (例如 v10)" style="flex:0.3">
+                <input type="text" id="new-date" placeholder="日期 (YYYY-MM-DD)" style="flex:0.3">
+            </div>
+            <textarea id="new-content" placeholder="更新內容 (每行一條)"></textarea>
+            <div class="btn-group" style="margin-top:5px;">
+                <button onclick="addLogEntry()" style="background:#00695C;">➕ 新增版本</button>
+                <button onclick="exportJSON()">📤 匯出 JSON</button>
+                <button onclick="document.getElementById('fileInput').click()">📥 匯入 JSON</button>
+                <button onclick="exportMD()">📝 匯出 Markdown</button>
+            </div>
+            <input type="file" id="fileInput" accept=".json" style="display:none" onchange="importJSON(this)">
+        </div>
+    </div>
+</div>
+
+<div id="sidebar">
+    <a href="index.html" class="home-btn">🏠 回首頁</a>
+    
+    <div>
+        <h2>Cutting Layout <span style="font-size:12px; color:#888;">v9.1</span></h2>
+        <button onclick="openChangelog()" style="width:100%">📖 版本紀錄 (Changelog)</button>
+    </div>
+
+    <div class="section-title">Measure (量測)</div>
+    <button id="btn-measure-mode" onclick="toggleMeasureMode()" style="width:100%; margin-bottom:5px;">📏 開啟量測模式 (Measure Mode)</button>
+    <div class="row" style="padding-left:5px;">
+        <input type="checkbox" id="snap-check" checked onchange="draw()">
+        <span style="font-size:13px; color:#ddd;">Snap to geometry (吸附)</span>
+    </div>
+    <div class="row" style="padding-left:5px;">
+        <label style="width:auto; margin-right:5px;">Type:</label>
+        <select id="measure-type" style="background:#333; color:white; border:1px solid #555; flex:1;">
+            <option value="Free">Free (自由)</option>
+            <option value="Horizontal">Horizontal (水平)</option>
+            <option value="Vertical">Vertical (垂直)</option>
+        </select>
+    </div>
+    <button onclick="clearMeasures()" style="background:#D32F2F; border-color:#B71C1C;">🗑️ 清除所有量測</button>
+
+    <div class="section-title">Jig (治具)</div>
+    <div class="row"><label>Height</label><input type="text" id="jig_h" value="5.0" onchange="draw()"><div class="unit">mm</div></div>
+    <div class="row"><label>Angle</label><input type="text" id="jig_a" value="45.0" onchange="draw()"><div class="unit">°</div></div>
+    <div class="row"><label>Rotate</label><input type="text" id="jig_r" value="180.0" onchange="draw()"><div class="unit">°</div></div>
+
+    <div class="section-title">Sample</div>
+    <div class="row"><label>Pos t (0-1)</label><input type="text" id="sam_t" value="0.70" onchange="draw()"></div>
+    <div class="row"><label>Length</label><input type="text" id="sam_l" value="5.0" onchange="draw()"><div class="unit">mm</div></div>
+    <div class="row"><label>Thickness</label><input type="text" id="sam_th" value="795.0" onchange="draw()"><div class="unit">µm</div></div>
+
+    <div class="section-title">Blade</div>
+    <div class="row"><label>Width</label><input type="text" id="bld_w" value="45.0" onchange="draw()"><div class="unit">µm</div></div>
+    <div class="row"><label>Exposure</label><input type="text" id="bld_e" value="1210.0" onchange="draw()"><div class="unit">µm</div></div>
+    <div class="row"><label>Shift X</label><input type="text" id="bld_x" value="0.0" onchange="draw()"><div class="unit">mm</div></div>
+    <div class="row"><label>Shift Y</label><input type="text" id="bld_y" value="-0.8" onchange="draw()"><div class="unit">mm</div></div>
+    <div id="depth-display" style="color:#00E676; font-size:12px; margin-top:5px;">Depth: 0.000 mm</div>
+
+    <div class="section-title">輸出 & 操作</div>
+    <button onclick="resetView()">🔍 重置視角</button>
+    <button onclick="downloadPNG()">💾 下載圖片 (PNG)</button>
+    <div style="font-size:12px; color:#666; margin-top:5px;">
+        * 量測模式：拖曳可畫線，右鍵刪除線段<br>
+        * 滾輪縮放 / 右鍵拖曳平移
+    </div>
+</div>
+
+<div id="main-area">
+    <canvas id="canvas"></canvas>
+</div>
+
+<script>
+    // --- 1. 基礎幾何與數學工具 ---
+    const add = (a, b) => [a[0]+b[0], a[1]+b[1]];
+    const sub = (a, b) => [a[0]-b[0], a[1]-b[1]];
+    const mul = (a, k) => [a[0]*k, a[1]*k];
+    const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
+    const cross = (a, b) => a[0]*b[1] - a[1]*b[0];
+    const len = (v) => Math.hypot(v[0], v[1]);
+    const unit = (v) => { const L = len(v); return L ? [v[0]/L, v[1]/L] : [0,0]; };
+    const rad = deg => deg * Math.PI / 180;
+    const deg = rad => rad * 180 / Math.PI;
+    const rot = (p, c, deg) => {
+        const r = rad(deg), s = Math.sin(r), c0 = Math.cos(r);
+        const x = p[0]-c[0], y = p[1]-c[1];
+        return [x*c0 - y*s + c[0], x*s + y*c0 + c[1]];
+    };
+    
+    // 安全算式解析
+    function parseNum(str, def) {
+        str = String(str).trim();
+        if (str.startsWith('=')) str = str.substring(1);
+        try {
+            if (!/^[0-9+\-*/().\s]+$/.test(str)) return parseFloat(str) || def;
+            return new Function('return ' + str)() || def;
+        } catch { return def; }
+    }
+
+    // Sutherland-Hodgman 用於深度計算
+    function polygonArea(poly) {
+        let A = 0;
+        for(let i=0; i<poly.length; i++) {
+            let [x1,y1] = poly[i], [x2,y2] = poly[(i+1)%poly.length];
+            A += x1*y2 - x2*y1;
+        }
+        return 0.5 * A;
+    }
+    function lineIntersection(a, b, c, d) {
+        let [ax,ay]=a, [bx,by]=b, [cx,cy]=c, [dx,dy]=d;
+        let r = [bx-ax, by-ay], s = [dx-cx, dy-cy];
+        let rxs = cross(r, s);
+        if (Math.abs(rxs) < 1e-12) return null;
+        let t = cross(sub(c,a), s) / rxs;
+        return [ax + r[0]*t, ay + r[1]*t];
+    }
+    function clipPoly(subject, clipper) {
+        if (!subject.length || !clipper.length) return [];
+        let out = [...subject];
+        let ccw = polygonArea(clipper) > 0;
+        const inside = (p, a, b) => {
+            const val = cross(sub(b,a), sub(p,a));
+            return ccw ? val >= -1e-10 : val <= 1e-10;
+        };
+
+        for (let i=0; i<clipper.length; i++) {
+            let a = clipper[i], b = clipper[(i+1)%clipper.length];
+            let input = out; out = [];
+            if (input.length === 0) break;
+            let S = input[input.length-1];
+            for (let E of input) {
+                if (inside(E, a, b)) {
+                    if (!inside(S, a, b)) {
+                        let inter = lineIntersection(S, E, a, b);
+                        if(inter) out.push(inter);
+                    }
+                    out.push(E);
+                } else if (inside(S, a, b)) {
+                    let inter = lineIntersection(S, E, a, b);
+                    if(inter) out.push(inter);
+                }
+                S = E;
+            }
+        }
+        return out;
+    }
+
+    // --- 2. 狀態與 Canvas ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const m = {
+        jig_h: 5.0, jig_a: 45.0, jig_r: 180.0, origin: [-2.5, -0.5],
+        sam_t: 0.70, sam_l: 5.0, sam_th: 795.0,
+        bld_w: 45.0, bld_e: 1210.0, bld_x: 0.0, bld_y: -0.8
+    };
+
+    // View Control
+    let scale = 50; 
+    let offset = { x: 0, y: 0 };
+    let isDragging = false, dragType = null, lastMouse = {x:0, y:0};
+
+    // Measure State
+    let measures = [];
+    let isMeasureMode = false;
+    let drawingMeasure = null; // { p0: [x,y], p1: [x,y] }
+    let dragMeasureHandle = null; // { index: 0, endpoint: 'p0' }
+
+    function init() {
+        resize();
+        window.addEventListener('resize', resize);
+        loadChangelog();
+        offset.x = canvas.width/2; offset.y = canvas.height/2;
+        draw();
+    }
+    function resize() {
+        canvas.width = document.getElementById('main-area').clientWidth;
+        canvas.height = document.getElementById('main-area').clientHeight;
+        draw();
+    }
+    function resetView() {
+        scale = 50;
+        offset.x = canvas.width/2; offset.y = canvas.height/2;
+        draw();
+    }
+
+    const mmToPx = (x, y) => [offset.x + x*scale, offset.y + y*scale];
+    const pxToMm = (px, py) => [(px - offset.x)/scale, (py - offset.y)/scale];
+
+    // --- 3. 繪圖與幾何 ---
+    function getParams() {
+        m.jig_h = parseNum(document.getElementById('jig_h').value, m.jig_h);
+        m.jig_a = parseNum(document.getElementById('jig_a').value, m.jig_a);
+        m.jig_r = parseNum(document.getElementById('jig_r').value, m.jig_r);
+        m.sam_t = Math.max(0, Math.min(1, parseNum(document.getElementById('sam_t').value, m.sam_t)));
+        m.sam_l = parseNum(document.getElementById('sam_l').value, m.sam_l);
+        m.sam_th = parseNum(document.getElementById('sam_th').value, m.sam_th);
+        m.bld_w = parseNum(document.getElementById('bld_w').value, m.bld_w);
+        m.bld_e = parseNum(document.getElementById('bld_e').value, m.bld_e);
+        m.bld_x = parseNum(document.getElementById('bld_x').value, m.bld_x);
+        m.bld_y = parseNum(document.getElementById('bld_y').value, m.bld_y);
+    }
+
+    function getGeometries() {
+        // Jig
+        let base = (m.jig_a<=0 || m.jig_a>=90) ? m.jig_h : m.jig_h/Math.tan(rad(m.jig_a));
+        let top = m.origin, br = [top[0]+base, top[1]], bot = [br[0], br[1]+m.jig_h];
+        let tri = [top, br, bot];
+        if (m.jig_r % 360 !== 0) {
+            let cx = (top[0]+bot[0])/2, cy = (top[1]+bot[1])/2;
+            tri = tri.map(p => rot(p, [cx,cy], m.jig_r));
+        }
+
+        // Sample
+        let p1 = tri[0], p2 = tri[2]; 
+        let dir = unit(sub(p2, p1)), nrm = [-dir[1], dir[0]];
+        let start = add(p1, mul(sub(p2, p1), m.sam_t));
+        let th_mm = m.sam_th / 1000;
+        let a = add(start, mul(nrm, th_mm)); 
+        let b = add(a, mul(dir, m.sam_l));
+        let c = add(b, mul(nrm, -th_mm));
+        let d = add(a, mul(nrm, -th_mm));
+        let sample = [a,b,c,d];
+
+        // Blade
+        let cx = (a[0]+b[0])/2 + m.bld_x;
+        let cy = (a[1]+b[1])/2 + m.bld_y;
+        let w = m.bld_w/1000, h = m.bld_e/1000;
+        let blade = [[cx-w/2, cy-h], [cx+w/2, cy-h], [cx+w/2, cy], [cx-w/2, cy]];
+
+        return { tri, sample, blade, p1, p2, dir, a, d }; 
+    }
+
+    // Snapping Logic
+    function getSnapPoint(mouseMm) {
+        if (!document.getElementById('snap-check').checked) return mouseMm;
+        
+        let g = getGeometries();
+        let points = [...g.tri, ...g.sample, ...g.blade];
+        let minDist = 12 / scale; // 12px snap radius in mm
+        let bestPt = mouseMm;
+
+        // Snap to vertices
+        for(let p of points) {
+            let d = len(sub(mouseMm, p));
+            if (d < minDist) {
+                minDist = d;
+                bestPt = p;
+            }
+        }
+        return bestPt;
+    }
+
+    function draw() {
+        getParams();
+        const g = getGeometries();
+        
+        ctx.fillStyle = "#e0e0e0";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const drawPoly = (pts, fill, stroke) => {
+            ctx.beginPath();
+            let [sx, sy] = mmToPx(pts[0][0], pts[0][1]);
+            ctx.moveTo(sx, sy);
+            for(let i=1; i<pts.length; i++) {
+                let [px, py] = mmToPx(pts[i][0], pts[i][1]);
+                ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = fill; ctx.fill();
+            ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke();
+        };
+
+        drawPoly(g.tri, "#E1BEE7", "#4A148C"); 
+        drawPoly(g.sample, "#BBDEFB", "#0D47A1");
+        drawPoly(g.blade, "#FFF9C4", "#F57F17"); 
+
+        // Labels
+        ctx.fillStyle = "#333"; ctx.font = "12px Arial";
+        let [jx,jy] = mmToPx(g.tri[1][0], g.tri[1][1]);
+        ctx.fillText(`Angle: ${m.jig_a}°`, jx+10, jy);
+        let [sx,sy] = mmToPx(g.sample[1][0], g.sample[1][1]);
+        ctx.fillText(`L: ${m.sam_l}mm`, sx+10, sy);
+        let [bx,by] = mmToPx(g.blade[2][0], g.blade[2][1]);
+        ctx.fillText(`Exp: ${m.bld_e}µm`, bx+10, by);
+
+        // Depth
+        let n_down = unit(sub(g.d, g.a));
+        let th_mm = m.sam_th / 1000;
+        let inter = clipPoly(g.blade, g.sample);
+        let depth = 0;
+        if (inter.length > 0) {
+            let max_v = -999;
+            for(let p of inter) {
+                let v = dot(sub(p, g.a), n_down);
+                if (v > max_v) max_v = v;
+            }
+            depth = Math.max(0, Math.min(max_v, th_mm));
+        }
+        let pct = (th_mm > 0) ? (depth/th_mm*100) : 0;
+        document.getElementById('depth-display').innerText = 
+            `Depth: ${depth.toFixed(3)} mm (${(depth*1000).toFixed(0)} µm, ${pct.toFixed(1)}%)`;
+
+        // 畫量測線
+        const allMeasures = [...measures];
+        if (drawingMeasure) allMeasures.push(drawingMeasure);
+
+        allMeasures.forEach((ms, idx) => {
+            let [x0,y0] = mmToPx(ms.p0[0], ms.p0[1]);
+            let [x1,y1] = mmToPx(ms.p1[0], ms.p1[1]);
+            
+            // Line
+            ctx.beginPath();
+            ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+            ctx.strokeStyle = "#333"; ctx.lineWidth = 1.5; ctx.stroke();
+
+            // Handles
+            ctx.fillStyle = "#333";
+            ctx.beginPath(); ctx.arc(x0, y0, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x1, y1, 3, 0, Math.PI*2); ctx.fill();
+
+            // Label text
+            let d = len(sub(ms.p1, ms.p0));
+            let dx = Math.abs(ms.p1[0] - ms.p0[0]);
+            let dy = Math.abs(ms.p1[1] - ms.p0[1]);
+            let ang = Math.atan2(ms.p1[1]-ms.p0[1], ms.p1[0]-ms.p0[0]) * 180 / Math.PI;
+            
+            ctx.fillStyle = "#000"; ctx.font = "bold 12px Arial";
+            let midX = (x0+x1)/2 + 10, midY = (y0+y1)/2;
+            
+            // Background for text
+            let txt = `L: ${(d*1000).toFixed(0)}µm (${d.toFixed(3)}mm)`;
+            let txt2 = `dx:${(dx*1000).toFixed(0)}, dy:${(dy*1000).toFixed(0)}`;
+            ctx.fillText(txt, midX, midY - 6);
+            ctx.font = "10px Arial"; ctx.fillStyle = "#555";
+            ctx.fillText(txt2, midX, midY + 6);
+        });
+
+        if (isMeasureMode) {
+            ctx.font = "14px Arial"; ctx.fillStyle = "#D32F2F";
+            ctx.fillText("📏 量測模式 (拖曳畫線)", 10, 20);
+        }
+    }
+
+    // --- 4. 互動事件 ---
+    function toggleMeasureMode() {
+        isMeasureMode = !isMeasureMode;
+        let btn = document.getElementById('btn-measure-mode');
+        if(isMeasureMode) {
+            btn.classList.add('active');
+            btn.innerText = "📏 關閉量測模式";
+            canvas.style.cursor = "crosshair";
+        } else {
+            btn.classList.remove('active');
+            btn.innerText = "📏 開啟量測模式";
+            canvas.style.cursor = "default";
+        }
+        draw();
+    }
+
+    function clearMeasures() {
+        measures = [];
+        draw();
+    }
+
+    // Hit test for measure handles
+    function hitMeasureHandle(x, y) {
+        for(let i=0; i<measures.length; i++) {
+            let p0 = mmToPx(measures[i].p0[0], measures[i].p0[1]);
+            let p1 = mmToPx(measures[i].p1[0], measures[i].p1[1]);
+            if (Math.hypot(x-p0[0], y-p0[1]) < 8) return {index: i, endpoint: 'p0'};
+            if (Math.hypot(x-p1[0], y-p1[1]) < 8) return {index: i, endpoint: 'p1'};
+        }
+        return null;
+    }
+
+    // Hit test for measure lines (for deletion)
+    function hitMeasureLine(x, y) {
+        for(let i=0; i<measures.length; i++) {
+            let m0 = mmToPx(measures[i].p0[0], measures[i].p0[1]);
+            let m1 = mmToPx(measures[i].p1[0], measures[i].p1[1]);
+            // Point to line segment distance
+            let A = x - m0[0], B = y - m0[1], C = m1[0] - m0[0], D = m1[1] - m0[1];
+            let dot = A * C + B * D;
+            let len_sq = C * C + D * D;
+            let param = -1;
+            if (len_sq != 0) param = dot / len_sq;
+            let xx, yy;
+            if (param < 0) { xx = m0[0]; yy = m0[1]; }
+            else if (param > 1) { xx = m1[0]; yy = m1[1]; }
+            else { xx = m0[0] + param * C; yy = m0[1] + param * D; }
+            let dx = x - xx, dy = y - yy;
+            if (Math.sqrt(dx * dx + dy * dy) < 5) return i;
+        }
+        return -1;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        let mm = pxToMm(e.offsetX, e.offsetY);
+        let snappedMm = getSnapPoint(mm);
+
+        if (e.button === 2) { 
+            // Right click: Delete measure or Pan
+            let delIdx = hitMeasureLine(e.offsetX, e.offsetY);
+            if (delIdx !== -1) {
+                measures.splice(delIdx, 1);
+                draw();
+            } else {
+                dragType = 'pan'; 
+                isDragging = true;
+            }
+        } else {
+            // Left click
+            let handle = hitMeasureHandle(e.offsetX, e.offsetY);
+            
+            if (isMeasureMode) {
+                // Start creating measurement
+                if (handle) {
+                    // If clicking existing handle in measure mode, edit it
+                    dragMeasureHandle = handle;
+                } else {
+                    drawingMeasure = { p0: snappedMm, p1: snappedMm };
+                }
+                isDragging = true;
+            } else {
+                // Edit Mode
+                if (handle) {
+                    dragMeasureHandle = handle;
+                    isDragging = true;
+                } else {
+                    // Standard Object Dragging
+                    let g = getGeometries();
+                    const center = poly => {
+                        let x=0,y=0; poly.forEach(p=>{x+=p[0];y+=p[1]}); 
+                        return [x/poly.length, y/poly.length]; 
+                    };
+                    const dist = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+                    
+                    if (dist(mm, center(g.blade)) < 1) dragType = 'blade';
+                    else if (dist(mm, center(g.sample)) < 3) dragType = 'sample';
+                    else if (dist(mm, center(g.tri)) < 5) dragType = 'jig';
+                    isDragging = true;
+                }
+            }
+        }
+        lastMouse = {x: e.offsetX, y: e.offsetY};
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        let mm = pxToMm(e.offsetX, e.offsetY);
+        let snappedMm = getSnapPoint(mm);
+        
+        // Cursor Logic
+        let handle = hitMeasureHandle(e.offsetX, e.offsetY);
+        if (handle) canvas.style.cursor = "pointer";
+        else if (isMeasureMode) canvas.style.cursor = "crosshair";
+        else canvas.style.cursor = "default";
+
+        if (!isDragging) return;
+
+        if (dragType === 'pan') {
+            offset.x += (e.offsetX - lastMouse.x);
+            offset.y += (e.offsetY - lastMouse.y);
+            draw();
+            lastMouse = {x: e.offsetX, y: e.offsetY};
+            return;
+        }
+
+        if (drawingMeasure) {
+            // Creating new measure
+            let type = document.getElementById('measure-type').value;
+            let p1 = snappedMm;
+            if (type === 'Horizontal') p1 = [snappedMm[0], drawingMeasure.p0[1]];
+            if (type === 'Vertical') p1 = [drawingMeasure.p0[0], snappedMm[1]];
+            drawingMeasure.p1 = p1;
+            draw();
+            return;
+        }
+
+        if (dragMeasureHandle) {
+            // Editing existing measure
+            let type = document.getElementById('measure-type').value;
+            let pt = snappedMm;
+            let otherPt = measures[dragMeasureHandle.index][dragMeasureHandle.endpoint === 'p0' ? 'p1' : 'p0'];
+            
+            if (type === 'Horizontal') pt = [snappedMm[0], otherPt[1]];
+            if (type === 'Vertical') pt = [otherPt[0], snappedMm[1]];
+
+            measures[dragMeasureHandle.index][dragMeasureHandle.endpoint] = pt;
+            draw();
+            return;
+        }
+
+        // Object Dragging
+        let dx_px = e.offsetX - lastMouse.x;
+        let dy_px = e.offsetY - lastMouse.y;
+        let dx_mm = dx_px / scale;
+        let dy_mm = dy_px / scale;
+
+        if (dragType === 'jig') {
+            m.origin[0] += dx_mm; m.origin[1] += dy_mm;
+        } else if (dragType === 'blade') {
+            document.getElementById('bld_x').value = (parseFloat(document.getElementById('bld_x').value) + dx_mm).toFixed(3);
+            document.getElementById('bld_y').value = (parseFloat(document.getElementById('bld_y').value) + dy_mm).toFixed(3);
+        } else if (dragType === 'sample') {
+            let g = getGeometries();
+            let segLen = len(sub(g.p2, g.p1));
+            let proj = (dx_mm*g.dir[0] + dy_mm*g.dir[1]);
+            let dt = proj / segLen;
+            document.getElementById('sam_t').value = (parseFloat(document.getElementById('sam_t').value) + dt).toFixed(3);
+        }
+
+        draw();
+        lastMouse = {x: e.offsetX, y: e.offsetY};
+    });
+
+    canvas.addEventListener('mouseup', () => { 
+        if (drawingMeasure) {
+            // Commit new measure only if length > 0
+            if (len(sub(drawingMeasure.p0, drawingMeasure.p1)) > 0.001) {
+                measures.push(drawingMeasure);
+            }
+            drawingMeasure = null;
+        }
+        isDragging = false; 
+        dragType = null; 
+        dragMeasureHandle = null;
+        draw();
+    });
+
+    canvas.addEventListener('wheel', e => {
+        e.preventDefault();
+        let s = (e.deltaY > 0) ? 0.9 : 1.1;
+        scale *= s;
+        draw();
+    });
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- 5. Changelog & Export ---
+    // (代碼與上一版相同，省略以節省長度，已包含在上方完整代碼中)
+    // ... Copy from previous response ...
+    
+    // --- Duplicate of Changelog logic for completeness ---
+    let changelogs = [];
+    const DEFAULT_LOGS = [{version:"v9.1", date: new Date().toISOString().split('T')[0], changes:["新增量測功能 (Measure)", "新增吸附功能 (Snap)"]}];
+    function loadChangelog() {
+        const stored = localStorage.getItem('cutting_changelog');
+        changelogs = stored ? JSON.parse(stored) : DEFAULT_LOGS;
+        renderChangelog();
+    }
+    function saveChangelog() { localStorage.setItem('cutting_changelog', JSON.stringify(changelogs)); renderChangelog(); }
+    function renderChangelog() {
+        const list = document.getElementById('changelog-list'); list.innerHTML = '';
+        changelogs.forEach(log => {
+            const div = document.createElement('div'); div.className = 'log-entry';
+            div.innerHTML = `<span class="log-ver">${log.version}</span> <span class="log-date">${log.date}</span><div class="log-content">${log.changes.join('\n')}</div>`;
+            list.appendChild(div);
+        });
+        document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
+    }
+    function addLogEntry() {
+        const v = document.getElementById('new-ver').value; const d = document.getElementById('new-date').value;
+        const c = document.getElementById('new-content').value.split('\n').filter(x=>x.trim());
+        if(!v || !c.length) { alert("請輸入版本與內容"); return; }
+        changelogs.unshift({version:v, date:d, changes:c}); saveChangelog(); document.getElementById('new-content').value = "";
+    }
+    function openChangelog() { document.getElementById('changelog-modal').style.display = 'flex'; }
+    function closeChangelog() { document.getElementById('changelog-modal').style.display = 'none'; }
+    function exportJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(changelogs, null, 2));
+        const link = document.createElement('a'); link.href = dataStr; link.download = "cutting_changelog.json"; link.click();
+    }
+    function importJSON(input) {
+        const file = input.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = e => { try { changelogs = JSON.parse(e.target.result); saveChangelog(); alert("匯入成功"); } catch { alert("格式錯誤"); } };
+        reader.readAsText(file);
+    }
+    function exportMD() {
+        let md = "# Cutting Layout Changelog\n\n";
+        changelogs.forEach(log => { md += `## ${log.version} (${log.date})\n`; log.changes.forEach(c => md += `- ${c}\n`); md += "\n"; });
+        const blob = new Blob([md], {type: "text/markdown"});
+        const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = "changelog.md"; link.click();
+    }
+    function downloadPNG() {
+        const link = document.createElement('a'); link.download = 'cutting_layout.png'; link.href = canvas.toDataURL(); link.click();
+    }
+
+    init();
+</script>
+</body>
+</html>
