@@ -3,173 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Project DB)</title>
+    <title>工程疊構圖產生器 (Cloud DB)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎佈局 --- */
-        body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #121212;
-            color: #ddd;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        /* 左側控制面板 */
-        #sidebar {
-            width: 400px;
-            min-width: 320px;
-            max-width: 800px;
-            background-color: #1e1e1e;
-            padding: 15px;
-            padding-top: 60px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 10;
-            overflow-y: auto;
-            flex-shrink: 0;
-            box-sizing: border-box;
-        }
-
-        /* 拖曳調整桿 */
-        #resizer {
-            width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0;
-            display: flex; justify-content: center; align-items: center;
-        }
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
+        #sidebar { width: 400px; min-width: 320px; max-width: 800px; background-color: #1e1e1e; padding: 15px; padding-top: 60px; display: flex; flex-direction: column; gap: 12px; z-index: 10; overflow-y: auto; flex-shrink: 0; box-sizing: border-box; }
+        #resizer { width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
         #resizer::after { content: ""; width: 2px; height: 30px; background: #444; }
         #resizer:hover, #resizer.active { background: #1976D2; }
-
-        /* 右側畫布區 */
-        #main-area {
-            flex-grow: 1; background-color: #222;
-            display: flex; justify-content: center; align-items: center;
-            overflow: auto; padding: 20px; cursor: default;
-        }
-
-        /* 文字與輸入框樣式 */
+        #main-area { flex-grow: 1; background-color: #222; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; cursor: default; }
+        
+        /* 元件樣式 */
         h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
         h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
-        
         .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
         label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
+        input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
         
-        input[type="text"], input[type="number"], select {
-            background: #333; border: 1px solid #555; color: white;
-            padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px;
-        }
-
-        /* --- 層次列表 --- */
+        /* 列表與按鈕 */
         #layer-list { display: flex; flex-direction: column; gap: 6px; }
-        
-        .layer-item {
-            background: #333; border-radius: 4px; padding: 6px;
-            border-left: 4px solid #666; font-size: 13px;
-            cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
-        }
+        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; cursor: grab; transition: transform 0.2s, box-shadow 0.2s; }
         .layer-item.dragging { opacity: 0.5; border: 2px dashed #888; }
-        
         .layer-main-row { display: flex; align-items: center; gap: 6px; }
         .drag-handle { cursor: grab; color: #666; font-size: 16px; padding: 0 4px; }
-        .drag-handle:hover { color: #fff; }
-
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
-
-        .layer-details {
-            display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555;
-            grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end;
-        }
+        .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
         .layer-item.open .layer-details { display: grid; }
-        
-        .btn-toggle-details {
-            cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a;
-        }
-        .btn-toggle-details:hover { background: #444; color: white; }
+        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; }
         .btn-toggle-details.active { background: #1976D2; color: white; }
-
         input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
         .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
         .btn-del:hover { color: #ff5252; }
-
-        /* 標註清單 */
-        .dim-item {
-            background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px;
-            border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; color: #bbb;
-        }
-
-        button {
-            padding: 8px; font-size: 13px; cursor: pointer;
-            background-color: #444; color: white;
-            border: 1px solid #555; border-radius: 4px; width: 100%;
-            transition: 0.2s; margin-top: 5px;
-        }
+        .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
+        
+        button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
         button:hover { background-color: #666; }
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
         .btn-img { background-color: #1976D2; border-color: #1565C0; }
         .btn-add { background-color: #43A047; border-color: #2E7D32; }
-        .btn-save-local { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
-        .btn-del-local { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
+        
+        /* 雲端專案按鈕 */
+        .btn-save-cloud { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
+        .btn-save-cloud:hover { background-color: #26A69A; }
+        .btn-del-cloud { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
+        .btn-del-cloud:hover { background-color: #ef5350; }
 
-        .home-btn {
-            position: absolute; top: 15px; left: 15px;
-            text-decoration: none; background: #444; padding: 6px 12px;
-            border-radius: 20px; color: #fff; font-size: 12px;
-            border: 1px solid #666; z-index: 100;
-        }
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
+        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
 
-        /* 隱藏的檔案上傳輸入框 */
+        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
         #fileInput { display: none; }
-
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; }
+        
+        /* 載入遮罩 */
+        #loading-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7); color: white; display: none;
+            justify-content: center; align-items: center; z-index: 999; flex-direction: column;
+        }
     </style>
 </head>
 <body>
 
+    <div id="loading-overlay">
+        <div style="font-size: 24px;">☁️ 正在連線至雲端資料庫...</div>
+    </div>
+
     <a href="index.html" class="home-btn">🏠 回首頁</a>
 
     <div id="sidebar">
-        <h2>📚 疊構資料庫</h2>
+        <h2>📚 疊構資料庫 (Cloud)</h2>
 
         <div class="control-group" style="border-color: #00897B;">
-            <label style="color:#80CBC4">💾 專案存取</label>
+            <label style="color:#80CBC4">☁️ 雲端專案存取</label>
             <div style="display:flex; gap:5px; margin-bottom:5px;">
-                <input type="text" id="projName" placeholder="輸入名稱 (例: Type-C)" style="flex:1">
-                <button class="btn-save-local" onclick="saveToLocal()">儲存</button>
+                <input type="text" id="projName" placeholder="輸入名稱 (例: 5層板A款)" style="flex:1">
+                <button class="btn-save-cloud" onclick="window.saveToCloud()">儲存</button>
             </div>
             <div style="display:flex; gap:5px;">
-                <select id="savedProjects" onchange="loadFromLocal()" style="flex:1">
-                    <option value="">-- 選擇專案 --</option>
+                <select id="savedProjects" onchange="window.loadFromCloud()" style="flex:1">
+                    <option value="">-- 連線中 --</option>
                 </select>
-                <button class="btn-del-local" onclick="deleteFromLocal()" title="刪除">🗑️</button>
+                <button class="btn-del-cloud" onclick="window.deleteFromCloud()" title="刪除選定專案">🗑️</button>
             </div>
         </div>
         
         <div class="project-btns">
-            <button class="btn-clear" onclick="newProject()">📄 清空</button>
-            <button class="btn-proj" onclick="exportJSON()">📤 備份</button>
+            <button class="btn-clear" onclick="window.newProject()">📄 清空</button>
+            <button class="btn-proj" onclick="window.exportJSON()">📤 備份</button>
             <button class="btn-proj" onclick="document.getElementById('fileInput').click()">📥 讀取</button>
-            <input type="file" id="fileInput" accept=".json" onchange="importJSON(this)">
+            <input type="file" id="fileInput" accept=".json" onchange="window.importJSON(this)">
         </div>
 
         <div class="control-group">
             <label>全域設定</label>
             <div style="display:flex; gap:5px;">
-                <input type="text" id="unitInput" value="um" placeholder="單位" oninput="draw()" style="flex:1">
-                <input type="number" id="canvasWidth" value="450" placeholder="寬" oninput="resizeCanvas()" style="flex:1">
-                <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="draw()" style="flex:1">
+                <input type="text" id="unitInput" value="um" placeholder="單位" oninput="window.draw()" style="flex:1">
+                <input type="number" id="canvasWidth" value="450" placeholder="寬" oninput="window.resizeCanvas()" style="flex:1">
+                <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="window.draw()" style="flex:1">
             </div>
         </div>
 
-        <h3>1. 層次 (可拖曳)</h3>
-        <button class="btn-add" onclick="addLayer()">➕ 新增一層 (Top)</button>
+        <h3>1. 層次 (可拖曳排序)</h3>
+        <button class="btn-add" onclick="window.addLayer()">➕ 新增一層 (Top)</button>
         
         <div id="layer-list" style="margin-top:5px;"></div>
 
-        <h3>2. 標註 (可拖曳)</h3>
+        <h3>2. 標註 (拖曳紅線調整)</h3>
         <div class="control-group">
             <div style="display:flex; gap:5px; margin-bottom:5px;">
                 <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
@@ -178,95 +120,92 @@
                 <input type="text" id="dimLabel" placeholder="文字 (選填)">
                 <input type="number" id="dimOffset" value="50" placeholder="偏移">
             </div>
-            <button onclick="addDimension()">➕ 新增標註</button>
+            <button onclick="window.addDimension()">➕ 新增標註</button>
         </div>
         <div id="dim-list" style="margin-top:5px;"></div>
 
         <div style="margin-top: auto;"></div>
         
         <h3>3. 輸出</h3>
-        <button class="btn-img" onclick="downloadImage()">💾 下載圖片 (PNG)</button>
-        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (完整版)</button>
+        <button class="btn-img" onclick="window.downloadImage()">💾 下載圖片 (PNG)</button>
+        <button class="btn-ppt" onclick="window.downloadPPT()">📊 下載 PPT (完整版)</button>
     </div>
 
     <div id="resizer"></div>
+    <div id="main-area"><canvas id="stackCanvas"></canvas></div>
 
-    <div id="main-area">
-        <canvas id="stackCanvas"></canvas>
-    </div>
+    <script type="module">
+        // ---------------------------------------------------------
+        // 1. Firebase 設定區
+        // ---------------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
+               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <script>
-        const canvas = document.getElementById('stackCanvas');
-        const ctx = canvas.getContext('2d');
-        const listEl = document.getElementById('layer-list');
-        const dimListEl = document.getElementById('dim-list');
-        const STORAGE_KEY = 'stack_diagram_projects';
-        const LAST_PROJECT_KEY = 'stack_diagram_last_active'; // 紀錄最後開啟的專案
+        // ★★★ 請將下方換成你的 Firebase Config ★★★
+        const firebaseConfig = {
+          apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+          authDomain: "stack-diagram-db.firebaseapp.com",
+          projectId: "stack-diagram-db",
+          storageBucket: "stack-diagram-db.firebasestorage.app",
+          messagingSenderId: "67240747982",
+          appId: "1:67240747982:web:1fb065e40e936a7485419f",
+          measurementId: "G-QJNE60W8BB"
+        };
 
-        let layers = [];
-        let dimensions = [];
-        let dragTargetType = null; 
-        let dragIndex = -1;
-        let isDraggingCanvas = false;
-        let lastMouseY = 0; let lastMouseX = 0;
-        let hitRegions = { layers: [], dims: [] };
+        // 初始化 Firebase
+        let db = null;
+        let COLLECTION_NAME = "projects";
+        let isFirebaseReady = false;
 
-        const sidebar = document.getElementById('sidebar');
-        const resizer = document.getElementById('resizer');
-        let isResizingSidebar = false;
-
-        // --- 初始化邏輯 (關鍵更新) ---
-        // 1. 先讀取專案列表
-        refreshProjectList(); 
-        
-        // 2. 檢查是否有「上次編輯的專案」
-        const lastProj = localStorage.getItem(LAST_PROJECT_KEY);
-        const projects = getStoredProjects();
-
-        if (lastProj && projects[lastProj]) {
-            // 如果有上次的紀錄，且該專案還存在 -> 自動載入
-            document.getElementById('savedProjects').value = lastProj;
-            loadFromLocal();
-        } else if (Object.keys(projects).length > 0) {
-            // 如果沒有上次紀錄，但有其他專案 -> 載入第一個
-            const firstProj = Object.keys(projects)[0];
-            document.getElementById('savedProjects').value = firstProj;
-            loadFromLocal();
-        } else {
-            // 完全沒有任何專案 -> 載入預設範例
-            loadExample(true); 
-        }
-        
-        // --- 本機專案資料庫 ---
-        function getStoredProjects() {
-            const str = localStorage.getItem(STORAGE_KEY);
-            return str ? JSON.parse(str) : {};
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            isFirebaseReady = true;
+            console.log("Firebase initialized");
+        } catch(e) {
+            console.error("Firebase init error:", e);
+            alert("Firebase 連線失敗，請檢查 Config");
         }
 
-        function refreshProjectList() {
-            const projects = getStoredProjects();
+        // ---------------------------------------------------------
+        // 2. 雲端存取函式
+        // ---------------------------------------------------------
+        
+        // 讀取列表
+        window.refreshProjectList = async function() {
+            if(!isFirebaseReady) return;
             const select = document.getElementById('savedProjects');
-            const currentVal = select.value; // 記住目前選的，避免重繪後跑掉
-            
-            select.innerHTML = '<option value="">-- 選擇專案 --</option>';
-            
-            Object.keys(projects).forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.innerText = name;
-                select.appendChild(opt);
-            });
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">載入中...</option>';
 
-            if (currentVal && projects[currentVal]) select.value = currentVal;
-        }
+            try {
+                const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
+                select.innerHTML = '<option value="">-- 選擇雲端專案 --</option>';
+                
+                querySnapshot.forEach((doc) => {
+                    const opt = document.createElement('option');
+                    opt.value = doc.id;
+                    opt.innerText = doc.id;
+                    select.appendChild(opt);
+                });
 
-        function saveToLocal() {
+                if (currentVal) select.value = currentVal;
+            } catch (e) {
+                console.error("List error:", e);
+                select.innerHTML = '<option value="">讀取失敗</option>';
+            }
+        };
+
+        // 儲存
+        window.saveToCloud = async function() {
+            if(!isFirebaseReady) return;
             const name = document.getElementById('projName').value.trim();
             if (!name) { alert("請輸入專案名稱！"); return; }
             
             const config = {
-                layers: layers,
-                dimensions: dimensions,
+                layers: window.layers,
+                dimensions: window.dimensions,
                 settings: {
                     unit: document.getElementById('unitInput').value,
                     width: document.getElementById('canvasWidth').value,
@@ -275,85 +214,108 @@
                 timestamp: Date.now()
             };
 
-            const projects = getStoredProjects();
-            if(projects[name] && !confirm(`專案 "${name}" 已存在，確定要覆蓋嗎？`)) return;
+            // 簡單覆蓋提示 (需先讀取檢查是否存在比較嚴謹，這裡簡化)
+            if(!confirm(`確定要將 "${name}" 儲存到雲端嗎？`)) return;
 
-            projects[name] = config;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            
-            // 記住這是最後操作的專案
-            localStorage.setItem(LAST_PROJECT_KEY, name);
-            
-            refreshProjectList();
-            document.getElementById('savedProjects').value = name;
-            alert(`專案 "${name}" 儲存成功！下次開啟會自動載入。`);
-        }
+            showLoading(true);
+            try {
+                await setDoc(doc(db, COLLECTION_NAME, name), config);
+                alert("✅ 雲端儲存成功！");
+                await window.refreshProjectList();
+                document.getElementById('savedProjects').value = name;
+            } catch (e) {
+                alert("儲存失敗：" + e.message);
+            }
+            showLoading(false);
+        };
 
-        function loadFromLocal() {
+        // 載入
+        window.loadFromCloud = async function() {
+            if(!isFirebaseReady) return;
             const name = document.getElementById('savedProjects').value;
             if (!name) return;
 
-            const projects = getStoredProjects();
-            const config = projects[name];
-            if (config) {
-                applyConfig(config);
-                document.getElementById('projName').value = name;
-                // 記住狀態
-                localStorage.setItem(LAST_PROJECT_KEY, name);
+            showLoading(true);
+            try {
+                const docSnap = await getDoc(doc(db, COLLECTION_NAME, name));
+                if (docSnap.exists()) {
+                    window.applyConfig(docSnap.data());
+                    document.getElementById('projName').value = name;
+                } else {
+                    alert("找不到該專案");
+                }
+            } catch (e) {
+                alert("載入失敗：" + e.message);
             }
-        }
+            showLoading(false);
+        };
 
-        function deleteFromLocal() {
+        // 刪除
+        window.deleteFromCloud = async function() {
+            if(!isFirebaseReady) return;
             const name = document.getElementById('savedProjects').value;
-            if (!name) { alert("請先選擇要刪除的專案"); return; }
-            if (!confirm(`確定要永久刪除 "${name}" 嗎？`)) return;
+            if (!name) return;
+            if(!confirm(`確定要永久刪除雲端上的 "${name}" 嗎？`)) return;
 
-            const projects = getStoredProjects();
-            delete projects[name];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            
-            // 如果刪除的是當前專案，清除最後紀錄
-            if(localStorage.getItem(LAST_PROJECT_KEY) === name) {
-                localStorage.removeItem(LAST_PROJECT_KEY);
+            showLoading(true);
+            try {
+                await deleteDoc(doc(db, COLLECTION_NAME, name));
+                document.getElementById('projName').value = "";
+                await window.refreshProjectList();
+            } catch (e) {
+                alert("刪除失敗：" + e.message);
             }
-            
-            document.getElementById('projName').value = "";
-            refreshProjectList();
-            
-            // 刪除後如果還有其他專案，載入第一個；否則清空
-            const remaining = Object.keys(projects);
-            if(remaining.length > 0) {
-                document.getElementById('savedProjects').value = remaining[0];
-                loadFromLocal();
-            } else {
-                newProject(true); // 強制清空不詢問
-            }
+            showLoading(false);
+        };
+
+        function showLoading(show) {
+            document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
         }
 
-        function newProject(force=false) {
-            if(!force && !confirm("確定清空畫面？")) return;
-            layers = []; dimensions = [];
-            document.getElementById('projName').value = "";
-            document.getElementById('savedProjects').value = "";
-            localStorage.removeItem(LAST_PROJECT_KEY); // 清除記憶
-            renderList(); draw();
+        // 初始化執行
+        if(isFirebaseReady) {
+            window.refreshProjectList();
         }
+    </script>
 
-        // --- 以下為通用功能 (保持不變) ---
-        function applyConfig(config) {
-            layers = config.layers || [];
-            dimensions = config.dimensions || [];
+    <script>
+        // --- 變數與初始化 ---
+        const canvas = document.getElementById('stackCanvas');
+        const ctx = canvas.getContext('2d');
+        const listEl = document.getElementById('layer-list');
+        const dimListEl = document.getElementById('dim-list');
+
+        // 將變數掛載到 window 以便模組存取
+        window.layers = [];
+        window.dimensions = [];
+
+        let dragTargetType = null, dragIndex = -1, isDraggingCanvas = false;
+        let lastMouseY = 0, lastMouseX = 0;
+        let hitRegions = { layers: [], dims: [] };
+
+        const sidebar = document.getElementById('sidebar');
+        const resizer = document.getElementById('resizer');
+        let isResizingSidebar = false;
+
+        // 預設載入範例
+        loadExample(true);
+
+        // --- 核心操作函式 (掛載到 window) ---
+        
+        window.applyConfig = function(config) {
+            window.layers = config.layers || [];
+            window.dimensions = config.dimensions || [];
             if(config.settings) {
                 document.getElementById('unitInput').value = config.settings.unit || "um";
                 document.getElementById('canvasWidth').value = config.settings.width || 450;
                 document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
             }
             resizeCanvas(); renderList(); draw();
-        }
+        };
 
-        function exportJSON() {
+        window.exportJSON = function() {
             const config = {
-                layers: layers, dimensions: dimensions,
+                layers: window.layers, dimensions: window.dimensions,
                 settings: {
                     unit: document.getElementById('unitInput').value,
                     width: document.getElementById('canvasWidth').value,
@@ -362,26 +324,33 @@
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
             const link = document.createElement('a'); link.href = dataStr; link.download = "stack_backup.json"; link.click();
-        }
+        };
         
-        function importJSON(input) {
+        window.importJSON = function(input) {
             const file = input.files[0]; if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const config = JSON.parse(e.target.result);
-                    applyConfig(config);
-                    alert("讀取成功");
+                    window.applyConfig(config);
                 } catch(err) { alert("格式錯誤"); }
                 input.value = '';
             };
             reader.readAsText(file);
-        }
+        };
 
-        // --- Render UI ---
+        window.newProject = function() {
+            if(!confirm("確定清空？")) return;
+            window.layers = []; window.dimensions = [];
+            document.getElementById('projName').value = "";
+            document.getElementById('savedProjects').value = "";
+            renderList(); draw();
+        };
+
+        // --- 列表渲染 ---
         function renderList() {
             listEl.innerHTML = ''; updateDimSelects();
-            layers.forEach((layer, index) => {
+            window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
                 item.className = 'layer-item';
                 if(layer.showDetails) item.classList.add('open');
@@ -411,7 +380,7 @@
                 item.addEventListener('drop', e => {
                     e.preventDefault(); const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
                     if (fromIdx !== index) {
-                        const moved = layers.splice(fromIdx, 1)[0]; layers.splice(index, 0, moved);
+                        const moved = window.layers.splice(fromIdx, 1)[0]; window.layers.splice(index, 0, moved);
                         renderList(); draw();
                     }
                 });
@@ -419,17 +388,19 @@
             });
         }
 
-        function updateLayer(index, key, value) {
+        // 把這些輔助函式也掛載到 window，因為 HTML onclick 會呼叫它們
+        window.updateLayer = function(index, key, value) {
             if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0;
-            layers[index][key] = value;
+            window.layers[index][key] = value;
             if(key === 'color') renderList(); draw();
-        }
-        function toggleDetails(index) { layers[index].showDetails = !layers[index].showDetails; renderList(); }
-        function addLayer() { layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); renderList(); draw(); }
-        function deleteLayer(index) { layers.splice(index, 1); renderList(); draw(); }
+        };
+        window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; renderList(); };
+        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); renderList(); draw(); };
+        window.deleteLayer = function(index) { window.layers.splice(index, 1); renderList(); draw(); };
+        
         function loadExample(silent = false) {
             if(!silent && !confirm("確定覆蓋設定？")) return;
-            layers = [
+            window.layers = [
                 { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' },
                 { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' },
                 { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' },
@@ -438,40 +409,40 @@
                 { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' },
                 { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' }
             ];
-            dimensions = []; addDimensionByLogic(0, layers.length-1, "", 80); renderList(); draw();
+            window.dimensions = []; window.addDimensionByLogic(0, window.layers.length-1, "", 80); renderList(); draw();
         }
 
         function updateDimSelects() {
             const s1 = document.getElementById('dimStart'); const s2 = document.getElementById('dimEnd');
             const v1 = s1.value; const v2 = s2.value;
             s1.innerHTML = ''; s2.innerHTML = '';
-            layers.forEach((l, i) => {
+            window.layers.forEach((l, i) => {
                 const opt = `<option value="${i}">${i+1}. ${l.name}</option>`;
                 s1.innerHTML += opt; s2.innerHTML += opt;
             });
-            if(v1) s1.value = v1; if(v2) s2.value = v2; else if(layers.length>0) s2.value = layers.length-1;
+            if(v1) s1.value = v1; if(v2) s2.value = v2; else if(window.layers.length>0) s2.value = window.layers.length-1;
         }
-        function addDimension() {
+        window.addDimension = function() {
             const s = parseInt(document.getElementById('dimStart').value); const e = parseInt(document.getElementById('dimEnd').value);
             const txt = document.getElementById('dimLabel').value; const off = parseInt(document.getElementById('dimOffset').value) || 50;
-            addDimensionByLogic(s, e, txt, off);
-        }
-        function addDimensionByLogic(s, e, l, o) { dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); draw(); }
+            window.addDimensionByLogic(s, e, txt, off);
+        };
+        window.addDimensionByLogic = function(s, e, l, o) { window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); draw(); };
+        
         function renderDims() {
             dimListEl.innerHTML = '';
-            dimensions.forEach((d, i) => {
-                const sName = layers[d.start]?.name||'?'; const eName = layers[d.end]?.name||'?';
+            window.dimensions.forEach((d, i) => {
+                const sName = window.layers[d.start]?.name||'?'; const eName = window.layers[d.end]?.name||'?';
                 const div = document.createElement('div'); div.className = 'dim-item';
                 div.innerHTML = `<span>${sName}~${eName} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="deleteDim(${i})">×</span>`;
                 dimListEl.appendChild(div);
             });
         }
-        function deleteDim(i) { dimensions.splice(i, 1); renderDims(); draw(); }
+        window.deleteDim = function(i) { window.dimensions.splice(i, 1); renderDims(); draw(); };
 
         // --- Canvas Interactions ---
         canvas.addEventListener('mousedown', e => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+            const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             for (let i = 0; i < hitRegions.dims.length; i++) {
                 const d = hitRegions.dims[i];
                 if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) {
@@ -497,13 +468,14 @@
             }
             const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             if (dragTargetType === 'dimension') {
-                const dx = lastMouseX - x; dimensions[dragIndex].offset += dx; if(dimensions[dragIndex].offset < 20) dimensions[dragIndex].offset = 20;
+                const dx = lastMouseX - x; window.dimensions[dragIndex].offset += dx; 
+                if(window.dimensions[dragIndex].offset < 20) window.dimensions[dragIndex].offset = 20;
                 lastMouseX = x; draw(); renderDims();
             } else if (dragTargetType === 'layer') {
                 let hoveredIndex = -1;
                 for (let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
                 if (hoveredIndex !== -1 && hoveredIndex !== dragIndex) {
-                    const temp = layers[dragIndex]; layers[dragIndex] = layers[hoveredIndex]; layers[hoveredIndex] = temp;
+                    const temp = window.layers[dragIndex]; window.layers[dragIndex] = window.layers[hoveredIndex]; window.layers[hoveredIndex] = temp;
                     dragIndex = hoveredIndex; renderList(); draw();
                 }
                 lastMouseY = y;
@@ -511,23 +483,23 @@
         });
         window.addEventListener('mouseup', () => { isDraggingCanvas = false; dragTargetType = null; document.body.style.cursor = 'default'; canvas.style.cursor = 'default'; });
 
-        function resizeCanvas() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; draw(); }
+        window.resizeCanvas = function() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; draw(); };
         
-        function draw() {
+        window.draw = function() {
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
-            const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
+            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) return;
-            let maxOffset = 20; dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
             const padding = { top: 40, bottom: 40, left: maxOffset + 40, right: 20 };
             const drawWidth = canvas.width - padding.left - padding.right;
-            const availableHeight = Math.max(500, layers.length * 40);
+            const availableHeight = Math.max(500, window.layers.length * 40);
             canvas.height = availableHeight + padding.top + padding.bottom;
             const scale = availableHeight / totalThickness;
             ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.textAlign = "center"; ctx.textBaseline = "middle";
             hitRegions.layers = []; hitRegions.dims = []; let currentY = padding.top; let yPositions = [];
 
-            layers.forEach((layer, idx) => {
+            window.layers.forEach((layer, idx) => {
                 const h = layer.thickness * scale;
                 hitRegions.layers.push({ index: idx, y: currentY, h: h }); yPositions.push({ top: currentY, bottom: currentY + h });
                 ctx.fillStyle = layer.color; ctx.fillRect(padding.left, currentY, drawWidth, h);
@@ -542,16 +514,17 @@
                 }
                 currentY += h;
             });
-            dimensions.forEach((dim, idx) => {
+            window.dimensions.forEach((dim, idx) => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
                 const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom; const h = y2 - y1;
-                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
                 const x = padding.left - dim.offset;
                 hitRegions.dims.push({ index: idx, x: x, yStart: y1, yEnd: y2 });
                 drawDimensionLine(x, y1, h, txt);
             });
-        }
+        };
+        
         function drawDimensionLine(x, yStart, height, text) {
             ctx.strokeStyle = "#D32F2F"; ctx.fillStyle = "#D32F2F"; ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
             ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x, yStart + height); ctx.stroke();
@@ -571,28 +544,31 @@
         }
         function cleanHex(hex) { if(!hex) return "FFFFFF"; return hex.replace('#', '').toUpperCase(); }
         
+        // Resize Sidebar
         resizer.addEventListener('mousedown', () => { isResizingSidebar = true; resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
         window.addEventListener('mousemove', (e) => { if (!isResizingSidebar) return; let w = e.clientX; if (w < 320) w = 320; if (w > 800) w = 800; sidebar.style.width = w + 'px'; });
         window.addEventListener('mouseup', () => { isResizingSidebar = false; resizer.classList.remove('active'); document.body.style.cursor = 'default'; });
-        function downloadImage() { const link = document.createElement('a'); link.download = 'stack_diagram.png'; link.href = canvas.toDataURL(); link.click(); }
 
-        function downloadPPT() {
+        window.downloadImage = function() { const link = document.createElement('a'); link.download = 'stack_diagram.png'; link.href = canvas.toDataURL(); link.click(); };
+
+        window.downloadPPT = function() {
             let pres = new PptxGenJS();
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
-            const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
+            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
-            let maxOffset = 20; dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
             const pptPaddingLeft = maxOffset + 150; const pptPaddingTop = 50;
             const scaleFactor = 100; const contentWidth = canvas.width - (maxOffset + 40) - 20; 
             const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
-            const availableHeightPx = Math.max(500, layers.length * 40);
+            const availableHeightPx = Math.max(500, window.layers.length * 40);
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
             pres.defineLayout({ name:'CUST', width: slideW, height: slideH }); pres.layout = 'CUST';
             let slide = pres.addSlide();
             let currentYPx = pptPaddingTop; let yPositions = [];
-            layers.forEach(layer => {
+            
+            window.layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
                 const x = pptPaddingLeft / scaleFactor; const y = currentYPx / scaleFactor; const w = contentWidth / scaleFactor; const h = hPx / scaleFactor;
                 yPositions.push({ top: y, bottom: y + h });
@@ -604,11 +580,11 @@
                 slide.addText(textContent, { x: x, y: y, w: w, h: h, color: txtColor, fontSize: fs, align: 'center', valign: 'middle', bold: isBold });
                 currentYPx += hPx;
             });
-            dimensions.forEach(dim => {
+            window.dimensions.forEach(dim => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
                 const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom;
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
-                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
                 slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0, h: y2 - y1, line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' } });
                 const connectorLen = 0.15;
@@ -618,7 +594,7 @@
                 slide.addText(txt, { x: xLine - textWidth - 0.1, y: (y1 + y2)/2 - 0.3, w: textWidth, h: 0.6, color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle' });
             });
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
-        }
+        };
     </script>
 </body>
 </html>
