@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cutting 3D Simulator v4.9 (Project & Measure)</title>
+    <title>Cutting 3D Simulator v5.1 (Measure & Vis)</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; }
         
-        /* --- 左側側欄 --- */
+        /* 側欄 */
         #sidebar {
             position: absolute; top: 0; left: 0; width: 380px; height: 100vh;
             background: rgba(30, 30, 30, 0.95); overflow-y: auto; padding: 0;
@@ -17,12 +17,23 @@
 
         .header-area { padding: 12px 15px; background: #1a1a1a; border-bottom: 1px solid #444; }
         .app-title { color: #4FC3F7; font-size: 18px; margin: 0 0 8px 0; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 顯示隱藏控制列 */
+        .vis-bar { display: flex; gap: 5px; margin-bottom: 10px; background: #222; padding: 5px; border-radius: 4px; border: 1px solid #444; }
+        .vis-btn { 
+            flex: 1; padding: 4px; font-size: 16px; cursor: pointer; border: 1px solid #555; 
+            background: #333; color: #666; border-radius: 3px; text-align: center; transition:0.2s;
+        }
+        .vis-btn:hover { background: #444; }
+        .vis-btn.active { background: #00E676; color: #000; border-color: #00E676; }
+        .vis-btn.active::after { content: ''; } /* Remove strikethrough logic visual, rely on color */
+
         .obj-select {
             width: 100%; padding: 8px; font-size: 15px; font-weight: bold;
             background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;
         }
 
-        /* --- 分頁與內容 --- */
+        /* 分頁 */
         .tabs { display: flex; background: #222; border-bottom: 1px solid #444; }
         .tab-btn {
             flex: 1; padding: 10px 0; background: #222; color: #888; border: none;
@@ -32,15 +43,15 @@
         .tab-content { padding: 15px; display: none; overflow-y: auto; flex: 1; }
         .tab-content.active { display: block; }
 
-        /* --- UI 元件 --- */
-        .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; margin-bottom: 10px; position: relative; }
+        /* UI 元件 */
+        .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; margin-bottom: 10px; }
         .group-title { font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px; color: #aaa; }
         
         .row { display: flex; align-items: center; margin-bottom: 6px; gap: 5px; }
         .row-rot { background: rgba(255, 235, 59, 0.1); padding: 3px; border-radius: 4px; border: 1px solid rgba(255, 235, 59, 0.2); }
         
         label { flex: 0 0 60px; font-size: 12px; color: #ccc; text-align: right; margin-right: 5px;}
-        input[type="number"] { width: 55px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
+        input[type="number"] { width: 50px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
         input[type="range"] { flex: 1; cursor: pointer; height: 6px; }
         
         button.action-btn { width: 100%; padding: 8px; background: #00695C; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px;}
@@ -48,45 +59,38 @@
         
         .tool-btn { background: #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #666; color: white; font-size: 12px;}
         .tool-btn:hover { background: #666; }
-
-        /* 微調按鈕 */
-        .adj-btn { width: 24px; height: 24px; padding: 0; background: #444; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; }
         
-        /* --- 視角與 Gizmo --- */
+        /* 彈窗樣式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; justify-content: center; align-items: center; }
+        .modal { background: #222; width: 550px; max-height: 80vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; }
+        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; cursor: pointer; transition: 0.2s; align-items: center;}
+        .project-card:hover { border-color: #00E676; background: #3a3a3a; }
+        .project-thumb { width: 80px; height: 60px; background: #000; object-fit: cover; border-radius: 4px; }
+        .project-info { flex: 1; }
+        .default-badge { color: #FFD700; font-size: 18px; cursor: pointer; padding: 5px; }
+        .default-badge.inactive { color: #555; filter: grayscale(1); }
+
+        /* 視角與Gizmo */
         #view-controls { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 10; }
         .view-btn { width: 40px; height: 40px; background: rgba(50,50,50,0.8); color: white; border: 1px solid #666; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; }
-        .view-btn:hover { background: #4FC3F7; color: #000; }
-
+        
         #gizmo-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(30,30,30,0.9); padding: 10px; border-radius: 8px; border: 1px solid #555; width: 150px; z-index: 10;}
         .gizmo-row { display: flex; gap: 5px; margin-top: 5px;}
         .gizmo-btn { flex: 1; padding: 5px; font-size: 11px; cursor: pointer; background: #444; color: #ddd; border: 1px solid #666; border-radius: 4px; }
         .gizmo-btn.active { background: #FF9800; color: #000; border-color: #FF9800; }
 
-        /* --- 彈窗 (Modal) --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; justify-content: center; align-items: center; }
-        .modal { background: #222; width: 500px; max-height: 80vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; }
-        .modal h3 { margin: 0 0 10px 0; color: #4FC3F7; border-bottom: 1px solid #444; padding-bottom: 5px;}
-        .modal-body { overflow-y: auto; flex: 1; padding-right: 5px; }
-        
-        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; cursor: pointer; transition: 0.2s;}
-        .project-card:hover { border-color: #00E676; background: #3a3a3a; }
-        .project-thumb { width: 80px; height: 60px; background: #000; object-fit: cover; border-radius: 4px; }
-        .project-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .project-name { font-weight: bold; color: #fff; font-size: 14px; }
-        .project-desc { font-size: 12px; color: #aaa; }
-        .project-date { font-size: 10px; color: #666; margin-top: 4px; }
-        
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; pt: 10px; border-top: 1px solid #444;}
-
-        /* --- 浮動資訊 --- */
-        #info-overlay {
-            position: absolute; bottom: 20px; left: 400px; pointer-events: none;
-            color: rgba(255,255,255,0.7); font-size: 12px; font-family: monospace;
-            z-index: 10;
+        /* 浮動提示 */
+        #snap-hint {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 230, 118, 0.8); color: black; padding: 10px 20px;
+            border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30;
         }
-        .measure-label {
-            position: absolute; background: rgba(0,0,0,0.7); color: #00E676; padding: 2px 6px;
-            border-radius: 4px; font-size: 12px; pointer-events: none; font-weight: bold; border: 1px solid #00E676;
+        
+        /* 量測結果浮動窗 */
+        #measure-box {
+            position: absolute; bottom: 20px; left: 400px; 
+            background: rgba(0,0,0,0.8); border: 1px solid #00E676; color: #00E676;
+            padding: 10px; border-radius: 6px; font-family: monospace; display: none; z-index: 10;
         }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s; }
@@ -107,29 +111,33 @@
 <body>
 
 <div id="loader">🚀 系統啟動中...</div>
+<div id="snap-hint">🖱️ 請點擊任意表面進行吸附</div>
+
+<div id="measure-box">
+    <div>📏 距離: <span id="m-dist">0.00</span> mm</div>
+    <hr style="border-color:#333; margin:5px 0;">
+    <div>dX: <span id="m-dx">0.00</span></div>
+    <div>dY: <span id="m-dy">0.00</span></div>
+    <div>dZ: <span id="m-dz">0.00</span></div>
+</div>
 
 <div id="modal-save" class="modal-overlay">
     <div class="modal">
-        <h3>💾 儲存專案 (Save Project)</h3>
-        <label style="text-align:left;width:100%">專案名稱</label>
-        <input type="text" id="save-name" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white;">
-        <label style="text-align:left;width:100%">描述 / 備註</label>
-        <textarea id="save-desc" rows="3" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
-        <div class="modal-footer">
-            <button class="tool-btn" onclick="closeModal('modal-save')">取消</button>
-            <button class="action-btn" style="margin:0; width:auto; padding:8px 20px;" onclick="confirmSave()">確認儲存</button>
+        <h3 style="margin:0;color:#4FC3F7">💾 儲存專案</h3>
+        <input type="text" id="save-name" placeholder="專案名稱" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white;">
+        <textarea id="save-desc" rows="3" placeholder="描述..." style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+            <button class="tool-btn" onclick="document.getElementById('modal-save').style.display='none'">取消</button>
+            <button class="action-btn" style="margin:0; width:auto;" onclick="confirmSave()">儲存</button>
         </div>
     </div>
 </div>
 
 <div id="modal-load" class="modal-overlay">
     <div class="modal" style="height: 600px;">
-        <h3>📂 開啟專案 (Load Project)</h3>
-        <div id="project-list" class="modal-body">
-            </div>
-        <div class="modal-footer">
-            <button class="tool-btn" onclick="closeModal('modal-load')">關閉</button>
-        </div>
+        <h3 style="margin:0;color:#4FC3F7">📂 專案列表 (點擊★設為預設)</h3>
+        <div id="project-list" style="overflow-y:auto; flex:1; padding-right:5px;"></div>
+        <button class="tool-btn" onclick="document.getElementById('modal-load').style.display='none'" style="align-self:flex-end;">關閉</button>
     </div>
 </div>
 
@@ -143,8 +151,8 @@
 <div id="gizmo-panel">
     <div style="font-size:12px;color:#aaa;text-align:center">滑鼠操作</div>
     <div class="gizmo-row">
-        <button class="gizmo-btn" id="mode-translate" onclick="setGizmoMode('translate')">移動</button>
-        <button class="gizmo-btn active" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉</button>
+        <button class="gizmo-btn" id="mode-translate" onclick="setGizmoMode('translate')">移動 Move</button>
+        <button class="gizmo-btn active" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉 Rot</button>
     </div>
     <div style="font-size:12px;color:#aaa;text-align:center;margin-top:5px">軸向鎖定</div>
     <div class="gizmo-row">
@@ -153,30 +161,34 @@
         <button class="gizmo-btn" onclick="setGizmoAxis('Z')">Z</button>
     </div>
     <button class="gizmo-btn" onclick="setGizmoAxis(null)" style="width:100%;margin-top:2px">自由 (Free)</button>
-</div>
-
-<div id="info-overlay">
-    <div>Ctrl+Z: 復原 | Ctrl+Y: 重做</div>
-    <div id="measure-res" style="color:#00E676; font-weight:bold; display:none;">📏 距離: 0.00 mm</div>
+    <div style="font-size:10px;color:#666;margin-top:5px;text-align:center">吸附後請切換 Local</div>
 </div>
 
 <div id="sidebar">
     <div class="header-area">
         <div class="app-title">
-            <span>Cutting 3D v4.9</span>
+            <span>Cutting 3D v5.1</span>
             <div style="display:flex; gap:5px;">
-                <button class="tool-btn" onclick="undo()" title="復原 (Ctrl+Z)">↩️</button>
-                <button class="tool-btn" onclick="redo()" title="重做 (Ctrl+Y)">↪️</button>
+                <button class="tool-btn" onclick="initFromDefault()" title="初始化 (載入預設)">🔄 初始化</button>
                 <button class="tool-btn" onclick="openLoadModal()">📂</button>
                 <button class="tool-btn" style="background:#E65100" onclick="openSaveModal()">💾</button>
             </div>
         </div>
+        
+        <div class="vis-bar">
+            <div class="vis-btn active" onclick="toggleVis('jig',this)" title="顯示/隱藏 治具">📐</div>
+            <div class="vis-btn active" onclick="toggleVis('sample',this)" title="顯示/隱藏 樣品">🧊</div>
+            <div class="vis-btn active" onclick="toggleVis('blade',this)" title="顯示/隱藏 刀具">🔪</div>
+            <div class="vis-btn active" onclick="toggleVis('nozzle',this)" title="顯示/隱藏 噴頭">🚿</div>
+            <div class="vis-btn active" onclick="toggleVis('water',this)" title="顯示/隱藏 水流">💦</div>
+        </div>
+
         <div style="font-size:11px;color:#888;margin-bottom:5px;">目前編輯物件：</div>
         <select id="obj-selector" class="obj-select" onchange="changeSelection(this.value)">
-            <option value="jig">📐 Jig (治具)</option>
-            <option value="sample">🧊 Sample (樣品)</option>
-            <option value="blade">🔪 Blade (刀具)</option>
             <option value="nozzle">🚿 Nozzle (噴頭)</option>
+            <option value="blade">🔪 Blade (刀具)</option>
+            <option value="sample">🧊 Sample (樣品)</option>
+            <option value="jig">📐 Jig (治具)</option>
         </select>
     </div>
 
@@ -187,75 +199,74 @@
     </div>
 
     <div id="tab-dims" class="tab-content active">
-        <div id="dims-jig" class="group">
+        <div id="dims-jig" class="group" style="display:none">
             <span class="group-title">治具參數</span>
             <div class="row"><label>高度 H</label><input type="number" id="val_j_h" onchange="updateVal('j_h',this.value)"><input type="range" id="rng_j_h" min="1" max="100" step="0.1" oninput="updateVal('j_h',this.value)"></div>
             <div class="row"><label>角度 A</label><input type="number" id="val_j_a" onchange="updateVal('j_a',this.value)"><input type="range" id="rng_j_a" min="5" max="89" step="1" oninput="updateVal('j_a',this.value)"></div>
             <div class="row"><label>深度 Z</label><input type="number" id="val_j_w" onchange="updateVal('j_w',this.value)"><input type="range" id="rng_j_w" min="1" max="100" step="0.1" oninput="updateVal('j_w',this.value)"></div>
         </div>
-        <div id="dims-sample" class="group" style="display:none;">
-            <span class="group-title">樣品參數 (貼合斜面)</span>
+        <div id="dims-sample" class="group" style="display:none">
+            <span class="group-title">樣品參數</span>
             <div class="row"><label>長度 L</label><input type="number" id="val_s_l" onchange="updateVal('s_l',this.value)"><input type="range" id="rng_s_l" min="1" max="100" step="0.1" oninput="updateVal('s_l',this.value)"></div>
             <div class="row" id="row-s-th"><label>厚度 T</label><input type="number" id="val_s_th" onchange="updateVal('s_th',this.value)"><input type="range" id="rng_s_th" min="0.1" max="20" step="0.01" oninput="updateVal('s_th',this.value)"></div>
             <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
             <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
-            <div class="row row-rot"><label>自旋 R</label><input type="number" id="val_s_r" onchange="updateVal('s_r',this.value)"><input type="range" id="rng_s_r" min="-180" max="180" step="1" oninput="updateVal('s_r',this.value)"></div>
         </div>
-        <div id="dims-blade" class="group" style="display:none;">
+        <div id="dims-blade" class="group" style="display:none">
             <span class="group-title">刀具參數</span>
             <div class="row"><label>刀厚 X</label><input type="number" id="val_b_t" onchange="updateVal('b_t',this.value)"><input type="range" id="rng_b_t" min="0.01" max="10" step="0.01" oninput="updateVal('b_t',this.value)"></div>
             <div class="row"><label>刀寬 Z</label><input type="number" id="val_b_w" onchange="updateVal('b_w',this.value)"><input type="range" id="rng_b_w" min="1" max="100" step="0.1" oninput="updateVal('b_w',this.value)"></div>
             <div class="row"><label>切深 Y</label><input type="number" id="val_b_d" onchange="updateVal('b_d',this.value)"><input type="range" id="rng_b_d" min="0" max="100" step="0.1" oninput="updateVal('b_d',this.value)"></div>
         </div>
-        <div id="dims-nozzle" class="group" style="display:none;">
-            <span class="group-title">噴頭</span>
-            <div style="color:#888;font-size:12px;">噴頭為標準件，請使用 [變換] 分頁移動。</div>
+        <div id="dims-nozzle" class="group">
+            <span class="group-title">噴頭參數</span>
+            <div style="font-size:12px;color:#888;">標準噴頭，無尺寸設定。請使用變換工具移動。</div>
         </div>
     </div>
 
     <div id="tab-trans" class="tab-content">
+        <button id="btn-snap" class="action-btn" style="background:#FF9800; margin-bottom:10px;" onclick="toggleSnapMode()">🧲 開啟吸附對齊 (Snap)</button>
+        
         <div class="group">
-            <span class="group-title" style="color:#00E676;">位置 Position (mm)</span>
+            <span class="group-title" style="color:#00E676;">位置 (mm)</span>
             <div class="row"><label>X</label><input type="number" id="t_px" onchange="updateTransFromInput()"><input type="range" id="rg_px" min="-50" max="50" oninput="document.getElementById('t_px').value=this.value;updateTransFromInput()"></div>
             <div class="row"><label>Y</label><input type="number" id="t_py" onchange="updateTransFromInput()"><input type="range" id="rg_py" min="-50" max="50" oninput="document.getElementById('t_py').value=this.value;updateTransFromInput()"></div>
             <div class="row"><label>Z</label><input type="number" id="t_pz" onchange="updateTransFromInput()"><input type="range" id="rg_pz" min="-50" max="50" oninput="document.getElementById('t_pz').value=this.value;updateTransFromInput()"></div>
         </div>
         <div class="group">
-            <span class="group-title" style="color:#FFC107;">旋轉 Rotation (°)</span>
-            <div class="row row-rot"><label>X</label><input type="number" id="t_rx" onchange="updateTransFromInput()"><input type="range" id="rg_rx" min="-180" max="180" oninput="document.getElementById('t_rx').value=this.value;updateTransFromInput()"></div>
-            <div class="row row-rot"><label>Y</label><input type="number" id="t_ry" onchange="updateTransFromInput()"><input type="range" id="rg_ry" min="-180" max="180" oninput="document.getElementById('t_ry').value=this.value;updateTransFromInput()"></div>
-            <div class="row row-rot"><label>Z</label><input type="number" id="t_rz" onchange="updateTransFromInput()"><input type="range" id="rg_rz" min="-180" max="180" oninput="document.getElementById('t_rz').value=this.value;updateTransFromInput()"></div>
+            <span class="group-title" style="color:#FFC107;">旋轉 (°)</span>
+            <div class="row"><label>X</label><input type="number" id="t_rx" onchange="updateTransFromInput()"><input type="range" id="rg_rx" min="-180" max="180" oninput="document.getElementById('t_rx').value=this.value;updateTransFromInput()"></div>
+            <div class="row"><label>Y</label><input type="number" id="t_ry" onchange="updateTransFromInput()"><input type="range" id="rg_ry" min="-180" max="180" oninput="document.getElementById('t_ry').value=this.value;updateTransFromInput()"></div>
+            <div class="row"><label>Z</label><input type="number" id="t_rz" onchange="updateTransFromInput()"><input type="range" id="rg_rz" min="-180" max="180" oninput="document.getElementById('t_rz').value=this.value;updateTransFromInput()"></div>
         </div>
     </div>
 
     <div id="tab-sim" class="tab-content">
-        <button id="btn-measure" class="action-btn" style="background:#555; border:1px solid #777; margin-bottom:10px;" onclick="toggleMeasure()">📏 開啟量測模式</button>
+        <button id="btn-measure" class="action-btn" style="background:#555; border:1px solid #777; margin-bottom:10px;" onclick="toggleMeasure()">📏 開啟量測 (Dist)</button>
+
+        <div class="group" style="border-left: 3px solid #00B0FF;">
+            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
+            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
+            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
+            <div class="row"><label>擴散</label><input type="range" id="w_spread" min="0" max="45" value="5" oninput="waterSpread=this.value"></div>
+            <div class="row"><label>阻擋</label><select id="water-target" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample</option><option value="jig">Jig</option><option value="blade">Blade</option></select></div>
+        </div>
 
         <div class="group" style="border-left: 3px solid #FF9800;">
             <span class="group-title" style="color:#FF9800;">☁️ 雲端疊構</span>
             <select id="project-select" style="width:100%;margin-bottom:5px;background:#333;color:white;padding:5px;"><option value="">-- 連線中... --</option></select>
             <button class="action-btn" onclick="loadSelectedProject()">📥 載入疊構</button>
             <button class="action-btn" style="background:#D32F2F" onclick="unloadProject()">❌ 清除</button>
-            <div id="stack-info" style="font-size:11px; color:#aaa; margin-top:5px; display:none;">厚度: <span id="current-stack-th" style="color:#fff;">0</span> mm</div>
+            <div id="stack-info" style="font-size:11px; color:#aaa; margin-top:5px; display:none;">
+                厚度: <span id="current-stack-th" style="color:#fff;">0</span> mm
+            </div>
         </div>
 
         <div class="group">
             <span class="group-title">🎯 切割 Boolean</span>
-            <div class="row"><label>目標</label><select id="target-select" onchange="updateModel()" style="flex:1;background:#333;color:white;"><option value="none">不切割 (Preview)</option><option value="sample" selected>切樣品</option><option value="jig">切治具</option></select></div>
+            <div class="row"><label>目標</label><select id="target-select" onchange="updateModel()" style="flex:1;background:#333;color:white;"><option value="none">不切割</option><option value="sample" selected>切樣品</option><option value="jig">切治具</option></select></div>
             <button class="action-btn" style="background:#444" onclick="toggleWireframe()">切換網格</button>
-            <div style="margin-top:5px; font-size:12px; color:#00E676;">
-                相對深度: <span id="calc-depth">0.00</span> mm
-            </div>
         </div>
-
-        <div class="group" style="border-left: 3px solid #00B0FF;">
-            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
-            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
-            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
-            <div class="row"><label>阻擋</label><select id="water-target" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample</option><option value="jig">Jig</option><option value="blade">Blade</option></select></div>
-        </div>
-        
-        <div style="text-align:center; margin-top:10px;"><a href="./" style="color:#666;font-size:12px;">🏠 回首頁</a></div>
     </div>
 </div>
 
@@ -269,7 +280,7 @@
     import { initializeApp } from 'firebase-app';
     import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase-firestore';
 
-    // --- State & History ---
+    // --- State ---
     const defaultParams = {
         j_h: 5, j_a: 45, j_w: 20,
         s_t: 0.5, s_l: 10, s_th: 0.8, s_w: 15, s_r: 0,
@@ -284,167 +295,100 @@
 
     let params = {...defaultParams};
     let transforms = JSON.parse(JSON.stringify(defaultTransforms));
-    let currentObj = 'jig';
+    let currentObj = 'nozzle';
     let stackData = null;
     let waterEnabled = false;
-    let history = [];
-    let historyStep = -1;
-    let isSaving = false; // flag to prevent loop
+    let waterSpread = 5;
+    let snapMode = false;
 
-    // Undo/Redo
-    function recordState() {
-        if(isSaving) return;
-        // Remove future
-        if (historyStep < history.length - 1) {
-            history = history.slice(0, historyStep + 1);
+    // --- Init & Persistence ---
+    window.initFromDefault = () => {
+        const defId = localStorage.getItem('cutting3d_default_id');
+        if(defId) {
+            const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
+            const p = projects.find(x => x.id == defId);
+            if(p) { loadProject(p); return; }
         }
-        history.push(JSON.stringify({ params, transforms }));
-        if(history.length > 20) history.shift(); else historyStep++;
-    }
-    
-    // Initial record
-    setTimeout(() => recordState(), 1000);
-
-    window.undo = function() {
-        if (historyStep > 0) {
-            historyStep--;
-            applyState(history[historyStep]);
-        }
-    }
-    window.redo = function() {
-        if (historyStep < history.length - 1) {
-            historyStep++;
-            applyState(history[historyStep]);
-        }
+        params = {...defaultParams};
+        transforms = JSON.parse(JSON.stringify(defaultTransforms));
+        updateAllUI();
+        alert("已重置為原廠設定");
     }
 
-    function applyState(json) {
-        isSaving = true;
-        const state = JSON.parse(json);
-        params = state.params;
-        transforms = state.transforms;
-        // Update UI
-        Object.keys(params).forEach(k => {
-            const e1 = document.getElementById(`val_${k}`); if(e1) e1.value = params[k];
-            const e2 = document.getElementById(`rng_${k}`); if(e2) e2.value = params[k];
-        });
-        updateTransformUI();
-        updateModel();
-        applyTransforms();
-        isSaving = false;
-    }
-
-    document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
-    });
-
-    // --- Project Manager (LocalStorage) ---
     window.openSaveModal = () => {
-        // Screenshot
         renderer.render(scene, camera);
-        const thumb = renderer.domElement.toDataURL('image/jpeg', 0.5); // Low res
-        window.tempThumb = thumb;
-        document.getElementById('save-name').value = "My Setup " + new Date().toLocaleDateString();
-        document.getElementById('modal-save').style.display = 'flex';
+        window.tempThumb = renderer.domElement.toDataURL('image/jpeg', 0.5);
+        document.getElementById('save-name').value = "Project " + new Date().toLocaleDateString();
+        document.getElementById('modal-save').style.display='flex';
     }
-    window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-    
     window.confirmSave = () => {
         const name = document.getElementById('save-name').value;
         const desc = document.getElementById('save-desc').value;
-        if(!name) return alert("請輸入名稱");
-        
         const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-        projects.unshift({
-            id: Date.now(), name, desc, thumb: window.tempThumb,
-            data: { params, transforms, stackData }
-        });
+        projects.unshift({ id: Date.now(), name, desc, thumb: window.tempThumb, data: { params, transforms, stackData } });
         localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
-        alert("已儲存!");
-        closeModal('modal-save');
+        document.getElementById('modal-save').style.display='none';
+        alert("儲存成功");
     }
-
     window.openLoadModal = () => {
-        const list = document.getElementById('project-list');
-        list.innerHTML = '';
+        const list = document.getElementById('project-list'); list.innerHTML='';
         const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-        if(projects.length === 0) list.innerHTML = '<div style="padding:20px;text-align:center;color:#666">暫無存檔</div>';
+        const defId = localStorage.getItem('cutting3d_default_id');
         
         projects.forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'project-card';
+            const isDef = (p.id == defId);
+            const div = document.createElement('div'); div.className='project-card';
             div.innerHTML = `
+                <div class="default-badge ${isDef?'':'inactive'}" onclick="setDefault(${p.id}, event)" title="設為初始化預設">★</div>
                 <img src="${p.thumb}" class="project-thumb">
                 <div class="project-info">
-                    <div class="project-name">${p.name}</div>
-                    <div class="project-desc">${p.desc || ''}</div>
-                    <div class="project-date">${new Date(p.id).toLocaleString()}</div>
+                    <div style="font-weight:bold;color:white">${p.name}</div>
+                    <div style="font-size:12px;color:#aaa">${p.desc||''}</div>
                 </div>
-                <button class="tool-btn" style="background:#d32f2f;height:30px;align-self:center;" onclick="deleteProject(${p.id}, event)">🗑️</button>
+                <button class="tool-btn" style="background:#d32f2f" onclick="deleteProject(${p.id}, event)">🗑️</button>
             `;
-            div.onclick = (e) => { if(e.target.tagName!=='BUTTON') loadProject(p); };
+            div.onclick = (e) => { if(e.target.tagName!=='BUTTON' && !e.target.classList.contains('default-badge')) loadProject(p); };
             list.appendChild(div);
         });
-        document.getElementById('modal-load').style.display = 'flex';
+        document.getElementById('modal-load').style.display='flex';
     }
-
+    window.setDefault = (id, e) => {
+        e.stopPropagation();
+        const curr = localStorage.getItem('cutting3d_default_id');
+        if(curr == id) localStorage.removeItem('cutting3d_default_id'); 
+        else localStorage.setItem('cutting3d_default_id', id);
+        window.openLoadModal(); 
+    }
     window.loadProject = (p) => {
-        if(confirm(`載入專案 "${p.name}"?`)) {
-            params = p.data.params;
-            transforms = p.data.transforms;
-            stackData = p.data.stackData;
-            applyState(JSON.stringify(p.data)); // Reuse apply logic
-            closeModal('modal-load');
-            recordState();
-        }
+        params = p.data.params; transforms = p.data.transforms; stackData = p.data.stackData;
+        updateAllUI();
+        document.getElementById('modal-load').style.display='none';
     }
-
     window.deleteProject = (id, e) => {
         e.stopPropagation();
         if(!confirm("確定刪除?")) return;
         let projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
         projects = projects.filter(x => x.id !== id);
         localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
-        openLoadModal(); // Refresh
+        window.openLoadModal();
+    }
+
+    function updateAllUI() {
+        Object.keys(params).forEach(k => {
+            const e1=document.getElementById('val_'+k), e2=document.getElementById('rng_'+k);
+            if(e1) e1.value=params[k]; if(e2) e2.value=params[k];
+        });
+        updateTransformUI();
+        updateModel();
+        applyTransforms();
     }
 
     // --- Firebase ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-        authDomain: "stack-diagram-db.firebaseapp.com",
-        projectId: "stack-diagram-db",
-        storageBucket: "stack-diagram-db.firebasestorage.app",
-        messagingSenderId: "67240747982",
-        appId: "1:67240747982:web:1fb065e40e936a7485419f",
-        measurementId: "G-QJNE60W8BB"
-    };
+    const firebaseConfig = {apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI", authDomain: "stack-diagram-db.firebaseapp.com", projectId: "stack-diagram-db", storageBucket: "stack-diagram-db.firebasestorage.app", messagingSenderId: "67240747982", appId: "1:67240747982:web:1fb065e40e936a7485419f", measurementId: "G-QJNE60W8BB"};
     let db=null; try { const app=initializeApp(firebaseConfig); db=getFirestore(app); initProjectList(); } catch(e){}
-
-    async function initProjectList() {
-        const sel = document.getElementById('project-select');
-        try {
-            const snapshot = await getDocs(collection(db, "projects"));
-            sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>';
-            snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); });
-        } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; }
-    }
-    // ... loadSelectedProject same as before ... 
-    window.loadSelectedProject = async function() {
-        const id = document.getElementById('project-select').value;
-        if(!id) return;
-        const docSnap = await getDoc(doc(db, "projects", id));
-        if (docSnap.exists()) {
-            stackData = docSnap.data();
-            let totalThickMm=0; const scale=(stackData.settings?.unit==='mm')?1:0.001;
-            stackData.layers.forEach(l=>{totalThickMm+=l.thickness*scale});
-            document.getElementById('stack-info').style.display='block';
-            document.getElementById('current-stack-th').innerText=totalThickMm.toFixed(3);
-            document.getElementById('row-s-th').style.display='none';
-            updateModel(); recordState();
-        }
-    }
-    window.unloadProject = function() { stackData=null; document.getElementById('stack-info').style.display='none'; document.getElementById('row-s-th').style.display='flex'; updateModel(); recordState(); }
+    async function initProjectList() { /* ... same ... */ const sel = document.getElementById('project-select'); try { const snapshot = await getDocs(collection(db, "projects")); sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>'; snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); }); } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; } }
+    window.loadSelectedProject = async function() { const id = document.getElementById('project-select').value; if(!id) return; const docSnap = await getDoc(doc(db, "projects", id)); if (docSnap.exists()) { stackData = docSnap.data(); let totalThickMm=0; const scale=(stackData.settings?.unit==='mm')?1:0.001; stackData.layers.forEach(l=>{totalThickMm+=l.thickness*scale}); document.getElementById('stack-info').style.display='block'; document.getElementById('current-stack-th').innerText=totalThickMm.toFixed(3); document.getElementById('row-s-th').style.display='none'; updateModel(); } }
+    window.unloadProject = function() { stackData=null; document.getElementById('stack-info').style.display='none'; document.getElementById('row-s-th').style.display='flex'; updateModel(); }
 
     // --- UI Logic ---
     window.switchTab = (tab) => {
@@ -462,11 +406,7 @@
         ['jig','sample','blade','nozzle'].forEach(k => document.getElementById('dims-'+k).style.display=k===val?'block':'none');
         updateTransformUI();
     }
-    window.updateVal = (key, val) => {
-        params[key]=parseFloat(val); 
-        document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; 
-        updateModel(); 
-    }
+    window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); }
     function updateTransformUI() {
         const t=transforms[currentObj];
         document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
@@ -479,46 +419,47 @@
     }
     window.updateTransFromInput = () => {
         const t=transforms[currentObj];
-        t.px=parseFloat(document.getElementById('t_px').value);
-        t.py=parseFloat(document.getElementById('t_py').value);
-        t.pz=parseFloat(document.getElementById('t_pz').value);
-        t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180;
-        t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180;
-        t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
+        t.px=parseFloat(document.getElementById('t_px').value); t.py=parseFloat(document.getElementById('t_py').value); t.pz=parseFloat(document.getElementById('t_pz').value);
+        t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180; t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180; t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
         applyTransforms();
-        // Record state only on change end (not every input), but for now this is ok
     }
-    // Add event listener to record state on mouse up of range sliders
-    document.addEventListener('mouseup', e => {
-        if(e.target.type === 'range') recordState();
-    });
+    window.toggleVis = (name, btn) => {
+        let grp = null;
+        if(name==='jig') grp=jigGroup; if(name==='sample') grp=sampleGroup;
+        if(name==='blade') grp=bladeGroup; if(name==='nozzle') grp=nozzleGroup;
+        if(name==='water') grp=waterSystem;
+        if(grp) {
+            grp.visible = !grp.visible;
+            if(grp.visible) btn.classList.add('active'); else btn.classList.remove('active');
+        }
+    }
 
     // --- 3D Scene ---
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene(); scene.background = new THREE.Color(0x222222);
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
     camera.position.set(35,35,45); camera.lookAt(0,0,0);
-    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true}); // Needed for screenshot
+    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
     scene.add(new THREE.AmbientLight(0x404040, 1.5));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); dirLight.castShadow=true; 
-    dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); 
+    dirLight.castShadow=true; dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
     scene.add(new THREE.GridHelper(200, 200, 0x444444, 0x333333));
     scene.add(new THREE.AxesHelper(10));
 
     const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping=true;
     const tControls = new TransformControls(camera, renderer.domElement);
-    tControls.addEventListener('dragging-changed', e => { controls.enabled=!e.value; if(!e.value) recordState(); }); // Record on drag end
+    tControls.addEventListener('dragging-changed', e => controls.enabled = !e.value);
     tControls.addEventListener('change', () => {
         if(!tControls.object) return;
-        const obj=tControls.object; const k=currentObj;
-        transforms[k].px=obj.position.x; transforms[k].py=obj.position.y; transforms[k].pz=obj.position.z;
-        transforms[k].rx=obj.rotation.x; transforms[k].ry=obj.rotation.y; transforms[k].rz=obj.rotation.z;
+        const o=tControls.object; const k=currentObj;
+        transforms[k].px=o.position.x; transforms[k].py=o.position.y; transforms[k].pz=o.position.z;
+        transforms[k].rx=o.rotation.x; transforms[k].ry=o.rotation.y; transforms[k].rz=o.rotation.z;
         updateTransformUI();
-        if(k==='blade'||k==='sample'||k==='jig') { if(document.getElementById('target-select').value!=='none') updateModel(); }
+        if(k!=='nozzle' && document.getElementById('target-select').value!=='none') updateModel(); 
     });
     scene.add(tControls);
 
@@ -534,9 +475,9 @@
     const matNozzle=new THREE.MeshStandardMaterial({color:0x9E9E9E});
 
     // Nozzle
-    const n1=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle);
-    const n2=new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle);
-    n2.position.y=-1.5; nozzleGroup.add(n1,n2);
+    const nCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle); nCyl.position.y=1.5;
+    const nCone = new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle); nCone.rotation.x=Math.PI; nCone.position.y=0.5;
+    const nozMesh = new THREE.Group(); nozMesh.add(nCyl,nCone); nozzleGroup.add(nozMesh);
 
     let brushJig, brushBlade, sampleBrushes=[], resultMesh, isWireframe=false;
     const evaluator = new Evaluator();
@@ -546,20 +487,22 @@
     let measurePoints = [];
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    let measureMarkers = []; // Spheres
-    let measureLine = null; // Line object
+    let measureMarkers = []; 
+    let measureLine = null;
 
     window.toggleMeasure = () => {
         measureMode = !measureMode;
         const btn = document.getElementById('btn-measure');
         if(measureMode) {
             btn.style.background = '#00E676';
-            btn.innerText = '📏 點擊兩點進行量測';
+            btn.innerText = '📏 點擊兩點量測';
             container.style.cursor = 'crosshair';
+            tControls.visible = false;
         } else {
             btn.style.background = '#555';
-            btn.innerText = '📏 開啟量測模式';
+            btn.innerText = '📏 開啟量測 (Dist)';
             container.style.cursor = 'default';
+            tControls.visible = true;
             clearMeasure();
         }
     }
@@ -568,71 +511,119 @@
         measurePoints = [];
         measureMarkers.forEach(m => scene.remove(m)); measureMarkers = [];
         if(measureLine) scene.remove(measureLine); measureLine = null;
-        document.getElementById('measure-res').style.display = 'none';
+        document.getElementById('measure-box').style.display = 'none';
     }
 
-    window.addEventListener('mousedown', (event) => {
-        if(!measureMode) return;
-        // Calculate mouse pos
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(scene.children, true); // Recursive
-        
-        // Filter out grid, helpers, water
-        const hit = intersects.find(i => i.object.type === 'Mesh' && i.object.visible);
-        
-        if(hit) {
-            measurePoints.push(hit.point);
-            // Add marker
-            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFF0000}));
-            marker.position.copy(hit.point);
-            scene.add(marker);
-            measureMarkers.push(marker);
+    // --- Snapping Logic ---
+    let snapArrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 5, 0x00E676);
+    snapArrow.visible = false; scene.add(snapArrow);
 
-            if(measurePoints.length === 2) {
-                // Draw line
-                const geo = new THREE.BufferGeometry().setFromPoints(measurePoints);
-                measureLine = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xFF0000, linewidth:2}));
-                scene.add(measureLine);
-                
-                // Calc dist
-                const dist = measurePoints[0].distanceTo(measurePoints[1]);
-                const lbl = document.getElementById('measure-res');
-                lbl.innerText = `📏 距離: ${dist.toFixed(3)} mm`;
-                lbl.style.display = 'block';
-                
-                // Reset for next
-                setTimeout(() => { 
-                    if(measureMode) {
-                        measurePoints = [];
-                        // Don't clear visuals immediately, let user see
-                    }
-                }, 100); 
-            }
-            if(measurePoints.length > 2) {
-                clearMeasure(); // New start
+    window.toggleSnapMode = () => {
+        snapMode = !snapMode;
+        const btn = document.getElementById('btn-snap');
+        if(snapMode) {
+            btn.style.background = '#00E676';
+            btn.innerText = '點擊表面以吸附';
+            document.getElementById('snap-hint').style.display='block';
+            container.style.cursor = 'crosshair';
+            tControls.visible = false;
+        } else {
+            btn.style.background = '#FF9800';
+            btn.innerText = '🧲 開啟吸附對齊 (Snap)';
+            document.getElementById('snap-hint').style.display='none';
+            snapArrow.visible = false;
+            container.style.cursor = 'default';
+            tControls.visible = true;
+        }
+    }
+
+    container.addEventListener('mousemove', e => {
+        updateRaycaster(e);
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        if(snapMode) {
+            const targetGroup = (currentObj==='nozzle')?nozzleGroup : (currentObj==='blade')?bladeGroup : null;
+            const hit = intersects.find(i => i.object.type==='Mesh' && i.object.visible && 
+                (!targetGroup || !targetGroup.children.includes(i.object) && !i.object.isTransformControlsPlane));
+            if(hit) {
+                snapArrow.visible = true;
+                snapArrow.position.copy(hit.point);
+                snapArrow.setDirection(hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize());
+            } else { snapArrow.visible = false; }
+        }
+    });
+
+    container.addEventListener('mousedown', e => {
+        if(e.button !== 0) return;
+        updateRaycaster(e);
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        
+        // Measure Logic
+        if(measureMode) {
+            const hit = intersects.find(i => i.object.type === 'Mesh' && i.object.visible);
+            if(hit) {
+                if(measurePoints.length >= 2) clearMeasure();
                 measurePoints.push(hit.point);
                 const marker = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFF0000}));
-                marker.position.copy(hit.point);
-                scene.add(marker);
-                measureMarkers.push(marker);
+                marker.position.copy(hit.point); scene.add(marker); measureMarkers.push(marker);
+
+                if(measurePoints.length === 2) {
+                    const geo = new THREE.BufferGeometry().setFromPoints(measurePoints);
+                    measureLine = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xFF0000, linewidth:2}));
+                    scene.add(measureLine);
+                    const p1 = measurePoints[0], p2 = measurePoints[1];
+                    const dist = p1.distanceTo(p2);
+                    document.getElementById('measure-box').style.display = 'block';
+                    document.getElementById('m-dist').innerText = dist.toFixed(3);
+                    document.getElementById('m-dx').innerText = Math.abs(p2.x - p1.x).toFixed(3);
+                    document.getElementById('m-dy').innerText = Math.abs(p2.y - p1.y).toFixed(3);
+                    document.getElementById('m-dz').innerText = Math.abs(p2.z - p1.z).toFixed(3);
+                }
+            }
+            return;
+        }
+
+        // Snap Logic
+        if(snapMode) {
+            const targetGroup = (currentObj==='nozzle')?nozzleGroup : (currentObj==='blade')?bladeGroup : (currentObj==='sample')?sampleGroup : null;
+            if(!targetGroup) { alert("此物件不支援吸附"); toggleSnapMode(); return; }
+            const hit = intersects.find(i => i.object.type==='Mesh' && i.object.visible && !targetGroup.children.some(c=>c===i.object||c.children?.includes(i.object)));
+            if(hit) {
+                targetGroup.position.copy(hit.point);
+                const up = new THREE.Vector3(0,1,0);
+                const normal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize();
+                const q = new THREE.Quaternion().setFromUnitVectors(up, normal);
+                targetGroup.quaternion.copy(q);
+                targetGroup.updateMatrixWorld();
+                
+                const t = transforms[currentObj];
+                t.px=targetGroup.position.x; t.py=targetGroup.position.y; t.pz=targetGroup.position.z;
+                const euler = new THREE.Euler().setFromQuaternion(targetGroup.quaternion);
+                t.rx=euler.x*180/Math.PI; t.ry=euler.y*180/Math.PI; t.rz=euler.z*180/Math.PI;
+                updateTransformUI();
+                toggleSnapMode();
+                window.setGizmoAxis(null); // Unlock
             }
         }
     });
 
+    function updateRaycaster(e) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera({x,y}, camera);
+    }
 
-    // Water
-    const particleCount=2000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
+    // Water System (Fix Visibility)
+    const particleCount=3000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
     for(let i=0;i<particleCount;i++){waterPos[i*3+1]=-999;waterVel.push({x:0,y:0,z:0});}
     waterGeo.setAttribute('position',new THREE.BufferAttribute(waterPos,3));
-    const waterSystem=new THREE.Points(waterGeo,new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.6}));
+    const waterMat=new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.8,depthWrite:false});
+    const waterSystem=new THREE.Points(waterGeo, waterMat);
+    waterSystem.frustumCulled = false; // Important fix!
     scene.add(waterSystem);
 
     function applyTransforms() {
-        const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx, t.ry, t.rz); grp.updateMatrixWorld(); }
+        const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx*Math.PI/180, t.ry*Math.PI/180, t.rz*Math.PI/180); grp.updateMatrixWorld(); }
         setT(jigGroup, transforms.jig); setT(sampleGroup, transforms.sample); setT(bladeGroup, transforms.blade); setT(nozzleGroup, transforms.nozzle);
     }
 
@@ -660,13 +651,13 @@
         const topX=-jData.base/2, topY=jData.h/2;
         const slideDist = params.s_t * slopeLen;
         const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
-        const angleRad=params.j_a*Math.PI/180, spinRad=params.s_r*Math.PI/180;
+        const angleRad=params.j_a*Math.PI/180;
 
         const buildSampleLayer = (th, color, offset) => {
             const g = new THREE.BoxGeometry(params.s_l, th, params.s_w);
             const m = new THREE.MeshStandardMaterial({color});
             const b = new Brush(g, m);
-            b.rotation.set(0,0,0); b.rotateY(spinRad); b.rotateZ(-angleRad);
+            b.rotation.set(0,0,0); b.rotateY(params.s_r*Math.PI/180); b.rotateZ(-angleRad);
             const sx = baseSx + nx*(offset+th/2) + ux*(params.s_l/2);
             const sy = baseSy + ny*(offset+th/2) + uy*(params.s_l/2);
             b.position.set(sx, sy, 0); b.updateMatrixWorld();
@@ -680,23 +671,13 @@
                 sampleBrushes.push(b); sampleGroup.add(b); curOff+=th;
             });
         } else {
-            const b=buildSampleLayer(params.s_th, 0x2196F3, 0);
-            sampleBrushes.push(b); sampleGroup.add(b);
+            const b=buildSampleLayer(params.s_th, 0x2196F3, 0); sampleBrushes.push(b); sampleGroup.add(b);
         }
 
         applyTransforms();
 
-        // Calculate Depth Display
-        // Blade bottom Y (world) vs Sample Top Y (world)
-        // This is complex due to rotations. 
-        // Simple approx: Blade Tip Y - Jig contact Y?
-        // Let's rely on blade parameter 'b_d' (Cut Depth) which is visual.
-        document.getElementById('calc-depth').innerText = params.b_d.toFixed(2);
-
-        const gBlade = new THREE.BoxGeometry(params.b_t, 50, params.b_w);
-        gBlade.translate(0, 25, 0); 
-        brushBlade = new Brush(gBlade, matBlade);
-        bladeGroup.add(brushBlade);
+        const gBlade = new THREE.BoxGeometry(params.b_t, 50, params.b_w); gBlade.translate(0, 25, 0); 
+        brushBlade = new Brush(gBlade, matBlade); bladeGroup.add(brushBlade);
 
         const target = document.getElementById('target-select').value;
         jigGroup.updateMatrixWorld(true); sampleGroup.updateMatrixWorld(true); bladeGroup.updateMatrixWorld(true);
@@ -731,8 +712,6 @@
         camera.lookAt(0,0,0); controls.target.set(0,0,0);
     }
     window.toggleWater = () => { waterEnabled=!waterEnabled; document.getElementById('btn-water').style.background=waterEnabled?'#00bcd4':'#0277bd'; waterSystem.visible=waterEnabled; }
-    
-    // Helper
     window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); }
     window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; }
 
@@ -744,11 +723,15 @@
             const positions = waterGeo.attributes.position.array;
             const pressure = document.getElementById('w_pressure').value;
             const targetType = document.getElementById('water-target').value;
-            const tipLocal = new THREE.Vector3(0,-1.5,0);
-            const tipWorld = tipLocal.applyMatrix4(nozzleGroup.matrixWorld);
-            const dirLocal = new THREE.Vector3(0,-1,0);
-            const dirWorld = dirLocal.transformDirection(nozzleGroup.matrixWorld).normalize();
             
+            // Tip world pos
+            const tipWorld = new THREE.Vector3(0,0,0).applyMatrix4(nozzleGroup.children[0].matrixWorld);
+            // Direction (local -Y of nozzle group is standard, but check geometry orientation)
+            // Cylinder is 0 to 2 Y. Cone is 0 to 1 Y. We want water out of Cone tip at 0.
+            // Cone rotation is PI (upside down). So tip is at bottom.
+            // Vector (0,-1,0) in Nozzle Group Space should work.
+            const dirWorld = new THREE.Vector3(0,-1,0).transformDirection(nozzleGroup.matrixWorld).normalize();
+
             let box=null;
             if(targetType!=='none') {
                 const targetObj = (targetType==='sample')?sampleGroup : (targetType==='jig')?jigGroup : bladeGroup;
@@ -757,11 +740,14 @@
 
             for(let i=0; i<particleCount; i++) {
                 if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
-                    waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.2;
+                    waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.1;
                     waterPos[i*3+1] = tipWorld.y;
-                    waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.2;
+                    waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.1;
                     const spd = 0.5 + (pressure/100)*1.0;
-                    waterVel[i].x = dirWorld.x*spd; waterVel[i].y = dirWorld.y*spd; waterVel[i].z = dirWorld.z*spd;
+                    const spreadRad = (waterSpread||5) * Math.PI / 180;
+                    const r1=(Math.random()-0.5)*spreadRad, r2=(Math.random()-0.5)*spreadRad;
+                    const vel = dirWorld.clone().applyEuler(new THREE.Euler(r1, 0, r2)).multiplyScalar(spd);
+                    waterVel[i].x=vel.x; waterVel[i].y=vel.y; waterVel[i].z=vel.z;
                 } else {
                     const ox=waterPos[i*3], oy=waterPos[i*3+1], oz=waterPos[i*3+2];
                     waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
@@ -776,10 +762,11 @@
         }
         renderer.render(scene, camera);
     }
-
+    
+    // Init
     document.getElementById('loader').style.display='none';
-    changeSelection('jig');
-    updateModel();
+    changeSelection('nozzle');
+    initFromDefault();
     animate();
 
 </script>
