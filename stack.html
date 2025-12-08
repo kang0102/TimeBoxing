@@ -148,7 +148,7 @@
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ★★★ 請務必在此填入你的 Firebase Config ★★★
+        // ★★★ Firebase Config (已填入你的資料) ★★★
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -158,6 +158,7 @@
           appId: "1:67240747982:web:1fb065e40e936a7485419f",
           measurementId: "G-QJNE60W8BB"
         };
+
         // 初始化變數
         let db = null;
         let COLLECTION_NAME = "projects";
@@ -168,7 +169,7 @@
             if (firebaseConfig.apiKey.includes("你的API_KEY") || firebaseConfig.apiKey === "") {
                 const sel = document.getElementById('savedProjects');
                 sel.innerHTML = '<option>⚠️ 尚未填入 API Key</option>';
-                alert("【重要提示】\n程式碼中的 Firebase API Key 還是預設值！\n\n請用記事本打開 stack.html，搜尋 'firebaseConfig' 並填入您的設定。\n\n(現在只能使用備份功能)");
+                alert("【重要提示】\n程式碼中的 Firebase API Key 還是預設值！");
                 return false;
             }
             return true;
@@ -204,9 +205,6 @@
         const sidebar = document.getElementById('sidebar');
         const resizer = document.getElementById('resizer');
         let isResizingSidebar = false;
-
-        // 預設載入範例
-        loadExample(true);
 
         // ---------------------------------------------------------
         // 3. 雲端存取函式 (掛載到 window)
@@ -249,9 +247,8 @@
                 console.error("List error:", e);
                 select.innerHTML = '<option value="">讀取失敗: 請檢查權限</option>';
                 
-                // ★ 常見錯誤提示：權限不足 ★
                 if(e.code === 'permission-denied') {
-                    alert("【連線被拒絕】\n原因：Firestore 安全規則可能未設定為公開。\n\n請去 Firebase Console -> Firestore Database -> Rules\n將 'allow read, write: if false;' 改為 'if true;'");
+                    alert("【連線被拒絕】\n請檢查 Firestore Rules 是否已改為 'if true;'");
                 }
             }
         };
@@ -324,7 +321,7 @@
         };
 
         // ---------------------------------------------------------
-        // 4. 一般操作 (保持不變)
+        // 4. 一般操作
         // ---------------------------------------------------------
         window.applyConfig = function(config) {
             window.layers = config.layers || [];
@@ -409,7 +406,11 @@
         function loadExample(silent = false) {
             if(!silent && !confirm("覆蓋設定？")) return;
             window.layers = [ { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' }, { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, { name: "Ad", thickness: 25, color: "#eeeeee", fontSize: 0, fontStyle:'normal', textColor:'#000000' }, { name: "PI", thickness: 100, color: "#a8a8a8", fontSize: 28, fontStyle:'bold', textColor:'#ffffff' }, { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' }, { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' } ];
-            window.dimensions = []; window.addDimensionByLogic(0, window.layers.length-1, "", 80); window.renderList(); window.draw();
+            window.dimensions = []; 
+            // 確保函式存在再執行
+            if(window.addDimensionByLogic) window.addDimensionByLogic(0, window.layers.length-1, "", 80); 
+            window.renderList(); 
+            window.draw();
         }
 
         window.updateDimSelects = function() {
@@ -542,8 +543,17 @@
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
         };
 
-        // 確保初始讀取 (如果沒填 API Key 會跳出警告)
+        // =========================================================
+        // ★★★ 關鍵修改：將執行點移到最後面！ ★★★
+        // =========================================================
+        
+        // 1. 先載入範例 (這時候上面的 function 都已經準備好了)
+        loadExample(true);
+
+        // 2. 如果 Firebase 連線成功，嘗試讀取雲端列表
         if(isFirebaseReady) window.refreshProjectList();
+
+        console.log("🚀 程式載入完成，所有功能已就緒！");
     </script>
 </body>
 </html>
