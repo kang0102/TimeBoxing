@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Cloud DB)</title>
+    <title>工程疊構圖產生器 (Cloud Ultimate)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎佈局 --- */
@@ -68,7 +68,7 @@
 <body>
 
     <div id="loading-overlay">
-        <div style="font-size: 24px;">☁️ 正在連線至雲端資料庫...</div>
+        <div style="font-size: 24px;">☁️ 連線中...</div>
     </div>
 
     <a href="index.html" class="home-btn">🏠 回首頁</a>
@@ -169,10 +169,32 @@
         }
 
         // ---------------------------------------------------------
-        // 2. 雲端存取函式
+        // 2. 應用程式核心邏輯
+        // ---------------------------------------------------------
+        const canvas = document.getElementById('stackCanvas');
+        const ctx = canvas.getContext('2d');
+        const listEl = document.getElementById('layer-list');
+        const dimListEl = document.getElementById('dim-list');
+
+        // 將變數掛載到 window
+        window.layers = [];
+        window.dimensions = [];
+
+        let dragTargetType = null, dragIndex = -1, isDraggingCanvas = false;
+        let lastMouseY = 0, lastMouseX = 0;
+        let hitRegions = { layers: [], dims: [] };
+
+        const sidebar = document.getElementById('sidebar');
+        const resizer = document.getElementById('resizer');
+        let isResizingSidebar = false;
+
+        // 預設載入範例 (稍後若連線成功會被覆蓋)
+        loadExample(true);
+
+        // ---------------------------------------------------------
+        // 3. 雲端存取函式 (掛載到 window)
         // ---------------------------------------------------------
         
-        // 讀取列表
         window.refreshProjectList = async function() {
             if(!isFirebaseReady) return;
             const select = document.getElementById('savedProjects');
@@ -197,7 +219,6 @@
             }
         };
 
-        // 儲存
         window.saveToCloud = async function() {
             if(!isFirebaseReady) return;
             const name = document.getElementById('projName').value.trim();
@@ -214,7 +235,6 @@
                 timestamp: Date.now()
             };
 
-            // 簡單覆蓋提示 (需先讀取檢查是否存在比較嚴謹，這裡簡化)
             if(!confirm(`確定要將 "${name}" 儲存到雲端嗎？`)) return;
 
             showLoading(true);
@@ -229,7 +249,6 @@
             showLoading(false);
         };
 
-        // 載入
         window.loadFromCloud = async function() {
             if(!isFirebaseReady) return;
             const name = document.getElementById('savedProjects').value;
@@ -250,7 +269,6 @@
             showLoading(false);
         };
 
-        // 刪除
         window.deleteFromCloud = async function() {
             if(!isFirebaseReady) return;
             const name = document.getElementById('savedProjects').value;
@@ -272,36 +290,10 @@
             document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
         }
 
-        // 初始化執行
-        if(isFirebaseReady) {
-            window.refreshProjectList();
-        }
-    </script>
+        // ---------------------------------------------------------
+        // 4. 一般操作函式 (掛載到 window)
+        // ---------------------------------------------------------
 
-    <script>
-        // --- 變數與初始化 ---
-        const canvas = document.getElementById('stackCanvas');
-        const ctx = canvas.getContext('2d');
-        const listEl = document.getElementById('layer-list');
-        const dimListEl = document.getElementById('dim-list');
-
-        // 將變數掛載到 window 以便模組存取
-        window.layers = [];
-        window.dimensions = [];
-
-        let dragTargetType = null, dragIndex = -1, isDraggingCanvas = false;
-        let lastMouseY = 0, lastMouseX = 0;
-        let hitRegions = { layers: [], dims: [] };
-
-        const sidebar = document.getElementById('sidebar');
-        const resizer = document.getElementById('resizer');
-        let isResizingSidebar = false;
-
-        // 預設載入範例
-        loadExample(true);
-
-        // --- 核心操作函式 (掛載到 window) ---
-        
         window.applyConfig = function(config) {
             window.layers = config.layers || [];
             window.dimensions = config.dimensions || [];
@@ -310,7 +302,7 @@
                 document.getElementById('canvasWidth').value = config.settings.width || 450;
                 document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
             }
-            resizeCanvas(); renderList(); draw();
+            window.resizeCanvas(); window.renderList(); window.draw();
         };
 
         window.exportJSON = function() {
@@ -344,12 +336,11 @@
             window.layers = []; window.dimensions = [];
             document.getElementById('projName').value = "";
             document.getElementById('savedProjects').value = "";
-            renderList(); draw();
+            window.renderList(); window.draw();
         };
 
-        // --- 列表渲染 ---
-        function renderList() {
-            listEl.innerHTML = ''; updateDimSelects();
+        window.renderList = function() {
+            listEl.innerHTML = ''; window.updateDimSelects();
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
                 item.className = 'layer-item';
@@ -381,25 +372,24 @@
                     e.preventDefault(); const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
                     if (fromIdx !== index) {
                         const moved = window.layers.splice(fromIdx, 1)[0]; window.layers.splice(index, 0, moved);
-                        renderList(); draw();
+                        window.renderList(); window.draw();
                     }
                 });
                 listEl.appendChild(item);
             });
-        }
+        };
 
-        // 把這些輔助函式也掛載到 window，因為 HTML onclick 會呼叫它們
         window.updateLayer = function(index, key, value) {
             if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0;
             window.layers[index][key] = value;
-            if(key === 'color') renderList(); draw();
+            if(key === 'color') window.renderList(); window.draw();
         };
-        window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; renderList(); };
-        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); renderList(); draw(); };
-        window.deleteLayer = function(index) { window.layers.splice(index, 1); renderList(); draw(); };
+        window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; window.renderList(); };
+        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); window.renderList(); window.draw(); };
+        window.deleteLayer = function(index) { window.layers.splice(index, 1); window.renderList(); window.draw(); };
         
         function loadExample(silent = false) {
-            if(!silent && !confirm("確定覆蓋設定？")) return;
+            if(!silent && !confirm("覆蓋設定？")) return;
             window.layers = [
                 { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' },
                 { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' },
@@ -409,10 +399,10 @@
                 { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' },
                 { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' }
             ];
-            window.dimensions = []; window.addDimensionByLogic(0, window.layers.length-1, "", 80); renderList(); draw();
+            window.dimensions = []; window.addDimensionByLogic(0, window.layers.length-1, "", 80); window.renderList(); window.draw();
         }
 
-        function updateDimSelects() {
+        window.updateDimSelects = function() {
             const s1 = document.getElementById('dimStart'); const s2 = document.getElementById('dimEnd');
             const v1 = s1.value; const v2 = s2.value;
             s1.innerHTML = ''; s2.innerHTML = '';
@@ -421,13 +411,13 @@
                 s1.innerHTML += opt; s2.innerHTML += opt;
             });
             if(v1) s1.value = v1; if(v2) s2.value = v2; else if(window.layers.length>0) s2.value = window.layers.length-1;
-        }
+        };
         window.addDimension = function() {
             const s = parseInt(document.getElementById('dimStart').value); const e = parseInt(document.getElementById('dimEnd').value);
             const txt = document.getElementById('dimLabel').value; const off = parseInt(document.getElementById('dimOffset').value) || 50;
             window.addDimensionByLogic(s, e, txt, off);
         };
-        window.addDimensionByLogic = function(s, e, l, o) { window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); draw(); };
+        window.addDimensionByLogic = function(s, e, l, o) { window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); window.draw(); };
         
         function renderDims() {
             dimListEl.innerHTML = '';
@@ -438,11 +428,12 @@
                 dimListEl.appendChild(div);
             });
         }
-        window.deleteDim = function(i) { window.dimensions.splice(i, 1); renderDims(); draw(); };
+        window.deleteDim = function(i) { window.dimensions.splice(i, 1); renderDims(); window.draw(); };
 
         // --- Canvas Interactions ---
         canvas.addEventListener('mousedown', e => {
-            const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             for (let i = 0; i < hitRegions.dims.length; i++) {
                 const d = hitRegions.dims[i];
                 if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) {
@@ -468,22 +459,21 @@
             }
             const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             if (dragTargetType === 'dimension') {
-                const dx = lastMouseX - x; window.dimensions[dragIndex].offset += dx; 
-                if(window.dimensions[dragIndex].offset < 20) window.dimensions[dragIndex].offset = 20;
-                lastMouseX = x; draw(); renderDims();
+                const dx = lastMouseX - x; window.dimensions[dragIndex].offset += dx; if(window.dimensions[dragIndex].offset < 20) window.dimensions[dragIndex].offset = 20;
+                lastMouseX = x; window.draw(); renderDims();
             } else if (dragTargetType === 'layer') {
                 let hoveredIndex = -1;
                 for (let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
                 if (hoveredIndex !== -1 && hoveredIndex !== dragIndex) {
                     const temp = window.layers[dragIndex]; window.layers[dragIndex] = window.layers[hoveredIndex]; window.layers[hoveredIndex] = temp;
-                    dragIndex = hoveredIndex; renderList(); draw();
+                    dragIndex = hoveredIndex; window.renderList(); window.draw();
                 }
                 lastMouseY = y;
             }
         });
         window.addEventListener('mouseup', () => { isDraggingCanvas = false; dragTargetType = null; document.body.style.cursor = 'default'; canvas.style.cursor = 'default'; });
 
-        window.resizeCanvas = function() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; draw(); };
+        window.resizeCanvas = function() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; window.draw(); };
         
         window.draw = function() {
             const unit = document.getElementById('unitInput').value;
@@ -544,7 +534,6 @@
         }
         function cleanHex(hex) { if(!hex) return "FFFFFF"; return hex.replace('#', '').toUpperCase(); }
         
-        // Resize Sidebar
         resizer.addEventListener('mousedown', () => { isResizingSidebar = true; resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
         window.addEventListener('mousemove', (e) => { if (!isResizingSidebar) return; let w = e.clientX; if (w < 320) w = 320; if (w > 800) w = 800; sidebar.style.width = w + 'px'; });
         window.addEventListener('mouseup', () => { isResizingSidebar = false; resizer.classList.remove('active'); document.body.style.cursor = 'default'; });
@@ -576,6 +565,7 @@
                 let txtColor = "000000"; if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor); else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
                 const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const isBold = layer.fontStyle === 'bold';
                 const textContent = `${layer.name} ${layer.thickness}${unit}`;
+                // PPT修復版：圖文分離 (先畫純色塊，再畫文字)
                 slide.addShape(pres.ShapeType.rect, { x: x, y: y, w: w, h: h, fill: { color: safeFillColor }, line: { color: "333333", width: 1 } });
                 slide.addText(textContent, { x: x, y: y, w: w, h: h, color: txtColor, fontSize: fs, align: 'center', valign: 'middle', bold: isBold });
                 currentYPx += hPx;
@@ -595,6 +585,11 @@
             });
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
         };
+
+        // 如果 Firebase 還沒準備好，先載入本機列表
+        if(isFirebaseReady) {
+            window.refreshProjectList();
+        }
     </script>
 </body>
 </html>
