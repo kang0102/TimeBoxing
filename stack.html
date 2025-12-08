@@ -3,128 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Project DB)</title>
+    <title>工程疊構圖產生器 (Auto-Load)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
-        /* --- 基礎佈局 --- */
-        body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #121212;
-            color: #ddd;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        /* 左側控制面板 */
-        #sidebar {
-            width: 400px;
-            min-width: 320px;
-            max-width: 800px;
-            background-color: #1e1e1e;
-            padding: 15px;
-            padding-top: 60px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 10;
-            overflow-y: auto;
-            flex-shrink: 0;
-            box-sizing: border-box;
-        }
-
-        /* 拖曳調整桿 */
-        #resizer {
-            width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0;
-            display: flex; justify-content: center; align-items: center;
-        }
+        /* (樣式保持不變，為了節省篇幅，這裡省略重複 CSS，請直接保留上一版所有的 CSS) */
+        /* 請保留上一版 <style> 到 </style> 之間的所有內容 */
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
+        #sidebar { width: 400px; min-width: 320px; max-width: 800px; background-color: #1e1e1e; padding: 15px; padding-top: 60px; display: flex; flex-direction: column; gap: 12px; z-index: 10; overflow-y: auto; flex-shrink: 0; box-sizing: border-box; }
+        #resizer { width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
         #resizer::after { content: ""; width: 2px; height: 30px; background: #444; }
         #resizer:hover, #resizer.active { background: #1976D2; }
-
-        /* 右側畫布區 */
-        #main-area {
-            flex-grow: 1; background-color: #222;
-            display: flex; justify-content: center; align-items: center;
-            overflow: auto; padding: 20px; cursor: default;
-        }
-
-        /* 文字與輸入框樣式 */
+        #main-area { flex-grow: 1; background-color: #222; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; cursor: default; }
         h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
         h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
-        
         .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
         label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
-        
-        input[type="text"], input[type="number"], select {
-            background: #333; border: 1px solid #555; color: white;
-            padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px;
-        }
-
-        /* --- 層次列表 --- */
+        input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
         #layer-list { display: flex; flex-direction: column; gap: 6px; }
-        
-        .layer-item {
-            background: #333; border-radius: 4px; padding: 6px;
-            border-left: 4px solid #666; font-size: 13px;
-            cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
-        }
+        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; cursor: grab; transition: transform 0.2s, box-shadow 0.2s; }
         .layer-item.dragging { opacity: 0.5; border: 2px dashed #888; }
-        
         .layer-main-row { display: flex; align-items: center; gap: 6px; }
         .drag-handle { cursor: grab; color: #666; font-size: 16px; padding: 0 4px; }
         .drag-handle:hover { color: #fff; }
-
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
-
-        .layer-details {
-            display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555;
-            grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end;
-        }
+        .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
         .layer-item.open .layer-details { display: grid; }
-        
-        .btn-toggle-details {
-            cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a;
-        }
+        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; }
         .btn-toggle-details:hover { background: #444; color: white; }
         .btn-toggle-details.active { background: #1976D2; color: white; }
-
         input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
         .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
         .btn-del:hover { color: #ff5252; }
-
-        /* 標註清單 */
-        .dim-item {
-            background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px;
-            border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; color: #bbb;
-        }
-
-        button {
-            padding: 8px; font-size: 13px; cursor: pointer;
-            background-color: #444; color: white;
-            border: 1px solid #555; border-radius: 4px; width: 100%;
-            transition: 0.2s; margin-top: 5px;
-        }
+        .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
+        button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
         button:hover { background-color: #666; }
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
         .btn-img { background-color: #1976D2; border-color: #1565C0; }
         .btn-add { background-color: #43A047; border-color: #2E7D32; }
         .btn-save-local { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
         .btn-del-local { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
-
-        .home-btn {
-            position: absolute; top: 15px; left: 15px;
-            text-decoration: none; background: #444; padding: 6px 12px;
-            border-radius: 20px; color: #fff; font-size: 12px;
-            border: 1px solid #666; z-index: 100;
-        }
-
-        /* 隱藏的檔案上傳輸入框 */
+        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
         #fileInput { display: none; }
-
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; }
+        
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
+        .btn-proj:hover { background-color: #607D8B; }
+        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
+        .btn-clear:hover { background-color: #E53935; }
     </style>
 </head>
 <body>
@@ -135,23 +61,23 @@
         <h2>📚 疊構資料庫</h2>
 
         <div class="control-group" style="border-color: #00897B;">
-            <label style="color:#80CBC4">💾 專案存取 (下拉選單)</label>
+            <label style="color:#80CBC4">💾 專案存取</label>
             <div style="display:flex; gap:5px; margin-bottom:5px;">
-                <input type="text" id="projName" placeholder="輸入名稱 (例: 5層板A款)" style="flex:1">
+                <input type="text" id="projName" placeholder="輸入名稱 (例: Type-C)" style="flex:1">
                 <button class="btn-save-local" onclick="saveToLocal()">儲存</button>
             </div>
             <div style="display:flex; gap:5px;">
                 <select id="savedProjects" onchange="loadFromLocal()" style="flex:1">
-                    <option value="">-- 選擇已存專案 --</option>
+                    <option value="">-- 選擇專案 --</option>
                 </select>
-                <button class="btn-del-local" onclick="deleteFromLocal()" title="刪除選定專案">🗑️</button>
+                <button class="btn-del-local" onclick="deleteFromLocal()" title="刪除">🗑️</button>
             </div>
         </div>
         
-        <div style="display:flex; gap:5px; margin-bottom:10px;">
-            <button onclick="newProject()" style="background:#555">📄 清空</button>
-            <button onclick="exportJSON()" style="background:#555">📤 備份檔案</button>
-            <button onclick="document.getElementById('fileInput').click()" style="background:#555">📥 讀取檔案</button>
+        <div class="project-btns">
+            <button class="btn-clear" onclick="newProject()">📄 清空</button>
+            <button class="btn-proj" onclick="exportJSON()">📤 備份</button>
+            <button class="btn-proj" onclick="document.getElementById('fileInput').click()">📥 讀取</button>
             <input type="file" id="fileInput" accept=".json" onchange="importJSON(this)">
         </div>
 
@@ -159,17 +85,17 @@
             <label>全域設定</label>
             <div style="display:flex; gap:5px;">
                 <input type="text" id="unitInput" value="um" placeholder="單位" oninput="draw()" style="flex:1">
-                <input type="number" id="canvasWidth" value="450" placeholder="畫布寬" oninput="resizeCanvas()" style="flex:1">
+                <input type="number" id="canvasWidth" value="450" placeholder="寬" oninput="resizeCanvas()" style="flex:1">
                 <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="draw()" style="flex:1">
             </div>
         </div>
 
-        <h3>1. 層次 (可拖曳排序)</h3>
+        <h3>1. 層次 (可拖曳)</h3>
         <button class="btn-add" onclick="addLayer()">➕ 新增一層 (Top)</button>
         
         <div id="layer-list" style="margin-top:5px;"></div>
 
-        <h3>2. 標註 (拖曳紅線調整)</h3>
+        <h3>2. 標註 (可拖曳)</h3>
         <div class="control-group">
             <div style="display:flex; gap:5px; margin-bottom:5px;">
                 <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
@@ -186,7 +112,7 @@
         
         <h3>3. 輸出</h3>
         <button class="btn-img" onclick="downloadImage()">💾 下載圖片 (PNG)</button>
-        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (圖文分離版)</button>
+        <button class="btn-ppt" onclick="downloadPPT()">📊 下載 PPT (完整版)</button>
     </div>
 
     <div id="resizer"></div>
@@ -196,40 +122,48 @@
     </div>
 
     <script>
-        // --- 核心變數 ---
         const canvas = document.getElementById('stackCanvas');
         const ctx = canvas.getContext('2d');
         const listEl = document.getElementById('layer-list');
         const dimListEl = document.getElementById('dim-list');
-        const STORAGE_KEY = 'stack_diagram_projects'; // LocalStorage Key
+        const STORAGE_KEY = 'stack_diagram_projects';
+        const LAST_PROJECT_KEY = 'stack_diagram_last_active'; // 紀錄最後開啟的專案
 
-        // 資料結構
         let layers = [];
         let dimensions = [];
-
-        // 互動狀態
         let dragTargetType = null; 
         let dragIndex = -1;
         let isDraggingCanvas = false;
         let lastMouseY = 0; let lastMouseX = 0;
         let hitRegions = { layers: [], dims: [] };
 
-        // UI 調整
         const sidebar = document.getElementById('sidebar');
         const resizer = document.getElementById('resizer');
         let isResizingSidebar = false;
 
-        // 初始化
-        refreshProjectList(); // 載入儲存的專案列表
-        // 如果沒有任何專案，載入預設範例
-        if (Object.keys(getStoredProjects()).length === 0) {
-            loadExample(true);
+        // --- 初始化邏輯 (關鍵更新) ---
+        // 1. 先讀取專案列表
+        refreshProjectList(); 
+        
+        // 2. 檢查是否有「上次編輯的專案」
+        const lastProj = localStorage.getItem(LAST_PROJECT_KEY);
+        const projects = getStoredProjects();
+
+        if (lastProj && projects[lastProj]) {
+            // 如果有上次的紀錄，且該專案還存在 -> 自動載入
+            document.getElementById('savedProjects').value = lastProj;
+            loadFromLocal();
+        } else if (Object.keys(projects).length > 0) {
+            // 如果沒有上次紀錄，但有其他專案 -> 載入第一個
+            const firstProj = Object.keys(projects)[0];
+            document.getElementById('savedProjects').value = firstProj;
+            loadFromLocal();
         } else {
-            // 嘗試載入最後一個專案，或者保持空白
+            // 完全沒有任何專案 -> 載入預設範例
             loadExample(true); 
         }
         
-        // --- 0. 本機專案資料庫 (LocalStorage) ---
+        // --- 本機專案資料庫 ---
         function getStoredProjects() {
             const str = localStorage.getItem(STORAGE_KEY);
             return str ? JSON.parse(str) : {};
@@ -238,8 +172,9 @@
         function refreshProjectList() {
             const projects = getStoredProjects();
             const select = document.getElementById('savedProjects');
-            // 保留第一項提示
-            select.innerHTML = '<option value="">-- 選擇已存專案 --</option>';
+            const currentVal = select.value; // 記住目前選的，避免重繪後跑掉
+            
+            select.innerHTML = '<option value="">-- 選擇專案 --</option>';
             
             Object.keys(projects).forEach(name => {
                 const opt = document.createElement('option');
@@ -247,6 +182,8 @@
                 opt.innerText = name;
                 select.appendChild(opt);
             });
+
+            if (currentVal && projects[currentVal]) select.value = currentVal;
         }
 
         function saveToLocal() {
@@ -270,10 +207,12 @@
             projects[name] = config;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
             
+            // 記住這是最後操作的專案
+            localStorage.setItem(LAST_PROJECT_KEY, name);
+            
             refreshProjectList();
-            // 自動選取剛存的
             document.getElementById('savedProjects').value = name;
-            alert(`專案 "${name}" 儲存成功！`);
+            alert(`專案 "${name}" 儲存成功！下次開啟會自動載入。`);
         }
 
         function loadFromLocal() {
@@ -284,7 +223,9 @@
             const config = projects[name];
             if (config) {
                 applyConfig(config);
-                document.getElementById('projName').value = name; // 同步名稱框
+                document.getElementById('projName').value = name;
+                // 記住狀態
+                localStorage.setItem(LAST_PROJECT_KEY, name);
             }
         }
 
@@ -297,11 +238,34 @@
             delete projects[name];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
             
-            refreshProjectList();
+            // 如果刪除的是當前專案，清除最後紀錄
+            if(localStorage.getItem(LAST_PROJECT_KEY) === name) {
+                localStorage.removeItem(LAST_PROJECT_KEY);
+            }
+            
             document.getElementById('projName').value = "";
+            refreshProjectList();
+            
+            // 刪除後如果還有其他專案，載入第一個；否則清空
+            const remaining = Object.keys(projects);
+            if(remaining.length > 0) {
+                document.getElementById('savedProjects').value = remaining[0];
+                loadFromLocal();
+            } else {
+                newProject(true); // 強制清空不詢問
+            }
         }
 
-        // 通用：套用設定檔
+        function newProject(force=false) {
+            if(!force && !confirm("確定清空畫面？")) return;
+            layers = []; dimensions = [];
+            document.getElementById('projName').value = "";
+            document.getElementById('savedProjects').value = "";
+            localStorage.removeItem(LAST_PROJECT_KEY); // 清除記憶
+            renderList(); draw();
+        }
+
+        // --- 以下為通用功能 (保持不變) ---
         function applyConfig(config) {
             layers = config.layers || [];
             dimensions = config.dimensions || [];
@@ -313,11 +277,9 @@
             resizeCanvas(); renderList(); draw();
         }
 
-        // 通用：匯出 JSON (備份用)
         function exportJSON() {
             const config = {
-                layers: layers,
-                dimensions: dimensions,
+                layers: layers, dimensions: dimensions,
                 settings: {
                     unit: document.getElementById('unitInput').value,
                     width: document.getElementById('canvasWidth').value,
@@ -325,51 +287,31 @@
                 }
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
-            const link = document.createElement('a');
-            link.href = dataStr;
-            link.download = "stack_backup.json";
-            link.click();
+            const link = document.createElement('a'); link.href = dataStr; link.download = "stack_backup.json"; link.click();
         }
         
         function importJSON(input) {
-            const file = input.files[0];
-            if(!file) return;
+            const file = input.files[0]; if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const config = JSON.parse(e.target.result);
                     applyConfig(config);
-                    alert("檔案讀取成功！");
-                } catch(err) {
-                    console.error(err);
-                    alert("檔案格式錯誤");
-                }
+                    alert("讀取成功");
+                } catch(err) { alert("格式錯誤"); }
                 input.value = '';
             };
             reader.readAsText(file);
         }
 
-        function newProject() {
-            if(!confirm("確定清空畫面？")) return;
-            layers = []; dimensions = [];
-            document.getElementById('projName').value = "";
-            document.getElementById('savedProjects').value = "";
-            renderList(); draw();
-        }
-
-        // --- 1. 左側列表邏輯 ---
-
+        // --- Render UI ---
         function renderList() {
-            listEl.innerHTML = '';
-            updateDimSelects();
-
+            listEl.innerHTML = ''; updateDimSelects();
             layers.forEach((layer, index) => {
                 const item = document.createElement('div');
                 item.className = 'layer-item';
                 if(layer.showDetails) item.classList.add('open');
-                item.draggable = true;
-                item.style.borderLeftColor = layer.color;
-
+                item.draggable = true; item.style.borderLeftColor = layer.color;
                 const txtColorVal = layer.textColor || "#000000";
                 
                 item.innerHTML = `
@@ -389,20 +331,16 @@
                         <div><label>樣式</label><select onchange="updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
                 `;
-
                 item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); });
                 item.addEventListener('dragend', () => item.classList.remove('dragging'));
                 item.addEventListener('dragover', e => e.preventDefault());
                 item.addEventListener('drop', e => {
-                    e.preventDefault();
-                    const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                    e.preventDefault(); const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
                     if (fromIdx !== index) {
-                        const moved = layers.splice(fromIdx, 1)[0];
-                        layers.splice(index, 0, moved);
+                        const moved = layers.splice(fromIdx, 1)[0]; layers.splice(index, 0, moved);
                         renderList(); draw();
                     }
                 });
-
                 listEl.appendChild(item);
             });
         }
@@ -410,21 +348,11 @@
         function updateLayer(index, key, value) {
             if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0;
             layers[index][key] = value;
-            if(key === 'color') renderList();
-            draw();
+            if(key === 'color') renderList(); draw();
         }
-
-        function toggleDetails(index) {
-            layers[index].showDetails = !layers[index].showDetails; renderList();
-        }
-
-        function addLayer() {
-            layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', showDetails: false });
-            renderList(); draw();
-        }
-
+        function toggleDetails(index) { layers[index].showDetails = !layers[index].showDetails; renderList(); }
+        function addLayer() { layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); renderList(); draw(); }
         function deleteLayer(index) { layers.splice(index, 1); renderList(); draw(); }
-
         function loadExample(silent = false) {
             if(!silent && !confirm("確定覆蓋設定？")) return;
             layers = [
@@ -436,15 +364,11 @@
                 { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' },
                 { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' }
             ];
-            dimensions = [];
-            addDimensionByLogic(0, layers.length-1, "", 80);
-            renderList(); draw();
+            dimensions = []; addDimensionByLogic(0, layers.length-1, "", 80); renderList(); draw();
         }
 
-        // --- 標註邏輯 ---
         function updateDimSelects() {
-            const s1 = document.getElementById('dimStart');
-            const s2 = document.getElementById('dimEnd');
+            const s1 = document.getElementById('dimStart'); const s2 = document.getElementById('dimEnd');
             const v1 = s1.value; const v2 = s2.value;
             s1.innerHTML = ''; s2.innerHTML = '';
             layers.forEach((l, i) => {
@@ -453,151 +377,90 @@
             });
             if(v1) s1.value = v1; if(v2) s2.value = v2; else if(layers.length>0) s2.value = layers.length-1;
         }
-
         function addDimension() {
-            const s = parseInt(document.getElementById('dimStart').value);
-            const e = parseInt(document.getElementById('dimEnd').value);
-            const txt = document.getElementById('dimLabel').value;
-            const off = parseInt(document.getElementById('dimOffset').value) || 50;
+            const s = parseInt(document.getElementById('dimStart').value); const e = parseInt(document.getElementById('dimEnd').value);
+            const txt = document.getElementById('dimLabel').value; const off = parseInt(document.getElementById('dimOffset').value) || 50;
             addDimensionByLogic(s, e, txt, off);
         }
-
-        function addDimensionByLogic(s, e, l, o) {
-            dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o });
-            renderDims(); draw();
-        }
-
+        function addDimensionByLogic(s, e, l, o) { dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); draw(); }
         function renderDims() {
             dimListEl.innerHTML = '';
             dimensions.forEach((d, i) => {
-                const sName = layers[d.start]?.name || '?';
-                const eName = layers[d.end]?.name || '?';
-                const div = document.createElement('div');
-                div.className = 'dim-item';
+                const sName = layers[d.start]?.name||'?'; const eName = layers[d.end]?.name||'?';
+                const div = document.createElement('div'); div.className = 'dim-item';
                 div.innerHTML = `<span>${sName}~${eName} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="deleteDim(${i})">×</span>`;
                 dimListEl.appendChild(div);
             });
         }
         function deleteDim(i) { dimensions.splice(i, 1); renderDims(); draw(); }
 
-
-        // --- 2. 畫布互動邏輯 ---
+        // --- Canvas Interactions ---
         canvas.addEventListener('mousedown', e => {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
+            const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             for (let i = 0; i < hitRegions.dims.length; i++) {
                 const d = hitRegions.dims[i];
                 if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) {
-                    dragTargetType = 'dimension'; dragIndex = d.index;
-                    isDraggingCanvas = true; lastMouseX = x;
+                    dragTargetType = 'dimension'; dragIndex = d.index; isDraggingCanvas = true; lastMouseX = x;
                     document.body.style.cursor = 'ew-resize'; return;
                 }
             }
-
             for (let i = 0; i < hitRegions.layers.length; i++) {
                 const l = hitRegions.layers[i];
                 if (y >= l.y && y <= l.y + l.h && x > 50) {
-                    dragTargetType = 'layer'; dragIndex = l.index;
-                    isDraggingCanvas = true; lastMouseY = y;
+                    dragTargetType = 'layer'; dragIndex = l.index; isDraggingCanvas = true; lastMouseY = y;
                     document.body.style.cursor = 'ns-resize'; return;
                 }
             }
         });
-
         window.addEventListener('mousemove', e => {
             if (!isDraggingCanvas) {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
                 let hover = false;
-                for(let d of hitRegions.dims) {
-                    if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) { canvas.style.cursor = 'ew-resize'; hover=true; break; }
-                }
-                if(!hover) {
-                     for(let l of hitRegions.layers) {
-                        if (y >= l.y && y <= l.y + l.h && x > 50) { canvas.style.cursor = 'ns-resize'; hover=true; break; }
-                    }
-                }
-                if(!hover) canvas.style.cursor = 'default';
-                return;
+                for(let d of hitRegions.dims) if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) { canvas.style.cursor = 'ew-resize'; hover=true; break; }
+                if(!hover) for(let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h && x > 50) { canvas.style.cursor = 'ns-resize'; hover=true; break; }
+                if(!hover) canvas.style.cursor = 'default'; return;
             }
-
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
+            const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             if (dragTargetType === 'dimension') {
-                const dx = lastMouseX - x;
-                dimensions[dragIndex].offset += dx;
-                if(dimensions[dragIndex].offset < 20) dimensions[dragIndex].offset = 20;
-                lastMouseX = x;
-                draw(); renderDims();
+                const dx = lastMouseX - x; dimensions[dragIndex].offset += dx; if(dimensions[dragIndex].offset < 20) dimensions[dragIndex].offset = 20;
+                lastMouseX = x; draw(); renderDims();
             } else if (dragTargetType === 'layer') {
                 let hoveredIndex = -1;
-                for (let l of hitRegions.layers) {
-                    if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
-                }
+                for (let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
                 if (hoveredIndex !== -1 && hoveredIndex !== dragIndex) {
-                    const temp = layers[dragIndex];
-                    layers[dragIndex] = layers[hoveredIndex];
-                    layers[hoveredIndex] = temp;
-                    dragIndex = hoveredIndex; 
-                    renderList(); draw();
+                    const temp = layers[dragIndex]; layers[dragIndex] = layers[hoveredIndex]; layers[hoveredIndex] = temp;
+                    dragIndex = hoveredIndex; renderList(); draw();
                 }
                 lastMouseY = y;
             }
         });
+        window.addEventListener('mouseup', () => { isDraggingCanvas = false; dragTargetType = null; document.body.style.cursor = 'default'; canvas.style.cursor = 'default'; });
 
-        window.addEventListener('mouseup', () => {
-            if (isDraggingCanvas) {
-                isDraggingCanvas = false; dragTargetType = null;
-                document.body.style.cursor = 'default'; canvas.style.cursor = 'default';
-            }
-        });
-
-        // --- 繪圖核心 ---
-        function resizeCanvas() {
-            const w = parseInt(document.getElementById('canvasWidth').value) || 450;
-            canvas.width = w; draw();
-        }
-
+        function resizeCanvas() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; draw(); }
+        
         function draw() {
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) return;
-
-            let maxOffset = 20;
-            dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            let maxOffset = 20; dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
             const padding = { top: 40, bottom: 40, left: maxOffset + 40, right: 20 };
-
             const drawWidth = canvas.width - padding.left - padding.right;
             const availableHeight = Math.max(500, layers.length * 40);
             canvas.height = availableHeight + padding.top + padding.bottom;
             const scale = availableHeight / totalThickness;
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            hitRegions.layers = []; hitRegions.dims = []; let currentY = padding.top; let yPositions = [];
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.textAlign = "center"; ctx.textBaseline = "middle";
-
-            hitRegions.layers = []; hitRegions.dims = [];
-            let currentY = padding.top;
-            let yPositions = [];
-
-            // 1. 畫層次
             layers.forEach((layer, idx) => {
                 const h = layer.thickness * scale;
-                hitRegions.layers.push({ index: idx, y: currentY, h: h });
-                yPositions.push({ top: currentY, bottom: currentY + h });
-
+                hitRegions.layers.push({ index: idx, y: currentY, h: h }); yPositions.push({ top: currentY, bottom: currentY + h });
                 ctx.fillStyle = layer.color; ctx.fillRect(padding.left, currentY, drawWidth, h);
                 ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.strokeRect(padding.left, currentY, drawWidth, h);
-
                 if (h > 12) {
                     if (layer.textColor && layer.textColor !== '#000000') ctx.fillStyle = layer.textColor;
                     else ctx.fillStyle = isColorDark(layer.color) ? "white" : "black";
-
                     const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
                     const style = layer.fontStyle === 'bold' ? 'bold' : '';
                     ctx.font = `${style} ${fs}px "Microsoft JhengHei", Arial`;
@@ -605,172 +468,81 @@
                 }
                 currentY += h;
             });
-
-            // 2. 畫標註
             dimensions.forEach((dim, idx) => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                const y1 = yPositions[dim.start].top;
-                const y2 = yPositions[dim.end].bottom;
-                const h = y2 - y1;
-                
-                let val = 0;
-                for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
+                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom; const h = y2 - y1;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
-                
                 const x = padding.left - dim.offset;
                 hitRegions.dims.push({ index: idx, x: x, yStart: y1, yEnd: y2 });
                 drawDimensionLine(x, y1, h, txt);
             });
         }
-
         function drawDimensionLine(x, yStart, height, text) {
-            ctx.strokeStyle = "#D32F2F"; ctx.fillStyle = "#D32F2F";
-            ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
+            ctx.strokeStyle = "#D32F2F"; ctx.fillStyle = "#D32F2F"; ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
             ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x, yStart + height); ctx.stroke();
-            
             ctx.strokeStyle = "#ccc"; ctx.lineWidth = 1;
-            ctx.beginPath(); 
-            ctx.moveTo(x, yStart); ctx.lineTo(x + 10, yStart);
-            ctx.moveTo(x, yStart + height); ctx.lineTo(x + 10, yStart + height);
-            ctx.stroke();
-
-            ctx.fillStyle = "#D32F2F";
-            drawArrow(x, yStart, "up"); drawArrow(x, yStart + height, "down");
-
-            ctx.textAlign = "right"; ctx.textBaseline = "middle";
-            ctx.fillText(text, x - 5, yStart + height / 2);
+            ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x + 10, yStart); ctx.moveTo(x, yStart + height); ctx.lineTo(x + 10, yStart + height); ctx.stroke();
+            ctx.fillStyle = "#D32F2F"; drawArrow(x, yStart, "up"); drawArrow(x, yStart + height, "down");
+            ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(text, x - 5, yStart + height / 2);
         }
-
         function drawArrow(x, y, dir) {
             ctx.beginPath(); const s = 5;
-            if(dir==="up") { ctx.moveTo(x,y); ctx.lineTo(x-s,y+s); ctx.lineTo(x+s,y+s); }
-            else { ctx.moveTo(x,y); ctx.lineTo(x-s,y-s); ctx.lineTo(x+s,y-s); }
+            if(dir==="up") { ctx.moveTo(x,y); ctx.lineTo(x-s,y+s); ctx.lineTo(x+s,y+s); } else { ctx.moveTo(x,y); ctx.lineTo(x-s,y-s); ctx.lineTo(x+s,y-s); }
             ctx.fill();
         }
-
         function isColorDark(hex) {
-            const r = parseInt(hex.substr(1, 2), 16);
-            const g = parseInt(hex.substr(3, 2), 16);
-            const b = parseInt(hex.substr(5, 2), 16);
+            const r = parseInt(hex.substr(1, 2), 16); const g = parseInt(hex.substr(3, 2), 16); const b = parseInt(hex.substr(5, 2), 16);
             return ((r*299 + g*587 + b*114)/1000) < 128;
         }
-
-        function cleanHex(hex) {
-            if(!hex) return "FFFFFF";
-            return hex.replace('#', '').toUpperCase();
-        }
-
-        // --- Sidebar Resize ---
+        function cleanHex(hex) { if(!hex) return "FFFFFF"; return hex.replace('#', '').toUpperCase(); }
+        
         resizer.addEventListener('mousedown', () => { isResizingSidebar = true; resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
-        window.addEventListener('mousemove', (e) => {
-            if (!isResizingSidebar) return;
-            let w = e.clientX;
-            if (w < 320) w = 320; if (w > 800) w = 800;
-            sidebar.style.width = w + 'px';
-        });
+        window.addEventListener('mousemove', (e) => { if (!isResizingSidebar) return; let w = e.clientX; if (w < 320) w = 320; if (w > 800) w = 800; sidebar.style.width = w + 'px'; });
         window.addEventListener('mouseup', () => { isResizingSidebar = false; resizer.classList.remove('active'); document.body.style.cursor = 'default'; });
+        function downloadImage() { const link = document.createElement('a'); link.download = 'stack_diagram.png'; link.href = canvas.toDataURL(); link.click(); }
 
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.download = 'stack_diagram.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-
-        // --- PPT 輸出功能 (圖文分離保險版) ---
         function downloadPPT() {
             let pres = new PptxGenJS();
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
-
-            let maxOffset = 20;
-            dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
-
-            const pptPaddingLeft = maxOffset + 150; 
-            const pptPaddingTop = 50;
-            const scaleFactor = 100; 
-            const contentWidth = canvas.width - (maxOffset + 40) - 20; 
-            
+            let maxOffset = 20; dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            const pptPaddingLeft = maxOffset + 150; const pptPaddingTop = 50;
+            const scaleFactor = 100; const contentWidth = canvas.width - (maxOffset + 40) - 20; 
             const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
             const availableHeightPx = Math.max(500, layers.length * 40);
             const slideH = (availableHeightPx + 100) / scaleFactor;
             const pxToThickScale = availableHeightPx / totalThickness;
-
-            pres.defineLayout({ name:'CUST', width: slideW, height: slideH });
-            pres.layout = 'CUST';
+            pres.defineLayout({ name:'CUST', width: slideW, height: slideH }); pres.layout = 'CUST';
             let slide = pres.addSlide();
-
-            let currentYPx = pptPaddingTop;
-            let yPositions = [];
-
+            let currentYPx = pptPaddingTop; let yPositions = [];
             layers.forEach(layer => {
                 const hPx = layer.thickness * pxToThickScale;
-                const x = pptPaddingLeft / scaleFactor;
-                const y = currentYPx / scaleFactor;
-                const w = contentWidth / scaleFactor;
-                const h = hPx / scaleFactor;
-                
+                const x = pptPaddingLeft / scaleFactor; const y = currentYPx / scaleFactor; const w = contentWidth / scaleFactor; const h = hPx / scaleFactor;
                 yPositions.push({ top: y, bottom: y + h });
-
                 const safeFillColor = cleanHex(layer.color);
-                let txtColor = "000000";
-                if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor);
-                else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
-                
-                const fs = layer.fontSize > 0 ? layer.fontSize : globalFS;
-                const isBold = layer.fontStyle === 'bold';
+                let txtColor = "000000"; if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor); else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
+                const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const isBold = layer.fontStyle === 'bold';
                 const textContent = `${layer.name} ${layer.thickness}${unit}`;
-
-                // A. 純色塊
-                slide.addShape(pres.ShapeType.rect, {
-                    x: x, y: y, w: w, h: h,
-                    fill: { color: safeFillColor },
-                    line: { color: "333333", width: 1 }
-                });
-
-                // B. 獨立文字框
-                slide.addText(textContent, {
-                    x: x, y: y, w: w, h: h,
-                    color: txtColor,
-                    fontSize: fs,
-                    align: 'center',
-                    valign: 'middle',
-                    bold: isBold
-                });
-
+                slide.addShape(pres.ShapeType.rect, { x: x, y: y, w: w, h: h, fill: { color: safeFillColor }, line: { color: "333333", width: 1 } });
+                slide.addText(textContent, { x: x, y: y, w: w, h: h, color: txtColor, fontSize: fs, align: 'center', valign: 'middle', bold: isBold });
                 currentYPx += hPx;
             });
-
-            // Dimensions
             dimensions.forEach(dim => {
                 if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                const y1 = yPositions[dim.start].top;
-                const y2 = yPositions[dim.end].bottom;
+                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom;
                 const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
-                
-                let val = 0;
-                for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += layers[k].thickness;
                 const txt = dim.label ? dim.label : `${val}${unit}`;
-
-                // Line
-                slide.addShape(pres.ShapeType.line, {
-                    x: xLine, y: y1, w: 0, h: y2 - y1,
-                    line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' }
-                });
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0, h: y2 - y1, line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' } });
                 const connectorLen = 0.15;
                 slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
                 slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
-
-                // Text
                 const textWidth = 2.0; 
-                slide.addText(txt, {
-                    x: xLine - textWidth - 0.1, y: (y1 + y2)/2 - 0.3, w: textWidth, h: 0.6,
-                    color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle'
-                });
+                slide.addText(txt, { x: xLine - textWidth - 0.1, y: (y1 + y2)/2 - 0.3, w: textWidth, h: 0.6, color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle' });
             });
-
             pres.writeFile({ fileName: "Stack_Diagram.pptx" });
         }
     </script>
