@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cutting 3D Simulator v5.1 (Measure & Vis)</title>
+    <title>Cutting 3D Simulator v5.2 (Impact Heatmap)</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; }
         
@@ -20,25 +20,15 @@
         
         /* 顯示隱藏控制列 */
         .vis-bar { display: flex; gap: 5px; margin-bottom: 10px; background: #222; padding: 5px; border-radius: 4px; border: 1px solid #444; }
-        .vis-btn { 
-            flex: 1; padding: 4px; font-size: 16px; cursor: pointer; border: 1px solid #555; 
-            background: #333; color: #666; border-radius: 3px; text-align: center; transition:0.2s;
-        }
+        .vis-btn { flex: 1; padding: 4px; font-size: 16px; cursor: pointer; border: 1px solid #555; background: #333; color: #666; border-radius: 3px; text-align: center; transition:0.2s; }
         .vis-btn:hover { background: #444; }
         .vis-btn.active { background: #00E676; color: #000; border-color: #00E676; }
-        .vis-btn.active::after { content: ''; } /* Remove strikethrough logic visual, rely on color */
 
-        .obj-select {
-            width: 100%; padding: 8px; font-size: 15px; font-weight: bold;
-            background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;
-        }
+        .obj-select { width: 100%; padding: 8px; font-size: 15px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer; }
 
         /* 分頁 */
         .tabs { display: flex; background: #222; border-bottom: 1px solid #444; }
-        .tab-btn {
-            flex: 1; padding: 10px 0; background: #222; color: #888; border: none;
-            cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s;
-        }
+        .tab-btn { flex: 1; padding: 10px 0; background: #222; color: #888; border: none; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s; }
         .tab-btn.active { color: #fff; background: #333; border-bottom-color: #00E676; }
         .tab-content { padding: 15px; display: none; overflow-y: auto; flex: 1; }
         .tab-content.active { display: block; }
@@ -46,17 +36,12 @@
         /* UI 元件 */
         .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; margin-bottom: 10px; }
         .group-title { font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px; color: #aaa; }
-        
         .row { display: flex; align-items: center; margin-bottom: 6px; gap: 5px; }
-        .row-rot { background: rgba(255, 235, 59, 0.1); padding: 3px; border-radius: 4px; border: 1px solid rgba(255, 235, 59, 0.2); }
-        
         label { flex: 0 0 60px; font-size: 12px; color: #ccc; text-align: right; margin-right: 5px;}
         input[type="number"] { width: 50px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
         input[type="range"] { flex: 1; cursor: pointer; height: 6px; }
-        
         button.action-btn { width: 100%; padding: 8px; background: #00695C; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px;}
         button.action-btn:hover { background: #00897B; }
-        
         .tool-btn { background: #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #666; color: white; font-size: 12px;}
         .tool-btn:hover { background: #666; }
         
@@ -80,20 +65,14 @@
         .gizmo-btn.active { background: #FF9800; color: #000; border-color: #FF9800; }
 
         /* 浮動提示 */
-        #snap-hint {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 230, 118, 0.8); color: black; padding: 10px 20px;
-            border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30;
-        }
-        
+        #snap-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 230, 118, 0.8); color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30; }
         /* 量測結果浮動窗 */
-        #measure-box {
-            position: absolute; bottom: 20px; left: 400px; 
-            background: rgba(0,0,0,0.8); border: 1px solid #00E676; color: #00E676;
-            padding: 10px; border-radius: 6px; font-family: monospace; display: none; z-index: 10;
-        }
+        #measure-box { position: absolute; bottom: 20px; left: 400px; background: rgba(0,0,0,0.8); border: 1px solid #00E676; color: #00E676; padding: 10px; border-radius: 6px; font-family: monospace; display: none; z-index: 10; }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s; }
+
+        /* [v5.2 新增] 隱藏的 Canvas 用於計算熱力圖 */
+        #impact-canvas { display: none; }
     </style>
     
     <script type="importmap">
@@ -112,6 +91,8 @@
 
 <div id="loader">🚀 系統啟動中...</div>
 <div id="snap-hint">🖱️ 請點擊任意表面進行吸附</div>
+
+<canvas id="impact-canvas" width="512" height="512"></canvas>
 
 <div id="measure-box">
     <div>📏 距離: <span id="m-dist">0.00</span> mm</div>
@@ -167,7 +148,7 @@
 <div id="sidebar">
     <div class="header-area">
         <div class="app-title">
-            <span>Cutting 3D v5.1</span>
+            <span>Cutting 3D v5.2</span>
             <div style="display:flex; gap:5px;">
                 <button class="tool-btn" onclick="initFromDefault()" title="初始化 (載入預設)">🔄 初始化</button>
                 <button class="tool-btn" onclick="openLoadModal()">📂</button>
@@ -245,11 +226,12 @@
         <button id="btn-measure" class="action-btn" style="background:#555; border:1px solid #777; margin-bottom:10px;" onclick="toggleMeasure()">📏 開啟量測 (Dist)</button>
 
         <div class="group" style="border-left: 3px solid #00B0FF;">
-            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
+            <span class="group-title" style="color:#00B0FF;">💦 噴水系統 & 衝擊熱力圖</span>
             <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
             <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
             <div class="row"><label>擴散</label><input type="range" id="w_spread" min="0" max="45" value="5" oninput="waterSpread=this.value"></div>
-            <div class="row"><label>阻擋</label><select id="water-target" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample</option><option value="jig">Jig</option><option value="blade">Blade</option></select></div>
+            <div class="row"><label>阻擋</label><select id="water-target" onchange="changeWaterTarget(this.value)" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample (顯示熱力圖)</option><option value="jig">Jig (顯示熱力圖)</option><option value="blade">Blade</option></select></div>
+            <div style="font-size:11px;color:#aaa;margin-top:5px;">* 選擇 Sample/Jig 可見衝擊熱力圖</div>
         </div>
 
         <div class="group" style="border-left: 3px solid #FF9800;">
@@ -300,6 +282,15 @@
     let waterEnabled = false;
     let waterSpread = 5;
     let snapMode = false;
+
+    // --- [v5.2 新增] Impact Heatmap Setup ---
+    const impactCanvas = document.getElementById('impact-canvas');
+    const impactCtx = impactCanvas.getContext('2d');
+    // Initialize canvas black (no pressure)
+    impactCtx.fillStyle = 'black'; impactCtx.fillRect(0, 0, 512, 512);
+    const impactTexture = new THREE.CanvasTexture(impactCanvas);
+    let impactTargetMesh = null;
+    let originalMaterial = null;
 
     // --- Init & Persistence ---
     window.initFromDefault = () => {
@@ -386,7 +377,7 @@
     // --- Firebase ---
     const firebaseConfig = {apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI", authDomain: "stack-diagram-db.firebaseapp.com", projectId: "stack-diagram-db", storageBucket: "stack-diagram-db.firebasestorage.app", messagingSenderId: "67240747982", appId: "1:67240747982:web:1fb065e40e936a7485419f", measurementId: "G-QJNE60W8BB"};
     let db=null; try { const app=initializeApp(firebaseConfig); db=getFirestore(app); initProjectList(); } catch(e){}
-    async function initProjectList() { /* ... same ... */ const sel = document.getElementById('project-select'); try { const snapshot = await getDocs(collection(db, "projects")); sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>'; snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); }); } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; } }
+    async function initProjectList() { const sel = document.getElementById('project-select'); try { const snapshot = await getDocs(collection(db, "projects")); sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>'; snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); }); } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; } }
     window.loadSelectedProject = async function() { const id = document.getElementById('project-select').value; if(!id) return; const docSnap = await getDoc(doc(db, "projects", id)); if (docSnap.exists()) { stackData = docSnap.data(); let totalThickMm=0; const scale=(stackData.settings?.unit==='mm')?1:0.001; stackData.layers.forEach(l=>{totalThickMm+=l.thickness*scale}); document.getElementById('stack-info').style.display='block'; document.getElementById('current-stack-th').innerText=totalThickMm.toFixed(3); document.getElementById('row-s-th').style.display='none'; updateModel(); } }
     window.unloadProject = function() { stackData=null; document.getElementById('stack-info').style.display='none'; document.getElementById('row-s-th').style.display='flex'; updateModel(); }
 
@@ -622,6 +613,41 @@
     waterSystem.frustumCulled = false; // Important fix!
     scene.add(waterSystem);
 
+    // --- [v5.2 新增] Impact Material Management ---
+    function resetImpactMaterial() {
+        if (impactTargetMesh && originalMaterial) {
+            impactTargetMesh.material = originalMaterial;
+        }
+        impactTargetMesh = null;
+        originalMaterial = null;
+        // Clear canvas to black
+        impactCtx.fillStyle = 'black'; impactCtx.fillRect(0, 0, 512, 512); impactTexture.needsUpdate = true;
+    }
+
+    function setupImpactMaterial(targetGroup) {
+        resetImpactMaterial(); // Clear previous
+        // Find the first suitable mesh to apply heatmap
+        targetGroup.traverse(child => {
+            if (!impactTargetMesh && child.isMesh && child.material) {
+                impactTargetMesh = child;
+                originalMaterial = child.material;
+                // Create new material with emissive map
+                const newMat = child.material.clone();
+                newMat.emissiveMap = impactTexture;
+                newMat.emissive = new THREE.Color(0xffffff); // White glow based on texture intensity
+                newMat.emissiveIntensity = 1.0;
+                child.material = newMat;
+            }
+        });
+    }
+
+    window.changeWaterTarget = (val) => {
+        resetImpactMaterial();
+        if(val === 'sample') setupImpactMaterial(sampleGroup);
+        else if(val === 'jig') setupImpactMaterial(jigGroup);
+        // Blade or None doesn't use heatmap
+    }
+
     function applyTransforms() {
         const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx*Math.PI/180, t.ry*Math.PI/180, t.rz*Math.PI/180); grp.updateMatrixWorld(); }
         setT(jigGroup, transforms.jig); setT(sampleGroup, transforms.sample); setT(bladeGroup, transforms.blade); setT(nozzleGroup, transforms.nozzle);
@@ -701,6 +727,10 @@
             bladeGroup.add(ghost); brushBlade.visible=false;
         }
         updateWireframe();
+
+        // [v5.2 新增] Re-apply impact material if geometry rebuilt
+        const waterTarget = document.getElementById('water-target').value;
+        if(waterTarget === 'sample' || waterTarget === 'jig') changeWaterTarget(waterTarget);
     }
 
     window.toggleWireframe = () => { isWireframe=!isWireframe; updateWireframe(); }
@@ -715,51 +745,106 @@
     window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); }
     window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; }
 
+    // --- [v5.2 更新] Water Animation with Raycasting & Heatmap ---
+    const impactRaycaster = new THREE.Raycaster();
+
+    function animateWater() {
+        // 1. Fade the impact canvas (simulate pressure dissipation)
+        impactCtx.fillStyle = 'rgba(0,0,0,0.1)'; // Semi-transparent black to fade slowly
+        impactCtx.fillRect(0, 0, 512, 512);
+        impactTexture.needsUpdate = true;
+
+        if(!waterEnabled) return;
+
+        const positions = waterGeo.attributes.position.array;
+        const pressure = document.getElementById('w_pressure').value;
+        const targetType = document.getElementById('water-target').value;
+        
+        // Tip world pos & direction
+        const tipWorld = new THREE.Vector3(0,0,0).applyMatrix4(nozzleGroup.children[0].matrixWorld);
+        const dirWorld = new THREE.Vector3(0,-1,0).transformDirection(nozzleGroup.matrixWorld).normalize();
+
+        // Determine target for raycasting (Heatmap)
+        let targetMeshForRay = null;
+        if(impactTargetMesh && (targetType === 'sample' || targetType === 'jig')) {
+            targetMeshForRay = impactTargetMesh;
+        }
+
+        // Fallback collision box for non-heatmap targets (Blade)
+        let box=null;
+        if(!targetMeshForRay && targetType!=='none') {
+            const targetObj = (targetType==='blade')?bladeGroup : null;
+            if(targetObj) box = new THREE.Box3().setFromObject(targetObj);
+        }
+
+        for(let i=0; i<particleCount; i++) {
+            if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
+                // Reset particle
+                waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.1;
+                waterPos[i*3+1] = tipWorld.y;
+                waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.1;
+                const spd = 0.5 + (pressure/100)*1.0;
+                const spreadRad = (waterSpread||5) * Math.PI / 180;
+                const r1=(Math.random()-0.5)*spreadRad, r2=(Math.random()-0.5)*spreadRad;
+                const vel = dirWorld.clone().applyEuler(new THREE.Euler(r1, 0, r2)).multiplyScalar(spd);
+                waterVel[i].x=vel.x; waterVel[i].y=vel.y; waterVel[i].z=vel.z;
+            } else {
+                // Move & Raycast
+                const oldPos = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
+                waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
+                const newPos = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
+                if(pressure<100) waterVel[i].y -= 0.02; 
+
+                let hit = false;
+
+                // Priority: Raycast against Heatmap Target
+                if(targetMeshForRay) {
+                    const moveDir = newPos.clone().sub(oldPos).normalize();
+                    const moveDist = oldPos.distanceTo(newPos);
+                    impactRaycaster.set(oldPos, moveDir);
+                    impactRaycaster.far = moveDist * 1.1; // Slightly further to ensure hit
+                    const intersects = impactRaycaster.intersectObject(targetMeshForRay, false);
+
+                    if(intersects.length > 0 && intersects[0].uv) {
+                        hit = true;
+                        // Draw on canvas based on UV
+                        const uv = intersects[0].uv;
+                        const x = uv.x * 512;
+                        const y = (1 - uv.y) * 512; // Flip Y axis for canvas
+                        const radius = 5 + (pressure/200)*15; // Size based on pressure
+                        
+                        // Draw radial gradient splat (White center -> Yellow -> Red edge)
+                        const gradient = impactCtx.createRadialGradient(x, y, 0, x, y, radius);
+                        gradient.addColorStop(0, 'rgba(255,255,255,1)'); // High pressure
+                        gradient.addColorStop(0.5, 'rgba(255,255,0,0.8)'); // Medium
+                        gradient.addColorStop(1, 'rgba(255,0,0,0)'); // Edge
+
+                        impactCtx.fillStyle = gradient;
+                        impactCtx.beginPath(); impactCtx.arc(x, y, radius, 0, Math.PI*2); impactCtx.fill();
+                    }
+                } 
+                
+                // Fallback: Simple box collision
+                if(!hit && box && box.containsPoint(newPos)) {
+                    hit = true;
+                }
+
+                if(hit) {
+                    // Reset particle on impact
+                    waterVel[i].x = (Math.random()-0.5)*0.5; waterVel[i].y = (Math.random())*0.5; waterVel[i].z = (Math.random()-0.5)*0.5;
+                    waterPos[i*3]=oldPos.x; waterPos[i*3+1]=oldPos.y; waterPos[i*3+2]=oldPos.z;
+                }
+            }
+        }
+        waterGeo.attributes.position.needsUpdate = true;
+    }
+
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         
-        if(waterEnabled) {
-            const positions = waterGeo.attributes.position.array;
-            const pressure = document.getElementById('w_pressure').value;
-            const targetType = document.getElementById('water-target').value;
-            
-            // Tip world pos
-            const tipWorld = new THREE.Vector3(0,0,0).applyMatrix4(nozzleGroup.children[0].matrixWorld);
-            // Direction (local -Y of nozzle group is standard, but check geometry orientation)
-            // Cylinder is 0 to 2 Y. Cone is 0 to 1 Y. We want water out of Cone tip at 0.
-            // Cone rotation is PI (upside down). So tip is at bottom.
-            // Vector (0,-1,0) in Nozzle Group Space should work.
-            const dirWorld = new THREE.Vector3(0,-1,0).transformDirection(nozzleGroup.matrixWorld).normalize();
-
-            let box=null;
-            if(targetType!=='none') {
-                const targetObj = (targetType==='sample')?sampleGroup : (targetType==='jig')?jigGroup : bladeGroup;
-                box = new THREE.Box3().setFromObject(targetObj);
-            }
-
-            for(let i=0; i<particleCount; i++) {
-                if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
-                    waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.1;
-                    waterPos[i*3+1] = tipWorld.y;
-                    waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.1;
-                    const spd = 0.5 + (pressure/100)*1.0;
-                    const spreadRad = (waterSpread||5) * Math.PI / 180;
-                    const r1=(Math.random()-0.5)*spreadRad, r2=(Math.random()-0.5)*spreadRad;
-                    const vel = dirWorld.clone().applyEuler(new THREE.Euler(r1, 0, r2)).multiplyScalar(spd);
-                    waterVel[i].x=vel.x; waterVel[i].y=vel.y; waterVel[i].z=vel.z;
-                } else {
-                    const ox=waterPos[i*3], oy=waterPos[i*3+1], oz=waterPos[i*3+2];
-                    waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
-                    if(pressure<100) waterVel[i].y -= 0.02; 
-                    if(box && box.containsPoint(new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]))) {
-                        waterVel[i].x = (Math.random()-0.5)*0.5; waterVel[i].y = (Math.random())*0.5; waterVel[i].z = (Math.random()-0.5)*0.5;
-                        waterPos[i*3]=ox; waterPos[i*3+1]=oy; waterPos[i*3+2]=oz;
-                    }
-                }
-            }
-            waterGeo.attributes.position.needsUpdate = true;
-        }
+        animateWater(); // [v5.2 更新] 呼叫新的動畫函數
+        
         renderer.render(scene, camera);
     }
     
