@@ -3,89 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cutting 3D Simulator v4.5 (Gizmo Control)</title>
+    <title>Cutting 3D Simulator v4.9 (Project & Measure)</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; }
         
-        /* 左側控制欄 */
+        /* --- 左側側欄 --- */
         #sidebar {
             position: absolute; top: 0; left: 0; width: 380px; height: 100vh;
-            background: rgba(30, 30, 30, 0.95); overflow-y: auto; padding: 15px;
+            background: rgba(30, 30, 30, 0.95); overflow-y: auto; padding: 0;
             box-sizing: border-box; border-right: 1px solid #444; backdrop-filter: blur(5px);
-            display: flex; flex-direction: column; gap: 12px; z-index: 10;
+            display: flex; flex-direction: column; z-index: 20;
         }
 
-        /* 右側視角按鈕 */
-        #view-controls {
-            position: absolute; top: 15px; right: 15px;
-            display: flex; flex-direction: column; gap: 8px; z-index: 10;
+        .header-area { padding: 12px 15px; background: #1a1a1a; border-bottom: 1px solid #444; }
+        .app-title { color: #4FC3F7; font-size: 18px; margin: 0 0 8px 0; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .obj-select {
+            width: 100%; padding: 8px; font-size: 15px; font-weight: bold;
+            background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;
         }
-        .view-btn {
-            width: 50px; height: 50px;
-            background: rgba(50, 50, 50, 0.8); color: white;
-            border: 1px solid #666; border-radius: 8px;
-            cursor: pointer; font-size: 13px; font-weight: bold;
-            display: flex; justify-content: center; align-items: center;
-            transition: 0.2s; backdrop-filter: blur(3px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .view-btn:hover { background: #4FC3F7; color: #000; border-color: #4FC3F7; }
 
-        /* 右下角 Gizmo 控制面板 */
-        #gizmo-panel {
-            position: absolute; bottom: 20px; right: 20px;
-            background: rgba(30, 30, 30, 0.9); padding: 10px;
-            border-radius: 8px; border: 1px solid #555;
-            display: flex; flex-direction: column; gap: 8px;
-            z-index: 10; width: 160px;
+        /* --- 分頁與內容 --- */
+        .tabs { display: flex; background: #222; border-bottom: 1px solid #444; }
+        .tab-btn {
+            flex: 1; padding: 10px 0; background: #222; color: #888; border: none;
+            cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s;
         }
-        .gizmo-row { display: flex; gap: 5px; }
-        .gizmo-btn {
-            flex: 1; padding: 6px; font-size: 12px; cursor: pointer;
-            background: #444; color: #ddd; border: 1px solid #666; border-radius: 4px;
-        }
-        .gizmo-btn.active { background: #FF9800; color: #000; font-weight: bold; border-color: #FF9800; }
-        .gizmo-label { font-size: 12px; color: #aaa; text-align: center; margin-bottom: 2px; }
+        .tab-btn.active { color: #fff; background: #333; border-bottom-color: #00E676; }
+        .tab-content { padding: 15px; display: none; overflow-y: auto; flex: 1; }
+        .tab-content.active { display: block; }
 
-        #canvas-container { width: 100vw; height: 100vh; }
+        /* --- UI 元件 --- */
+        .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; margin-bottom: 10px; position: relative; }
+        .group-title { font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px; color: #aaa; }
         
-        /* UI 元件 */
-        h2 { margin: 0; color: #4FC3F7; font-size: 20px; border-bottom: 1px solid #555; padding-bottom: 8px; }
-        .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; position: relative; }
+        .row { display: flex; align-items: center; margin-bottom: 6px; gap: 5px; }
+        .row-rot { background: rgba(255, 235, 59, 0.1); padding: 3px; border-radius: 4px; border: 1px solid rgba(255, 235, 59, 0.2); }
         
-        /* 可點擊的標題，用來切換 Gizmo 目標 */
-        .group-title { 
-            font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; 
-            cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.2s;
-        }
-        .group-title:hover { background: rgba(255,255,255,0.1); }
-        .group-title.selected { background: rgba(0, 230, 118, 0.2); border: 1px solid #00E676; }
-        .select-hint { font-size: 10px; color: #888; font-weight: normal; }
+        label { flex: 0 0 60px; font-size: 12px; color: #ccc; text-align: right; margin-right: 5px;}
+        input[type="number"] { width: 55px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
+        input[type="range"] { flex: 1; cursor: pointer; height: 6px; }
+        
+        button.action-btn { width: 100%; padding: 8px; background: #00695C; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px;}
+        button.action-btn:hover { background: #00897B; }
+        
+        .tool-btn { background: #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #666; color: white; font-size: 12px;}
+        .tool-btn:hover { background: #666; }
 
-        .row { display: flex; align-items: center; margin-bottom: 5px; gap: 3px; }
-        .row-rot { background: rgba(255, 235, 59, 0.08); padding: 2px 0; border-radius: 4px; }
-        label { flex: 0 0 75px; font-size: 12px; color: #aaa; text-align: right; margin-right: 5px;}
+        /* 微調按鈕 */
+        .adj-btn { width: 24px; height: 24px; padding: 0; background: #444; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; }
         
-        input[type="number"] { width: 55px; background: #222; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 13px; text-align: right; }
-        input[type="range"] { flex: 1; cursor: pointer; height: 10px; }
-        select { background: #333; color: white; border: 1px solid #555; padding: 5px; border-radius: 4px; flex: 1; }
-        
-        .adj-btn {
-            width: 24px; height: 24px; padding: 0; background: #444; color: #fff; border: 1px solid #555;
-            border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; font-size: 14px;
-        }
-        .adj-btn:hover { background: #666; }
-        
-        .step-container { display: flex; align-items: center; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #444; }
-        .step-disp { width: 60px; text-align: center; font-weight: bold; color: #00E676; background: #333; padding: 4px; border-radius: 4px; margin-left: 10px; font-size: 14px; }
+        /* --- 視角與 Gizmo --- */
+        #view-controls { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 10; }
+        .view-btn { width: 40px; height: 40px; background: rgba(50,50,50,0.8); color: white; border: 1px solid #666; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; }
+        .view-btn:hover { background: #4FC3F7; color: #000; }
 
-        .btn-toggle { width:100%; background: #444; color:white; border:none; padding: 6px; border-radius:4px; margin-bottom: 5px; cursor:pointer;}
-        .btn-toggle.active { background: #1976D2; }
+        #gizmo-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(30,30,30,0.9); padding: 10px; border-radius: 8px; border: 1px solid #555; width: 150px; z-index: 10;}
+        .gizmo-row { display: flex; gap: 5px; margin-top: 5px;}
+        .gizmo-btn { flex: 1; padding: 5px; font-size: 11px; cursor: pointer; background: #444; color: #ddd; border: 1px solid #666; border-radius: 4px; }
+        .gizmo-btn.active { background: #FF9800; color: #000; border-color: #FF9800; }
 
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; 
-            display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s;
+        /* --- 彈窗 (Modal) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; justify-content: center; align-items: center; }
+        .modal { background: #222; width: 500px; max-height: 80vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; }
+        .modal h3 { margin: 0 0 10px 0; color: #4FC3F7; border-bottom: 1px solid #444; padding-bottom: 5px;}
+        .modal-body { overflow-y: auto; flex: 1; padding-right: 5px; }
+        
+        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; cursor: pointer; transition: 0.2s;}
+        .project-card:hover { border-color: #00E676; background: #3a3a3a; }
+        .project-thumb { width: 80px; height: 60px; background: #000; object-fit: cover; border-radius: 4px; }
+        .project-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .project-name { font-weight: bold; color: #fff; font-size: 14px; }
+        .project-desc { font-size: 12px; color: #aaa; }
+        .project-date { font-size: 10px; color: #666; margin-top: 4px; }
+        
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; pt: 10px; border-top: 1px solid #444;}
+
+        /* --- 浮動資訊 --- */
+        #info-overlay {
+            position: absolute; bottom: 20px; left: 400px; pointer-events: none;
+            color: rgba(255,255,255,0.7); font-size: 12px; font-family: monospace;
+            z-index: 10;
         }
+        .measure-label {
+            position: absolute; background: rgba(0,0,0,0.7); color: #00E676; padding: 2px 6px;
+            border-radius: 4px; font-size: 12px; pointer-events: none; font-weight: bold; border: 1px solid #00E676;
+        }
+
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s; }
     </style>
     
     <script type="importmap">
@@ -102,102 +106,156 @@
 </head>
 <body>
 
-<div id="loader">🚀 正在載入 3D 引擎...</div>
+<div id="loader">🚀 系統啟動中...</div>
+
+<div id="modal-save" class="modal-overlay">
+    <div class="modal">
+        <h3>💾 儲存專案 (Save Project)</h3>
+        <label style="text-align:left;width:100%">專案名稱</label>
+        <input type="text" id="save-name" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white;">
+        <label style="text-align:left;width:100%">描述 / 備註</label>
+        <textarea id="save-desc" rows="3" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
+        <div class="modal-footer">
+            <button class="tool-btn" onclick="closeModal('modal-save')">取消</button>
+            <button class="action-btn" style="margin:0; width:auto; padding:8px 20px;" onclick="confirmSave()">確認儲存</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-load" class="modal-overlay">
+    <div class="modal" style="height: 600px;">
+        <h3>📂 開啟專案 (Load Project)</h3>
+        <div id="project-list" class="modal-body">
+            </div>
+        <div class="modal-footer">
+            <button class="tool-btn" onclick="closeModal('modal-load')">關閉</button>
+        </div>
+    </div>
+</div>
 
 <div id="view-controls">
-    <div class="view-btn" onclick="setView('top')" title="Top">上</div>
-    <div class="view-btn" onclick="setView('front')" title="Front">前</div>
-    <div class="view-btn" onclick="setView('side')" title="Right">右</div>
-    <div class="view-btn" onclick="setView('iso')" title="ISO">ISO</div>
+    <div class="view-btn" onclick="setView('top')">上</div>
+    <div class="view-btn" onclick="setView('front')">前</div>
+    <div class="view-btn" onclick="setView('side')">右</div>
+    <div class="view-btn" onclick="setView('iso')">ISO</div>
 </div>
 
 <div id="gizmo-panel">
-    <div class="gizmo-label">🎮 控制模式</div>
+    <div style="font-size:12px;color:#aaa;text-align:center">滑鼠操作</div>
     <div class="gizmo-row">
         <button class="gizmo-btn" id="mode-translate" onclick="setGizmoMode('translate')">移動</button>
         <button class="gizmo-btn active" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉</button>
     </div>
-    <div class="gizmo-label" style="margin-top:5px;">🔒 鎖定軸向</div>
+    <div style="font-size:12px;color:#aaa;text-align:center;margin-top:5px">軸向鎖定</div>
     <div class="gizmo-row">
-        <button class="gizmo-btn" onclick="setGizmoAxis('X')">X (YZ)</button>
-        <button class="gizmo-btn" onclick="setGizmoAxis('Y')">Y (XZ)</button>
-        <button class="gizmo-btn" onclick="setGizmoAxis('Z')">Z (XY)</button>
+        <button class="gizmo-btn" onclick="setGizmoAxis('X')">X</button>
+        <button class="gizmo-btn" onclick="setGizmoAxis('Y')">Y</button>
+        <button class="gizmo-btn" onclick="setGizmoAxis('Z')">Z</button>
     </div>
-    <button class="gizmo-btn" onclick="setGizmoAxis(null)" style="width:100%; margin-top:2px;">解鎖 (Free)</button>
+    <button class="gizmo-btn" onclick="setGizmoAxis(null)" style="width:100%;margin-top:2px">自由 (Free)</button>
+</div>
+
+<div id="info-overlay">
+    <div>Ctrl+Z: 復原 | Ctrl+Y: 重做</div>
+    <div id="measure-res" style="color:#00E676; font-weight:bold; display:none;">📏 距離: 0.00 mm</div>
 </div>
 
 <div id="sidebar">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2>Cutting 3D <span style="font-size:12px;color:#888;">v4.5</span></h2>
-        <a href="./" style="color:#aaa; text-decoration:none; font-size:12px;">🏠 回首頁</a>
+    <div class="header-area">
+        <div class="app-title">
+            <span>Cutting 3D v4.9</span>
+            <div style="display:flex; gap:5px;">
+                <button class="tool-btn" onclick="undo()" title="復原 (Ctrl+Z)">↩️</button>
+                <button class="tool-btn" onclick="redo()" title="重做 (Ctrl+Y)">↪️</button>
+                <button class="tool-btn" onclick="openLoadModal()">📂</button>
+                <button class="tool-btn" style="background:#E65100" onclick="openSaveModal()">💾</button>
+            </div>
+        </div>
+        <div style="font-size:11px;color:#888;margin-bottom:5px;">目前編輯物件：</div>
+        <select id="obj-selector" class="obj-select" onchange="changeSelection(this.value)">
+            <option value="jig">📐 Jig (治具)</option>
+            <option value="sample">🧊 Sample (樣品)</option>
+            <option value="blade">🔪 Blade (刀具)</option>
+            <option value="nozzle">🚿 Nozzle (噴頭)</option>
+        </select>
     </div>
 
-    <div class="group" style="border-top: 3px solid #00E676;">
-        <span class="group-title" style="color:#00E676;">🎛️ 微調倍率</span>
-        <div class="step-container">
-            <input type="range" id="step-slider" min="0" max="5" step="1" value="1" oninput="updateStepDisplay(this.value)" style="flex:1;">
-            <div id="step-val" class="step-disp">0.1</div>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:#666; margin-top:2px; padding:0 5px;">
-            <span>0.01</span><span>0.1</span><span>0.5</span><span>1</span><span>5</span><span>10</span>
-        </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('dims')">📏 尺寸</button>
+        <button class="tab-btn" onclick="switchTab('trans')">🔄 變換</button>
+        <button class="tab-btn" onclick="switchTab('sim')">⚙️ 模擬</button>
     </div>
-    
-    <div class="group" style="border-left: 3px solid #FF9800;">
-        <span class="group-title" style="color:#FF9800;">☁️ 讀取疊構</span>
-        <div class="row">
-            <select id="project-select"><option value="">-- 連線中... --</option></select>
+
+    <div id="tab-dims" class="tab-content active">
+        <div id="dims-jig" class="group">
+            <span class="group-title">治具參數</span>
+            <div class="row"><label>高度 H</label><input type="number" id="val_j_h" onchange="updateVal('j_h',this.value)"><input type="range" id="rng_j_h" min="1" max="100" step="0.1" oninput="updateVal('j_h',this.value)"></div>
+            <div class="row"><label>角度 A</label><input type="number" id="val_j_a" onchange="updateVal('j_a',this.value)"><input type="range" id="rng_j_a" min="5" max="89" step="1" oninput="updateVal('j_a',this.value)"></div>
+            <div class="row"><label>深度 Z</label><input type="number" id="val_j_w" onchange="updateVal('j_w',this.value)"><input type="range" id="rng_j_w" min="1" max="100" step="0.1" oninput="updateVal('j_w',this.value)"></div>
         </div>
-        <button class="btn-toggle" onclick="loadSelectedProject()">📥 載入選定疊構</button>
-        <button class="btn-toggle" onclick="unloadProject()">❌ 清除</button>
-        <div id="stack-info" style="font-size:11px; color:#aaa; margin-top:5px; display:none;">
-            總厚度: <span id="current-stack-th" style="color:#fff;">0</span> mm
+        <div id="dims-sample" class="group" style="display:none;">
+            <span class="group-title">樣品參數 (貼合斜面)</span>
+            <div class="row"><label>長度 L</label><input type="number" id="val_s_l" onchange="updateVal('s_l',this.value)"><input type="range" id="rng_s_l" min="1" max="100" step="0.1" oninput="updateVal('s_l',this.value)"></div>
+            <div class="row" id="row-s-th"><label>厚度 T</label><input type="number" id="val_s_th" onchange="updateVal('s_th',this.value)"><input type="range" id="rng_s_th" min="0.1" max="20" step="0.01" oninput="updateVal('s_th',this.value)"></div>
+            <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
+            <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
+            <div class="row row-rot"><label>自旋 R</label><input type="number" id="val_s_r" onchange="updateVal('s_r',this.value)"><input type="range" id="rng_s_r" min="-180" max="180" step="1" oninput="updateVal('s_r',this.value)"></div>
+        </div>
+        <div id="dims-blade" class="group" style="display:none;">
+            <span class="group-title">刀具參數</span>
+            <div class="row"><label>刀厚 X</label><input type="number" id="val_b_t" onchange="updateVal('b_t',this.value)"><input type="range" id="rng_b_t" min="0.01" max="10" step="0.01" oninput="updateVal('b_t',this.value)"></div>
+            <div class="row"><label>刀寬 Z</label><input type="number" id="val_b_w" onchange="updateVal('b_w',this.value)"><input type="range" id="rng_b_w" min="1" max="100" step="0.1" oninput="updateVal('b_w',this.value)"></div>
+            <div class="row"><label>切深 Y</label><input type="number" id="val_b_d" onchange="updateVal('b_d',this.value)"><input type="range" id="rng_b_d" min="0" max="100" step="0.1" oninput="updateVal('b_d',this.value)"></div>
+        </div>
+        <div id="dims-nozzle" class="group" style="display:none;">
+            <span class="group-title">噴頭</span>
+            <div style="color:#888;font-size:12px;">噴頭為標準件，請使用 [變換] 分頁移動。</div>
         </div>
     </div>
 
-    <div class="group">
-        <span class="group-title" style="color:#fff;">🎯 切割模式</span>
-        <div class="row">
-            <label>被切物件</label>
-            <select id="target-select" onchange="updateModel()">
-                <option value="none">不切割 (Preview)</option>
-                <option value="sample" selected>Sample (樣品)</option>
-                <option value="jig">Jig (治具)</option>
-            </select>
+    <div id="tab-trans" class="tab-content">
+        <div class="group">
+            <span class="group-title" style="color:#00E676;">位置 Position (mm)</span>
+            <div class="row"><label>X</label><input type="number" id="t_px" onchange="updateTransFromInput()"><input type="range" id="rg_px" min="-50" max="50" oninput="document.getElementById('t_px').value=this.value;updateTransFromInput()"></div>
+            <div class="row"><label>Y</label><input type="number" id="t_py" onchange="updateTransFromInput()"><input type="range" id="rg_py" min="-50" max="50" oninput="document.getElementById('t_py').value=this.value;updateTransFromInput()"></div>
+            <div class="row"><label>Z</label><input type="number" id="t_pz" onchange="updateTransFromInput()"><input type="range" id="rg_pz" min="-50" max="50" oninput="document.getElementById('t_pz').value=this.value;updateTransFromInput()"></div>
         </div>
-        <button class="btn-toggle" id="btn-wireframe" onclick="toggleWireframe()">切換網格 (Wireframe)</button>
+        <div class="group">
+            <span class="group-title" style="color:#FFC107;">旋轉 Rotation (°)</span>
+            <div class="row row-rot"><label>X</label><input type="number" id="t_rx" onchange="updateTransFromInput()"><input type="range" id="rg_rx" min="-180" max="180" oninput="document.getElementById('t_rx').value=this.value;updateTransFromInput()"></div>
+            <div class="row row-rot"><label>Y</label><input type="number" id="t_ry" onchange="updateTransFromInput()"><input type="range" id="rg_ry" min="-180" max="180" oninput="document.getElementById('t_ry').value=this.value;updateTransFromInput()"></div>
+            <div class="row row-rot"><label>Z</label><input type="number" id="t_rz" onchange="updateTransFromInput()"><input type="range" id="rg_rz" min="-180" max="180" oninput="document.getElementById('t_rz').value=this.value;updateTransFromInput()"></div>
+        </div>
     </div>
 
-    <div class="group" style="border-left: 3px solid #E1BEE7;" id="group-jig">
-        <div class="group-title" onclick="selectObject('jig')" id="title-jig" style="color:#E1BEE7;">
-            <span>📐 Jig (治具)</span> <span class="select-hint">點擊選取</span>
-        </div>
-        <div class="row row-rot"><label>旋轉Y °</label><input type="number" id="nb_j_r" value="0" onchange="sync('j_r',this.value)"><button class="adj-btn" onclick="adjust('j_r',-1)">-</button><input type="range" id="j_r" min="-180" max="180" step="1" value="0" oninput="sync('nb_j_r',this.value)"><button class="adj-btn" onclick="adjust('j_r',1)">+</button></div>
-        <div class="row"><label>高度 mm</label><input type="number" id="nb_j_h" value="5" onchange="sync('j_h',this.value)"><button class="adj-btn" onclick="adjust('j_h',-1)">-</button><input type="range" id="j_h" min="1" max="50" step="0.1" value="5" oninput="sync('nb_j_h',this.value)"><button class="adj-btn" onclick="adjust('j_h',1)">+</button></div>
-        <div class="row"><label>角度 °</label><input type="number" id="nb_j_a" value="45" onchange="sync('j_a',this.value)"><button class="adj-btn" onclick="adjust('j_a',-1)">-</button><input type="range" id="j_a" min="5" max="85" step="1" value="45" oninput="sync('nb_j_a',this.value)"><button class="adj-btn" onclick="adjust('j_a',1)">+</button></div>
-        <div class="row"><label>深度Z mm</label><input type="number" id="nb_j_w" value="20" onchange="sync('j_w',this.value)"><button class="adj-btn" onclick="adjust('j_w',-1)">-</button><input type="range" id="j_w" min="1" max="100" step="0.1" value="20" oninput="sync('nb_j_w',this.value)"><button class="adj-btn" onclick="adjust('j_w',1)">+</button></div>
-    </div>
+    <div id="tab-sim" class="tab-content">
+        <button id="btn-measure" class="action-btn" style="background:#555; border:1px solid #777; margin-bottom:10px;" onclick="toggleMeasure()">📏 開啟量測模式</button>
 
-    <div class="group" style="border-left: 3px solid #BBDEFB;" id="group-sample">
-        <div class="group-title" onclick="selectObject('sample')" id="title-sample" style="color:#BBDEFB;">
-            <span>🧊 Sample (樣品)</span> <span class="select-hint">點擊選取</span>
+        <div class="group" style="border-left: 3px solid #FF9800;">
+            <span class="group-title" style="color:#FF9800;">☁️ 雲端疊構</span>
+            <select id="project-select" style="width:100%;margin-bottom:5px;background:#333;color:white;padding:5px;"><option value="">-- 連線中... --</option></select>
+            <button class="action-btn" onclick="loadSelectedProject()">📥 載入疊構</button>
+            <button class="action-btn" style="background:#D32F2F" onclick="unloadProject()">❌ 清除</button>
+            <div id="stack-info" style="font-size:11px; color:#aaa; margin-top:5px; display:none;">厚度: <span id="current-stack-th" style="color:#fff;">0</span> mm</div>
         </div>
-        <div class="row row-rot"><label>自旋Y °</label><input type="number" id="nb_s_r" value="0" onchange="sync('s_r',this.value)"><button class="adj-btn" onclick="adjust('s_r',-1)">-</button><input type="range" id="s_r" min="-180" max="180" step="1" value="0" oninput="sync('nb_s_r',this.value)"><button class="adj-btn" onclick="adjust('s_r',1)">+</button></div>
-        <div class="row"><label>滑動 0-1</label><input type="number" id="nb_s_t" value="0.5" onchange="sync('s_t',this.value)"><button class="adj-btn" onclick="adjust('s_t',-1)">-</button><input type="range" id="s_t" min="0" max="1" step="0.01" value="0.5" oninput="sync('nb_s_t',this.value)"><button class="adj-btn" onclick="adjust('s_t',1)">+</button></div>
-        <div class="row"><label>長度 mm</label><input type="number" id="nb_s_l" value="10" onchange="sync('s_l',this.value)"><button class="adj-btn" onclick="adjust('s_l',-1)">-</button><input type="range" id="s_l" min="1" max="100" step="0.1" value="10" oninput="sync('nb_s_l',this.value)"><button class="adj-btn" onclick="adjust('s_l',1)">+</button></div>
-        <div class="row" id="simple-thick-row"><label>厚度 mm</label><input type="number" id="nb_s_th" value="0.8" onchange="sync('s_th',this.value)"><button class="adj-btn" onclick="adjust('s_th',-1)">-</button><input type="range" id="s_th" min="0.1" max="20" step="0.01" value="0.8" oninput="sync('nb_s_th',this.value)"><button class="adj-btn" onclick="adjust('s_th',1)">+</button></div>
-        <div class="row"><label>寬度Z mm</label><input type="number" id="nb_s_w" value="15" onchange="sync('s_w',this.value)"><button class="adj-btn" onclick="adjust('s_w',-1)">-</button><input type="range" id="s_w" min="1" max="100" step="0.1" value="15" oninput="sync('nb_s_w',this.value)"><button class="adj-btn" onclick="adjust('s_w',1)">+</button></div>
-    </div>
 
-    <div class="group" style="border-left: 3px solid #FFF9C4;" id="group-blade">
-        <div class="group-title" onclick="selectObject('blade')" id="title-blade" style="color:#FFF9C4;">
-            <span>🔪 Blade (刀具)</span> <span class="select-hint">點擊選取</span>
+        <div class="group">
+            <span class="group-title">🎯 切割 Boolean</span>
+            <div class="row"><label>目標</label><select id="target-select" onchange="updateModel()" style="flex:1;background:#333;color:white;"><option value="none">不切割 (Preview)</option><option value="sample" selected>切樣品</option><option value="jig">切治具</option></select></div>
+            <button class="action-btn" style="background:#444" onclick="toggleWireframe()">切換網格</button>
+            <div style="margin-top:5px; font-size:12px; color:#00E676;">
+                相對深度: <span id="calc-depth">0.00</span> mm
+            </div>
         </div>
-        <div class="row row-rot"><label>角度Z °</label><input type="number" id="nb_b_a" value="0" onchange="sync('b_a',this.value)"><button class="adj-btn" onclick="adjust('b_a',-1)">-</button><input type="range" id="b_a" min="-45" max="45" step="1" value="0" oninput="sync('nb_b_a',this.value)"><button class="adj-btn" onclick="adjust('b_a',1)">+</button></div>
-        <div class="row"><label>刀厚X mm</label><input type="number" id="nb_b_t" value="0.5" onchange="sync('b_t',this.value)"><button class="adj-btn" onclick="adjust('b_t',-1)">-</button><input type="range" id="b_t" min="0.01" max="10" step="0.01" value="0.5" oninput="sync('nb_b_t',this.value)"><button class="adj-btn" onclick="adjust('b_t',1)">+</button></div>
-        <div class="row"><label>刀寬Z mm</label><input type="number" id="nb_b_w" value="25" onchange="sync('b_w',this.value)"><button class="adj-btn" onclick="adjust('b_w',-1)">-</button><input type="range" id="b_w" min="1" max="100" step="0.1" value="25" oninput="sync('nb_b_w',this.value)"><button class="adj-btn" onclick="adjust('b_w',1)">+</button></div>
-        <div class="row"><label>切深Y mm</label><input type="number" id="nb_b_d" value="3.0" onchange="sync('b_d',this.value)"><button class="adj-btn" onclick="adjust('b_d',-1)">-</button><input type="range" id="b_d" min="0" max="50" step="0.1" value="3.0" oninput="sync('nb_b_d',this.value)"><button class="adj-btn" onclick="adjust('b_d',1)">+</button></div>
-        <div class="row"><label>偏移X mm</label><input type="number" id="nb_b_dx" value="0" onchange="sync('b_dx',this.value)"><button class="adj-btn" onclick="adjust('b_dx',-1)">-</button><input type="range" id="b_dx" min="-50" max="50" step="0.1" value="0" oninput="sync('nb_b_dx',this.value)"><button class="adj-btn" onclick="adjust('b_dx',1)">+</button></div>
+
+        <div class="group" style="border-left: 3px solid #00B0FF;">
+            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
+            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
+            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
+            <div class="row"><label>阻擋</label><select id="water-target" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample</option><option value="jig">Jig</option><option value="blade">Blade</option></select></div>
+        </div>
+        
+        <div style="text-align:center; margin-top:10px;"><a href="./" style="color:#666;font-size:12px;">🏠 回首頁</a></div>
     </div>
 </div>
 
@@ -211,15 +269,147 @@
     import { initializeApp } from 'firebase-app';
     import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase-firestore';
 
-    // --- Global State ---
-    const stepValues = [0.01, 0.1, 0.5, 1.0, 5.0, 10.0];
-    window.currentStep = 0.1;
-    window.updateStepDisplay = function(idx) {
-        window.currentStep = stepValues[idx];
-        document.getElementById('step-val').innerText = window.currentStep;
+    // --- State & History ---
+    const defaultParams = {
+        j_h: 5, j_a: 45, j_w: 20,
+        s_t: 0.5, s_l: 10, s_th: 0.8, s_w: 15, s_r: 0,
+        b_t: 0.5, b_w: 25, b_d: 3.0
+    };
+    const defaultTransforms = {
+        jig: { px:0, py:0, pz:0, rx:0, ry:0, rz:0 },
+        sample: { px:0, py:0, pz:0, rx:0, ry:0, rz:0 },
+        blade: { px:0, py:20, pz:0, rx:0, ry:0, rz:0 },
+        nozzle: { px:5, py:15, pz:0, rx:0, ry:0, rz:-0.78 }
+    };
+
+    let params = {...defaultParams};
+    let transforms = JSON.parse(JSON.stringify(defaultTransforms));
+    let currentObj = 'jig';
+    let stackData = null;
+    let waterEnabled = false;
+    let history = [];
+    let historyStep = -1;
+    let isSaving = false; // flag to prevent loop
+
+    // Undo/Redo
+    function recordState() {
+        if(isSaving) return;
+        // Remove future
+        if (historyStep < history.length - 1) {
+            history = history.slice(0, historyStep + 1);
+        }
+        history.push(JSON.stringify({ params, transforms }));
+        if(history.length > 20) history.shift(); else historyStep++;
+    }
+    
+    // Initial record
+    setTimeout(() => recordState(), 1000);
+
+    window.undo = function() {
+        if (historyStep > 0) {
+            historyStep--;
+            applyState(history[historyStep]);
+        }
+    }
+    window.redo = function() {
+        if (historyStep < history.length - 1) {
+            historyStep++;
+            applyState(history[historyStep]);
+        }
     }
 
-    // --- Firebase Config ---
+    function applyState(json) {
+        isSaving = true;
+        const state = JSON.parse(json);
+        params = state.params;
+        transforms = state.transforms;
+        // Update UI
+        Object.keys(params).forEach(k => {
+            const e1 = document.getElementById(`val_${k}`); if(e1) e1.value = params[k];
+            const e2 = document.getElementById(`rng_${k}`); if(e2) e2.value = params[k];
+        });
+        updateTransformUI();
+        updateModel();
+        applyTransforms();
+        isSaving = false;
+    }
+
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
+    });
+
+    // --- Project Manager (LocalStorage) ---
+    window.openSaveModal = () => {
+        // Screenshot
+        renderer.render(scene, camera);
+        const thumb = renderer.domElement.toDataURL('image/jpeg', 0.5); // Low res
+        window.tempThumb = thumb;
+        document.getElementById('save-name').value = "My Setup " + new Date().toLocaleDateString();
+        document.getElementById('modal-save').style.display = 'flex';
+    }
+    window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+    
+    window.confirmSave = () => {
+        const name = document.getElementById('save-name').value;
+        const desc = document.getElementById('save-desc').value;
+        if(!name) return alert("請輸入名稱");
+        
+        const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
+        projects.unshift({
+            id: Date.now(), name, desc, thumb: window.tempThumb,
+            data: { params, transforms, stackData }
+        });
+        localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
+        alert("已儲存!");
+        closeModal('modal-save');
+    }
+
+    window.openLoadModal = () => {
+        const list = document.getElementById('project-list');
+        list.innerHTML = '';
+        const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
+        if(projects.length === 0) list.innerHTML = '<div style="padding:20px;text-align:center;color:#666">暫無存檔</div>';
+        
+        projects.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'project-card';
+            div.innerHTML = `
+                <img src="${p.thumb}" class="project-thumb">
+                <div class="project-info">
+                    <div class="project-name">${p.name}</div>
+                    <div class="project-desc">${p.desc || ''}</div>
+                    <div class="project-date">${new Date(p.id).toLocaleString()}</div>
+                </div>
+                <button class="tool-btn" style="background:#d32f2f;height:30px;align-self:center;" onclick="deleteProject(${p.id}, event)">🗑️</button>
+            `;
+            div.onclick = (e) => { if(e.target.tagName!=='BUTTON') loadProject(p); };
+            list.appendChild(div);
+        });
+        document.getElementById('modal-load').style.display = 'flex';
+    }
+
+    window.loadProject = (p) => {
+        if(confirm(`載入專案 "${p.name}"?`)) {
+            params = p.data.params;
+            transforms = p.data.transforms;
+            stackData = p.data.stackData;
+            applyState(JSON.stringify(p.data)); // Reuse apply logic
+            closeModal('modal-load');
+            recordState();
+        }
+    }
+
+    window.deleteProject = (id, e) => {
+        e.stopPropagation();
+        if(!confirm("確定刪除?")) return;
+        let projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
+        projects = projects.filter(x => x.id !== id);
+        localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
+        openLoadModal(); // Refresh
+    }
+
+    // --- Firebase ---
     const firebaseConfig = {
         apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
         authDomain: "stack-diagram-db.firebaseapp.com",
@@ -229,403 +419,367 @@
         appId: "1:67240747982:web:1fb065e40e936a7485419f",
         measurementId: "G-QJNE60W8BB"
     };
-
-    let db = null, stackData = null;
-    try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        initProjectList();
-    } catch(e) { console.error("Firebase Init Error", e); }
+    let db=null; try { const app=initializeApp(firebaseConfig); db=getFirestore(app); initProjectList(); } catch(e){}
 
     async function initProjectList() {
         const sel = document.getElementById('project-select');
         try {
             const snapshot = await getDocs(collection(db, "projects"));
             sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>';
-            snapshot.forEach(doc => {
-                const opt = document.createElement('option');
-                opt.value = doc.id; opt.innerText = doc.id; sel.appendChild(opt);
-            });
-        } catch(e) { console.error(e); }
+            snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); });
+        } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; }
     }
-
+    // ... loadSelectedProject same as before ... 
     window.loadSelectedProject = async function() {
         const id = document.getElementById('project-select').value;
         if(!id) return;
         const docSnap = await getDoc(doc(db, "projects", id));
         if (docSnap.exists()) {
             stackData = docSnap.data();
-            let totalThickMm = 0;
-            const scale = (stackData.settings?.unit === 'mm') ? 1 : 0.001;
-            stackData.layers.forEach(l => { totalThickMm += l.thickness * scale; });
-            document.getElementById('stack-info').style.display = 'block';
-            document.getElementById('current-stack-name').innerText = id;
-            document.getElementById('current-stack-th').innerText = totalThickMm.toFixed(3);
-            document.getElementById('simple-thick-row').style.display = 'none';
-            updateModel();
+            let totalThickMm=0; const scale=(stackData.settings?.unit==='mm')?1:0.001;
+            stackData.layers.forEach(l=>{totalThickMm+=l.thickness*scale});
+            document.getElementById('stack-info').style.display='block';
+            document.getElementById('current-stack-th').innerText=totalThickMm.toFixed(3);
+            document.getElementById('row-s-th').style.display='none';
+            updateModel(); recordState();
         }
     }
-
-    window.unloadProject = function() {
-        stackData = null;
-        document.getElementById('stack-info').style.display = 'none';
-        document.getElementById('simple-thick-row').style.display = 'flex';
-        updateModel();
-    }
+    window.unloadProject = function() { stackData=null; document.getElementById('stack-info').style.display='none'; document.getElementById('row-s-th').style.display='flex'; updateModel(); recordState(); }
 
     // --- UI Logic ---
-    window.sync = function(targetId, val) {
-        let sliderId, inputId;
-        if(targetId.startsWith('nb_')) { inputId = targetId; sliderId = targetId.replace('nb_', ''); } 
-        else { inputId = 'nb_' + targetId; sliderId = targetId; }
-        document.getElementById(inputId).value = val;
-        document.getElementById(sliderId).value = val;
-        updateModel();
+    window.switchTab = (tab) => {
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
     }
-
-    window.adjust = function(id, direction) {
-        const input = document.getElementById('nb_' + id);
-        let current = parseFloat(input.value);
-        let next = current + (window.currentStep * direction);
-        const decimals = (window.currentStep.toString().split('.')[1] || '').length;
-        next = parseFloat(next.toFixed(Math.max(decimals, 2))); 
-        if (!['b_dx', 'b_a', 'j_r', 's_r'].includes(id)) next = Math.max(0.01, next);
-        input.value = next;
-        document.getElementById(id).value = next;
-        updateModel();
+    window.changeSelection = (val) => {
+        currentObj=val; tControls.detach();
+        if(val==='jig') tControls.attach(jigGroup);
+        if(val==='sample') tControls.attach(sampleGroup);
+        if(val==='blade') tControls.attach(bladeGroup);
+        if(val==='nozzle') tControls.attach(nozzleGroup);
+        ['jig','sample','blade','nozzle'].forEach(k => document.getElementById('dims-'+k).style.display=k===val?'block':'none');
+        updateTransformUI();
     }
+    window.updateVal = (key, val) => {
+        params[key]=parseFloat(val); 
+        document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; 
+        updateModel(); 
+    }
+    function updateTransformUI() {
+        const t=transforms[currentObj];
+        document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
+        document.getElementById('t_py').value=t.py.toFixed(2); document.getElementById('rg_py').value=t.py;
+        document.getElementById('t_pz').value=t.pz.toFixed(2); document.getElementById('rg_pz').value=t.pz;
+        const dx=t.rx*180/Math.PI, dy=t.ry*180/Math.PI, dz=t.rz*180/Math.PI;
+        document.getElementById('t_rx').value=dx.toFixed(1); document.getElementById('rg_rx').value=dx;
+        document.getElementById('t_ry').value=dy.toFixed(1); document.getElementById('rg_ry').value=dy;
+        document.getElementById('t_rz').value=dz.toFixed(1); document.getElementById('rg_rz').value=dz;
+    }
+    window.updateTransFromInput = () => {
+        const t=transforms[currentObj];
+        t.px=parseFloat(document.getElementById('t_px').value);
+        t.py=parseFloat(document.getElementById('t_py').value);
+        t.pz=parseFloat(document.getElementById('t_pz').value);
+        t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180;
+        t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180;
+        t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
+        applyTransforms();
+        // Record state only on change end (not every input), but for now this is ok
+    }
+    // Add event listener to record state on mouse up of range sliders
+    document.addEventListener('mouseup', e => {
+        if(e.target.type === 'range') recordState();
+    });
 
     // --- 3D Scene ---
     const container = document.getElementById('canvas-container');
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222);
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(30, 30, 40); camera.lookAt(0, 0, 0);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x222222);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
+    camera.position.set(35,35,45); camera.lookAt(0,0,0);
+    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true}); // Needed for screenshot
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
-    scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-    dirLight.position.set(20, 50, 20); dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 2048; dirLight.shadow.mapSize.height = 2048;
-    scene.add(dirLight);
+    scene.add(new THREE.AmbientLight(0x404040, 1.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); dirLight.castShadow=true; 
+    dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
+    scene.add(new THREE.GridHelper(200, 200, 0x444444, 0x333333));
+    scene.add(new THREE.AxesHelper(10));
 
-    const gridHelper = new THREE.GridHelper(200, 200, 0x444444, 0x333333);
-    scene.add(gridHelper);
-    const axesHelper = new THREE.AxesHelper(10);
-    scene.add(axesHelper);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    const evaluator = new Evaluator();
-
-    // TransformControls (Gizmo)
-    const transformControl = new TransformControls(camera, renderer.domElement);
-    transformControl.addEventListener('dragging-changed', function (event) {
-        controls.enabled = !event.value; // Disable Orbit when dragging Gizmo
+    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping=true;
+    const tControls = new TransformControls(camera, renderer.domElement);
+    tControls.addEventListener('dragging-changed', e => { controls.enabled=!e.value; if(!e.value) recordState(); }); // Record on drag end
+    tControls.addEventListener('change', () => {
+        if(!tControls.object) return;
+        const obj=tControls.object; const k=currentObj;
+        transforms[k].px=obj.position.x; transforms[k].py=obj.position.y; transforms[k].pz=obj.position.z;
+        transforms[k].rx=obj.rotation.x; transforms[k].ry=obj.rotation.y; transforms[k].rz=obj.rotation.z;
+        updateTransformUI();
+        if(k==='blade'||k==='sample'||k==='jig') { if(document.getElementById('target-select').value!=='none') updateModel(); }
     });
-    // 當 Gizmo 被拉動時，同步更新數值
-    transformControl.addEventListener('change', function () {
-        if (!transformControl.object) return;
-        const obj = transformControl.object;
-        const mode = transformControl.getMode();
-        
-        if (mode === 'rotate') {
-            const rotDeg = obj.rotation.y * 180 / Math.PI; // 假設主要是 Y 旋轉
-            // 這裡簡化：只更新對應的主要旋轉軸
-            if (obj === jigGroup) {
-                const deg = (obj.rotation.y * 180 / Math.PI).toFixed(1);
-                updateUI('j_r', deg);
-            } else if (obj === bladeGroup) {
-                const deg = (obj.rotation.z * 180 / Math.PI).toFixed(1);
-                updateUI('b_a', deg);
-            }
-            // Sample 的 spin 比較特殊，是在內部 mesh 上，但我們可以用 Gizmo 轉 Group 模擬
-            // 這裡暫時只做 Jig 和 Blade 的完美連動，Sample 維持輸入框控制較穩
-        } else if (mode === 'translate') {
-            if (obj === bladeGroup) {
-                updateUI('b_dx', obj.position.x.toFixed(2));
-                // b_d 是高度，但我們 Blade 原始位置有 +25，要扣掉
-                updateUI('b_d', (obj.position.y - 25).toFixed(2));
-            }
-        }
-    });
-    scene.add(transformControl);
+    scene.add(tControls);
 
-    function updateUI(id, val) {
-        document.getElementById(id).value = val;
-        document.getElementById('nb_' + id).value = val;
-    }
-
-    // Groups for Gizmo attachment
-    const jigGroup = new THREE.Group(); scene.add(jigGroup);
-    const sampleGroup = new THREE.Group(); jigGroup.add(sampleGroup); // Sample follows Jig
-    const bladeGroup = new THREE.Group(); scene.add(bladeGroup);
-
-    // Gizmo Selection Logic
-    window.selectObject = function(type) {
-        document.querySelectorAll('.group-title').forEach(el => el.classList.remove('selected'));
-        document.getElementById('title-' + type).classList.add('selected');
-        
-        transformControl.detach();
-        if (type === 'jig') {
-            transformControl.attach(jigGroup);
-            transformControl.setMode('rotate'); // 治具主要是旋轉
-        } else if (type === 'blade') {
-            transformControl.attach(bladeGroup);
-            transformControl.setMode('translate'); // 刀具主要是移動
-        } else if (type === 'sample') {
-            // Sample 比較特別，我們這裡先不做 Gizmo，因為他在 Group 裡面比較複雜
-            // 或者可以 attach 到 sampleGroup，但那是 local 座標
-            // 暫時不 attach，避免混淆
-        }
-    }
-
-    window.setGizmoMode = function(mode) {
-        transformControl.setMode(mode);
-        document.getElementById('mode-translate').classList.remove('active');
-        document.getElementById('mode-rotate').classList.remove('active');
-        document.getElementById('mode-' + mode).classList.add('active');
-    }
-
-    window.setGizmoAxis = function(axis) {
-        transformControl.showX = (axis === null || axis === 'X');
-        transformControl.showY = (axis === null || axis === 'Y');
-        transformControl.showZ = (axis === null || axis === 'Z');
-    }
+    const jigGroup=new THREE.Group(); scene.add(jigGroup);
+    const sampleGroup=new THREE.Group(); jigGroup.add(sampleGroup); 
+    const bladeGroup=new THREE.Group(); scene.add(bladeGroup);
+    const nozzleGroup=new THREE.Group(); scene.add(nozzleGroup);
 
     // Materials
-    const matJig = new THREE.MeshStandardMaterial({ color: 0x9C27B0, roughness: 0.3, metalness: 0.1 });
-    const matBlade = new THREE.MeshStandardMaterial({ color: 0xFFC107, roughness: 0.1, metalness: 0.8 });
-    const matDefaultSample = new THREE.MeshStandardMaterial({ color: 0x2196F3, roughness: 0.2, metalness: 0.0 });
+    const matJig=new THREE.MeshStandardMaterial({color:0x9C27B0, roughness:0.3});
+    const matSample=new THREE.MeshStandardMaterial({color:0x2196F3, roughness:0.2});
+    const matBlade=new THREE.MeshStandardMaterial({color:0xFFC107, roughness:0.1, metalness:0.8});
+    const matNozzle=new THREE.MeshStandardMaterial({color:0x9E9E9E});
 
-    let meshJig, sampleMeshes = [], meshBlade, resultMesh;
-    let isWireframe = false;
+    // Nozzle
+    const n1=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle);
+    const n2=new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle);
+    n2.position.y=-1.5; nozzleGroup.add(n1,n2);
 
-    // View Controls
-    window.setView = function(type) {
-        const dist = 60;
-        switch(type) {
-            case 'top': camera.position.set(0, dist, 0); break;
-            case 'front': camera.position.set(0, 0, dist); break;
-            case 'side': camera.position.set(dist, 0, 0); break;
-            case 'iso': camera.position.set(30, 30, 40); break;
+    let brushJig, brushBlade, sampleBrushes=[], resultMesh, isWireframe=false;
+    const evaluator = new Evaluator();
+
+    // Measurement
+    let measureMode = false;
+    let measurePoints = [];
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let measureMarkers = []; // Spheres
+    let measureLine = null; // Line object
+
+    window.toggleMeasure = () => {
+        measureMode = !measureMode;
+        const btn = document.getElementById('btn-measure');
+        if(measureMode) {
+            btn.style.background = '#00E676';
+            btn.innerText = '📏 點擊兩點進行量測';
+            container.style.cursor = 'crosshair';
+        } else {
+            btn.style.background = '#555';
+            btn.innerText = '📏 開啟量測模式';
+            container.style.cursor = 'default';
+            clearMeasure();
         }
-        camera.lookAt(0,0,0);
-        controls.target.set(0,0,0);
-        controls.update();
     }
 
-    function createJigGeometry(h, angleDeg, w) {
-        const shape = new THREE.Shape();
-        const angleRad = angleDeg * Math.PI / 180;
-        const base = (angleDeg >= 89) ? 0.1 : h / Math.tan(angleRad);
-        shape.moveTo(0, 0); shape.lineTo(base, 0); shape.lineTo(0, h); shape.lineTo(0, 0);
-        const geo = new THREE.ExtrudeGeometry(shape, { steps: 1, depth: w, bevelEnabled: false });
-        geo.center();
-        return { geo, base, height: h };
+    function clearMeasure() {
+        measurePoints = [];
+        measureMarkers.forEach(m => scene.remove(m)); measureMarkers = [];
+        if(measureLine) scene.remove(measureLine); measureLine = null;
+        document.getElementById('measure-res').style.display = 'none';
+    }
+
+    window.addEventListener('mousedown', (event) => {
+        if(!measureMode) return;
+        // Calculate mouse pos
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(scene.children, true); // Recursive
+        
+        // Filter out grid, helpers, water
+        const hit = intersects.find(i => i.object.type === 'Mesh' && i.object.visible);
+        
+        if(hit) {
+            measurePoints.push(hit.point);
+            // Add marker
+            const marker = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFF0000}));
+            marker.position.copy(hit.point);
+            scene.add(marker);
+            measureMarkers.push(marker);
+
+            if(measurePoints.length === 2) {
+                // Draw line
+                const geo = new THREE.BufferGeometry().setFromPoints(measurePoints);
+                measureLine = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xFF0000, linewidth:2}));
+                scene.add(measureLine);
+                
+                // Calc dist
+                const dist = measurePoints[0].distanceTo(measurePoints[1]);
+                const lbl = document.getElementById('measure-res');
+                lbl.innerText = `📏 距離: ${dist.toFixed(3)} mm`;
+                lbl.style.display = 'block';
+                
+                // Reset for next
+                setTimeout(() => { 
+                    if(measureMode) {
+                        measurePoints = [];
+                        // Don't clear visuals immediately, let user see
+                    }
+                }, 100); 
+            }
+            if(measurePoints.length > 2) {
+                clearMeasure(); // New start
+                measurePoints.push(hit.point);
+                const marker = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFF0000}));
+                marker.position.copy(hit.point);
+                scene.add(marker);
+                measureMarkers.push(marker);
+            }
+        }
+    });
+
+
+    // Water
+    const particleCount=2000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
+    for(let i=0;i<particleCount;i++){waterPos[i*3+1]=-999;waterVel.push({x:0,y:0,z:0});}
+    waterGeo.setAttribute('position',new THREE.BufferAttribute(waterPos,3));
+    const waterSystem=new THREE.Points(waterGeo,new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.6}));
+    scene.add(waterSystem);
+
+    function applyTransforms() {
+        const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx, t.ry, t.rz); grp.updateMatrixWorld(); }
+        setT(jigGroup, transforms.jig); setT(sampleGroup, transforms.sample); setT(bladeGroup, transforms.blade); setT(nozzleGroup, transforms.nozzle);
+    }
+
+    function createJigGeometry() {
+        const h=params.j_h, w=params.j_w, angleRad=params.j_a*Math.PI/180;
+        const base=(params.j_a>=89)?0.1:h/Math.tan(angleRad);
+        const s=new THREE.Shape(); s.moveTo(0,0); s.lineTo(base,0); s.lineTo(0,h); s.lineTo(0,0);
+        const g=new THREE.ExtrudeGeometry(s,{steps:1,depth:w,bevelEnabled:false}); g.center(); g.translate(0,h/2,0);
+        return {geo:g, base, h};
     }
 
     function updateModel() {
-        const getVal = (id) => parseFloat(document.getElementById('nb_' + id).value);
-        const p = {
-            j_h: getVal('j_h'), j_a: getVal('j_a'), j_w: getVal('j_w'), j_r: getVal('j_r'),
-            s_t: getVal('s_t'), s_l: getVal('s_l'), s_th: getVal('s_th'), s_w: getVal('s_w'), s_r: getVal('s_r'),
-            b_t: getVal('b_t'), b_w: getVal('b_w'), b_d: getVal('b_d'), b_dx: getVal('b_dx'), b_a: getVal('b_a')
-        };
-
-        // 清理 Group 內容，但不刪除 Group 本身
-        jigGroup.clear(); 
-        sampleGroup.clear();
-        bladeGroup.clear();
+        if(brushJig) brushJig.geometry.dispose(); if(brushBlade) brushBlade.geometry.dispose();
+        sampleBrushes.forEach(b=>b.geometry.dispose()); sampleBrushes=[];
         if(resultMesh) { scene.remove(resultMesh); resultMesh.geometry.dispose(); }
-
-        // --- 1. Jig Generation ---
-        const jigData = createJigGeometry(p.j_h, p.j_a, p.j_w);
-        const brushJig = new Brush(jigData.geo, matJig);
-        // Jig 本體位置 (Local to Group)
-        brushJig.position.y = p.j_h / 2; 
         
-        // 更新 Group 的 Transform (由 Gizmo/Input 控制)
-        jigGroup.rotation.y = p.j_r * Math.PI / 180;
-        jigGroup.add(brushJig);
+        jigGroup.clear(); sampleGroup.clear(); bladeGroup.clear();
+        jigGroup.add(sampleGroup); 
 
-        // --- 2. Sample Calculation (Relative to Jig) ---
-        const angleRad = p.j_a * Math.PI / 180;
-        const base = jigData.base;
-        const h = p.j_h;
-        const dx = base, dy = -h;
-        const slopeLen = Math.sqrt(dx*dx + dy*dy);
-        const ux = dx / slopeLen, uy = dy / slopeLen; 
-        const nx = -uy, ny = ux; 
-        const topX = -base / 2, topY = h / 2;
-        const slideDist = p.s_t * slopeLen;
-        const baseSx = topX + ux * slideDist;
-        const baseSy = topY + uy * slideDist;
-        const sampleSpinRad = p.s_r * Math.PI / 180;
+        const jData = createJigGeometry();
+        brushJig = new Brush(jData.geo, matJig); jigGroup.add(brushJig);
 
-        let sampleBrushes = [];
+        const dx=jData.base, dy=-jData.h; const slopeLen=Math.sqrt(dx*dx+dy*dy);
+        const ux=dx/slopeLen, uy=dy/slopeLen; const nx=-uy, ny=ux; 
+        const topX=-jData.base/2, topY=jData.h/2;
+        const slideDist = params.s_t * slopeLen;
+        const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
+        const angleRad=params.j_a*Math.PI/180, spinRad=params.s_r*Math.PI/180;
 
-        const transformSample = (brush, thicknessOffset) => {
-            let sx = baseSx + nx * thicknessOffset;
-            let sy = baseSy + ny * thicknessOffset;
-            sx += ux * (p.s_l/2); sy += uy * (p.s_l/2);
+        const buildSampleLayer = (th, color, offset) => {
+            const g = new THREE.BoxGeometry(params.s_l, th, params.s_w);
+            const m = new THREE.MeshStandardMaterial({color});
+            const b = new Brush(g, m);
+            b.rotation.set(0,0,0); b.rotateY(spinRad); b.rotateZ(-angleRad);
+            const sx = baseSx + nx*(offset+th/2) + ux*(params.s_l/2);
+            const sy = baseSy + ny*(offset+th/2) + uy*(params.s_l/2);
+            b.position.set(sx, sy, 0); b.updateMatrixWorld();
+            return b;
+        }
 
-            // Sample Group Logic
-            // 我們把 Sample 放在 sampleGroup 裡，並將 sampleGroup 放在 jigGroup 裡
-            // 這樣 Sample 就會跟著 Jig 轉。
-            // 但 Sample 在斜面上的定位是相對於 Jig 中心的。
-            
-            brush.rotation.set(0, 0, 0);
-            brush.rotateY(sampleSpinRad); 
-            brush.rotateZ(-angleRad);
-            
-            // 位置是 Local to Jig
-            brush.position.set(sx, sy + p.j_h/2, 0);
-            brush.updateMatrixWorld();
-        };
-
-        if (stackData) {
-            const unit = stackData.settings?.unit || 'um';
-            const scale = (unit === 'mm') ? 1 : 0.001;
-            let currentThickOffset = 0;
-            const layers = [...stackData.layers].reverse();
-            layers.forEach(layer => {
-                const lThick = layer.thickness * scale;
-                const geoLayer = new THREE.BoxGeometry(p.s_l, lThick, p.s_w);
-                const matLayer = new THREE.MeshStandardMaterial({ color: layer.color || 0xcccccc, roughness: 0.2 });
-                const brushLayer = new Brush(geoLayer, matLayer);
-                transformSample(brushLayer, currentThickOffset + (lThick / 2));
-                sampleGroup.add(brushLayer);
-                sampleBrushes.push(brushLayer);
-                currentThickOffset += lThick;
+        if(stackData) {
+            const scale=(stackData.settings?.unit==='mm')?1:0.001; let curOff=0;
+            [...stackData.layers].reverse().forEach(l=>{
+                const th=l.thickness*scale; const b=buildSampleLayer(th, l.color||0xcccccc, curOff);
+                sampleBrushes.push(b); sampleGroup.add(b); curOff+=th;
             });
         } else {
-            const geoSample = new THREE.BoxGeometry(p.s_l, p.s_th, p.s_w);
-            const brushSample = new Brush(geoSample, matDefaultSample);
-            transformSample(brushSample, p.s_th / 2);
-            sampleGroup.add(brushSample);
-            sampleBrushes.push(brushSample);
+            const b=buildSampleLayer(params.s_th, 0x2196F3, 0);
+            sampleBrushes.push(b); sampleGroup.add(b);
         }
 
-        // --- 3. Blade ---
-        const geoBlade = new THREE.BoxGeometry(p.b_t, 50, p.b_w);
-        const brushBlade = new Brush(geoBlade, matBlade);
-        
-        // Blade Group Transform
-        bladeGroup.position.x = p.b_dx;
-        bladeGroup.position.y = p.b_d + 25; // Height
-        bladeGroup.rotation.z = p.b_a * Math.PI / 180;
+        applyTransforms();
+
+        // Calculate Depth Display
+        // Blade bottom Y (world) vs Sample Top Y (world)
+        // This is complex due to rotations. 
+        // Simple approx: Blade Tip Y - Jig contact Y?
+        // Let's rely on blade parameter 'b_d' (Cut Depth) which is visual.
+        document.getElementById('calc-depth').innerText = params.b_d.toFixed(2);
+
+        const gBlade = new THREE.BoxGeometry(params.b_t, 50, params.b_w);
+        gBlade.translate(0, 25, 0); 
+        brushBlade = new Brush(gBlade, matBlade);
         bladeGroup.add(brushBlade);
-        
-        // Update matrices for Boolean
-        jigGroup.updateMatrixWorld(true);
-        bladeGroup.updateMatrixWorld(true);
 
-        // --- 4. Boolean (Requires World Coordinates) ---
         const target = document.getElementById('target-select').value;
-        
-        // 為了進行 Boolean，我們需要複製一份 World Space 的 Geometry
-        // 這比較複雜，因為 CSG 需要絕對位置。
-        // 簡單做法：如果不切割 (None)，直接顯示 Group
-        // 如果要切割，我們必須 "Bake" 變換。
-        
-        if (target === 'none') {
-            // Do nothing, groups are already added to scene
-        } else {
-            // Hide original groups, show result
-            jigGroup.visible = false;
-            // Blade is ghost
-            bladeGroup.visible = true; 
-            // Create a ghost material for blade if cutting
-            brushBlade.material = new THREE.MeshBasicMaterial({ color: 0xFFEB3B, wireframe: true, transparent: true, opacity: 0.3 });
+        jigGroup.updateMatrixWorld(true); sampleGroup.updateMatrixWorld(true); bladeGroup.updateMatrixWorld(true);
 
-            // Prepare Brushes with World Matrix applied
-            // 這裡我們需要 clone 並 applyMatrix
-            const worldJig = brushJig.clone();
-            worldJig.applyMatrix4(jigGroup.matrixWorld);
-            
-            const worldBlade = brushBlade.clone();
-            // brushBlade is inside bladeGroup, need to combine
-            worldBlade.applyMatrix4(bladeGroup.matrixWorld);
-            // Restore material for calculation (doesn't matter for geometry, but evaluate needs material)
-            worldBlade.material = matBlade;
-
-            if (target === 'sample') {
-                jigGroup.visible = true; // Show Jig
-                sampleGroup.visible = false; // Hide original Sample
-                
-                // Cut each sample layer
-                sampleBrushes.forEach(brush => {
-                    const worldBrush = brush.clone();
-                    // Brush is child of SampleGroup, SampleGroup is child of JigGroup
-                    // Total transform: JigGroup * SampleGroup (Identity) * Brush
-                    worldBrush.applyMatrix4(brush.matrixWorld);
-                    
-                    const result = evaluator.evaluate(worldBrush, worldBlade, SUBTRACTION);
-                    result.material = brush.material;
-                    result.castShadow = true; result.receiveShadow = true;
-                    scene.add(result);
-                    resultMesh = result; // Keep ref to dispose later (only tracks last one, but simple enough)
+        if(target!=='none') {
+            const worldBlade = brushBlade.clone(); worldBlade.applyMatrix4(bladeGroup.matrixWorld); worldBlade.material = matBlade;
+            if(target==='jig') {
+                brushJig.visible=false; 
+                const wJig=brushJig.clone(); wJig.applyMatrix4(jigGroup.matrixWorld);
+                const res=evaluator.evaluate(wJig, worldBlade, SUBTRACTION);
+                res.material=matJig; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
+            } else {
+                sampleBrushes.forEach(b=>{
+                    b.visible=false; 
+                    const wb=b.clone(); wb.applyMatrix4(sampleGroup.matrix); wb.applyMatrix4(jigGroup.matrixWorld);
+                    const res=evaluator.evaluate(wb, worldBlade, SUBTRACTION);
+                    res.material=b.material; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
                 });
-
-            } else { // Cut Jig
-                jigGroup.visible = false;
-                sampleGroup.visible = true; // Show Sample
-                
-                const result = evaluator.evaluate(worldJig, worldBlade, SUBTRACTION);
-                result.material = matJig;
-                result.castShadow = true; result.receiveShadow = true;
-                scene.add(result);
-                resultMesh = result;
             }
+            const ghost = brushBlade.clone(); ghost.material = new THREE.MeshBasicMaterial({color:0xFFEB3B, wireframe:true, opacity:0.3, transparent:true});
+            bladeGroup.add(ghost); brushBlade.visible=false;
         }
         updateWireframe();
     }
 
-    window.toggleWireframe = function() {
-        isWireframe = !isWireframe;
-        const btn = document.getElementById('btn-wireframe');
-        if(isWireframe) btn.classList.add('active'); else btn.classList.remove('active');
-        updateWireframe();
+    window.toggleWireframe = () => { isWireframe=!isWireframe; updateWireframe(); }
+    function updateWireframe() { scene.traverse(o => { if(o.isMesh && o.material && o.visible && o.name!=='ghost') o.material.wireframe=isWireframe; }); }
+    window.setView = (v) => {
+        const d=60; 
+        if(v==='top') camera.position.set(0,d,0); if(v==='front') camera.position.set(0,0,d);
+        if(v==='side') camera.position.set(d,0,0); if(v==='iso') camera.position.set(30,30,40);
+        camera.lookAt(0,0,0); controls.target.set(0,0,0);
     }
-
-    function updateWireframe() {
-        scene.traverse((obj) => {
-            if (obj.isMesh && obj.material && obj.visible) {
-                // Avoid setting wireframe on Gizmo helpers
-                if(obj.type === 'TransformControlsPlane') return;
-                obj.material.wireframe = isWireframe;
-            }
-        });
-    }
-
-    window.updateModel = updateModel;
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    window.toggleWater = () => { waterEnabled=!waterEnabled; document.getElementById('btn-water').style.background=waterEnabled?'#00bcd4':'#0277bd'; waterSystem.visible=waterEnabled; }
+    
+    // Helper
+    window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); }
+    window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; }
 
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
+        
+        if(waterEnabled) {
+            const positions = waterGeo.attributes.position.array;
+            const pressure = document.getElementById('w_pressure').value;
+            const targetType = document.getElementById('water-target').value;
+            const tipLocal = new THREE.Vector3(0,-1.5,0);
+            const tipWorld = tipLocal.applyMatrix4(nozzleGroup.matrixWorld);
+            const dirLocal = new THREE.Vector3(0,-1,0);
+            const dirWorld = dirLocal.transformDirection(nozzleGroup.matrixWorld).normalize();
+            
+            let box=null;
+            if(targetType!=='none') {
+                const targetObj = (targetType==='sample')?sampleGroup : (targetType==='jig')?jigGroup : bladeGroup;
+                box = new THREE.Box3().setFromObject(targetObj);
+            }
+
+            for(let i=0; i<particleCount; i++) {
+                if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
+                    waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.2;
+                    waterPos[i*3+1] = tipWorld.y;
+                    waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.2;
+                    const spd = 0.5 + (pressure/100)*1.0;
+                    waterVel[i].x = dirWorld.x*spd; waterVel[i].y = dirWorld.y*spd; waterVel[i].z = dirWorld.z*spd;
+                } else {
+                    const ox=waterPos[i*3], oy=waterPos[i*3+1], oz=waterPos[i*3+2];
+                    waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
+                    if(pressure<100) waterVel[i].y -= 0.02; 
+                    if(box && box.containsPoint(new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]))) {
+                        waterVel[i].x = (Math.random()-0.5)*0.5; waterVel[i].y = (Math.random())*0.5; waterVel[i].z = (Math.random()-0.5)*0.5;
+                        waterPos[i*3]=ox; waterPos[i*3+1]=oy; waterPos[i*3+2]=oz;
+                    }
+                }
+            }
+            waterGeo.attributes.position.needsUpdate = true;
+        }
         renderer.render(scene, camera);
     }
 
-    document.getElementById('loader').style.opacity = 0;
-    setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-    
-    // Initial Select
+    document.getElementById('loader').style.display='none';
+    changeSelection('jig');
     updateModel();
-    selectObject('jig'); // Default select Jig
     animate();
 
 </script>
