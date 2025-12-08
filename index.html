@@ -50,6 +50,7 @@
             color: #333;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .card:hover {
@@ -66,12 +67,20 @@
             font-size: 4rem;
         }
 
+        /* 各種背景色 */
         .timer-bg { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%); }
         .glue-bg { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .stitch-bg { background: linear-gradient(135deg, #FFB74D 0%, #FFCC80 100%); }
+        .stack-bg { background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%); }
+        .cut2d-bg { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .cut3d-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; } /* 3D專用深色漸層 */
 
         .card-content {
             padding: 20px;
             text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .card-title {
@@ -87,11 +96,26 @@
             line-height: 1.5;
         }
 
+        /* 標籤 (Badge) */
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4757;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         footer {
             margin-top: auto;
             padding: 20px;
             color: #888;
             font-size: 0.9rem;
+            text-align: center;
         }
     </style>
 </head>
@@ -99,7 +123,7 @@
 
     <header>
         <h1>🛠️ Neil's 工具箱</h1>
-        <p> 45度切割時分析用 </p>
+        <p> 45度切割時分析與日常輔助工具 </p>
     </header>
 
     <div class="container">
@@ -125,37 +149,42 @@
         </a>
 
         <a href="stitch.html" class="card">
-            <div class="card-img" style="background: linear-gradient(135deg, #FFB74D 0%, #FFCC80 100%);">
-                🖼️
-            </div>
+            <div class="card-img stitch-bg">🖼️</div>
             <div class="card-content">
                 <div class="card-title">圖片拼接工具</div>
                 <div class="card-desc">
-                    多圖手動合成工具。載入兩張圖片，拖曳調整位置與透明度並存檔。
+                    多圖手動合成工具。載入兩張圖片，拖曳調整位置與透明度。
                 </div>
             </div>
         </a>
 
         <a href="stack.html" class="card">
-            <div class="card-img" style="background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%); font-size: 3rem;">
-                📚
-            </div>
+            <div class="card-img stack-bg">📚</div>
             <div class="card-content">
                 <div class="card-title">疊構圖產生器</div>
                 <div class="card-desc">
-                    自訂材料層次、厚度與顏色，自動產生比例正確的堆疊結構圖。
+                    自訂材料層次、厚度與顏色，產生堆疊結構圖。
                 </div>
             </div>
         </a>
 
         <a href="cutting.html" class="card">
-            <div class="card-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); font-size: 3rem;">
-                ✂️
-            </div>
+            <div class="card-img cut2d-bg">✂️</div>
             <div class="card-content">
-                <div class="card-title">切割佈局工具</div>
+                <div class="card-title">切割佈局 (2D)</div>
                 <div class="card-desc">
-                    模擬治具、樣品與刀具關係，計算切割深度並提供精準量測功能。
+                    平面量測工具。計算切割深度、支援畫線量測與吸附功能。
+                </div>
+            </div>
+        </a>
+
+        <a href="cutting_3d.html" class="card">
+            <div class="badge">NEW</div>
+            <div class="card-img cut3d-bg" style="font-size: 3.5rem;">🧊</div>
+            <div class="card-content">
+                <div class="card-title">切割模擬 (3D)</div>
+                <div class="card-desc">
+                    全 3D 視角。設定長寬高，模擬刀具切割實體後的斷面形狀。
                 </div>
             </div>
         </a>
@@ -163,16 +192,27 @@
     </div>
 
     <footer>
-        <div style="margin-bottom: 10px;">
+        <div style="margin-bottom: 15px;">
             &copy; 2024 My Web Tools. Hosted on GitHub Pages.
         </div>
         
-        <div style="font-size: 12px; opacity: 0.8; display: flex; justify-content: center; gap: 15px;">
-            <span id="busuanzi_container_site_pv" style="display:none">
-                👀 累積瀏覽: <span id="busuanzi_value_site_pv" style="color:#4FC3F7; font-weight:bold;"></span> 次
-            </span>
+        <div style="
+            font-size: 13px; 
+            background: rgba(255,255,255,0.5); 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            display: inline-flex; 
+            gap: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        ">
             <span id="busuanzi_container_site_uv" style="display:none">
-                👤 訪客總數: <span id="busuanzi_value_site_uv" style="color:#81C784; font-weight:bold;"></span> 人
+                👤 訪客數: <span id="busuanzi_value_site_uv" style="color:#00897B; font-weight:bold;"></span>
+            </span>
+            
+            <span style="border-left: 1px solid #ccc;"></span>
+
+            <span id="busuanzi_container_site_pv" style="display:none">
+                👀 瀏覽次數: <span id="busuanzi_value_site_pv" style="color:#1976D2; font-weight:bold;"></span>
             </span>
         </div>
         
