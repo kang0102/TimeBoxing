@@ -1,185 +1,216 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>膠體分析工具箱 (Web版)</title>
+    <title>膠體分析工具 v2.4 (效能優化版)</title>
     <style>
-        /* --- 樣式設定 (CSS) --- */
-        body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #ddd;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* 左側工具欄 */
-        #sidebar {
-            width: 260px;
-            background-color: #2b2b2b;
-            padding: 15px;
-            padding-top: 60px; /* 預留空間給回首頁按鈕 */
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        /* 右側畫布區 */
-        #main-area {
-            flex-grow: 1;
-            position: relative;
-            background-color: #333;
-            overflow: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        h2 { margin: 0 0 15px 0; color: #4FC3F7; font-size: 18px; }
+        /* --- 基礎佈局 --- */
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #1e1e1e; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        button {
-            padding: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: #444;
-            color: white;
-            border: 1px solid #555;
-            border-radius: 4px;
-            transition: 0.2s;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        #sidebar { width: 300px; background-color: #2b2b2b; padding: 15px; padding-top: 60px; display: flex; flex-direction: column; gap: 8px; box-shadow: 2px 0 5px rgba(0,0,0,0.5); z-index: 10; overflow-y: auto; }
+        #main-area { flex-grow: 1; position: relative; background-color: #333; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 95%; max-height: 95%; cursor: crosshair; }
+
+        h2 { margin: 0 0 10px 0; color: #00E5FF; font-size: 18px; }
+        h3 { margin: 15px 0 5px 0; color: #aaa; font-size: 13px; border-bottom: 1px solid #444; padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; transition: 0.2s; width: 100%; text-align: center; margin-bottom: 2px;}
         button:hover { background-color: #666; }
-        button.active { background-color: #007bff; border-color: #007bff; }
+        button.active { background-color: #00897B; border-color: #00695C; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+        button.action { background-color: #388E3C; border-color: #2E7D32; font-weight: bold; font-size: 14px; padding: 10px; margin-top: 10px;}
         
-        .separator { height: 1px; background: #555; margin: 5px 0; }
-        
-        input[type="range"] { width: 100%; margin: 10px 0; }
-        
-        .info-box {
-            background: #111;
-            padding: 10px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            color: #00ff00;
-            line-height: 1.6;
-            margin-top: auto;
-        }
+        .btn-row { display: flex; gap: 5px; }
+        .btn-cloud { background-color: #FF9800; border-color: #F57C00; color: black; font-weight: bold; }
 
-        /* 回首頁按鈕樣式 */
-        .home-btn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            text-decoration: none;
-            background: #444;
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: #fff;
-            font-weight: bold;
-            font-size: 14px;
-            border: 1px solid #666;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .home-btn:hover { background: #666; }
+        .control-row { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; }
+        .control-row label { flex: 1; font-size: 12px; color: #ccc; }
+        select, input[type="number"], input[type="text"] { background: #333; color: white; border: 1px solid #555; padding: 4px; border-radius: 3px; width: 100%; box-sizing: border-box; }
+        input[type="number"] { width: 70px; }
 
-        /* 畫布樣式 */
-        canvas {
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            cursor: crosshair;
-            max-width: 100%;
-            max-height: 100%;
-        }
+        input[type="range"] { width: 100%; margin: 5px 0; cursor: pointer; }
+        
+        .info-box { background: #111; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #00E676; line-height: 1.5; margin-top: auto; border: 1px solid #333; white-space: pre-wrap; }
+        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 8px 15px; border-radius: 20px; color: #fff; font-weight: bold; font-size: 12px; border: 1px solid #666; z-index: 100; }
+        
+        #preview-tag { position: absolute; top: 10px; right: 10px; background: rgba(0, 229, 255, 0.8); color: #000; font-weight: bold; padding: 5px 10px; border-radius: 4px; font-size: 12px; display: none; pointer-events: none; }
+        
+        #excluded-colors { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; min-height: 5px;}
+        .color-swatch { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #fff; cursor: pointer; position: relative; }
+        .color-swatch:hover::after { content: '×'; position: absolute; top:-2px; left:5px; color: red; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="home-btn">🏠 回首頁</a>
+    <a href="./" class="home-btn">🏠 回首頁</a>
+    <div id="preview-tag">🔵 預覽模式</div>
 
     <div id="sidebar">
-        <h2>🧩 膠體分析工具</h2>
+        <h2>🔬 膠體分析 v2.4</h2>
         
-        <button onclick="document.getElementById('fileInput').click()">📂 載入圖片</button>
+        <div style="background: rgba(255,152,0,0.1); padding: 8px; border-radius: 6px; border: 1px solid #FF9800; margin-bottom: 5px;">
+            <div style="display:flex; gap:5px;">
+                <select id="cloud-settings" onchange="loadFromCloud()" style="flex:1;">
+                    <option value="">-- 讀取雲端參數 --</option>
+                </select>
+                <button onclick="deleteFromCloud()" style="width:30px; padding:0; background:#d32f2f;">🗑️</button>
+            </div>
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <input type="text" id="setting-name" placeholder="設定檔名稱...">
+                <button class="btn-cloud" onclick="saveToCloud()" style="width:60px;">儲存</button>
+            </div>
+        </div>
+
+        <h3>1. 檔案與工具</h3>
+        <button onclick="document.getElementById('fileInput').click()" style="background:#555;">📂 載入圖片</button>
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="loadImage(this)">
         
-        <div class="separator"></div>
-        
-        <button id="btnRect" onclick="setTool('rect')" class="active">⬜ 矩形選取</button>
-        <button id="btnPoly" onclick="setTool('poly')">⬡ 多邊形 (連點)</button>
-        <button onclick="resetROI()">🔄 清除選取</button>
-        
-        <div class="separator"></div>
-        
-        <label>閾值 (深色過濾): <span id="threshVal">128</span></label>
-        <input type="range" id="thresholdSlider" min="0" max="255" value="128" oninput="updateThreshold(this.value)">
-        <div style="font-size: 12px; color: #888;">調整滑桿以改變識別敏感度</div>
-
-        <div class="separator"></div>
-
-        <button onclick="calculateArea()" style="background-color: #43A047; border-color: #2E7D32; justify-content: center;">
-            ▶ 開始計算面積
-        </button>
-
-        <div class="separator"></div>
-        <button onclick="saveAnalysis()" style="background-color: #1976D2; border-color: #1565C0;">
-            💾 儲存分析結果
-        </button>    
-        
-        <div class="info-box" id="resultBox">
-            等待計算...<br>
-            請載入圖片並選取範圍。
+        <div class="btn-row">
+            <button id="btnRect" onclick="setTool('rect')" class="active">⬜ 矩形選取</button>
+            <button id="btnPoly" onclick="setTool('poly')">⬡ 多邊形</button>
         </div>
+        <button onclick="resetROI()" style="background:#d32f2f; margin-top:2px;">🗑️ 清除選取</button>
+
+        <h3>2. 顯微鏡校正 (Scale)</h3>
+        <div class="control-row">
+            <button id="btnCalib" onclick="setTool('calib')" style="flex:1">📏 畫線校正</button>
+            <label style="flex:0.2; text-align:right">1px=</label>
+            <input type="number" id="pxRatio" step="0.000001" placeholder="輸入" oninput="manualSetScale(this.value)" style="width:70px">
+            <label style="flex:0.2">mm</label>
+        </div>
+        <div style="font-size:11px; color:#aaa; text-align:center" id="scaleInfo">未校正</div>
+
+        <h3>3. 影像分析參數</h3>
+        <div class="control-row">
+            <label>色彩通道:</label>
+            <select id="channelSel" onchange="schedulePreview()">
+                <option value="gray">灰度 (Gray)</option>
+                <option value="r">紅色 (R)</option>
+                <option value="g">綠色 (G)</option>
+                <option value="b">藍色 (B)</option>
+            </select>
+        </div>
+
+        <div class="control-row">
+            <label>目標:</label>
+            <div class="btn-row" style="flex:1;">
+                <button id="btnDark" onclick="setMode('dark')" class="active" style="margin:0;">深色</button>
+                <button id="btnLight" onclick="setMode('light')" style="margin:0;">亮色</button>
+            </div>
+        </div>
+
+        <label>閾值 (Threshold): <span id="threshVal" style="color:#4FC3F7">128</span></label>
+        <input type="range" id="thresholdSlider" min="0" max="255" value="128" oninput="updateThreshold(this.value)">
+
+        <div class="control-row" style="margin-top:5px;">
+            <button id="btnPick" onclick="setTool('picker')" style="border:1px dashed #aaa; flex:1;">💉 吸管去色</button>
+            <input type="number" id="colorTol" value="30" min="0" max="255" title="容許度" style="width:50px" onchange="if(isPreviewing) schedulePreview()">
+        </div>
+        <div id="excluded-colors"></div>
+
+        <button id="btnPreview" onclick="toggleBinaryPreview()" style="margin-top:10px; border:1px solid #555;">👁️ 切換預覽模式</button>
+
+        <button onclick="calculateArea()" class="action">▶ 計算面積</button>
+        <button onclick="saveAnalysis()" style="background-color: #1976D2; border-color: #1565C0;">💾 儲存結果圖</button>
+        
+        <div class="info-box" id="resultBox">等待計算...</div>
     </div>
 
     <div id="main-area">
         <canvas id="imageCanvas"></canvas>
     </div>
 
-    <script>
-        // --- 程式邏輯 (JavaScript) ---
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI", authDomain: "stack-diagram-db.firebaseapp.com", projectId: "stack-diagram-db", storageBucket: "stack-diagram-db.firebasestorage.app", messagingSenderId: "67240747982", appId: "1:67240747982:web:1fb065e40e936a7485419f", measurementId: "G-QJNE60W8BB" };
+        let db = null; const COLLECTION_NAME = "glue_settings";
+
+        try { const app = initializeApp(firebaseConfig); db = getFirestore(app); refreshCloudList(); } 
+        catch(e) { console.error("Firebase Error:", e); document.getElementById('cloud-settings').innerHTML = "<option>連線失敗</option>"; }
+
+        async function refreshCloudList() {
+            const sel = document.getElementById('cloud-settings');
+            try {
+                const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+                sel.innerHTML = "<option value=''>-- 讀取雲端參數 --</option>";
+                snapshot.forEach(doc => { const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = doc.id; sel.appendChild(opt); });
+            } catch(e) { sel.innerHTML = "<option>讀取失敗</option>"; }
+        }
         
+        window.saveToCloud = async function() {
+            const name = document.getElementById('setting-name').value.trim();
+            if(!name) return alert("請輸入名稱");
+            const data = {
+                threshold: parseInt(document.getElementById('thresholdSlider').value), mode: detectMode,
+                channel: document.getElementById('channelSel').value, pxRatio: document.getElementById('pxRatio').value,
+                pxPerMm: pxPerMm, excludedColors: excludedColors, tolerance: document.getElementById('colorTol').value, timestamp: Date.now()
+            };
+            try { await setDoc(doc(db, COLLECTION_NAME, name), data); alert("✅ 已儲存"); refreshCloudList(); } catch(e) { alert("失敗: " + e.message); }
+        };
+        window.loadFromCloud = async function() {
+            const name = document.getElementById('cloud-settings').value; if(!name) return;
+            try {
+                const docSnap = await getDoc(doc(db, COLLECTION_NAME, name));
+                if(docSnap.exists()) {
+                    const data = docSnap.data();
+                    window.updateThreshold(data.threshold); document.getElementById('thresholdSlider').value = data.threshold;
+                    window.setMode(data.mode);
+                    document.getElementById('channelSel').value = data.channel || 'gray';
+                    document.getElementById('pxRatio').value = data.pxRatio || '';
+                    pxPerMm = data.pxPerMm || 0;
+                    excludedColors = data.excludedColors || []; window.updateColorList();
+                    document.getElementById('colorTol').value = data.tolerance || 30;
+                    document.getElementById('setting-name').value = name;
+                    document.getElementById('scaleInfo').innerText = pxPerMm > 0 ? "已校正" : "未校正";
+                    if(img.src && isPreviewing) window.schedulePreview();
+                }
+            } catch(e) { alert("讀取失敗"); }
+        };
+        window.deleteFromCloud = async function() {
+            const name = document.getElementById('cloud-settings').value; if(!name) return;
+            if(!confirm(`確定刪除 "${name}"？`)) return;
+            try { await deleteDoc(doc(db, COLLECTION_NAME, name)); document.getElementById('setting-name').value = ""; refreshCloudList(); } catch(e) { alert("刪除失敗"); }
+        };
+    </script>
+
+    <script>
+        // --- 核心邏輯 ---
         let canvas = document.getElementById('imageCanvas');
-        let ctx = canvas.getContext('2d');
+        let ctx = canvas.getContext('2d', { willReadFrequently: true });
         let img = new Image();
         
-        // 狀態變數
-        let currentTool = 'rect'; // rect, poly
+        let currentTool = 'rect'; 
+        let detectMode = 'dark'; 
         let isDrawing = false;
         let startX, startY;
         let polyPoints = [];
-        let roiMask = null; // 用來存儲選取區域
+        let roiMask = null;
         let threshold = 128;
+        let isPreviewing = false; 
+        let pxPerMm = 0; 
+        let calibLine = null; 
+        let excludedColors = [];
+        
+        // 效能優化變數
+        let renderRequest = null;
 
-        // 初始化畫布文字
-        canvas.width = 800;
-        canvas.height = 600;
-        ctx.fillStyle = "#555";
-        ctx.font = "20px Microsoft JhengHei";
-        ctx.textAlign = "center";
-        ctx.fillText("請從左側載入圖片", canvas.width/2, canvas.height/2);
+        canvas.width = 800; canvas.height = 600;
+        ctx.fillStyle = "#555"; ctx.font = "20px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("請載入圖片", 400, 300);
 
-        // 1. 載入圖片
         function loadImage(input) {
             if (input.files && input.files[0]) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
                     img.onload = function() {
-                        // 調整畫布大小以適應圖片，但不要太大以免當機
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        resetROI();
-                        draw();
+                        let maxWidth = window.innerWidth * 0.75;
+                        let scale = 1;
+                        if(img.width > maxWidth) scale = maxWidth / img.width;
+                        canvas.width = img.width; canvas.height = img.height;
+                        canvas.style.width = (img.width * scale) + "px"; canvas.style.height = (img.height * scale) + "px";
+                        resetROI(); calibLine = null;
                     }
                     img.src = e.target.result;
                 }
@@ -187,255 +218,277 @@
             }
         }
 
-        // 2. 設定工具
-        function setTool(tool) {
-            currentTool = tool;
-            document.getElementById('btnRect').classList.toggle('active', tool === 'rect');
-            document.getElementById('btnPoly').classList.toggle('active', tool === 'poly');
-            // 切換工具時不強制清除，保留彈性
+        window.manualSetScale = function(val) {
+            let mm = parseFloat(val);
+            if(!isNaN(mm) && mm > 0) { pxPerMm = 1 / mm; document.getElementById('scaleInfo').innerText = "已校正 (手動)"; } 
+            else { pxPerMm = 0; document.getElementById('scaleInfo').innerText = "未校正"; }
         }
 
-        function resetROI() {
-            polyPoints = [];
-            roiMask = null;
-            draw();
+        window.setTool = function(tool) {
+            currentTool = tool;
+            document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            // Restore UI states
+            document.getElementById('btnRect').classList.toggle('active', tool === 'rect');
+            document.getElementById('btnPoly').classList.toggle('active', tool === 'poly');
+            document.getElementById('btnCalib').classList.toggle('active', tool === 'calib');
+            document.getElementById('btnPick').classList.toggle('active', tool === 'picker');
+            document.getElementById('btnDark').classList.toggle('active', detectMode === 'dark');
+            document.getElementById('btnLight').classList.toggle('active', detectMode === 'light');
+            if(isPreviewing) document.getElementById('btnPreview').classList.add('active'); // Keep preview state visual
+            
+            if(tool==='calib') alert("請在畫面上「畫一條線」對準刻度尺，滑鼠放開後輸入實際長度。");
+        }
+
+        window.setMode = function(mode) {
+            detectMode = mode;
+            document.getElementById('btnDark').classList.toggle('active', mode === 'dark');
+            document.getElementById('btnLight').classList.toggle('active', mode === 'light');
+            if(isPreviewing) schedulePreview();
+        }
+        
+        window.resetROI = function() {
+            polyPoints = []; roiMask = null; isPreviewing = false;
+            document.getElementById('preview-tag').style.display = 'none';
+            document.getElementById('btnPreview').classList.remove('active');
+            drawBaseImage();
             document.getElementById('resultBox').innerHTML = "區域已重置";
         }
 
-        function updateThreshold(val) {
+        window.updateThreshold = function(val) {
             threshold = parseInt(val);
             document.getElementById('threshVal').innerText = val;
-            if(roiMask) calculateArea(); // 如果有選區，直接即時計算預覽
+            if(!isPreviewing) { isPreviewing = true; document.getElementById('preview-tag').style.display = 'block'; document.getElementById('btnPreview').classList.add('active'); }
+            schedulePreview(); // 使用防抖動更新
         }
 
-        // 3. 繪圖與滑鼠事件
-        function draw() {
-            // 清空畫面
+        window.toggleBinaryPreview = function() {
+            if(!img.src) return;
+            isPreviewing = !isPreviewing;
+            document.getElementById('preview-tag').style.display = isPreviewing ? 'block' : 'none';
+            document.getElementById('btnPreview').classList.toggle('active', isPreviewing);
+            if(isPreviewing) schedulePreview(); else drawBaseImage();
+        }
+
+        // ★★★ 核心優化：使用 requestAnimationFrame 避免卡頓 ★★★
+        window.schedulePreview = function() {
+            if(renderRequest) cancelAnimationFrame(renderRequest);
+            renderRequest = requestAnimationFrame(renderPreview);
+        }
+
+        window.updateColorList = function() {
+            const container = document.getElementById('excluded-colors');
+            container.innerHTML = '';
+            excludedColors.forEach((c, index) => {
+                const d = document.createElement('div');
+                d.className = 'color-swatch';
+                d.style.backgroundColor = `rgb(${c.r},${c.g},${c.b})`;
+                d.onclick = () => { excludedColors.splice(index, 1); window.updateColorList(); if(isPreviewing) schedulePreview(); };
+                container.appendChild(d);
+            });
+        }
+
+        function drawBaseImage() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // 畫底圖
             if (img.src) ctx.drawImage(img, 0, 0);
+            drawROI(); drawCalibration();
+        }
 
-            // 設定繪圖樣式
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 3;
-            ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
-
-            // 畫多邊形
-            if (currentTool === 'poly' && polyPoints.length > 0) {
-                ctx.beginPath();
-                ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
-                for (let i = 1; i < polyPoints.length; i++) {
-                    ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
-                }
-                // 如果正在畫，連線到滑鼠位置（這裡簡化，直接畫出已有點）
-                if (roiMask && currentTool === 'poly') {
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                ctx.stroke();
-                
-                // 畫出頂點
-                ctx.fillStyle = 'yellow';
-                for(let p of polyPoints){
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-                    ctx.fill();
-                }
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.15)'; // 還原填色
-
-            } else if (roiMask && currentTool === 'rect') {
-                // 畫矩形
-                ctx.strokeRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
-                ctx.fillRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
+        function drawCalibration() {
+            if (calibLine) {
+                ctx.strokeStyle = '#00B0FF'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(calibLine.x1, calibLine.y1); ctx.lineTo(calibLine.x2, calibLine.y2); ctx.stroke();
+                ctx.fillStyle = '#00B0FF';
+                ctx.beginPath(); ctx.arc(calibLine.x1, calibLine.y1, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(calibLine.x2, calibLine.y2, 3, 0, Math.PI*2); ctx.fill();
             }
         }
 
-        // 滑鼠監聽
+        function drawROI() {
+            ctx.strokeStyle = '#FFFF00'; ctx.lineWidth = 2; ctx.fillStyle = 'rgba(255, 255, 0, 0.1)';
+            if (roiMask) {
+                ctx.beginPath();
+                if (roiMask.type === 'rect') ctx.rect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
+                else if (roiMask.type === 'poly') {
+                    let pts = roiMask.points;
+                    ctx.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+                    ctx.closePath();
+                }
+                ctx.stroke(); if(!isPreviewing) ctx.fill();
+            }
+            if (currentTool === 'poly' && polyPoints.length > 0 && !roiMask) {
+                ctx.beginPath(); ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
+                for (let i = 1; i < polyPoints.length; i++) ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
+                ctx.stroke(); ctx.fillStyle='#00FF00'; for(let p of polyPoints){ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();}
+            }
+        }
+
+        function getPixelValue(r, g, b, channel) {
+            if(channel === 'r') return r;
+            if(channel === 'g') return g;
+            if(channel === 'b') return b;
+            return 0.299 * r + 0.587 * g + 0.114 * b; 
+        }
+
+        function isColorExcluded(r, g, b) {
+            if (excludedColors.length === 0) return false;
+            const tol = parseInt(document.getElementById('colorTol').value);
+            // 簡單快速的距離計算，避免 Math.sqrt 提升效能
+            for (let c of excludedColors) {
+                // 使用曼哈頓距離近似，速度快很多
+                if (Math.abs(r-c.r) + Math.abs(g-c.g) + Math.abs(b-c.b) < tol * 2) return true;
+            }
+            return false;
+        }
+
+        function renderPreview() {
+            if(!img.src) return;
+            ctx.drawImage(img, 0, 0);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const channel = document.getElementById('channelSel').value;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i+1], b = data[i+2];
+                
+                if (isColorExcluded(r, g, b)) {
+                    data[i] = 100; data[i+1] = 0; data[i+2] = 100; continue; // Purple for excluded
+                }
+
+                const val = getPixelValue(r, g, b, channel);
+                let isGlue = (detectMode === 'dark') ? (val < threshold) : (val > threshold);
+
+                if (isGlue) {
+                    data[i] = 0; data[i+1] = 255; data[i+2] = 255; // Cyan Highlight
+                } else {
+                    const gray = val * 0.4; data[i] = gray; data[i+1] = gray; data[i+2] = gray;
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            drawROI(); drawCalibration();
+        }
+
+        window.calculateArea = function() {
+            if (!img.src || !roiMask) { alert("請先選取區域"); return; }
+            isPreviewing = false; 
+            document.getElementById('preview-tag').style.display = 'none';
+            document.getElementById('btnPreview').classList.remove('active');
+            ctx.drawImage(img, 0, 0); 
+
+            // 1. Create ROI Mask (offscreen)
+            const maskCv = document.createElement('canvas'); maskCv.width = canvas.width; maskCv.height = canvas.height;
+            const mCtx = maskCv.getContext('2d'); mCtx.fillStyle = 'white'; mCtx.beginPath();
+            if (roiMask.type === 'rect') mCtx.rect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
+            else { let pts = roiMask.points; mCtx.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length; i++) mCtx.lineTo(pts[i].x, pts[i].y); mCtx.closePath(); }
+            mCtx.fill();
+            const maskData = mCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+            // 2. Analyze
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const channel = document.getElementById('channelSel').value;
+            
+            let gluePixels = 0, totalRoiPixels = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                if (maskData[i+3] > 0) { // In ROI
+                    totalRoiPixels++;
+                    const r = data[i], g = data[i+1], b = data[i+2];
+                    if (!isColorExcluded(r, g, b)) {
+                        const val = getPixelValue(r, g, b, channel);
+                        let isTarget = (detectMode === 'dark') ? (val < threshold) : (val > threshold);
+                        if(isTarget) {
+                            gluePixels++;
+                            // Mark in Cyan
+                            data[i] = 0; data[i+1] = 200; data[i+2] = 200;
+                        }
+                    }
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            drawROI(); drawCalibration();
+
+            const percent = totalRoiPixels > 0 ? ((gluePixels/totalRoiPixels)*100).toFixed(2) : 0;
+            let areaText = `ROI: ${totalRoiPixels} px²<br>膠體: ${gluePixels} px²`;
+            if (pxPerMm > 0) {
+                let roiMm = (totalRoiPixels / (pxPerMm * pxPerMm)).toFixed(4);
+                let glueMm = (gluePixels / (pxPerMm * pxPerMm)).toFixed(4);
+                areaText = `ROI: ${totalRoiPixels} px² (<b>${roiMm} mm²</b>)<br>膠體: ${gluePixels} px² (<b>${glueMm} mm²</b>)`;
+            }
+            document.getElementById('resultBox').innerHTML = `${areaText}<br>比例: <span style="font-size:18px; color:cyan">${percent}%</span>`;
+        }
+
+        window.saveAnalysis = function() {
+            if (!img.src) return;
+            const link = document.createElement('a'); link.download = 'analysis_result.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.9); link.click();
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+            return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+        }
+
         canvas.addEventListener('mousedown', e => {
             if (!img.src) return;
-            const rect = canvas.getBoundingClientRect();
-            // 計算縮放比例 (因為 CSS 可能讓 canvas 縮小顯示)
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
+            const p = getPos(e);
             
-            const x = (e.clientX - rect.left) * scaleX;
-            const y = (e.clientY - rect.top) * scaleY;
-
-            if (currentTool === 'rect') {
-                isDrawing = true;
-                startX = x;
-                startY = y;
-                roiMask = null; // 重畫矩形時清除舊的
-            } else if (currentTool === 'poly') {
-                if(roiMask === true) { // 如果已經畫完一個，再點擊則重新開始
-                    polyPoints = [];
-                    roiMask = null;
-                }
-                polyPoints.push({x, y});
-                draw();
+            if (currentTool === 'picker') {
+                const pixel = ctx.getImageData(p.x, p.y, 1, 1).data;
+                excludedColors.push({ r: pixel[0], g: pixel[1], b: pixel[2] });
+                window.updateColorList(); if(isPreviewing) schedulePreview();
+                return;
             }
+            if (currentTool === 'calib') {
+                isDrawing = true; startX = p.x; startY = p.y; calibLine = null; return;
+            }
+            if (currentTool === 'rect') {
+                isDrawing = true; startX = p.x; startY = p.y; roiMask = null; 
+            } else if (currentTool === 'poly') {
+                if(roiMask && (roiMask.type === 'rect' || roiMask.type === 'poly')) { polyPoints = []; roiMask = null; }
+                polyPoints.push(p);
+            }
+            if(isPreviewing) schedulePreview(); else drawBaseImage();
         });
 
         canvas.addEventListener('mousemove', e => {
             if (!img.src) return;
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const x = (e.clientX - rect.left) * scaleX;
-            const y = (e.clientY - rect.top) * scaleY;
-
-            if (currentTool === 'rect' && isDrawing) {
-                draw(); // 重繪圖 (清除舊的拖曳框)
-                ctx.strokeStyle = '#00ff00';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(startX, startY, x - startX, y - startY);
+            if (isDrawing) {
+                const p = getPos(e);
+                if (currentTool === 'rect') {
+                    let w = p.x - startX; let h = p.y - startY;
+                    roiMask = { type: 'rect', x: w<0?p.x:startX, y: h<0?p.y:startY, w: Math.abs(w), h: Math.abs(h) };
+                } else if (currentTool === 'calib') {
+                    calibLine = { x1: startX, y1: startY, x2: p.x, y2: p.y };
+                }
+                // 使用 requestAnimationFrame 防抖動
+                if(isPreviewing) schedulePreview(); else {
+                    requestAnimationFrame(drawBaseImage); 
+                }
             }
         });
 
         canvas.addEventListener('mouseup', e => {
-            if (currentTool === 'rect' && isDrawing) {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const x = (e.clientX - rect.left) * scaleX;
-                const y = (e.clientY - rect.top) * scaleY;
-                
+            if (isDrawing) {
                 isDrawing = false;
-                // 修正寬高為負值的狀況
-                let w = x - startX;
-                let h = y - startY;
-                let rx = startX;
-                let ry = startY;
-                if(w < 0) { rx = x; w = Math.abs(w); }
-                if(h < 0) { ry = y; h = Math.abs(h); }
-
-                // 儲存矩形區域
-                roiMask = { x: rx, y: ry, w: w, h: h };
-                draw();
+                if (currentTool === 'calib' && calibLine) {
+                    let distPx = Math.sqrt(Math.pow(calibLine.x2 - calibLine.x1, 2) + Math.pow(calibLine.y2 - calibLine.y1, 2));
+                    let realMm = prompt("這條線代表多少 mm?", "1");
+                    if (realMm && !isNaN(realMm)) {
+                        pxPerMm = distPx / parseFloat(realMm);
+                        document.getElementById('scaleInfo').innerText = "已校正";
+                        document.getElementById('pxRatio').value = (1/pxPerMm).toFixed(6);
+                    } else { calibLine = null; drawBaseImage(); }
+                }
             }
         });
-        
-        // 多邊形雙擊結束
+
         canvas.addEventListener('dblclick', e => {
             if (currentTool === 'poly' && polyPoints.length > 2) {
-                roiMask = true; // 標記為完成狀態
-                draw(); // 會觸發 fill()
+                roiMask = { type: 'poly', points: [...polyPoints] };
+                if(isPreviewing) schedulePreview(); else drawBaseImage();
             }
         });
 
-        // 4. 計算面積邏輯
-        function calculateArea() {
-            if (!img.src || !roiMask) {
-                alert("請先載入圖片並選取區域");
-                return;
-            }
-
-            // 重新繪製乾淨的圖片以取得數據
-            draw(); 
-            // 這裡必須重畫一次不帶綠色遮罩的原始圖來計算像素? 
-            // 不，getImageData 會抓到綠色遮罩。
-            // 解決方法：用另一個隱藏的 canvas 畫原始圖 + Mask，或者直接操作數據。
-            
-            // 簡單解法：先畫原始圖
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-            
-            // 取得原始像素數據
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data; // R, G, B, A...
-            
-            // 建立 Mask Canvas
-            const maskCanvas = document.createElement('canvas');
-            maskCanvas.width = canvas.width;
-            maskCanvas.height = canvas.height;
-            const maskCtx = maskCanvas.getContext('2d');
-            
-            maskCtx.fillStyle = 'white'; // Mask 區域為白色
-            maskCtx.beginPath();
-            if (currentTool === 'rect') {
-                maskCtx.rect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
-            } else {
-                if(polyPoints.length < 3) return;
-                maskCtx.moveTo(polyPoints[0].x, polyPoints[0].y);
-                for (let i = 1; i < polyPoints.length; i++) {
-                    maskCtx.lineTo(polyPoints[i].x, polyPoints[i].y);
-                }
-                maskCtx.closePath();
-            }
-            maskCtx.fill();
-            const maskData = maskCtx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-            // 開始計算
-            let gluePixels = 0;
-            let totalRoiPixels = 0;
-            
-            // 視覺化陣列 (最後要畫回去)
-            // 我們直接在 imageData 上修改顏色來顯示結果
-            for (let i = 0; i < data.length; i += 4) {
-                // maskData 的 Alpha 通道 > 0 表示在選區內
-                // 注意：getImageData 的 Alpha 在 i+3
-                // maskCtx 畫白色，所以 R(i)=255, G(i+1)=255, B(i+2)=255
-                if (maskData[i] > 128) { // 簡單判斷是否為白色
-                    totalRoiPixels++;
-                    
-                    const r = data[i];
-                    const g = data[i+1];
-                    const b = data[i+2];
-                    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-
-                    // 閾值判斷 (假設膠體比背景黑)
-                    if (gray < threshold) {
-                        gluePixels++;
-                        // 將偵測到的膠體標記為顯眼的黃色
-                        data[i] = 255;   
-                        data[i+1] = 255; 
-                        data[i+2] = 0;   
-                    }
-                }
-            }
-            
-            // 將標記後的結果畫回主畫布
-            ctx.putImageData(imageData, 0, 0);
-
-            // 補上綠色外框 (因為 putImageData 蓋掉了)
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 2;
-            if (currentTool === 'rect') {
-                ctx.strokeRect(roiMask.x, roiMask.y, roiMask.w, roiMask.h);
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(polyPoints[0].x, polyPoints[0].y);
-                for (let i = 1; i < polyPoints.length; i++) {
-                    ctx.lineTo(polyPoints[i].x, polyPoints[i].y);
-                }
-                ctx.closePath();
-                ctx.stroke();
-            }
-
-            // 顯示結果
-            const percent = totalRoiPixels > 0 ? ((gluePixels/totalRoiPixels)*100).toFixed(2) : 0;
-            document.getElementById('resultBox').innerHTML = 
-                `ROI 面積: ${totalRoiPixels} px<br>` +
-                `膠體面積: ${gluePixels} px<br>` +
-                `覆蓋比例: <span style="font-size:16px; color:yellow">${percent}%</span>`;
-        }
-
-            // --- 5. 存檔功能 (新增) ---
-            function saveAnalysis() {
-                if (!img.src) {
-                    alert("請先載入圖片");
-                    return;
-                }
-            // 確保標記線有畫上去
-            calculateArea(); 
-    
-            // 下載圖片
-            const link = document.createElement('a');
-            link.download = 'glue_analysis_result.jpg';
-            link.href = canvas.toDataURL('image/jpeg', 0.9);
-            link.click();
-        }
-        
     </script>
 </body>
 </html>
