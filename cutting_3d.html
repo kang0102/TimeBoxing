@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cutting 3D Simulator v5.2 (Impact Heatmap)</title>
+    <title>Cutting 3D Pro v6.4 (Leader Lines & Fixes)</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; }
+        body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; user-select: none; }
         
         /* 側欄 */
         #sidebar {
@@ -19,16 +19,20 @@
         .app-title { color: #4FC3F7; font-size: 18px; margin: 0 0 8px 0; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         
         /* 顯示隱藏控制列 */
+        .control-bar-label { font-size: 11px; color: #888; margin-bottom: 2px; display: block;}
         .vis-bar { display: flex; gap: 5px; margin-bottom: 10px; background: #222; padding: 5px; border-radius: 4px; border: 1px solid #444; }
+        
         .vis-btn { flex: 1; padding: 4px; font-size: 16px; cursor: pointer; border: 1px solid #555; background: #333; color: #666; border-radius: 3px; text-align: center; transition:0.2s; }
         .vis-btn:hover { background: #444; }
-        .vis-btn.active { background: #00E676; color: #000; border-color: #00E676; }
+        .vis-btn.active { background: #00E676; color: #000; border-color: #00E676; box-shadow: 0 0 5px rgba(0, 230, 118, 0.3); }
 
-        .obj-select { width: 100%; padding: 8px; font-size: 15px; font-weight: bold; background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer; }
+        .sel-btn { flex: 1; padding: 6px 4px; font-size: 13px; cursor: pointer; border: 1px solid #555; background: #333; color: #aaa; border-radius: 3px; text-align: center; transition:0.2s; font-weight: bold; }
+        .sel-btn:hover { background: #444; color: #fff; }
+        .sel-btn.active { background: #2979FF; color: #fff; border-color: #2979FF; box-shadow: 0 0 8px rgba(41, 121, 255, 0.4); }
 
         /* 分頁 */
         .tabs { display: flex; background: #222; border-bottom: 1px solid #444; }
-        .tab-btn { flex: 1; padding: 10px 0; background: #222; color: #888; border: none; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .tab-btn { flex: 1; padding: 10px 0; background: #222; color: #888; border: none; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s; font-size: 13px;}
         .tab-btn.active { color: #fff; background: #333; border-bottom-color: #00E676; }
         .tab-content { padding: 15px; display: none; overflow-y: auto; flex: 1; }
         .tab-content.active { display: block; }
@@ -40,6 +44,9 @@
         label { flex: 0 0 60px; font-size: 12px; color: #ccc; text-align: right; margin-right: 5px;}
         input[type="number"] { width: 50px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
         input[type="range"] { flex: 1; cursor: pointer; height: 6px; }
+        input[type="text"] { background: #111; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; }
+        input[type="color"] { background: none; border: none; width: 30px; height: 30px; cursor: pointer; padding: 0;}
+        
         button.action-btn { width: 100%; padding: 8px; background: #00695C; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px;}
         button.action-btn:hover { background: #00897B; }
         .tool-btn { background: #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #666; color: white; font-size: 12px;}
@@ -47,11 +54,11 @@
         
         /* 彈窗樣式 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; justify-content: center; align-items: center; }
-        .modal { background: #222; width: 550px; max-height: 80vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; }
-        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; cursor: pointer; transition: 0.2s; align-items: center;}
+        .modal { background: #222; width: 600px; max-height: 85vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; align-items: center;}
         .project-card:hover { border-color: #00E676; background: #3a3a3a; }
-        .project-thumb { width: 80px; height: 60px; background: #000; object-fit: cover; border-radius: 4px; }
-        .project-info { flex: 1; }
+        .project-thumb { width: 100px; height: 70px; background: #000; object-fit: cover; border-radius: 4px; cursor: pointer;}
+        .project-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
         .default-badge { color: #FFD700; font-size: 18px; cursor: pointer; padding: 5px; }
         .default-badge.inactive { color: #555; filter: grayscale(1); }
 
@@ -64,14 +71,33 @@
         .gizmo-btn { flex: 1; padding: 5px; font-size: 11px; cursor: pointer; background: #444; color: #ddd; border: 1px solid #666; border-radius: 4px; }
         .gizmo-btn.active { background: #FF9800; color: #000; border-color: #FF9800; }
 
-        /* 浮動提示 */
-        #snap-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 230, 118, 0.8); color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30; }
-        /* 量測結果浮動窗 */
-        #measure-box { position: absolute; bottom: 20px; left: 400px; background: rgba(0,0,0,0.8); border: 1px solid #00E676; color: #00E676; padding: 10px; border-radius: 6px; font-family: monospace; display: none; z-index: 10; }
+        /* 標註系統 HTML Overlay */
+        #label-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 5; }
+        /* 引導線畫布 */
+        #leader-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
+        
+        .annotation-label { 
+            position: absolute; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            pointer-events: auto; 
+            white-space: nowrap; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+            display: flex; gap: 5px; align-items: center; 
+            border: 1px solid transparent; 
+            transition: background 0.2s, border 0.2s;
+            cursor: move; 
+        }
+        .annotation-label:hover { z-index: 100; border-color: rgba(255,255,255,0.8); box-shadow: 0 4px 12px rgba(0,0,0,0.8); }
+        .annotation-label input { background: transparent; border: none; color: inherit; font: inherit; text-align: center; min-width: 50px; outline: none; cursor: text; }
+        .close-btn { width: 18px; height: 18px; background: #e53935; color: white; border-radius: 50%; font-size: 12px; font-weight:bold; display: flex; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transition: 0.2s; border: none; }
+        .annotation-label:hover .close-btn { opacity: 1; }
+
+        #snap-hint { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.7); border: 1px solid #00E676; color: #00E676; padding: 8px 15px; border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30; }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s; }
 
-        /* [v5.2 新增] 隱藏的 Canvas 用於計算熱力圖 */
         #impact-canvas { display: none; }
     </style>
     
@@ -89,35 +115,37 @@
 </head>
 <body>
 
-<div id="loader">🚀 系統啟動中...</div>
-<div id="snap-hint">🖱️ 請點擊任意表面進行吸附</div>
+<div id="loader">☁️ 系統連線中...</div>
+<div id="snap-hint">模式提示</div>
 
+<div id="label-container"></div>
+<canvas id="leader-canvas"></canvas>
 <canvas id="impact-canvas" width="512" height="512"></canvas>
-
-<div id="measure-box">
-    <div>📏 距離: <span id="m-dist">0.00</span> mm</div>
-    <hr style="border-color:#333; margin:5px 0;">
-    <div>dX: <span id="m-dx">0.00</span></div>
-    <div>dY: <span id="m-dy">0.00</span></div>
-    <div>dZ: <span id="m-dz">0.00</span></div>
-</div>
 
 <div id="modal-save" class="modal-overlay">
     <div class="modal">
-        <h3 style="margin:0;color:#4FC3F7">💾 儲存專案</h3>
-        <input type="text" id="save-name" placeholder="專案名稱" style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white;">
-        <textarea id="save-desc" rows="3" placeholder="描述..." style="width:96%; padding:8px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
+        <h3 style="margin:0;color:#4FC3F7">💾 儲存至雲端</h3>
+        <div style="background:#111; padding:10px; border-radius:4px; text-align:center;">
+            <img id="save-preview-img" style="max-width:100%; max-height:200px; border:1px solid #444;">
+        </div>
+        <input type="text" id="save-name" placeholder="專案名稱" style="width:96%; padding:10px; background:#111; border:1px solid #555; color:white;">
+        <textarea id="save-desc" rows="2" placeholder="描述 (選填)..." style="width:96%; padding:10px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
             <button class="tool-btn" onclick="document.getElementById('modal-save').style.display='none'">取消</button>
-            <button class="action-btn" style="margin:0; width:auto;" onclick="confirmSave()">儲存</button>
+            <button class="action-btn" style="margin:0; width:auto; background:#E65100" onclick="confirmSave()">確認上傳</button>
         </div>
     </div>
 </div>
 
 <div id="modal-load" class="modal-overlay">
-    <div class="modal" style="height: 600px;">
-        <h3 style="margin:0;color:#4FC3F7">📂 專案列表 (點擊★設為預設)</h3>
-        <div id="project-list" style="overflow-y:auto; flex:1; padding-right:5px;"></div>
+    <div class="modal" style="height: 700px; width: 700px;">
+        <h3 style="margin:0;color:#4FC3F7">📂 雲端專案庫</h3>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <input type="text" id="search-proj" placeholder="搜尋專案..." oninput="filterProjects()" style="flex:1;">
+        </div>
+        <div id="project-list" style="overflow-y:auto; flex:1; padding-right:5px;">
+            <div style="text-align:center; padding:20px; color:#666;">載入中...</div>
+        </div>
         <button class="tool-btn" onclick="document.getElementById('modal-load').style.display='none'" style="align-self:flex-end;">關閉</button>
     </div>
 </div>
@@ -130,52 +158,52 @@
 </div>
 
 <div id="gizmo-panel">
-    <div style="font-size:12px;color:#aaa;text-align:center">滑鼠操作</div>
+    <div style="font-size:12px;color:#aaa;text-align:center">變換控制</div>
     <div class="gizmo-row">
-        <button class="gizmo-btn" id="mode-translate" onclick="setGizmoMode('translate')">移動 Move</button>
-        <button class="gizmo-btn active" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉 Rot</button>
+        <button class="gizmo-btn active" id="mode-translate" onclick="setGizmoMode('translate')">移動 Move</button>
+        <button class="gizmo-btn" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉 Rot</button>
     </div>
-    <div style="font-size:12px;color:#aaa;text-align:center;margin-top:5px">軸向鎖定</div>
     <div class="gizmo-row">
         <button class="gizmo-btn" onclick="setGizmoAxis('X')">X</button>
         <button class="gizmo-btn" onclick="setGizmoAxis('Y')">Y</button>
         <button class="gizmo-btn" onclick="setGizmoAxis('Z')">Z</button>
     </div>
     <button class="gizmo-btn" onclick="setGizmoAxis(null)" style="width:100%;margin-top:2px">自由 (Free)</button>
-    <div style="font-size:10px;color:#666;margin-top:5px;text-align:center">吸附後請切換 Local</div>
 </div>
 
 <div id="sidebar">
     <div class="header-area">
         <div class="app-title">
-            <span>Cutting 3D v5.2</span>
+            <span>Cutting 3D Pro</span>
             <div style="display:flex; gap:5px;">
-                <button class="tool-btn" onclick="initFromDefault()" title="初始化 (載入預設)">🔄 初始化</button>
-                <button class="tool-btn" onclick="openLoadModal()">📂</button>
-                <button class="tool-btn" style="background:#E65100" onclick="openSaveModal()">💾</button>
+                <button class="tool-btn" onclick="initFromDefault()" title="初始化 (載入預設)">🔄 重置</button>
+                <button class="tool-btn" onclick="openLoadModal()" title="開啟雲端專案">📂</button>
+                <button class="tool-btn" style="background:#E65100" onclick="openSaveModal()" title="儲存專案">💾</button>
             </div>
         </div>
         
+        <span class="control-bar-label">👁️ 顯示/隱藏</span>
         <div class="vis-bar">
-            <div class="vis-btn active" onclick="toggleVis('jig',this)" title="顯示/隱藏 治具">📐</div>
-            <div class="vis-btn active" onclick="toggleVis('sample',this)" title="顯示/隱藏 樣品">🧊</div>
-            <div class="vis-btn active" onclick="toggleVis('blade',this)" title="顯示/隱藏 刀具">🔪</div>
-            <div class="vis-btn active" onclick="toggleVis('nozzle',this)" title="顯示/隱藏 噴頭">🚿</div>
-            <div class="vis-btn active" onclick="toggleVis('water',this)" title="顯示/隱藏 水流">💦</div>
+            <div class="vis-btn active" onclick="toggleVis('jig',this)" title="治具">Jig</div>
+            <div class="vis-btn active" onclick="toggleVis('sample',this)" title="樣品">Sample</div>
+            <div class="vis-btn active" onclick="toggleVis('blade',this)" title="刀具">Blade</div>
+            <div class="vis-btn active" onclick="toggleVis('nozzle',this)" title="噴頭">Nozzle</div>
+            <div class="vis-btn active" onclick="toggleVis('anno',this)" title="標註">Label</div>
         </div>
 
-        <div style="font-size:11px;color:#888;margin-bottom:5px;">目前編輯物件：</div>
-        <select id="obj-selector" class="obj-select" onchange="changeSelection(this.value)">
-            <option value="nozzle">🚿 Nozzle (噴頭)</option>
-            <option value="blade">🔪 Blade (刀具)</option>
-            <option value="sample">🧊 Sample (樣品)</option>
-            <option value="jig">📐 Jig (治具)</option>
-        </select>
+        <span class="control-bar-label">🎯 選擇編輯對象 (移動/調整)</span>
+        <div class="vis-bar" style="background:#1a1a1a; border-color:#2979FF;">
+            <div id="sel-nozzle" class="sel-btn active" onclick="selectActiveObj('nozzle')">Nozzle</div>
+            <div id="sel-blade" class="sel-btn" onclick="selectActiveObj('blade')">Blade</div>
+            <div id="sel-sample" class="sel-btn" onclick="selectActiveObj('sample')">Sample</div>
+            <div id="sel-jig" class="sel-btn" onclick="selectActiveObj('jig')">Jig</div>
+        </div>
     </div>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('dims')">📏 尺寸</button>
         <button class="tab-btn" onclick="switchTab('trans')">🔄 變換</button>
+        <button class="tab-btn" onclick="switchTab('anno')">📝 標註</button>
         <button class="tab-btn" onclick="switchTab('sim')">⚙️ 模擬</button>
     </div>
 
@@ -206,8 +234,7 @@
     </div>
 
     <div id="tab-trans" class="tab-content">
-        <button id="btn-snap" class="action-btn" style="background:#FF9800; margin-bottom:10px;" onclick="toggleSnapMode()">🧲 開啟吸附對齊 (Snap)</button>
-        
+        <button id="btn-snap" class="action-btn" style="background:#FF9800; margin-bottom:10px;" onclick="toggleSnapMode()">🧲 表面吸附對齊 (Snap)</button>
         <div class="group">
             <span class="group-title" style="color:#00E676;">位置 (mm)</span>
             <div class="row"><label>X</label><input type="number" id="t_px" onchange="updateTransFromInput()"><input type="range" id="rg_px" min="-50" max="50" oninput="document.getElementById('t_px').value=this.value;updateTransFromInput()"></div>
@@ -222,30 +249,40 @@
         </div>
     </div>
 
-    <div id="tab-sim" class="tab-content">
-        <button id="btn-measure" class="action-btn" style="background:#555; border:1px solid #777; margin-bottom:10px;" onclick="toggleMeasure()">📏 開啟量測 (Dist)</button>
-
-        <div class="group" style="border-left: 3px solid #00B0FF;">
-            <span class="group-title" style="color:#00B0FF;">💦 噴水系統 & 衝擊熱力圖</span>
-            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
-            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
-            <div class="row"><label>擴散</label><input type="range" id="w_spread" min="0" max="45" value="5" oninput="waterSpread=this.value"></div>
-            <div class="row"><label>阻擋</label><select id="water-target" onchange="changeWaterTarget(this.value)" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample (顯示熱力圖)</option><option value="jig">Jig (顯示熱力圖)</option><option value="blade">Blade</option></select></div>
-            <div style="font-size:11px;color:#aaa;margin-top:5px;">* 選擇 Sample/Jig 可見衝擊熱力圖</div>
-        </div>
-
-        <div class="group" style="border-left: 3px solid #FF9800;">
-            <span class="group-title" style="color:#FF9800;">☁️ 雲端疊構</span>
-            <select id="project-select" style="width:100%;margin-bottom:5px;background:#333;color:white;padding:5px;"><option value="">-- 連線中... --</option></select>
-            <button class="action-btn" onclick="loadSelectedProject()">📥 載入疊構</button>
-            <button class="action-btn" style="background:#D32F2F" onclick="unloadProject()">❌ 清除</button>
-            <div id="stack-info" style="font-size:11px; color:#aaa; margin-top:5px; display:none;">
-                厚度: <span id="current-stack-th" style="color:#fff;">0</span> mm
+    <div id="tab-anno" class="tab-content">
+        <div class="group" style="border-left: 3px solid #E91E63;">
+            <span class="group-title" style="color:#E91E63;">標註工具 (Annotation)</span>
+            <div class="row" style="gap:2px;">
+                <button id="btn-anno-text" class="vis-btn" onclick="setAnnoMode('text')">🔤 文字</button>
+                <button id="btn-anno-line" class="vis-btn" onclick="setAnnoMode('line')">📏 拉線</button>
+                <button id="btn-anno-edge" class="vis-btn" onclick="setAnnoMode('edge')">📐 邊緣</button>
+            </div>
+            <div class="row">
+                <button class="vis-btn" style="background:#444;" onclick="clearAnnotations()">🗑️ 清除所有</button>
+                <button class="vis-btn" style="background:#444;" onclick="deleteLastAnnotation()">↩️ 復原</button>
             </div>
         </div>
 
         <div class="group">
-            <span class="group-title">🎯 切割 Boolean</span>
+            <span class="group-title">樣式設定</span>
+            <div class="row"><label>線條色</label><input type="color" id="anno-line-color" value="#E91E63" onchange="updateAnnoStyle()"></div>
+            <div class="row"><label>文字色</label><input type="color" id="anno-text-color" value="#ffffff" onchange="updateAnnoStyle()"> <input type="color" id="anno-bg-color" value="#000000" onchange="updateAnnoStyle()" title="背景色"></div>
+            <div class="row"><label>線條粗細</label><input type="range" id="anno-line-width" min="0.5" max="10" step="0.5" value="2" oninput="updateAnnoStyle()"></div>
+            <div class="row"><label>字體大小</label><input type="range" id="anno-font-size" min="10" max="40" value="14" oninput="updateAnnoStyle()"></div>
+        </div>
+    </div>
+
+    <div id="tab-sim" class="tab-content">
+        <div class="group" style="border-left: 3px solid #00B0FF;">
+            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
+            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
+            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
+            <div class="row"><label>擴散</label><input type="range" id="w_spread" min="0" max="45" value="5" oninput="waterSpread=this.value"></div>
+            <div class="row"><label>衝擊顯示</label><select id="water-target" onchange="changeWaterTarget(this.value)" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample (熱力圖)</option><option value="jig">Jig (熱力圖)</option></select></div>
+        </div>
+
+        <div class="group" style="border-left: 3px solid #FF9800;">
+            <span class="group-title" style="color:#FF9800;">🎯 切割 Boolean</span>
             <div class="row"><label>目標</label><select id="target-select" onchange="updateModel()" style="flex:1;background:#333;color:white;"><option value="none">不切割</option><option value="sample" selected>切樣品</option><option value="jig">切治具</option></select></div>
             <button class="action-btn" style="background:#444" onclick="toggleWireframe()">切換網格</button>
         </div>
@@ -260,9 +297,26 @@
     import { TransformControls } from 'three/addons/controls/TransformControls.js';
     import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
     import { initializeApp } from 'firebase-app';
-    import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase-firestore';
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy } from 'firebase-firestore';
 
-    // --- State ---
+    // --- Firebase Config ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+        authDomain: "stack-diagram-db.firebaseapp.com",
+        projectId: "stack-diagram-db",
+        storageBucket: "stack-diagram-db.firebasestorage.app",
+        messagingSenderId: "67240747982",
+        appId: "1:67240747982:web:1fb065e40e936a7485419f"
+    };
+    
+    let db = null;
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        console.log("🔥 Firebase Initialized");
+    } catch (e) { console.error("Firebase init failed", e); }
+
+    // --- State & Defaults ---
     const defaultParams = {
         j_h: 5, j_a: 45, j_w: 20,
         s_t: 0.5, s_l: 10, s_th: 0.8, s_w: 15, s_r: 0,
@@ -278,90 +332,612 @@
     let params = {...defaultParams};
     let transforms = JSON.parse(JSON.stringify(defaultTransforms));
     let currentObj = 'nozzle';
-    let stackData = null;
     let waterEnabled = false;
     let waterSpread = 5;
     let snapMode = false;
+    
+    // Annotation State
+    let annoMode = null; 
+    let annotations = []; // { type, pos, content, style, obj(Mesh), dom(HTML), offsetX, offsetY }
+    let tempPoints = [];
+    let hoveredEdgeMesh = null;
+    
+    // --- 3D Scene Setup ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x1a1a1a);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
+    camera.position.set(35,35,45); camera.lookAt(0,0,0);
+    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
 
-    // --- [v5.2 新增] Impact Heatmap Setup ---
+    scene.add(new THREE.AmbientLight(0x404040, 1.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); 
+    dirLight.castShadow=true; dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
+    
+    // Add Camera Light (Headlight) for Cylinders (Shiny effect)
+    const camLight = new THREE.PointLight(0xffffff, 0.6);
+    camera.add(camLight);
+    scene.add(camera);
+
+    scene.add(new THREE.GridHelper(200, 200, 0x333333, 0x222222));
+    scene.add(new THREE.AxesHelper(5));
+
+    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping=true;
+    const tControls = new TransformControls(camera, renderer.domElement);
+    tControls.addEventListener('dragging-changed', e => controls.enabled = !e.value);
+    tControls.addEventListener('change', () => {
+        if(!tControls.object) return;
+        const o=tControls.object; const k=currentObj;
+        transforms[k].px=o.position.x; transforms[k].py=o.position.y; transforms[k].pz=o.position.z;
+        transforms[k].rx=o.rotation.x; transforms[k].ry=o.rotation.y; transforms[k].rz=o.rotation.z;
+        updateTransformUI();
+        if(k!=='nozzle' && document.getElementById('target-select').value!=='none') updateModel(); 
+    });
+    scene.add(tControls);
+
+    // Groups
+    const jigGroup=new THREE.Group(); scene.add(jigGroup);
+    const sampleGroup=new THREE.Group(); jigGroup.add(sampleGroup); 
+    const bladeGroup=new THREE.Group(); scene.add(bladeGroup);
+    const nozzleGroup=new THREE.Group(); scene.add(nozzleGroup);
+    const annoGroup=new THREE.Group(); scene.add(annoGroup); 
+
+    // Materials
+    const matJig=new THREE.MeshStandardMaterial({color:0x9C27B0, roughness:0.3});
+    const matSample=new THREE.MeshStandardMaterial({color:0x2196F3, roughness:0.2});
+    const matBlade=new THREE.MeshStandardMaterial({color:0xFFC107, roughness:0.1, metalness:0.8});
+    const matNozzle=new THREE.MeshStandardMaterial({color:0x9E9E9E});
+
+    // Nozzle Model
+    const nCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle); nCyl.position.y=1.5;
+    const nCone = new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle); nCone.rotation.x=Math.PI; nCone.position.y=0.5;
+    const nozMesh = new THREE.Group(); nozMesh.add(nCyl,nCone); nozzleGroup.add(nozMesh);
+
+    let brushJig, brushBlade, sampleBrushes=[], resultMesh, isWireframe=false;
+    const evaluator = new Evaluator();
+
+    // Heatmap
     const impactCanvas = document.getElementById('impact-canvas');
     const impactCtx = impactCanvas.getContext('2d');
-    // Initialize canvas black (no pressure)
     impactCtx.fillStyle = 'black'; impactCtx.fillRect(0, 0, 512, 512);
     const impactTexture = new THREE.CanvasTexture(impactCanvas);
     let impactTargetMesh = null;
     let originalMaterial = null;
 
-    // --- Init & Persistence ---
-    window.initFromDefault = () => {
-        const defId = localStorage.getItem('cutting3d_default_id');
-        if(defId) {
-            const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-            const p = projects.find(x => x.id == defId);
-            if(p) { loadProject(p); return; }
+    // Raycaster
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    // --- Leader Line System (2D Canvas) ---
+    const leaderCanvas = document.getElementById('leader-canvas');
+    const leaderCtx = leaderCanvas.getContext('2d');
+    
+    function resizeLeaderCanvas() {
+        leaderCanvas.width = window.innerWidth;
+        leaderCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeLeaderCanvas);
+    resizeLeaderCanvas();
+
+    function drawLeaderLines() {
+        leaderCtx.clearRect(0, 0, leaderCanvas.width, leaderCanvas.height);
+        leaderCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        leaderCtx.lineWidth = 1.5;
+        leaderCtx.beginPath();
+
+        annotations.forEach(a => {
+            if(a.dom && a.pos && (a.offsetX !== 0 || a.offsetY !== 0)) {
+                // Calculate 3D point projected
+                const tempV = a.pos.clone();
+                tempV.project(camera);
+                
+                // If point is behind camera, ignore
+                if(Math.abs(tempV.z) > 1) return;
+
+                const originX = (tempV.x * .5 + .5) * leaderCanvas.width;
+                const originY = (tempV.y * -.5 + .5) * leaderCanvas.height;
+
+                // Div Center
+                const rect = a.dom.getBoundingClientRect();
+                const divX = rect.left + rect.width / 2;
+                const divY = rect.top + rect.height / 2;
+
+                leaderCtx.moveTo(originX, originY);
+                leaderCtx.lineTo(divX, divY);
+            }
+        });
+        leaderCtx.stroke();
+    }
+
+    // --- Annotation Logic ---
+    window.setAnnoMode = (mode) => {
+        annoMode = (annoMode === mode) ? null : mode;
+        document.querySelectorAll('#tab-anno .vis-btn').forEach(b=>b.classList.remove('active'));
+        if(annoMode) document.getElementById('btn-anno-'+mode).classList.add('active');
+        
+        const hint = document.getElementById('snap-hint');
+        if(annoMode) {
+            hint.style.display = 'block';
+            if(mode==='text') hint.innerText = "🔤 點擊物件表面新增文字";
+            if(mode==='line') hint.innerText = "📏 點擊兩點拉線";
+            if(mode==='edge') hint.innerText = "📐 移動到邊緣吸附 (黃色預覽)，點擊固定";
+            tControls.detach();
+        } else {
+            hint.style.display = 'none';
+            if(hoveredEdgeMesh) { annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh=null; }
+            tempPoints = [];
+            selectActiveObj(currentObj); // Restore gizmo
+        }
+    };
+
+    window.updateAnnoStyle = () => {
+        const thicknessScale = parseFloat(document.getElementById('anno-line-width').value) * 0.2;
+        const color = document.getElementById('anno-line-color').value;
+        const textColor = document.getElementById('anno-text-color').value;
+        const bgColor = document.getElementById('anno-bg-color').value;
+        const textSize = document.getElementById('anno-font-size').value;
+
+        annotations.forEach(a => {
+            // Update 3D Lines (Scaling X and Y only)
+            if((a.type === 'line' || a.type === 'edge') && a.obj) {
+                // FIXED: Scale Thickness (X, Y) but keep Length (Z) intact (1)
+                a.obj.scale.set(thicknessScale, thicknessScale, 1);
+                a.obj.material.color.set(color);
+            }
+            // Update Text
+            if(a.dom) {
+                a.dom.style.color = textColor;
+                a.dom.style.backgroundColor = bgColor;
+                a.dom.style.fontSize = textSize + 'px';
+            }
+        });
+    };
+
+    window.removeAnnotation = (annoObj) => {
+        if(annoObj.obj) annoGroup.remove(annoObj.obj);
+        if(annoObj.dom) annoObj.dom.remove();
+        annotations = annotations.filter(a => a !== annoObj);
+    };
+
+    window.clearAnnotations = () => {
+        if(!confirm("確定清除所有標註?")) return;
+        annotations.forEach(a => {
+            if(a.obj) annoGroup.remove(a.obj);
+            if(a.dom) a.dom.remove();
+        });
+        annotations = [];
+        document.getElementById('label-container').innerHTML = '';
+        leaderCtx.clearRect(0,0,leaderCanvas.width, leaderCanvas.height);
+    };
+    
+    window.deleteLastAnnotation = () => {
+        if(annotations.length === 0) return;
+        const a = annotations.pop();
+        if(a.obj) annoGroup.remove(a.obj);
+        if(a.dom) a.dom.remove();
+    }
+
+    // Draggable Label Implementation
+    let dragLabel = null;
+    let dragStartPos = { x: 0, y: 0 };
+    let dragStartOffset = { x: 0, y: 0 };
+
+    function createTextLabel(pos, text = "Label", parentAnno = null) {
+        const div = document.createElement('div');
+        div.className = 'annotation-label';
+        
+        const color = document.getElementById('anno-text-color').value;
+        const bgColor = document.getElementById('anno-bg-color').value;
+        const size = document.getElementById('anno-font-size').value;
+        
+        div.style.color = color;
+        div.style.backgroundColor = bgColor;
+        div.style.fontSize = size + 'px';
+        
+        const input = document.createElement('input');
+        input.value = text;
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '×';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation(); 
+            if(parentAnno) window.removeAnnotation(parentAnno);
+            else {
+                const self = annotations.find(a => a.dom === div);
+                if(self) window.removeAnnotation(self);
+            }
+        };
+
+        div.addEventListener('mousedown', (e) => {
+            if(e.target === input || e.target === closeBtn) return;
+            e.preventDefault();
+            dragLabel = parentAnno || annotations.find(a => a.dom === div);
+            if(dragLabel) {
+                dragStartPos = { x: e.clientX, y: e.clientY };
+                dragStartOffset = { x: dragLabel.offsetX || 0, y: dragLabel.offsetY || 0 };
+                div.style.cursor = 'grabbing';
+            }
+        });
+
+        div.appendChild(input);
+        div.appendChild(closeBtn);
+        document.getElementById('label-container').appendChild(div);
+        
+        if(!parentAnno) {
+            const annoData = {
+                type: 'text',
+                pos: pos.clone(),
+                dom: div,
+                offsetX: 0, offsetY: 0
+            };
+            annotations.push(annoData);
+        }
+        
+        updateLabels();
+        return div;
+    }
+    
+    window.addEventListener('mousemove', (e) => {
+        if(dragLabel) {
+            const dx = e.clientX - dragStartPos.x;
+            const dy = e.clientY - dragStartPos.y;
+            dragLabel.offsetX = dragStartOffset.x + dx;
+            dragLabel.offsetY = dragStartOffset.y + dy;
+            updateLabels();
+        }
+    });
+    
+    window.addEventListener('mouseup', () => {
+        if(dragLabel && dragLabel.dom) dragLabel.dom.style.cursor = 'move';
+        dragLabel = null;
+    });
+
+    // Helper: Create Cylinder from P1 to P2
+    // CORRECTED: Scale only X/Y for thickness, preserve Length
+    function createCylinderLine(p1, p2, color, scaleFactor) {
+        const vec = new THREE.Vector3().subVectors(p2, p1);
+        const len = vec.length();
+        
+        // Geometry oriented along Z-axis
+        // Height = len, Radius = 1.
+        // Default Cylinder is Y-up. Rotate X 90deg -> Z-up.
+        const geo = new THREE.CylinderGeometry(1, 1, len, 32);
+        geo.translate(0, len / 2, 0);
+        geo.rotateX(Math.PI / 2); // Now it lies on Z axis
+        
+        const mat = new THREE.MeshPhongMaterial({ 
+            color: color,
+            transparent: true,
+            opacity: 0.6, // Semi-transparent
+            depthTest: false, // ALWAYS ON TOP
+            shininess: 100
+        });
+        
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.copy(p1);
+        mesh.lookAt(p2);
+        
+        mesh.renderOrder = 999;
+        // Scale X and Y (Diameter), Z (Length) stays 1
+        mesh.scale.set(scaleFactor, scaleFactor, 1);
+        return mesh;
+    }
+
+    function createLine3D(p1, p2) {
+        const color = document.getElementById('anno-line-color').value;
+        const thickness = parseFloat(document.getElementById('anno-line-width').value) * 0.2; 
+        
+        const cylinderLine = createCylinderLine(p1, p2, color, thickness);
+        annoGroup.add(cylinderLine);
+        
+        const annoData = { type: 'line', obj: cylinderLine, offsetX: 0, offsetY: 0 };
+        annotations.push(annoData);
+        
+        const mid = p1.clone().add(p2).multiplyScalar(0.5);
+        const dist = p1.distanceTo(p2).toFixed(1) + "mm";
+        annoData.dom = createTextLabel(mid, dist, annoData); 
+        annoData.pos = mid; 
+    }
+
+    function highlightEdge(mesh, faceIndex, point) {
+        if(!mesh.geometry) return;
+        
+        const geo = mesh.geometry;
+        const pos = geo.attributes.position;
+        const idx = geo.index ? geo.index.array : null;
+
+        const getV = (i) => new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld);
+        let vA, vB, vC;
+
+        if (idx) {
+            vA = getV(idx[faceIndex * 3]);
+            vB = getV(idx[faceIndex * 3 + 1]);
+            vC = getV(idx[faceIndex * 3 + 2]);
+        } else {
+            vA = getV(faceIndex * 3);
+            vB = getV(faceIndex * 3 + 1);
+            vC = getV(faceIndex * 3 + 2);
+        }
+
+        const lineAB = new THREE.Line3(vA, vB), lineBC = new THREE.Line3(vB, vC), lineCA = new THREE.Line3(vC, vA);
+        const dAB = lineAB.closestPointToPoint(point, true).distanceTo(point);
+        const dBC = lineBC.closestPointToPoint(point, true).distanceTo(point);
+        const dCA = lineCA.closestPointToPoint(point, true).distanceTo(point);
+
+        let p1, p2;
+        if(dAB <= dBC && dAB <= dCA) { p1=vA; p2=vB; }
+        else if(dBC <= dAB && dBC <= dCA) { p1=vB; p2=vC; }
+        else { p1=vC; p2=vA; }
+
+        if(hoveredEdgeMesh) annoGroup.remove(hoveredEdgeMesh);
+        
+        // Preview: Very Thick (1.0), Yellow, Opacity 0.6
+        hoveredEdgeMesh = createCylinderLine(p1, p2, 0xFFFF00, 1.0); 
+        annoGroup.add(hoveredEdgeMesh);
+        
+        return [p1, p2];
+    }
+
+    // --- Interaction ---
+    container.addEventListener('mousedown', (e) => {
+        if(e.button !== 0) return;
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        if(annoMode) {
+            raycaster.setFromCamera(mouse, camera);
+            // FIXED: Ignore annoGroup during detection so we hit the real object
+            const objectsToIntersect = [jigGroup, sampleGroup, bladeGroup, resultMesh].filter(x=>x);
+            const intersects = raycaster.intersectObjects(objectsToIntersect, true);
+            const hit = intersects.find(i => i.object.visible && i.object.type === 'Mesh');
+            
+            if(hit) {
+                if(annoMode === 'text') {
+                    createTextLabel(hit.point, "Text");
+                    setAnnoMode(null); 
+                } else if(annoMode === 'line') {
+                    tempPoints.push(hit.point);
+                    if(tempPoints.length === 2) {
+                        createLine3D(tempPoints[0], tempPoints[1]);
+                        tempPoints = [];
+                        setAnnoMode(null);
+                    }
+                } else if(annoMode === 'edge') {
+                    // Because we clicked the object behind the preview, hoveredEdgeMesh exists
+                    if(hoveredEdgeMesh) {
+                        const color = document.getElementById('anno-line-color').value;
+                        const thickness = parseFloat(document.getElementById('anno-line-width').value) * 0.2;
+                        
+                        // Convert preview to real annotation
+                        const finalMesh = hoveredEdgeMesh.clone();
+                        finalMesh.material = hoveredEdgeMesh.material.clone();
+                        finalMesh.material.color.set(color);
+                        finalMesh.scale.set(thickness, thickness, 1);
+                        
+                        annoGroup.add(finalMesh);
+                        const annoData = { type: 'edge', obj: finalMesh, offsetX: 0, offsetY: 0 };
+                        annotations.push(annoData);
+
+                        // Calculate Length for Label
+                        // Scale.z is 1, so internal geometry length is valid
+                        // Actually geometry parameters are lost after clone sometimes, but let's recalculate distance
+                        // hoveredEdgeMesh is a cylinder from p1 to p2. 
+                        // But finding p1/p2 from a rotated cylinder is hard.
+                        // Hack: use the stored length in geometry
+                        const len = finalMesh.geometry.parameters.height; 
+                        annoData.dom = createTextLabel(hit.point, len.toFixed(1) + "mm", annoData);
+                        annoData.pos = hit.point;
+
+                        annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh = null;
+                        setAnnoMode(null);
+                    }
+                }
+            }
+        }
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        if(annoMode === 'edge') {
+            raycaster.setFromCamera(mouse, camera);
+            // FIXED: Ignore AnnoGroup so we can 'see through' the yellow preview line
+            const objectsToIntersect = [jigGroup, sampleGroup, bladeGroup, resultMesh].filter(x=>x);
+            const intersects = raycaster.intersectObjects(objectsToIntersect, true);
+            const hit = intersects.find(i => i.object.visible && i.object.type === 'Mesh');
+            
+            if(hit) {
+                highlightEdge(hit.object, hit.faceIndex, hit.point);
+            } else {
+                if(hoveredEdgeMesh) { annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh = null; }
+            }
+        }
+    });
+
+    function updateLabels() {
+        annotations.forEach(a => {
+            if(a.dom && a.pos) {
+                const tempV = a.pos.clone();
+                tempV.project(camera);
+                const x = (tempV.x * .5 + .5) * container.clientWidth;
+                const y = (tempV.y * -.5 + .5) * container.clientHeight;
+                
+                if(Math.abs(tempV.z) > 1) { 
+                     a.dom.style.display = 'none';
+                } else {
+                    a.dom.style.display = 'flex';
+                    const finalX = x + (a.offsetX || 0);
+                    const finalY = y + (a.offsetY || 0);
+                    a.dom.style.left = finalX + 'px';
+                    a.dom.style.top = finalY + 'px';
+                }
+            }
+        });
+        drawLeaderLines();
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        updateLabels();
+    });
+
+    // --- Object Selection ---
+    window.selectActiveObj = (val) => {
+        currentObj = val;
+        document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('sel-' + val).classList.add('active');
+        
+        tControls.detach();
+        if(val==='jig') tControls.attach(jigGroup);
+        if(val==='sample') tControls.attach(sampleGroup);
+        if(val==='blade') tControls.attach(bladeGroup);
+        if(val==='nozzle') tControls.attach(nozzleGroup);
+        
+        ['jig','sample','blade','nozzle'].forEach(k => { 
+            const el = document.getElementById('dims-'+k); 
+            if(el) el.style.display = (k===val ? 'block' : 'none'); 
+        });
+        updateTransformUI();
+    };
+
+    // --- Main Logic ---
+    window.initFromDefault = async () => {
+        const defId = localStorage.getItem('cutting3d_def_id');
+        if(defId && db) {
+           try {
+               const docSnap = await getDoc(doc(db, "projects_v6", defId));
+               if(docSnap.exists()) {
+                   loadProjectData(docSnap.data());
+                   return;
+               }
+           } catch(e) { console.warn("Default load failed"); }
         }
         params = {...defaultParams};
         transforms = JSON.parse(JSON.stringify(defaultTransforms));
         updateAllUI();
-        alert("已重置為原廠設定");
-    }
+        clearAnnotations();
+    };
 
     window.openSaveModal = () => {
+        if(!db) return alert("資料庫未連線");
         renderer.render(scene, camera);
-        window.tempThumb = renderer.domElement.toDataURL('image/jpeg', 0.5);
+        const url = renderer.domElement.toDataURL('image/jpeg', 0.5);
+        document.getElementById('save-preview-img').src = url;
         document.getElementById('save-name').value = "Project " + new Date().toLocaleDateString();
-        document.getElementById('modal-save').style.display='flex';
-    }
-    window.confirmSave = () => {
+        document.getElementById('modal-save').style.display = 'flex';
+    };
+
+    window.confirmSave = async () => {
         const name = document.getElementById('save-name').value;
         const desc = document.getElementById('save-desc').value;
-        const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-        projects.unshift({ id: Date.now(), name, desc, thumb: window.tempThumb, data: { params, transforms, stackData } });
-        localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
-        document.getElementById('modal-save').style.display='none';
-        alert("儲存成功");
-    }
-    window.openLoadModal = () => {
-        const list = document.getElementById('project-list'); list.innerHTML='';
-        const projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-        const defId = localStorage.getItem('cutting3d_default_id');
+        const thumb = document.getElementById('save-preview-img').src;
         
-        projects.forEach(p => {
-            const isDef = (p.id == defId);
-            const div = document.createElement('div'); div.className='project-card';
-            div.innerHTML = `
-                <div class="default-badge ${isDef?'':'inactive'}" onclick="setDefault(${p.id}, event)" title="設為初始化預設">★</div>
-                <img src="${p.thumb}" class="project-thumb">
-                <div class="project-info">
-                    <div style="font-weight:bold;color:white">${p.name}</div>
-                    <div style="font-size:12px;color:#aaa">${p.desc||''}</div>
-                </div>
-                <button class="tool-btn" style="background:#d32f2f" onclick="deleteProject(${p.id}, event)">🗑️</button>
-            `;
-            div.onclick = (e) => { if(e.target.tagName!=='BUTTON' && !e.target.classList.contains('default-badge')) loadProject(p); };
-            list.appendChild(div);
+        const serialAnno = annotations.map(a => {
+            if(a.type === 'text') {
+                 return { type: 'text', pos: a.pos, text: a.dom.querySelector('input').value, 
+                          offsetX: a.offsetX, offsetY: a.offsetY,
+                          style: { color: a.dom.style.color, bg: a.dom.style.backgroundColor, size: a.dom.style.fontSize }};
+            }
+            return null; 
+        }).filter(x => x);
+
+        const data = {
+            name, desc, thumb,
+            params, transforms,
+            annotations: serialAnno,
+            timestamp: serverTimestamp()
+        };
+
+        try {
+            await addDoc(collection(db, "projects_v6"), data);
+            alert("儲存成功");
+            document.getElementById('modal-save').style.display = 'none';
+        } catch(e) { alert("儲存失敗: " + e.message); }
+    };
+
+    let allProjects = [];
+    window.openLoadModal = async () => {
+        if(!db) return alert("資料庫未連線");
+        document.getElementById('modal-load').style.display = 'flex';
+        const list = document.getElementById('project-list');
+        list.innerHTML = '<div style="text-align:center;padding:20px;">載入中...</div>';
+        try {
+            const q = query(collection(db, "projects_v6"), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
+            allProjects = [];
+            snapshot.forEach(d => allProjects.push({id: d.id, ...d.data()}));
+            filterProjects();
+        } catch(e) { list.innerHTML = '載入失敗'; }
+    };
+
+    window.filterProjects = () => {
+        const filter = document.getElementById('search-proj').value.toLowerCase();
+        const list = document.getElementById('project-list');
+        list.innerHTML = '';
+        const defId = localStorage.getItem('cutting3d_def_id');
+        
+        allProjects.forEach(p => {
+            if(p.name.toLowerCase().includes(filter)) {
+                const isDef = (p.id === defId);
+                const dateStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleString() : '';
+                const div = document.createElement('div'); div.className = 'project-card';
+                div.innerHTML = `
+                    <div class="default-badge ${isDef?'':'inactive'}" onclick="setDefault('${p.id}', event)" title="設為預設">★</div>
+                    <img src="${p.thumb}" class="project-thumb" onclick="loadProjectById('${p.id}')">
+                    <div class="project-info">
+                        <input type="text" value="${p.name}" onchange="renameProject('${p.id}', this.value)" style="width:100%; font-weight:bold; border:none; background:transparent; padding:0;">
+                        <div style="font-size:11px;color:#aaa">${dateStr}</div>
+                        <div style="font-size:11px;color:#888">${p.desc||''}</div>
+                    </div>
+                    <button class="tool-btn" style="background:#c62828" onclick="deleteProject('${p.id}')">🗑️</button>
+                    <button class="tool-btn" style="background:#1565C0" onclick="loadProjectById('${p.id}')">載入</button>
+                `;
+                list.appendChild(div);
+            }
         });
-        document.getElementById('modal-load').style.display='flex';
-    }
+    };
+    
     window.setDefault = (id, e) => {
         e.stopPropagation();
-        const curr = localStorage.getItem('cutting3d_default_id');
-        if(curr == id) localStorage.removeItem('cutting3d_default_id'); 
-        else localStorage.setItem('cutting3d_default_id', id);
-        window.openLoadModal(); 
-    }
-    window.loadProject = (p) => {
-        params = p.data.params; transforms = p.data.transforms; stackData = p.data.stackData;
+        const curr = localStorage.getItem('cutting3d_def_id');
+        localStorage.setItem('cutting3d_def_id', curr === id ? '' : id);
+        filterProjects();
+    };
+    
+    window.renameProject = async (id, newName) => { try { await updateDoc(doc(db, "projects_v6", id), { name: newName }); } catch(e){} };
+    window.deleteProject = async (id) => { if(!confirm("確定刪除?")) return; try { await deleteDoc(doc(db, "projects_v6", id)); allProjects = allProjects.filter(p => p.id !== id); filterProjects(); } catch(e){} };
+    
+    window.loadProjectById = (id) => { const p = allProjects.find(x => x.id === id); if(p) loadProjectData(p); };
+    
+    function loadProjectData(data) {
+        params = data.params;
+        transforms = data.transforms;
+        clearAnnotations();
+        if(data.annotations) {
+            data.annotations.forEach(a => {
+                if(a.type === 'text') {
+                    document.getElementById('anno-text-color').value = a.style.color;
+                    document.getElementById('anno-bg-color').value = a.style.bg;
+                    document.getElementById('anno-font-size').value = parseInt(a.style.size);
+                    const pos = new THREE.Vector3(a.pos.x, a.pos.y, a.pos.z);
+                    const dom = createTextLabel(pos, a.text);
+                    // restore offsets
+                    const anno = annotations[annotations.length-1];
+                    anno.offsetX = a.offsetX || 0;
+                    anno.offsetY = a.offsetY || 0;
+                }
+            });
+        }
         updateAllUI();
         document.getElementById('modal-load').style.display='none';
-    }
-    window.deleteProject = (id, e) => {
-        e.stopPropagation();
-        if(!confirm("確定刪除?")) return;
-        let projects = JSON.parse(localStorage.getItem('cutting3d_projects') || '[]');
-        projects = projects.filter(x => x.id !== id);
-        localStorage.setItem('cutting3d_projects', JSON.stringify(projects));
-        window.openLoadModal();
     }
 
     function updateAllUI() {
@@ -373,31 +949,19 @@
         updateModel();
         applyTransforms();
     }
-
-    // --- Firebase ---
-    const firebaseConfig = {apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI", authDomain: "stack-diagram-db.firebaseapp.com", projectId: "stack-diagram-db", storageBucket: "stack-diagram-db.firebasestorage.app", messagingSenderId: "67240747982", appId: "1:67240747982:web:1fb065e40e936a7485419f", measurementId: "G-QJNE60W8BB"};
-    let db=null; try { const app=initializeApp(firebaseConfig); db=getFirestore(app); initProjectList(); } catch(e){}
-    async function initProjectList() { const sel = document.getElementById('project-select'); try { const snapshot = await getDocs(collection(db, "projects")); sel.innerHTML = '<option value="">-- 請選擇疊構 --</option>'; snapshot.forEach(doc => { const opt=document.createElement('option'); opt.value=doc.id; opt.innerText=doc.id; sel.appendChild(opt); }); } catch(e) { sel.innerHTML = '<option>讀取失敗</option>'; } }
-    window.loadSelectedProject = async function() { const id = document.getElementById('project-select').value; if(!id) return; const docSnap = await getDoc(doc(db, "projects", id)); if (docSnap.exists()) { stackData = docSnap.data(); let totalThickMm=0; const scale=(stackData.settings?.unit==='mm')?1:0.001; stackData.layers.forEach(l=>{totalThickMm+=l.thickness*scale}); document.getElementById('stack-info').style.display='block'; document.getElementById('current-stack-th').innerText=totalThickMm.toFixed(3); document.getElementById('row-s-th').style.display='none'; updateModel(); } }
-    window.unloadProject = function() { stackData=null; document.getElementById('stack-info').style.display='none'; document.getElementById('row-s-th').style.display='flex'; updateModel(); }
-
-    // --- UI Logic ---
+    
     window.switchTab = (tab) => {
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
         document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
         document.getElementById(`tab-${tab}`).classList.add('active');
-    }
-    window.changeSelection = (val) => {
-        currentObj=val; tControls.detach();
-        if(val==='jig') tControls.attach(jigGroup);
-        if(val==='sample') tControls.attach(sampleGroup);
-        if(val==='blade') tControls.attach(bladeGroup);
-        if(val==='nozzle') tControls.attach(nozzleGroup);
-        ['jig','sample','blade','nozzle'].forEach(k => document.getElementById('dims-'+k).style.display=k===val?'block':'none');
-        updateTransformUI();
-    }
-    window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); }
+    };
+    
+    // replaced by selectActiveObj
+    window.changeSelection = (val) => { selectActiveObj(val); };
+    
+    window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); };
+    
     function updateTransformUI() {
         const t=transforms[currentObj];
         document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
@@ -413,246 +977,20 @@
         t.px=parseFloat(document.getElementById('t_px').value); t.py=parseFloat(document.getElementById('t_py').value); t.pz=parseFloat(document.getElementById('t_pz').value);
         t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180; t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180; t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
         applyTransforms();
-    }
+    };
     window.toggleVis = (name, btn) => {
         let grp = null;
         if(name==='jig') grp=jigGroup; if(name==='sample') grp=sampleGroup;
         if(name==='blade') grp=bladeGroup; if(name==='nozzle') grp=nozzleGroup;
-        if(name==='water') grp=waterSystem;
-        if(grp) {
-            grp.visible = !grp.visible;
-            if(grp.visible) btn.classList.add('active'); else btn.classList.remove('active');
-        }
-    }
-
-    // --- 3D Scene ---
-    const container = document.getElementById('canvas-container');
-    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x222222);
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
-    camera.position.set(35,35,45); camera.lookAt(0,0,0);
-    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    container.appendChild(renderer.domElement);
-
-    scene.add(new THREE.AmbientLight(0x404040, 1.5));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); 
-    dirLight.castShadow=true; dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
-    scene.add(new THREE.GridHelper(200, 200, 0x444444, 0x333333));
-    scene.add(new THREE.AxesHelper(10));
-
-    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping=true;
-    const tControls = new TransformControls(camera, renderer.domElement);
-    tControls.addEventListener('dragging-changed', e => controls.enabled = !e.value);
-    tControls.addEventListener('change', () => {
-        if(!tControls.object) return;
-        const o=tControls.object; const k=currentObj;
-        transforms[k].px=o.position.x; transforms[k].py=o.position.y; transforms[k].pz=o.position.z;
-        transforms[k].rx=o.rotation.x; transforms[k].ry=o.rotation.y; transforms[k].rz=o.rotation.z;
-        updateTransformUI();
-        if(k!=='nozzle' && document.getElementById('target-select').value!=='none') updateModel(); 
-    });
-    scene.add(tControls);
-
-    const jigGroup=new THREE.Group(); scene.add(jigGroup);
-    const sampleGroup=new THREE.Group(); jigGroup.add(sampleGroup); 
-    const bladeGroup=new THREE.Group(); scene.add(bladeGroup);
-    const nozzleGroup=new THREE.Group(); scene.add(nozzleGroup);
-
-    // Materials
-    const matJig=new THREE.MeshStandardMaterial({color:0x9C27B0, roughness:0.3});
-    const matSample=new THREE.MeshStandardMaterial({color:0x2196F3, roughness:0.2});
-    const matBlade=new THREE.MeshStandardMaterial({color:0xFFC107, roughness:0.1, metalness:0.8});
-    const matNozzle=new THREE.MeshStandardMaterial({color:0x9E9E9E});
-
-    // Nozzle
-    const nCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle); nCyl.position.y=1.5;
-    const nCone = new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle); nCone.rotation.x=Math.PI; nCone.position.y=0.5;
-    const nozMesh = new THREE.Group(); nozMesh.add(nCyl,nCone); nozzleGroup.add(nozMesh);
-
-    let brushJig, brushBlade, sampleBrushes=[], resultMesh, isWireframe=false;
-    const evaluator = new Evaluator();
-
-    // Measurement
-    let measureMode = false;
-    let measurePoints = [];
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let measureMarkers = []; 
-    let measureLine = null;
-
-    window.toggleMeasure = () => {
-        measureMode = !measureMode;
-        const btn = document.getElementById('btn-measure');
-        if(measureMode) {
-            btn.style.background = '#00E676';
-            btn.innerText = '📏 點擊兩點量測';
-            container.style.cursor = 'crosshair';
-            tControls.visible = false;
-        } else {
-            btn.style.background = '#555';
-            btn.innerText = '📏 開啟量測 (Dist)';
-            container.style.cursor = 'default';
-            tControls.visible = true;
-            clearMeasure();
-        }
-    }
-
-    function clearMeasure() {
-        measurePoints = [];
-        measureMarkers.forEach(m => scene.remove(m)); measureMarkers = [];
-        if(measureLine) scene.remove(measureLine); measureLine = null;
-        document.getElementById('measure-box').style.display = 'none';
-    }
-
-    // --- Snapping Logic ---
-    let snapArrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 5, 0x00E676);
-    snapArrow.visible = false; scene.add(snapArrow);
-
-    window.toggleSnapMode = () => {
-        snapMode = !snapMode;
-        const btn = document.getElementById('btn-snap');
-        if(snapMode) {
-            btn.style.background = '#00E676';
-            btn.innerText = '點擊表面以吸附';
-            document.getElementById('snap-hint').style.display='block';
-            container.style.cursor = 'crosshair';
-            tControls.visible = false;
-        } else {
-            btn.style.background = '#FF9800';
-            btn.innerText = '🧲 開啟吸附對齊 (Snap)';
-            document.getElementById('snap-hint').style.display='none';
-            snapArrow.visible = false;
-            container.style.cursor = 'default';
-            tControls.visible = true;
-        }
-    }
-
-    container.addEventListener('mousemove', e => {
-        updateRaycaster(e);
-        const intersects = raycaster.intersectObjects(scene.children, true);
-        if(snapMode) {
-            const targetGroup = (currentObj==='nozzle')?nozzleGroup : (currentObj==='blade')?bladeGroup : null;
-            const hit = intersects.find(i => i.object.type==='Mesh' && i.object.visible && 
-                (!targetGroup || !targetGroup.children.includes(i.object) && !i.object.isTransformControlsPlane));
-            if(hit) {
-                snapArrow.visible = true;
-                snapArrow.position.copy(hit.point);
-                snapArrow.setDirection(hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize());
-            } else { snapArrow.visible = false; }
-        }
-    });
-
-    container.addEventListener('mousedown', e => {
-        if(e.button !== 0) return;
-        updateRaycaster(e);
-        const intersects = raycaster.intersectObjects(scene.children, true);
-        
-        // Measure Logic
-        if(measureMode) {
-            const hit = intersects.find(i => i.object.type === 'Mesh' && i.object.visible);
-            if(hit) {
-                if(measurePoints.length >= 2) clearMeasure();
-                measurePoints.push(hit.point);
-                const marker = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({color:0xFF0000}));
-                marker.position.copy(hit.point); scene.add(marker); measureMarkers.push(marker);
-
-                if(measurePoints.length === 2) {
-                    const geo = new THREE.BufferGeometry().setFromPoints(measurePoints);
-                    measureLine = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xFF0000, linewidth:2}));
-                    scene.add(measureLine);
-                    const p1 = measurePoints[0], p2 = measurePoints[1];
-                    const dist = p1.distanceTo(p2);
-                    document.getElementById('measure-box').style.display = 'block';
-                    document.getElementById('m-dist').innerText = dist.toFixed(3);
-                    document.getElementById('m-dx').innerText = Math.abs(p2.x - p1.x).toFixed(3);
-                    document.getElementById('m-dy').innerText = Math.abs(p2.y - p1.y).toFixed(3);
-                    document.getElementById('m-dz').innerText = Math.abs(p2.z - p1.z).toFixed(3);
-                }
-            }
-            return;
-        }
-
-        // Snap Logic
-        if(snapMode) {
-            const targetGroup = (currentObj==='nozzle')?nozzleGroup : (currentObj==='blade')?bladeGroup : (currentObj==='sample')?sampleGroup : null;
-            if(!targetGroup) { alert("此物件不支援吸附"); toggleSnapMode(); return; }
-            const hit = intersects.find(i => i.object.type==='Mesh' && i.object.visible && !targetGroup.children.some(c=>c===i.object||c.children?.includes(i.object)));
-            if(hit) {
-                targetGroup.position.copy(hit.point);
-                const up = new THREE.Vector3(0,1,0);
-                const normal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize();
-                const q = new THREE.Quaternion().setFromUnitVectors(up, normal);
-                targetGroup.quaternion.copy(q);
-                targetGroup.updateMatrixWorld();
-                
-                const t = transforms[currentObj];
-                t.px=targetGroup.position.x; t.py=targetGroup.position.y; t.pz=targetGroup.position.z;
-                const euler = new THREE.Euler().setFromQuaternion(targetGroup.quaternion);
-                t.rx=euler.x*180/Math.PI; t.ry=euler.y*180/Math.PI; t.rz=euler.z*180/Math.PI;
-                updateTransformUI();
-                toggleSnapMode();
-                window.setGizmoAxis(null); // Unlock
-            }
-        }
-    });
-
-    function updateRaycaster(e) {
-        const rect = renderer.domElement.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        raycaster.setFromCamera({x,y}, camera);
-    }
-
-    // Water System (Fix Visibility)
-    const particleCount=3000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
-    for(let i=0;i<particleCount;i++){waterPos[i*3+1]=-999;waterVel.push({x:0,y:0,z:0});}
-    waterGeo.setAttribute('position',new THREE.BufferAttribute(waterPos,3));
-    const waterMat=new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.8,depthWrite:false});
-    const waterSystem=new THREE.Points(waterGeo, waterMat);
-    waterSystem.frustumCulled = false; // Important fix!
-    scene.add(waterSystem);
-
-    // --- [v5.2 新增] Impact Material Management ---
-    function resetImpactMaterial() {
-        if (impactTargetMesh && originalMaterial) {
-            impactTargetMesh.material = originalMaterial;
-        }
-        impactTargetMesh = null;
-        originalMaterial = null;
-        // Clear canvas to black
-        impactCtx.fillStyle = 'black'; impactCtx.fillRect(0, 0, 512, 512); impactTexture.needsUpdate = true;
-    }
-
-    function setupImpactMaterial(targetGroup) {
-        resetImpactMaterial(); // Clear previous
-        // Find the first suitable mesh to apply heatmap
-        targetGroup.traverse(child => {
-            if (!impactTargetMesh && child.isMesh && child.material) {
-                impactTargetMesh = child;
-                originalMaterial = child.material;
-                // Create new material with emissive map
-                const newMat = child.material.clone();
-                newMat.emissiveMap = impactTexture;
-                newMat.emissive = new THREE.Color(0xffffff); // White glow based on texture intensity
-                newMat.emissiveIntensity = 1.0;
-                child.material = newMat;
-            }
-        });
-    }
-
-    window.changeWaterTarget = (val) => {
-        resetImpactMaterial();
-        if(val === 'sample') setupImpactMaterial(sampleGroup);
-        else if(val === 'jig') setupImpactMaterial(jigGroup);
-        // Blade or None doesn't use heatmap
-    }
+        if(name==='anno') { annoGroup.visible = !annoGroup.visible; document.getElementById('label-container').style.display = annoGroup.visible ? 'block' : 'none'; btn.classList.toggle('active'); return; }
+        if(grp) { grp.visible = !grp.visible; btn.classList.toggle('active'); }
+    };
 
     function applyTransforms() {
         const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx*Math.PI/180, t.ry*Math.PI/180, t.rz*Math.PI/180); grp.updateMatrixWorld(); }
         setT(jigGroup, transforms.jig); setT(sampleGroup, transforms.sample); setT(bladeGroup, transforms.blade); setT(nozzleGroup, transforms.nozzle);
     }
-
+    
     function createJigGeometry() {
         const h=params.j_h, w=params.j_w, angleRad=params.j_a*Math.PI/180;
         const base=(params.j_a>=89)?0.1:h/Math.tan(angleRad);
@@ -660,7 +998,6 @@
         const g=new THREE.ExtrudeGeometry(s,{steps:1,depth:w,bevelEnabled:false}); g.center(); g.translate(0,h/2,0);
         return {geo:g, base, h};
     }
-
     function updateModel() {
         if(brushJig) brushJig.geometry.dispose(); if(brushBlade) brushBlade.geometry.dispose();
         sampleBrushes.forEach(b=>b.geometry.dispose()); sampleBrushes=[];
@@ -679,26 +1016,13 @@
         const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
         const angleRad=params.j_a*Math.PI/180;
 
-        const buildSampleLayer = (th, color, offset) => {
-            const g = new THREE.BoxGeometry(params.s_l, th, params.s_w);
-            const m = new THREE.MeshStandardMaterial({color});
-            const b = new Brush(g, m);
-            b.rotation.set(0,0,0); b.rotateY(params.s_r*Math.PI/180); b.rotateZ(-angleRad);
-            const sx = baseSx + nx*(offset+th/2) + ux*(params.s_l/2);
-            const sy = baseSy + ny*(offset+th/2) + uy*(params.s_l/2);
-            b.position.set(sx, sy, 0); b.updateMatrixWorld();
-            return b;
-        }
-
-        if(stackData) {
-            const scale=(stackData.settings?.unit==='mm')?1:0.001; let curOff=0;
-            [...stackData.layers].reverse().forEach(l=>{
-                const th=l.thickness*scale; const b=buildSampleLayer(th, l.color||0xcccccc, curOff);
-                sampleBrushes.push(b); sampleGroup.add(b); curOff+=th;
-            });
-        } else {
-            const b=buildSampleLayer(params.s_th, 0x2196F3, 0); sampleBrushes.push(b); sampleGroup.add(b);
-        }
+        const g = new THREE.BoxGeometry(params.s_l, params.s_th, params.s_w);
+        const b = new Brush(g, matSample);
+        b.rotation.set(0,0,0); b.rotateZ(-angleRad);
+        const sx = baseSx + nx*(params.s_th/2) + ux*(params.s_l/2);
+        const sy = baseSy + ny*(params.s_th/2) + uy*(params.s_l/2);
+        b.position.set(sx, sy, 0); b.updateMatrixWorld();
+        sampleBrushes.push(b); sampleGroup.add(b);
 
         applyTransforms();
 
@@ -720,121 +1044,91 @@
                     b.visible=false; 
                     const wb=b.clone(); wb.applyMatrix4(sampleGroup.matrix); wb.applyMatrix4(jigGroup.matrixWorld);
                     const res=evaluator.evaluate(wb, worldBlade, SUBTRACTION);
-                    res.material=b.material; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
+                    res.material=matSample; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
                 });
             }
             const ghost = brushBlade.clone(); ghost.material = new THREE.MeshBasicMaterial({color:0xFFEB3B, wireframe:true, opacity:0.3, transparent:true});
             bladeGroup.add(ghost); brushBlade.visible=false;
         }
         updateWireframe();
-
-        // [v5.2 新增] Re-apply impact material if geometry rebuilt
-        const waterTarget = document.getElementById('water-target').value;
-        if(waterTarget === 'sample' || waterTarget === 'jig') changeWaterTarget(waterTarget);
+        
+        const wTilde = document.getElementById('water-target').value;
+        if(wTilde === 'sample' || wTilde === 'jig') changeWaterTarget(wTilde);
     }
-
-    window.toggleWireframe = () => { isWireframe=!isWireframe; updateWireframe(); }
+    
+    window.toggleWireframe = () => { isWireframe=!isWireframe; updateWireframe(); };
     function updateWireframe() { scene.traverse(o => { if(o.isMesh && o.material && o.visible && o.name!=='ghost') o.material.wireframe=isWireframe; }); }
     window.setView = (v) => {
         const d=60; 
         if(v==='top') camera.position.set(0,d,0); if(v==='front') camera.position.set(0,0,d);
         if(v==='side') camera.position.set(d,0,0); if(v==='iso') camera.position.set(30,30,40);
         camera.lookAt(0,0,0); controls.target.set(0,0,0);
-    }
-    window.toggleWater = () => { waterEnabled=!waterEnabled; document.getElementById('btn-water').style.background=waterEnabled?'#00bcd4':'#0277bd'; waterSystem.visible=waterEnabled; }
-    window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); }
-    window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; }
+    };
+    window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); };
+    window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; };
 
-    // --- [v5.2 更新] Water Animation with Raycasting & Heatmap ---
-    const impactRaycaster = new THREE.Raycaster();
+    const particleCount=2000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
+    for(let i=0;i<particleCount;i++){waterPos[i*3+1]=-999;waterVel.push({x:0,y:0,z:0});}
+    waterGeo.setAttribute('position',new THREE.BufferAttribute(waterPos,3));
+    const waterMat=new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.8,depthWrite:false});
+    const waterSystem=new THREE.Points(waterGeo, waterMat);
+    waterSystem.frustumCulled = false; scene.add(waterSystem);
+
+    window.toggleWater = () => { waterEnabled=!waterEnabled; waterSystem.visible=waterEnabled; };
+    window.changeWaterTarget = (val) => {
+        if(impactTargetMesh && originalMaterial) impactTargetMesh.material = originalMaterial;
+        impactTargetMesh = null; originalMaterial = null;
+        impactCtx.fillStyle = 'black'; impactCtx.fillRect(0,0,512,512); impactTexture.needsUpdate=true;
+        
+        let targetGroup = (val==='sample') ? sampleGroup : (val==='jig') ? jigGroup : null;
+        if(targetGroup) {
+             targetGroup.traverse(c => {
+                 if(!impactTargetMesh && c.isMesh && c.material) {
+                     impactTargetMesh = c; originalMaterial = c.material;
+                     const newMat = c.material.clone(); newMat.emissiveMap = impactTexture;
+                     newMat.emissive = new THREE.Color(0xffffff); newMat.emissiveIntensity=1.0;
+                     c.material = newMat;
+                 }
+             });
+        }
+    };
+    window.toggleSnapMode = () => {
+        snapMode = !snapMode;
+        const btn = document.getElementById('btn-snap');
+        btn.style.background = snapMode ? '#00E676' : '#FF9800';
+        if(snapMode) alert("提示：請使用「標註->邊緣」功能進行高精度邊緣吸附");
+    };
 
     function animateWater() {
-        // 1. Fade the impact canvas (simulate pressure dissipation)
-        impactCtx.fillStyle = 'rgba(0,0,0,0.1)'; // Semi-transparent black to fade slowly
-        impactCtx.fillRect(0, 0, 512, 512);
-        impactTexture.needsUpdate = true;
-
         if(!waterEnabled) return;
-
-        const positions = waterGeo.attributes.position.array;
+        impactCtx.fillStyle = 'rgba(0,0,0,0.1)'; impactCtx.fillRect(0,0,512,512); impactTexture.needsUpdate=true;
         const pressure = document.getElementById('w_pressure').value;
-        const targetType = document.getElementById('water-target').value;
-        
-        // Tip world pos & direction
         const tipWorld = new THREE.Vector3(0,0,0).applyMatrix4(nozzleGroup.children[0].matrixWorld);
         const dirWorld = new THREE.Vector3(0,-1,0).transformDirection(nozzleGroup.matrixWorld).normalize();
 
-        // Determine target for raycasting (Heatmap)
-        let targetMeshForRay = null;
-        if(impactTargetMesh && (targetType === 'sample' || targetType === 'jig')) {
-            targetMeshForRay = impactTargetMesh;
-        }
-
-        // Fallback collision box for non-heatmap targets (Blade)
-        let box=null;
-        if(!targetMeshForRay && targetType!=='none') {
-            const targetObj = (targetType==='blade')?bladeGroup : null;
-            if(targetObj) box = new THREE.Box3().setFromObject(targetObj);
-        }
-
         for(let i=0; i<particleCount; i++) {
-            if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
-                // Reset particle
-                waterPos[i*3] = tipWorld.x + (Math.random()-0.5)*0.1;
-                waterPos[i*3+1] = tipWorld.y;
-                waterPos[i*3+2] = tipWorld.z + (Math.random()-0.5)*0.1;
+             if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
+                waterPos[i*3] = tipWorld.x; waterPos[i*3+1] = tipWorld.y; waterPos[i*3+2] = tipWorld.z;
                 const spd = 0.5 + (pressure/100)*1.0;
                 const spreadRad = (waterSpread||5) * Math.PI / 180;
-                const r1=(Math.random()-0.5)*spreadRad, r2=(Math.random()-0.5)*spreadRad;
-                const vel = dirWorld.clone().applyEuler(new THREE.Euler(r1, 0, r2)).multiplyScalar(spd);
-                waterVel[i].x=vel.x; waterVel[i].y=vel.y; waterVel[i].z=vel.z;
-            } else {
-                // Move & Raycast
-                const oldPos = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
-                waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
-                const newPos = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
-                if(pressure<100) waterVel[i].y -= 0.02; 
-
-                let hit = false;
-
-                // Priority: Raycast against Heatmap Target
-                if(targetMeshForRay) {
-                    const moveDir = newPos.clone().sub(oldPos).normalize();
-                    const moveDist = oldPos.distanceTo(newPos);
-                    impactRaycaster.set(oldPos, moveDir);
-                    impactRaycaster.far = moveDist * 1.1; // Slightly further to ensure hit
-                    const intersects = impactRaycaster.intersectObject(targetMeshForRay, false);
-
-                    if(intersects.length > 0 && intersects[0].uv) {
-                        hit = true;
-                        // Draw on canvas based on UV
-                        const uv = intersects[0].uv;
-                        const x = uv.x * 512;
-                        const y = (1 - uv.y) * 512; // Flip Y axis for canvas
-                        const radius = 5 + (pressure/200)*15; // Size based on pressure
-                        
-                        // Draw radial gradient splat (White center -> Yellow -> Red edge)
-                        const gradient = impactCtx.createRadialGradient(x, y, 0, x, y, radius);
-                        gradient.addColorStop(0, 'rgba(255,255,255,1)'); // High pressure
-                        gradient.addColorStop(0.5, 'rgba(255,255,0,0.8)'); // Medium
-                        gradient.addColorStop(1, 'rgba(255,0,0,0)'); // Edge
-
-                        impactCtx.fillStyle = gradient;
-                        impactCtx.beginPath(); impactCtx.arc(x, y, radius, 0, Math.PI*2); impactCtx.fill();
-                    }
-                } 
-                
-                // Fallback: Simple box collision
-                if(!hit && box && box.containsPoint(newPos)) {
-                    hit = true;
-                }
-
-                if(hit) {
-                    // Reset particle on impact
-                    waterVel[i].x = (Math.random()-0.5)*0.5; waterVel[i].y = (Math.random())*0.5; waterVel[i].z = (Math.random()-0.5)*0.5;
-                    waterPos[i*3]=oldPos.x; waterPos[i*3+1]=oldPos.y; waterPos[i*3+2]=oldPos.z;
-                }
-            }
+                const vel = dirWorld.clone().applyEuler(new THREE.Euler((Math.random()-.5)*spreadRad, 0, (Math.random()-.5)*spreadRad)).multiplyScalar(spd);
+                waterVel[i] = vel;
+             } else {
+                 waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
+                 if(impactTargetMesh) {
+                     const p = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
+                     const box = new THREE.Box3().setFromObject(impactTargetMesh);
+                     if(box.containsPoint(p)) {
+                         const uvX = (p.x - box.min.x)/(box.max.x-box.min.x)*512;
+                         const uvY = (p.z - box.min.z)/(box.max.z-box.min.z)*512; 
+                         const r = 5 + (pressure/200)*10;
+                         const grad = impactCtx.createRadialGradient(uvX,uvY,0,uvX,uvY,r);
+                         grad.addColorStop(0,'white'); grad.addColorStop(1,'rgba(255,0,0,0)');
+                         impactCtx.fillStyle = grad; impactCtx.beginPath(); impactCtx.arc(uvX,uvY,r,0,Math.PI*2); impactCtx.fill();
+                         waterPos[i*3+1] = -999; 
+                     }
+                 }
+             }
         }
         waterGeo.attributes.position.needsUpdate = true;
     }
@@ -842,15 +1136,13 @@
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
-        
-        animateWater(); // [v5.2 更新] 呼叫新的動畫函數
-        
+        animateWater();
+        updateLabels();
         renderer.render(scene, camera);
     }
     
-    // Init
     document.getElementById('loader').style.display='none';
-    changeSelection('nozzle');
+    selectActiveObj('nozzle');
     initFromDefault();
     animate();
 
