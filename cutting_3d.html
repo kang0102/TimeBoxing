@@ -1396,36 +1396,30 @@
     initFromDefault();
     animate();
 
-    // --- [NEW] 真實 Firebase 疊構存取系統 ---
-    
-    // 定義資料庫集合名稱 (所有疊構都存在這裡)
+    // --- [NEW] 真實 Firebase 疊構存取系統 (定義在執行之前) ---
     const STACK_COLLECTION = "stack_definitions";
 
     // 1. 初始化與讀取列表
     window.initStackSystem = async () => {
         if(!db) return showStackMsg("資料庫未連線", true);
         const select = document.getElementById('stackSelect');
-        select.innerHTML = '<option>載入中...</option>';
+        // 避免重複呼叫時清空
+        if(select.options.length <= 1) select.innerHTML = '<option>載入中...</option>';
         
         try {
-            // 從 Firebase 抓取資料，依照時間排序
             const q = query(collection(db, STACK_COLLECTION), orderBy("timestamp", "desc"));
             const snapshot = await getDocs(q);
             
             select.innerHTML = '<option value="">-- 選擇疊構 --</option>';
-            select.innerHTML += '<option value="default">預設 (Glass/OCA/Film)</option>'; // 保留預設選項
+            select.innerHTML += '<option value="default">預設 (Glass/OCA/Film)</option>';
             
             if(snapshot.empty) {
                 showStackMsg("無雲端存檔");
             } else {
                 snapshot.forEach(doc => {
                     const data = doc.data();
+                    const valueData = { id: doc.id, layers: data.layers, name: data.name };
                     const opt = document.createElement('option');
-                    // 我們把整個資料物件轉成字串藏在 value 裡，方便讀取，同時紀錄 ID 方便刪除
-                    const valueData = {
-                        id: doc.id,
-                        layers: data.layers
-                    };
                     opt.value = JSON.stringify(valueData);
                     opt.text = data.name;
                     select.appendChild(opt);
@@ -1435,38 +1429,34 @@
         } catch(e) {
             console.error(e);
             select.innerHTML = '<option>讀取失敗</option>';
-            showStackMsg("讀取失敗", true);
         }
     };
 
-    // 2. 儲存目前的疊構 (Save)
+    // 2. 儲存目前的疊構
     window.saveStackToCloud = async () => {
         if(!db) return alert("資料庫未連線");
         const name = document.getElementById('stack-name-input').value;
         if(!name) return alert("請輸入疊構名稱");
         
         showStackMsg("儲存中...");
-        
         try {
             const data = {
                 name: name,
-                layers: sampleLayers, // 儲存目前的層結構
+                layers: sampleLayers,
                 totalThick: params.s_th,
                 timestamp: serverTimestamp()
             };
-            
             await addDoc(collection(db, STACK_COLLECTION), data);
             showStackMsg("儲存成功！");
-            document.getElementById('stack-name-input').value = ""; // 清空輸入框
+            document.getElementById('stack-name-input').value = ""; 
             initStackSystem(); // 重新整理列表
         } catch(e) {
             console.error(e);
-            alert("儲存失敗: " + e.message);
             showStackMsg("儲存失敗", true);
         }
     };
 
-    // 3. 讀取選單項目 (Load)
+    // 3. 讀取選單項目
     window.loadStackFromSelect = () => {
         const val = document.getElementById('stackSelect').value;
         if(!val) return;
@@ -1485,22 +1475,17 @@
                     sampleLayers = data.layers;
                     showStackMsg("已載入: " + (data.name || "雲端資料"));
                 }
-            } catch(e) {
-                console.error(e);
-                return;
-            }
+            } catch(e) { console.error(e); }
         }
-        
-        updateLayerDisplayOnly(); // 更新畫面上的列表 (不含編輯功能)
-        updateModel(); // 重建 3D 模型
+        updateLayerDisplayOnly();
+        updateModel();
     };
 
-    // 4. 刪除選單項目 (Delete)
+    // 4. 刪除選單項目
     window.deleteStackFromCloud = async () => {
         const val = document.getElementById('stackSelect').value;
-        if(!val || val === 'default') return alert("請選擇一個雲端存檔 (預設不可刪除)");
-        
-        if(!confirm("確定要從雲端刪除此疊構設定嗎？此操作無法復原。")) return;
+        if(!val || val === 'default') return alert("請選擇一個雲端存檔");
+        if(!confirm("確定要刪除嗎？")) return;
         
         try {
             const data = JSON.parse(val);
@@ -1508,19 +1493,16 @@
                 showStackMsg("刪除中...");
                 await deleteDoc(doc(db, STACK_COLLECTION, data.id));
                 showStackMsg("刪除成功");
-                initStackSystem(); // 重新整理列表
+                initStackSystem();
             }
-        } catch(e) {
-            alert("刪除失敗");
-        }
+        } catch(e) { alert("刪除失敗"); }
     };
 
-    // 輔助：只更新 UI 顯示 (唯讀模式)
+    // 輔助：更新畫面列表 (唯讀)
     function updateLayerDisplayOnly() {
         const container = document.getElementById('layer-list-container');
         container.innerHTML = '';
         let totalTh = 0;
-        
         sampleLayers.slice().reverse().forEach(layer => {
             totalTh += parseFloat(layer.thick);
             const div = document.createElement('div');
@@ -1534,20 +1516,202 @@
             `;
             container.appendChild(div);
         });
-        
         params.s_th = totalTh;
         document.getElementById('val_s_th').value = totalTh.toFixed(2);
     }
     
     function showStackMsg(msg, isError=false) {
         const el = document.getElementById('stack-msg');
-        el.innerText = msg;
-        el.style.color = isError ? '#ef5350' : '#66BB6A';
-        setTimeout(() => el.innerText = '', 3000);
+        if(el) {
+            el.innerText = msg;
+            el.style.color = isError ? '#ef5350' : '#66BB6A';
+            setTimeout(() => el.innerText = '', 3000);
+        }
     }
 
-    // 初始化呼叫
-    setTimeout(initStackSystem, 1500); // 稍微延遲確保 DB 連線
+    // --- Main Logic & Initialization (放在最後面執行) ---
+    
+    window.initFromDefault = async () => {
+        const defId = localStorage.getItem('cutting3d_def_id');
+        if(defId && db) {
+           try {
+               const docSnap = await getDoc(doc(db, "projects_v6", defId));
+               if(docSnap.exists()) {
+                   loadProjectData(docSnap.data());
+                   return;
+               }
+           } catch(e) { console.warn("Default load failed"); }
+        }
+        params = {...defaultParams};
+        transforms = JSON.parse(JSON.stringify(defaultTransforms));
+        updateAllUI();
+        clearAnnotations();
+    };
+
+    // 專案存取相關 (維持原樣)
+    window.openSaveModal = () => {
+        if(!db) return alert("資料庫未連線");
+        renderer.render(scene, camera);
+        const url = renderer.domElement.toDataURL('image/jpeg', 0.5);
+        document.getElementById('save-preview-img').src = url;
+        document.getElementById('save-name').value = "Project " + new Date().toLocaleDateString();
+        document.getElementById('modal-save').style.display = 'flex';
+    };
+
+    window.confirmSave = async () => {
+        const name = document.getElementById('save-name').value;
+        const desc = document.getElementById('save-desc').value;
+        const thumb = document.getElementById('save-preview-img').src;
+        
+        const serialAnno = annotations.map(a => {
+            if(a.type === 'text') {
+                 return { type: 'text', pos: a.pos, text: a.dom.querySelector('input').value, 
+                          offsetX: a.offsetX, offsetY: a.offsetY,
+                          style: { color: a.dom.style.color, bg: a.dom.style.backgroundColor, size: a.dom.style.fontSize }};
+            }
+            return null; 
+        }).filter(x => x);
+
+        const data = {
+            name, desc, thumb,
+            params, transforms,
+            annotations: serialAnno,
+            timestamp: serverTimestamp()
+        };
+
+        try {
+            await addDoc(collection(db, "projects_v6"), data);
+            alert("儲存成功");
+            document.getElementById('modal-save').style.display = 'none';
+        } catch(e) { alert("儲存失敗: " + e.message); }
+    };
+
+    let allProjects = [];
+    window.openLoadModal = async () => {
+        if(!db) return alert("資料庫未連線");
+        document.getElementById('modal-load').style.display = 'flex';
+        const list = document.getElementById('project-list');
+        list.innerHTML = '<div style="text-align:center;padding:20px;">載入中...</div>';
+        try {
+            const q = query(collection(db, "projects_v6"), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
+            allProjects = [];
+            snapshot.forEach(d => allProjects.push({id: d.id, ...d.data()}));
+            filterProjects();
+        } catch(e) { list.innerHTML = '載入失敗'; }
+    };
+
+    window.filterProjects = () => {
+        const filter = document.getElementById('search-proj').value.toLowerCase();
+        const list = document.getElementById('project-list');
+        list.innerHTML = '';
+        const defId = localStorage.getItem('cutting3d_def_id');
+        
+        allProjects.forEach(p => {
+            if(p.name.toLowerCase().includes(filter)) {
+                const isDef = (p.id === defId);
+                const dateStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleString() : '';
+                const div = document.createElement('div'); div.className = 'project-card';
+                div.innerHTML = `
+                    <div class="default-badge ${isDef?'':'inactive'}" onclick="setDefault('${p.id}', event)" title="設為預設">★</div>
+                    <img src="${p.thumb}" class="project-thumb" onclick="loadProjectById('${p.id}')">
+                    <div class="project-info">
+                        <input type="text" value="${p.name}" onchange="renameProject('${p.id}', this.value)" style="width:100%; font-weight:bold; border:none; background:transparent; padding:0;">
+                        <div style="font-size:11px;color:#aaa">${dateStr}</div>
+                        <div style="font-size:11px;color:#888">${p.desc||''}</div>
+                    </div>
+                    <button class="tool-btn" style="background:#c62828" onclick="deleteProject('${p.id}')">🗑️</button>
+                    <button class="tool-btn" style="background:#1565C0" onclick="loadProjectById('${p.id}')">載入</button>
+                `;
+                list.appendChild(div);
+            }
+        });
+    };
+    
+    window.setDefault = (id, e) => {
+        e.stopPropagation();
+        const curr = localStorage.getItem('cutting3d_def_id');
+        localStorage.setItem('cutting3d_def_id', curr === id ? '' : id);
+        filterProjects();
+    };
+    
+    window.renameProject = async (id, newName) => { try { await updateDoc(doc(db, "projects_v6", id), { name: newName }); } catch(e){} };
+    window.deleteProject = async (id) => { if(!confirm("確定刪除?")) return; try { await deleteDoc(doc(db, "projects_v6", id)); allProjects = allProjects.filter(p => p.id !== id); filterProjects(); } catch(e){} };
+    
+    window.loadProjectById = (id) => { const p = allProjects.find(x => x.id === id); if(p) loadProjectData(p); };
+    
+    function loadProjectData(data) {
+        params = data.params;
+        transforms = data.transforms;
+        clearAnnotations();
+        if(data.annotations) {
+            data.annotations.forEach(a => {
+                if(a.type === 'text') {
+                    document.getElementById('anno-text-color').value = a.style.color;
+                    document.getElementById('anno-bg-color').value = a.style.bg;
+                    document.getElementById('anno-font-size').value = parseInt(a.style.size);
+                    const pos = new THREE.Vector3(a.pos.x, a.pos.y, a.pos.z);
+                    const dom = createTextLabel(pos, a.text);
+                    const anno = annotations[annotations.length-1];
+                    anno.offsetX = a.offsetX || 0;
+                    anno.offsetY = a.offsetY || 0;
+                }
+            });
+        }
+        updateAllUI();
+        document.getElementById('modal-load').style.display='none';
+    }
+
+    function updateAllUI() {
+        Object.keys(params).forEach(k => {
+            const e1=document.getElementById('val_'+k), e2=document.getElementById('rng_'+k);
+            if(e1) e1.value=params[k]; if(e2) e2.value=params[k];
+        });
+        updateTransformUI();
+        updateModel();
+        applyTransforms();
+    }
+    
+    window.switchTab = (tab) => {
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
+    };
+    
+    window.changeSelection = (val) => { selectActiveObj(val); };
+    
+    window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); };
+
+    function updateTransformUI() {
+        const t=transforms[currentObj];
+        document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
+        document.getElementById('t_py').value=t.py.toFixed(2); document.getElementById('rg_py').value=t.py;
+        document.getElementById('t_pz').value=t.pz.toFixed(2); document.getElementById('rg_pz').value=t.pz;
+        const dx=t.rx*180/Math.PI, dy=t.ry*180/Math.PI, dz=t.rz*180/Math.PI;
+        document.getElementById('t_rx').value=dx.toFixed(1); document.getElementById('rg_rx').value=dx;
+        document.getElementById('t_ry').value=dy.toFixed(1); document.getElementById('rg_ry').value=dy;
+        document.getElementById('t_rz').value=dz.toFixed(1); document.getElementById('rg_rz').value=dz;
+    }
+    window.updateTransFromInput = () => {
+        const t=transforms[currentObj];
+        t.px=parseFloat(document.getElementById('t_px').value); t.py=parseFloat(document.getElementById('t_py').value); t.pz=parseFloat(document.getElementById('t_pz').value);
+        t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180; t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180; t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
+        applyTransforms();
+    };
+
+    // --- 最後執行初始化 (確保所有函式都已定義) ---
+    
+    // 隱藏 Loading
+    document.getElementById('loader').style.display='none';
+    selectActiveObj('nozzle');
+
+    // 初始化雲端列表
+    updateLayerDisplayOnly(); // 先顯示目前的 (預設)
+    setTimeout(initStackSystem, 1500); // 延遲載入雲端列表
+
+    initFromDefault();
+    animate();
     
 </script>
 </body>
