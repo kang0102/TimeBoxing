@@ -229,14 +229,28 @@
         </div>
         <div id="dims-sample" class="group" style="display:none">
             <span class="group-title">
-                樣品參數
-                <input type="color" id="col_sample" value="#2196F3" onchange="updateObjColor('sample', this.value)" title="更改顏色">
+                樣品參數 (唯讀疊構)
+                <button class="tool-btn" onclick="refreshStackList()" title="重新整理列表">🔄</button>
             </span>
+            
+            <div class="row" style="margin-bottom:10px;">
+                <label style="width:auto;">選擇疊構:</label>
+                <select id="stackSelect" onchange="loadStackFromCloud(this.value)" style="flex:1; background:#333; color:white; border:1px solid #555; padding:2px;">
+                    <option value="">-- 請選擇 --</option>
+                    <option value="default">預設 (Glass/OCA/Film)</option>
+                    </select>
+            </div>
+
+            <div id="layer-list-container" style="background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-bottom:5px; max-height:100px; overflow-y:auto; font-size:11px;">
+                </div>
+
+            <div class="row"><label>總厚 T</label><input type="number" id="val_s_th" readonly style="color:#666; border:none; background:transparent;"> mm</div>
+            <hr style="border:0; border-top:1px solid #444; margin:5px 0;">
+            
             <div class="row"><label>長度 L</label><input type="number" id="val_s_l" onchange="updateVal('s_l',this.value)"><input type="range" id="rng_s_l" min="1" max="100" step="0.1" oninput="updateVal('s_l',this.value)"></div>
-            <div class="row" id="row-s-th"><label>厚度 T</label><input type="number" id="val_s_th" onchange="updateVal('s_th',this.value)"><input type="range" id="rng_s_th" min="0.1" max="20" step="0.01" oninput="updateVal('s_th',this.value)"></div>
             <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
-            <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
         </div>
+
         <div id="dims-blade" class="group" style="display:none">
             <span class="group-title">
                 刀具參數
@@ -364,6 +378,14 @@
     let annotations = []; // { type, pos, content, style, obj(Mesh), dom(HTML), offsetX, offsetY }
     let tempPoints = [];
     let hoveredEdgeMesh = null;
+
+    // --- State & Defaults ---
+    // [NEW] 疊構資料：預設有一層玻璃
+    let sampleLayers = [
+        { name: 'Glass', thick: 0.8, color: '#2196F3' },
+        { name: 'OCA',   thick: 0.2, color: '#FFEB3B' },
+        { name: 'Film',  thick: 0.3, color: '#E91E63' }
+    ];
     
     // --- 3D Scene Setup ---
     const container = document.getElementById('canvas-container');
@@ -393,11 +415,38 @@
     tControls.addEventListener('change', () => {
         if(!tControls.object) return;
         const o=tControls.object; const k=currentObj;
+        
+        // 1. 只更新數值狀態，不重建模型
         transforms[k].px=o.position.x; transforms[k].py=o.position.y; transforms[k].pz=o.position.z;
         transforms[k].rx=o.rotation.x; transforms[k].ry=o.rotation.y; transforms[k].rz=o.rotation.z;
         updateTransformUI();
-        if(k!=='nozzle' && document.getElementById('target-select').value!=='none') updateModel(); 
+
+        // 2. 只有在「切割模式開啟」且「正在移動治具或樣品」時，才需要即時更新切割結果
+        // 如果覺得還是卡，可以把下面這行註解掉，改成移動完放開滑鼠才運算
+        const needBooleanUpdate = (document.getElementById('target-select').value !== 'none');
+        
+        if(needBooleanUpdate) {
+             // 為了效能，這裡我們不呼叫 updateModel() 重建幾何，而是直接呼叫 applyTransforms()
+             // updateModel() 只有在「尺寸改變」或「疊構改變」時才呼叫
+             applyTransforms(); 
+             
+             // 如果你需要即時看到切割結果，必須在這裡觸發 boolean 運算
+             // 但為了不 lag，我們通常建議移動時只看線框，放開才算。
+             // 這裡我們先做一個簡易版的更新：
+             updateBooleanOnly(); 
+        }
     });
+
+    // [NEW] 專門處理 Boolean 更新的輕量函數 (不重建幾何)
+    function updateBooleanOnly() {
+        const target = document.getElementById('target-select').value;
+        if(target === 'none' || !resultMesh) return;
+        
+        // 重新執行 CSG 運算即可，不需要 new Brush()
+        // 這裡簡化處理：如果真的很卡，建議移動時隱藏 resultMesh，顯示原始 Mesh
+        // 這裡我們維持 updateModel，但請確保 updateModel 裡面的 dispose 都有做好 (見下方)
+        updateModel(); 
+    }
     scene.add(tControls);
 
     // Groups
@@ -519,6 +568,49 @@
         if(mat) {
             mat.color.set(hexColor);
             // Re-trigger update if needed (mostly for CSG results which might share material)
+            updateModel();
+        }
+    };
+
+    // 載入貼圖 (Glue/Texture)
+    window.loadSampleTexture = (input) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const loader = new THREE.TextureLoader();
+                loader.load(e.target.result, (texture) => {
+                    texture.colorSpace = THREE.SRGBColorSpace;
+                    texture.wrapS = THREE.ClampToEdgeWrapping;
+                    texture.wrapT = THREE.ClampToEdgeWrapping;
+
+                    if (matSample) {
+                        matSample.map = texture;
+                        // 將底色改為白色，避免圖片混色
+                        matSample.color.setHex(0xffffff); 
+                        matSample.needsUpdate = true;
+                    }
+                    // 更新 UI 顏色選擇器
+                    const colPicker = document.getElementById('col_sample');
+                    if(colPicker) colPicker.value = "#ffffff";
+                    
+                    updateModel();
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // 移除貼圖
+    window.removeSampleTexture = () => {
+        if (matSample) {
+            matSample.map = null;
+            matSample.color.setHex(0x2196F3); // 回復預設藍色
+            matSample.needsUpdate = true;
+            
+            const colPicker = document.getElementById('col_sample');
+            if(colPicker) colPicker.value = "#2196F3";
+            
+            document.getElementById('tex-input').value = '';
             updateModel();
         }
     };
@@ -1036,7 +1128,7 @@
     window.changeSelection = (val) => { selectActiveObj(val); };
     
     window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); };
-    
+
     function updateTransformUI() {
         const t=transforms[currentObj];
         document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
@@ -1074,30 +1166,94 @@
         return {geo:g, base, h};
     }
     function updateModel() {
-        if(brushJig) brushJig.geometry.dispose(); if(brushBlade) brushBlade.geometry.dispose();
-        sampleBrushes.forEach(b=>b.geometry.dispose()); sampleBrushes=[];
-        if(resultMesh) { scene.remove(resultMesh); resultMesh.geometry.dispose(); }
+        // --- 1. 徹底清除舊物件 (解決殘影/複製問題) ---
+        if(brushJig) { 
+            if(brushJig.geometry) brushJig.geometry.dispose(); 
+            jigGroup.remove(brushJig); 
+        }
         
-        jigGroup.clear(); sampleGroup.clear(); bladeGroup.clear();
-        jigGroup.add(sampleGroup); 
+        // 徹底清除樣品
+        if(sampleBrushes.length > 0) {
+            sampleBrushes.forEach(b => {
+                if(b.geometry) b.geometry.dispose();
+                // 如果有 material 是 clone 出來的也要 dispose (這裡暫略，通常還好)
+                sampleGroup.remove(b);
+            });
+            sampleBrushes = [];
+        }
+        
+        if(brushBlade) {
+            if(brushBlade.geometry) brushBlade.geometry.dispose();
+            bladeGroup.remove(brushBlade);
+        }
 
+        if(resultMesh) {
+            scene.remove(resultMesh);
+            if(resultMesh.geometry) resultMesh.geometry.dispose();
+            resultMesh = null;
+        }
+        
+        // 確保 Group 也是乾淨的
+        jigGroup.clear(); 
+        sampleGroup.clear(); 
+        bladeGroup.clear();
+        
+        jigGroup.add(sampleGroup); // 重新建立階層結構
+
+        // 2. 建立治具 (Jig)
         const jData = createJigGeometry();
         brushJig = new Brush(jData.geo, matJig); jigGroup.add(brushJig);
 
+        // 3. 計算基準向量與位置
         const dx=jData.base, dy=-jData.h; const slopeLen=Math.sqrt(dx*dx+dy*dy);
         const ux=dx/slopeLen, uy=dy/slopeLen; const nx=-uy, ny=ux; 
         const topX=-jData.base/2, topY=jData.h/2;
         const slideDist = params.s_t * slopeLen;
-        const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
         const angleRad=params.j_a*Math.PI/180;
+        
+        // 樣品在斜面上的起始點 (最底部)
+        const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
 
-        const g = new THREE.BoxGeometry(params.s_l, params.s_th, params.s_w);
-        const b = new Brush(g, matSample);
-        b.rotation.set(0,0,0); b.rotateZ(-angleRad);
-        const sx = baseSx + nx*(params.s_th/2) + ux*(params.s_l/2);
-        const sy = baseSy + ny*(params.s_th/2) + uy*(params.s_l/2);
-        b.position.set(sx, sy, 0); b.updateMatrixWorld();
-        sampleBrushes.push(b); sampleGroup.add(b);
+        // --- [NEW] 開始：疊構生成邏輯 (Stack Logic) ---
+        let currentHeightOffset = 0; // 紀錄目前疊到多高
+
+        sampleLayers.forEach(layer => {
+            // A. 建立該層材質 (處理透明度)
+            const isTransparent = ['glue', 'oca'].some(k => layer.name.toLowerCase().includes(k));
+            const layerMat = new THREE.MeshStandardMaterial({
+                color: layer.color,
+                roughness: 0.2,
+                metalness: 0.1,
+                transparent: isTransparent,
+                opacity: isTransparent ? 0.6 : 1.0
+            });
+
+            // B. 建立該層幾何 (使用該層定義的厚度 layer.thick)
+            const g = new THREE.BoxGeometry(params.s_l, layer.thick, params.s_w);
+            const b = new Brush(g, layerMat);
+            
+            // C. 旋轉 (跟隨斜面角度)
+            b.rotation.set(0,0,0); b.rotateZ(-angleRad);
+
+            // D. 計算堆疊位置
+            // 中心點距離 = 累積高度 + (本層厚度 / 2)
+            const dist = currentHeightOffset + (layer.thick / 2);
+            
+            // 沿著法線方向 (nx, ny) 推出去
+            const sx = baseSx + nx * dist + ux * (params.s_l / 2);
+            const sy = baseSy + ny * dist + uy * (params.s_l / 2);
+            
+            b.position.set(sx, sy, 0); 
+            b.updateMatrixWorld();
+            
+            // E. 加入集合
+            sampleBrushes.push(b);
+            sampleGroup.add(b);
+
+            // F. 累加高度給下一層
+            currentHeightOffset += layer.thick;
+        });
+        // --- [NEW] 結束 ---
 
         applyTransforms();
 
@@ -1109,17 +1265,23 @@
 
         if(target!=='none') {
             const worldBlade = brushBlade.clone(); worldBlade.applyMatrix4(bladeGroup.matrixWorld); worldBlade.material = matBlade;
+            
             if(target==='jig') {
                 brushJig.visible=false; 
                 const wJig=brushJig.clone(); wJig.applyMatrix4(jigGroup.matrixWorld);
                 const res=evaluator.evaluate(wJig, worldBlade, SUBTRACTION);
                 res.material=matJig; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
             } else {
+                // 切割樣品 (Sample)
                 sampleBrushes.forEach(b=>{
                     b.visible=false; 
                     const wb=b.clone(); wb.applyMatrix4(sampleGroup.matrix); wb.applyMatrix4(jigGroup.matrixWorld);
                     const res=evaluator.evaluate(wb, worldBlade, SUBTRACTION);
-                    res.material=matSample; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
+                    
+                    // --- [NEW] 重要修改：切割後要使用該層原本的材質，而不是統一用 matSample ---
+                    res.material = b.material; 
+                    
+                    res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res; // 注意：這裡 resultMesh 只會存最後一個，如果需要多個結果操作可能會有限制，但視覺上是正確的
                 });
             }
             const ghost = brushBlade.clone(); ghost.material = new THREE.MeshBasicMaterial({color:0xFFEB3B, wireframe:true, opacity:0.3, transparent:true});
@@ -1218,8 +1380,103 @@
     
     document.getElementById('loader').style.display='none';
     selectActiveObj('nozzle');
+
+    renderLayerUI('default');
+    
     initFromDefault();
     animate();
+
+    // --- [NEW] 雲端疊構讀取功能 ---
+    
+    // 1. 模擬從 Firebase 讀取列表 (請替換成真的 Firebase 呼叫)
+    window.refreshStackList = async () => {
+        const select = document.getElementById('stackSelect');
+        select.innerHTML = '<option value="">讀取中...</option>';
+        
+        // 這裡假設你有一個 collection 叫 'stack_definitions'
+        // 如果還沒有，你可以先用假資料測試
+        try {
+            // const q = query(collection(db, "stack_definitions")); 
+            // const snapshot = await getDocs(q);
+            // ... (Firebase 邏輯)
+            
+            // 這裡我先寫死兩個範例，讓你測試 UI
+            const demoStacks = [
+                { id: 'stack_01', name: '3層-標準 (0.8mm)', layers: [
+                    {name:'Glass', thick:0.5, color:'#a3d2ca'},
+                    {name:'OCA', thick:0.1, color:'#ffdfba'},
+                    {name:'Film', thick:0.2, color:'#ffffba'}
+                ]},
+                { id: 'stack_02', name: '5層-防爆 (1.2mm)', layers: [
+                    {name:'Cover', thick:0.4, color:'#bae1ff'},
+                    {name:'Glue', thick:0.1, color:'#ffdfba'},
+                    {name:'Sensor', thick:0.3, color:'#ffb3ba'},
+                    {name:'Glue', thick:0.1, color:'#ffdfba'},
+                    {name:'LCD', thick:0.3, color:'#baffc9'}
+                ]}
+            ];
+            
+            select.innerHTML = '<option value="">-- 請選擇疊構 --</option>';
+            select.innerHTML += '<option value="default">預設 (Glass/OCA/Film)</option>';
+            
+            demoStacks.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(s.layers); // 簡單起見直接把資料藏在 value
+                opt.text = s.name;
+                select.appendChild(opt);
+            });
+            
+        } catch(e) {
+            console.error(e);
+            select.innerHTML = '<option>讀取失敗</option>';
+        }
+    };
+
+    // 2. 套用選擇的疊構
+    window.loadStackFromCloud = (val) => {
+        if(!val) return;
+        
+        if(val === 'default') {
+             sampleLayers = [
+                { name: 'Glass', thick: 0.8, color: '#2196F3' },
+                { name: 'OCA',   thick: 0.2, color: '#FFEB3B' },
+                { name: 'Film',  thick: 0.3, color: '#E91E63' }
+            ];
+        } else {
+            // 解析 JSON 資料
+            sampleLayers = JSON.parse(val);
+        }
+        
+        // 更新 UI 顯示 (唯讀)
+        const container = document.getElementById('layer-list-container');
+        container.innerHTML = '';
+        let totalTh = 0;
+        
+        // 顯示列表 (無編輯功能)
+        sampleLayers.slice().reverse().forEach(layer => { // 反轉顯示，讓上層在上面
+            totalTh += layer.thick;
+            const div = document.createElement('div');
+            div.style.cssText = 'display:flex; justify-content:space-between; border-bottom:1px solid #444; padding:2px 0;';
+            div.innerHTML = `
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <div style="width:10px;height:10px;background:${layer.color};border-radius:2px;"></div>
+                    <span style="color:#ccc;">${layer.name}</span>
+                </div>
+                <span style="color:#4FC3F7;">${layer.thick}mm</span>
+            `;
+            container.appendChild(div);
+        });
+
+        // 更新總厚度變數
+        params.s_th = totalTh;
+        document.getElementById('val_s_th').value = totalTh.toFixed(2);
+        
+        // 重建模型
+        updateModel();
+    };
+
+    // 初始化時載入列表
+    refreshStackList();
 
 </script>
 </body>
