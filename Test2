@@ -236,6 +236,21 @@
             <div class="row" id="row-s-th"><label>厚度 T</label><input type="number" id="val_s_th" onchange="updateVal('s_th',this.value)"><input type="range" id="rng_s_th" min="0.1" max="20" step="0.01" oninput="updateVal('s_th',this.value)"></div>
             <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
             <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
+            <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
+            <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
+            
+            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #444;">
+                <span class="group-title" style="color:#4FC3F7; font-size:12px; margin-bottom:5px; display:block;">
+                    🖼️ 疊構貼圖 (Glue Texture)
+                </span>
+                <div class="row">
+                    <button class="tool-btn" style="flex:1;" onclick="document.getElementById('tex-input').click()">📂 上傳圖片</button>
+                    <button class="tool-btn" style="width:30px; background:#c62828;" onclick="removeSampleTexture()" title="移除貼圖">×</button>
+                </div>
+                <input type="file" id="tex-input" accept="image/*" style="display:none" onchange="loadSampleTexture(this)">
+            </div>
+            </div> <div id="dims-blade" class="group" style="display:none">
+
         </div>
         <div id="dims-blade" class="group" style="display:none">
             <span class="group-title">
@@ -519,6 +534,49 @@
         if(mat) {
             mat.color.set(hexColor);
             // Re-trigger update if needed (mostly for CSG results which might share material)
+            updateModel();
+        }
+    };
+
+    // 載入貼圖 (Glue/Texture)
+    window.loadSampleTexture = (input) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const loader = new THREE.TextureLoader();
+                loader.load(e.target.result, (texture) => {
+                    texture.colorSpace = THREE.SRGBColorSpace;
+                    texture.wrapS = THREE.ClampToEdgeWrapping;
+                    texture.wrapT = THREE.ClampToEdgeWrapping;
+
+                    if (matSample) {
+                        matSample.map = texture;
+                        // 將底色改為白色，避免圖片混色
+                        matSample.color.setHex(0xffffff); 
+                        matSample.needsUpdate = true;
+                    }
+                    // 更新 UI 顏色選擇器
+                    const colPicker = document.getElementById('col_sample');
+                    if(colPicker) colPicker.value = "#ffffff";
+                    
+                    updateModel();
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // 移除貼圖
+    window.removeSampleTexture = () => {
+        if (matSample) {
+            matSample.map = null;
+            matSample.color.setHex(0x2196F3); // 回復預設藍色
+            matSample.needsUpdate = true;
+            
+            const colPicker = document.getElementById('col_sample');
+            if(colPicker) colPicker.value = "#2196F3";
+            
+            document.getElementById('tex-input').value = '';
             updateModel();
         }
     };
