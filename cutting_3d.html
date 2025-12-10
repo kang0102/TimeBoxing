@@ -233,26 +233,27 @@
                 <button class="tool-btn" onclick="initStackSystem()" title="重新整理">🔄</button>
             </span>
             
-            <div style="background:#263238; padding:8px; border-radius:4px; border:1px solid #37474F; margin-bottom:10px;">
-                <div style="font-size:11px; color:#4FC3F7; margin-bottom:5px;">☁️ 雲端疊構庫 (Stacks)</div>
+            <div style="background:#222; padding:10px; border-radius:4px; border:1px solid #333; margin-bottom:10px; border-left: 4px solid #009688;">
+                <div style="font-size:12px; color:#4FC3F7; margin-bottom:8px; font-weight:bold;">☁️ 雲端專案存取</div>
                 
                 <div style="display:flex; gap:5px; margin-bottom:8px;">
-                    <input type="text" id="stack-name-input" placeholder="輸入名稱 (例: LaZ Aji...)" style="flex:1; min-width:0;">
-                    <button class="tool-btn" style="background:#00695C; border:1px solid #004D40;" onclick="saveStackToCloud()">儲存</button>
+                    <input type="text" id="stack-name-input" placeholder="LaZ Ajinomoto singlemode" style="flex:1; min-width:0; background:#333; border:1px solid #555; color:white; padding:6px; border-radius:4px;">
+                    <button class="tool-btn" style="background:#00897B; border:1px solid #00695C; color:white; font-weight:bold; width:60px;" onclick="saveStackToCloud()">儲存</button>
                 </div>
                 
-                <div style="display:flex; gap:5px;">
-                    <select id="stackSelect" style="flex:1; background:#111; color:white; border:1px solid #555; padding:4px;">
-                        <option value="">載入中...</option>
+                <div style="display:flex; gap:5px; margin-bottom:8px;">
+                    <select id="stackSelect" style="flex:1; background:#333; color:white; border:1px solid #555; padding:6px; border-radius:4px;">
+                        <option value="">-- 載入中 --</option>
                     </select>
-                    <button class="tool-btn" style="background:#c62828; width:30px;" onclick="deleteStackFromCloud()" title="刪除">🗑️</button>
+                    <button class="tool-btn" style="background:#c62828; border:1px solid #b71c1c; width:40px;" onclick="deleteStackFromCloud()" title="刪除">🗑️</button>
                 </div>
-                <button class="action-btn" style="margin-top:5px; padding:5px; background:#1565C0;" onclick="loadStackFromSelect()">📂 讀取選取項目</button>
-                <div id="stack-msg" style="font-size:10px; color:#aaa; margin-top:3px; height:14px;"></div>
+                
+                <button class="action-btn" style="margin:0; padding:6px; background:#455A64; border:1px solid #546E7A;" onclick="loadStackFromSelect()">📥 讀取選取項目</button>
+                
+                <div id="stack-msg" style="font-size:10px; color:#aaa; margin-top:5px; text-align:right; height:14px;"></div>
             </div>
 
-            <div id="layer-list-container" style="background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-bottom:5px; max-height:100px; overflow-y:auto; font-size:11px;">
-                </div>
+            <div id="layer-list-container" style="background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-bottom:5px; max-height:100px; overflow-y:auto; font-size:11px;"></div>
 
             <div class="row"><label>總厚 T</label><input type="number" id="val_s_th" readonly style="color:#666; border:none; background:transparent;"> mm</div>
             <hr style="border:0; border-top:1px solid #444; margin:5px 0;">
