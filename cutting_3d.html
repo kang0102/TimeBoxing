@@ -229,16 +229,26 @@
         </div>
         <div id="dims-sample" class="group" style="display:none">
             <span class="group-title">
-                樣品參數 (唯讀疊構)
-                <button class="tool-btn" onclick="refreshStackList()" title="重新整理列表">🔄</button>
+                樣品參數 (疊構系統)
+                <button class="tool-btn" onclick="initStackSystem()" title="重新整理">🔄</button>
             </span>
             
-            <div class="row" style="margin-bottom:10px;">
-                <label style="width:auto;">選擇疊構:</label>
-                <select id="stackSelect" onchange="loadStackFromCloud(this.value)" style="flex:1; background:#333; color:white; border:1px solid #555; padding:2px;">
-                    <option value="">-- 請選擇 --</option>
-                    <option value="default">預設 (Glass/OCA/Film)</option>
+            <div style="background:#263238; padding:8px; border-radius:4px; border:1px solid #37474F; margin-bottom:10px;">
+                <div style="font-size:11px; color:#4FC3F7; margin-bottom:5px;">☁️ 雲端疊構庫 (Stacks)</div>
+                
+                <div style="display:flex; gap:5px; margin-bottom:8px;">
+                    <input type="text" id="stack-name-input" placeholder="輸入名稱 (例: LaZ Aji...)" style="flex:1; min-width:0;">
+                    <button class="tool-btn" style="background:#00695C; border:1px solid #004D40;" onclick="saveStackToCloud()">儲存</button>
+                </div>
+                
+                <div style="display:flex; gap:5px;">
+                    <select id="stackSelect" style="flex:1; background:#111; color:white; border:1px solid #555; padding:4px;">
+                        <option value="">載入中...</option>
                     </select>
+                    <button class="tool-btn" style="background:#c62828; width:30px;" onclick="deleteStackFromCloud()" title="刪除">🗑️</button>
+                </div>
+                <button class="action-btn" style="margin-top:5px; padding:5px; background:#1565C0;" onclick="loadStackFromSelect()">📂 讀取選取項目</button>
+                <div id="stack-msg" style="font-size:10px; color:#aaa; margin-top:3px; height:14px;"></div>
             </div>
 
             <div id="layer-list-container" style="background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-bottom:5px; max-height:100px; overflow-y:auto; font-size:11px;">
@@ -1386,54 +1396,79 @@
     initFromDefault();
     animate();
 
-    // --- [NEW] 雲端疊構讀取功能 ---
+    // --- [NEW] 真實 Firebase 疊構存取系統 ---
     
-    // 1. 模擬從 Firebase 讀取列表 (請替換成真的 Firebase 呼叫)
-    window.refreshStackList = async () => {
+    // 定義資料庫集合名稱 (所有疊構都存在這裡)
+    const STACK_COLLECTION = "stack_definitions";
+
+    // 1. 初始化與讀取列表
+    window.initStackSystem = async () => {
+        if(!db) return showStackMsg("資料庫未連線", true);
         const select = document.getElementById('stackSelect');
-        select.innerHTML = '<option value="">讀取中...</option>';
+        select.innerHTML = '<option>載入中...</option>';
         
-        // 這裡假設你有一個 collection 叫 'stack_definitions'
-        // 如果還沒有，你可以先用假資料測試
         try {
-            // const q = query(collection(db, "stack_definitions")); 
-            // const snapshot = await getDocs(q);
-            // ... (Firebase 邏輯)
+            // 從 Firebase 抓取資料，依照時間排序
+            const q = query(collection(db, STACK_COLLECTION), orderBy("timestamp", "desc"));
+            const snapshot = await getDocs(q);
             
-            // 這裡我先寫死兩個範例，讓你測試 UI
-            const demoStacks = [
-                { id: 'stack_01', name: '3層-標準 (0.8mm)', layers: [
-                    {name:'Glass', thick:0.5, color:'#a3d2ca'},
-                    {name:'OCA', thick:0.1, color:'#ffdfba'},
-                    {name:'Film', thick:0.2, color:'#ffffba'}
-                ]},
-                { id: 'stack_02', name: '5層-防爆 (1.2mm)', layers: [
-                    {name:'Cover', thick:0.4, color:'#bae1ff'},
-                    {name:'Glue', thick:0.1, color:'#ffdfba'},
-                    {name:'Sensor', thick:0.3, color:'#ffb3ba'},
-                    {name:'Glue', thick:0.1, color:'#ffdfba'},
-                    {name:'LCD', thick:0.3, color:'#baffc9'}
-                ]}
-            ];
+            select.innerHTML = '<option value="">-- 選擇疊構 --</option>';
+            select.innerHTML += '<option value="default">預設 (Glass/OCA/Film)</option>'; // 保留預設選項
             
-            select.innerHTML = '<option value="">-- 請選擇疊構 --</option>';
-            select.innerHTML += '<option value="default">預設 (Glass/OCA/Film)</option>';
-            
-            demoStacks.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = JSON.stringify(s.layers); // 簡單起見直接把資料藏在 value
-                opt.text = s.name;
-                select.appendChild(opt);
-            });
-            
+            if(snapshot.empty) {
+                showStackMsg("無雲端存檔");
+            } else {
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const opt = document.createElement('option');
+                    // 我們把整個資料物件轉成字串藏在 value 裡，方便讀取，同時紀錄 ID 方便刪除
+                    const valueData = {
+                        id: doc.id,
+                        layers: data.layers
+                    };
+                    opt.value = JSON.stringify(valueData);
+                    opt.text = data.name;
+                    select.appendChild(opt);
+                });
+                showStackMsg("列表已更新");
+            }
         } catch(e) {
             console.error(e);
             select.innerHTML = '<option>讀取失敗</option>';
+            showStackMsg("讀取失敗", true);
         }
     };
 
-    // 2. 套用選擇的疊構
-    window.loadStackFromCloud = (val) => {
+    // 2. 儲存目前的疊構 (Save)
+    window.saveStackToCloud = async () => {
+        if(!db) return alert("資料庫未連線");
+        const name = document.getElementById('stack-name-input').value;
+        if(!name) return alert("請輸入疊構名稱");
+        
+        showStackMsg("儲存中...");
+        
+        try {
+            const data = {
+                name: name,
+                layers: sampleLayers, // 儲存目前的層結構
+                totalThick: params.s_th,
+                timestamp: serverTimestamp()
+            };
+            
+            await addDoc(collection(db, STACK_COLLECTION), data);
+            showStackMsg("儲存成功！");
+            document.getElementById('stack-name-input').value = ""; // 清空輸入框
+            initStackSystem(); // 重新整理列表
+        } catch(e) {
+            console.error(e);
+            alert("儲存失敗: " + e.message);
+            showStackMsg("儲存失敗", true);
+        }
+    };
+
+    // 3. 讀取選單項目 (Load)
+    window.loadStackFromSelect = () => {
+        const val = document.getElementById('stackSelect').value;
         if(!val) return;
         
         if(val === 'default') {
@@ -1442,19 +1477,52 @@
                 { name: 'OCA',   thick: 0.2, color: '#FFEB3B' },
                 { name: 'Film',  thick: 0.3, color: '#E91E63' }
             ];
+            showStackMsg("已載入預設");
         } else {
-            // 解析 JSON 資料
-            sampleLayers = JSON.parse(val);
+            try {
+                const data = JSON.parse(val);
+                if(data.layers) {
+                    sampleLayers = data.layers;
+                    showStackMsg("已載入: " + (data.name || "雲端資料"));
+                }
+            } catch(e) {
+                console.error(e);
+                return;
+            }
         }
         
-        // 更新 UI 顯示 (唯讀)
+        updateLayerDisplayOnly(); // 更新畫面上的列表 (不含編輯功能)
+        updateModel(); // 重建 3D 模型
+    };
+
+    // 4. 刪除選單項目 (Delete)
+    window.deleteStackFromCloud = async () => {
+        const val = document.getElementById('stackSelect').value;
+        if(!val || val === 'default') return alert("請選擇一個雲端存檔 (預設不可刪除)");
+        
+        if(!confirm("確定要從雲端刪除此疊構設定嗎？此操作無法復原。")) return;
+        
+        try {
+            const data = JSON.parse(val);
+            if(data.id) {
+                showStackMsg("刪除中...");
+                await deleteDoc(doc(db, STACK_COLLECTION, data.id));
+                showStackMsg("刪除成功");
+                initStackSystem(); // 重新整理列表
+            }
+        } catch(e) {
+            alert("刪除失敗");
+        }
+    };
+
+    // 輔助：只更新 UI 顯示 (唯讀模式)
+    function updateLayerDisplayOnly() {
         const container = document.getElementById('layer-list-container');
         container.innerHTML = '';
         let totalTh = 0;
         
-        // 顯示列表 (無編輯功能)
-        sampleLayers.slice().reverse().forEach(layer => { // 反轉顯示，讓上層在上面
-            totalTh += layer.thick;
+        sampleLayers.slice().reverse().forEach(layer => {
+            totalTh += parseFloat(layer.thick);
             const div = document.createElement('div');
             div.style.cssText = 'display:flex; justify-content:space-between; border-bottom:1px solid #444; padding:2px 0;';
             div.innerHTML = `
@@ -1466,18 +1534,21 @@
             `;
             container.appendChild(div);
         });
-
-        // 更新總厚度變數
+        
         params.s_th = totalTh;
         document.getElementById('val_s_th').value = totalTh.toFixed(2);
-        
-        // 重建模型
-        updateModel();
-    };
+    }
+    
+    function showStackMsg(msg, isError=false) {
+        const el = document.getElementById('stack-msg');
+        el.innerText = msg;
+        el.style.color = isError ? '#ef5350' : '#66BB6A';
+        setTimeout(() => el.innerText = '', 3000);
+    }
 
-    // 初始化時載入列表
-    refreshStackList();
-
+    // 初始化呼叫
+    setTimeout(initStackSystem, 1500); // 稍微延遲確保 DB 連線
+    
 </script>
 </body>
 </html>
