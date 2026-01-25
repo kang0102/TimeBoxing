@@ -468,8 +468,8 @@
                     dragMeasureHandle = handle;
                 } else {
                     drawingMeasure = { p0: snappedMm, p1: snappedMm };
+                    isDragging = true;
                 }
-                isDragging = true;
             } else {
                 // Edit Mode
                 if (handle) {
@@ -585,10 +585,6 @@
     canvas.addEventListener('contextmenu', e => e.preventDefault());
 
     // --- 5. Changelog & Export ---
-    // (代碼與上一版相同，省略以節省長度，已包含在上方完整代碼中)
-    // ... Copy from previous response ...
-    
-    // --- Duplicate of Changelog logic for completeness ---
     let changelogs = [];
     const DEFAULT_LOGS = [{version:"v9.1", date: new Date().toISOString().split('T')[0], changes:["新增量測功能 (Measure)", "新增吸附功能 (Snap)"]}];
     function loadChangelog() {
