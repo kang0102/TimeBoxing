@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V2)</title>
+    <title>工程疊構圖產生器 (Pro V3)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎設定 --- */
@@ -38,7 +38,7 @@
         h3 { margin: 10px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
         
         .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; display: flex; flex-direction: column; gap: 5px; }
-        .sub-group { background: #2f2f2f; padding: 5px; border-radius: 4px; border: 1px dashed #444; margin-bottom: 5px; }
+        .sub-group { background: #2f2f2f; padding: 8px; border-radius: 4px; border: 1px dashed #555; margin-bottom: 8px; }
         
         label { display: block; margin-bottom: 2px; font-size: 12px; color: #aaa; }
         input[type="text"], input[type="number"], select, textarea { background: #333; border: 1px solid #555; color: white; padding: 6px; border-radius: 4px; width: 100%; font-size: 13px; }
@@ -49,7 +49,6 @@
         .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; transition: 0.2s; }
         .layer-item.dragging { opacity: 0.5; border: 2px dashed #4FC3F7; background: #2a2a2a; }
         .layer-main-row { display: flex; align-items: center; gap: 4px; }
-        
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
         .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
         .layer-item.open .layer-details { display: grid; }
@@ -62,7 +61,6 @@
         .layer-check { width: 18px; height: 18px; cursor: pointer; margin-right: 2px; accent-color: #4CAF50; }
         .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
         .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
-
         .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
 
         /* 按鈕群組 */
@@ -77,43 +75,43 @@
         .btn-ppt { background-color: #E65100; border-color: #EF6C00; }
         .btn-img { background-color: #1565C0; border-color: #0D47A1; }
         .btn-add { background-color: #2E7D32; border-color: #1B5E20; }
-        .btn-clear { background-color: #c62828; border-color: #b71c1c; }
-        
+        .btn-backup { background-color: #455A64; border-color: #37474F; flex:1;}
+        .btn-restore { background-color: #D84315; border-color: #BF360C; flex:1;}
+
         .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; max-width: 100%; }
 
-        /* --- 雲端管理 / 預覽 Modal --- */
+        /* --- 雲端管理 / 預覽 Modal (大改版) --- */
         .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000; display:none;}
         .modal { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #252525; border: 1px solid #4FC3F7; border-radius: 8px;
             padding: 20px; z-index: 2001; display: none;
-            width: 800px; max-width: 95%; max-height: 90vh; overflow-y: auto;
+            width: 900px; max-width: 95%; height: 85vh;
             box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            flex-direction: column;
         }
-        .modal h3 { margin-top: 0; color: #4FC3F7; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .modal-body { display: flex; flex: 1; gap: 15px; overflow: hidden; margin-top: 10px;}
         
-        /* 雲端檔案列表 */
+        .modal-left { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-right: 5px; border-right: 1px solid #444; }
+        .modal-right { width: 320px; display: flex; flex-direction: column; align-items: center; padding-left: 10px; background: #1e1e1e; border-radius: 4px; }
+        
         .cloud-list { list-style: none; padding: 0; margin: 0; }
         .cloud-item { 
             display: flex; align-items: center; justify-content: space-between; 
-            background: #333; padding: 10px; margin-bottom: 8px; border-radius: 4px; border-left: 4px solid #555; 
+            background: #333; padding: 8px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #555; cursor: pointer;
         }
-        .cloud-item:hover { background: #3a3a3a; border-left-color: #4FC3F7; }
-        .cloud-info { flex: 1; }
+        .cloud-item.selected { border-left-color: #4FC3F7; background: #3e3e3e; }
+        .cloud-info { flex: 1; margin-left: 8px;}
         .cloud-name { font-weight: bold; font-size: 14px; color: #fff; }
-        .cloud-meta { font-size: 12px; color: #aaa; margin-top: 3px; }
-        .cloud-note { font-size: 12px; color: #81C784; margin-top: 3px; font-style: italic; }
-        .cloud-actions { display: flex; gap: 5px; }
-        .btn-small { padding: 4px 8px; font-size: 11px; margin: 0; width: auto; }
+        .cloud-meta { font-size: 11px; color: #aaa; }
+        .cloud-note { font-size: 11px; color: #81C784; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;}
+        
+        /* Checkbox for batch select */
+        .batch-check { width: 18px; height: 18px; accent-color: #0277BD; cursor: pointer; }
 
-        /* 預覽畫布容器 */
-        #preview-container { 
-            display: none; background: #fff; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 15px; 
-            border: 2px solid #0277BD; position: relative;
-        }
-        #close-preview-btn { position: absolute; top:5px; right:5px; background:red; color:white; border:none; width:24px; height:24px; border-radius:50%; cursor:pointer;}
-
+        #preview-canvas { max-width: 100%; max-height: 300px; border: 1px solid #555; background: white; margin-bottom: 10px;}
+        
         /* Loading */
         #loading-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
@@ -133,47 +131,56 @@
 
     <div class="modal-backdrop" id="mgrBackdrop" onclick="window.closeCloudManager()"></div>
     <div class="modal" id="mgrModal">
-        <h3>☁️ 雲端檔案管理與預覽</h3>
-        
-        <div id="preview-container">
-            <button id="close-preview-btn" onclick="document.getElementById('preview-container').style.display='none'">×</button>
-            <h4 id="preview-title" style="margin:0 0 5px 0; color:#333;"></h4>
-            <canvas id="previewCanvas"></canvas>
-            <div style="margin-top:5px; font-size:12px; color:#555;">(此為預覽圖，不影響主畫面)</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; border:none; color:#4FC3F7;">☁️ 雲端檔案總管</h3>
+            <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:#c62828;">關閉</button>
         </div>
+        
+        <div style="margin-top: 10px; display: flex; gap: 10px; align-items:center;">
+             <input type="text" id="searchCloud" placeholder="搜尋專案..." oninput="window.renderCloudList()" style="flex:1">
+             <button class="btn-small" onclick="window.refreshCloudList()" style="width:auto; margin:0;">🔄 刷新</button>
+             <button class="btn-small" onclick="window.batchExportExcel()" style="width:auto; margin:0; background:#2E7D32;">📋 匯出選取 Excel</button>
+        </div>
+        <div style="font-size:12px; color:#aaa; margin-top:5px;">💡 提示：勾選左側框框可多選匯出，點擊項目可預覽。</div>
 
-        <div style="margin-bottom: 10px; display: flex; gap: 10px;">
-             <input type="text" id="searchCloud" placeholder="搜尋專案名稱..." oninput="window.renderCloudList()" style="flex:1">
-             <button class="btn-small" onclick="window.refreshCloudList()">🔄 刷新</button>
+        <div class="modal-body">
+            <div class="modal-left">
+                <ul class="cloud-list" id="cloudListEl"></ul>
+            </div>
+            <div class="modal-right">
+                <h4 style="color:#fff; margin:10px 0;">預覽視窗</h4>
+                <canvas id="previewCanvas"></canvas>
+                <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:12px; padding:10px;">
+                    請選擇左側專案...
+                </div>
+                <button id="btn-load-preview" style="background:#EF6C00; display:none;" onclick="window.loadSelectedToWorkspace()">📂 讀取至畫布</button>
+                <button id="btn-del-preview" style="background:#c62828; display:none;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+            </div>
         </div>
-        
-        <div style="max-height: 400px; overflow-y: auto;">
-            <ul class="cloud-list" id="cloudListEl">
-                </ul>
-        </div>
-        <button onclick="window.closeCloudManager()" style="margin-top:15px; background:#555;">關閉</button>
     </div>
 
     <a href="index.html" class="home-btn">🏠</a>
 
     <div id="sidebar">
-        <h2>📚 疊構資料庫 (Pro V2)</h2>
+        <h2>📚 疊構資料庫 (Pro V3)</h2>
 
         <div class="control-group" style="border-left: 4px solid #00897B;">
             <label style="color:#80CBC4">☁️ 專案存取 (Project)</label>
-            <input type="text" id="projName" placeholder="輸入專案名稱..." style="margin-bottom: 5px;">
+            <input type="text" id="projName" placeholder="專案名稱..." style="margin-bottom: 5px;">
             <textarea id="projNote" placeholder="在此輸入備註 (Note)... 例如: 客戶需求、特殊膠材說明"></textarea>
             
             <div class="btn-row">
-                <button class="btn-save" onclick="window.saveToCloud()">💾 儲存專案</button>
+                <button class="btn-save" onclick="window.saveToCloud()">💾 儲存</button>
                 <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端管理 / 預覽</button>
             </div>
             
-            <div style="display:flex; gap:5px; margin-top:5px;">
-                <button class="btn-small" onclick="window.newProject()" style="background:#555;">清空</button>
-                <button class="btn-small" onclick="window.exportJSON()" style="background:#546E7A;">下載備份</button>
-                <button class="btn-small" onclick="document.getElementById('fileInput').click()" style="background:#546E7A;">讀取備份</button>
-                <input type="file" id="fileInput" accept=".json" onchange="window.importJSON(this)" style="display:none">
+            <div class="sub-group" style="margin-top:5px; border-color:#555;">
+                <label>📦 資料庫完整備份/還原</label>
+                <div class="btn-row">
+                    <button class="btn-backup" onclick="window.backupAllCloudData()">⬇️ 完整備份</button>
+                    <button class="btn-restore" onclick="document.getElementById('restoreInput').click()">⬆️ 完整還原</button>
+                    <input type="file" id="restoreInput" accept=".json" onchange="window.restoreAllCloudData(this)" style="display:none">
+                </div>
             </div>
         </div>
 
@@ -188,16 +195,16 @@
 
         <div class="control-group" style="border-left: 4px solid #7B1FA2;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; border:none; color:#E1BEE7;">🧩 模組 & 層次</h3>
+                <h3 style="margin:0; border:none; color:#E1BEE7;">1. 層次 & 模組</h3>
                 <label style="cursor:pointer; display:flex; align-items:center; gap:5px; margin:0;">
                     <input type="checkbox" id="selectAllBox" checked onchange="window.toggleAllLayers(this)"> 全選
                 </label>
             </div>
 
             <div class="sub-group">
+                <label style="color:#CE93D8">🧩 模組單元 (Unit)</label>
                 <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
-                    <span style="font-size:12px; color:#aaa; flex:1;">選取下方層次:</span>
-                    <input type="text" id="unitName" placeholder="模組名稱..." style="flex:2">
+                    <input type="text" id="unitName" placeholder="模組名稱..." style="flex:1">
                     <button class="btn-unit-save" onclick="window.saveUnitToCloud()">存模組</button>
                 </div>
                 <div style="display:flex; gap:5px;">
@@ -205,7 +212,7 @@
                         <option value="">-- 選擇模組 --</option>
                     </select>
                     <button class="btn-unit-add" onclick="window.insertUnit()">➕ 插入</button>
-                    <button class="btn-small" onclick="window.deleteUnitFromCloud()" style="background:#c62828;">🗑️</button>
+                    <button class="btn-tiny" onclick="window.deleteUnitFromCloud()" style="background:#c62828; width:30px;">🗑️</button>
                 </div>
             </div>
 
@@ -214,7 +221,7 @@
         </div>
 
         <div class="control-group">
-            <label>尺寸標註 (Dimension)</label>
+            <label>2. 尺寸標註 (Dimension)</label>
             <div style="display:flex; gap:5px;">
                 <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
             </div>
@@ -238,10 +245,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Config
+        // Firebase Config (使用公用 Key 以確保您可以找回資料)
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -256,7 +263,8 @@
         let isFirebaseReady = false;
         const COL_PROJ = "projects";
         const COL_UNITS = "units";
-        let cloudProjectsCache = []; // 快取雲端列表
+        let cloudProjectsCache = []; 
+        let currentPreviewId = null;
 
         if (!firebaseConfig.apiKey.includes("你的API_KEY")) {
             try {
@@ -269,21 +277,18 @@
         const canvas = document.getElementById('stackCanvas');
         const ctx = canvas.getContext('2d');
         const listEl = document.getElementById('layer-list');
-        const dimListEl = document.getElementById('dim-list');
 
         window.layers = [];
         window.dimensions = [];
-        
-        // ---------------------------------------------
-        // 核心功能: 繪圖 & 列表
-        // ---------------------------------------------
         let dragSrcEl = null;
 
+        // ---------------------------------------------
+        // Core: Render & Drag
+        // ---------------------------------------------
         window.renderList = function() {
             listEl.innerHTML = ''; window.updateDimSelects();
             const allChecked = window.layers.every(l => l.checked !== false);
-            const selectAllBox = document.getElementById('selectAllBox');
-            if(selectAllBox) selectAllBox.checked = allChecked;
+            if(document.getElementById('selectAllBox')) document.getElementById('selectAllBox').checked = allChecked;
 
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
@@ -316,7 +321,6 @@
                     </div>
                 `;
                 
-                // Drag Events
                 item.addEventListener('dragstart', function(e) { this.style.opacity='0.4'; dragSrcEl=this; e.dataTransfer.effectAllowed='move'; this.classList.add('dragging'); });
                 item.addEventListener('dragover', function(e) { if(e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect='move'; return false; });
                 item.addEventListener('drop', function(e) { 
@@ -331,7 +335,6 @@
                     return false;
                 });
                 item.addEventListener('dragend', function() { this.style.opacity='1'; this.classList.remove('dragging'); });
-
                 listEl.appendChild(item);
             });
         };
@@ -355,39 +358,36 @@
             window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: document.getElementById('dimLabel').value, offset: parseInt(document.getElementById('dimOffset').value)||50 });
             renderDims(); window.draw();
         };
-        function renderDims() { dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { 
+        function renderDims() { 
+            const dimListEl = document.getElementById('dim-list');
+            dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { 
             const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name; 
             dimListEl.innerHTML += `<div class="dim-item"><span>${n1}~${n2} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="window.deleteDim(${i})">×</span></div>`; 
         }); }
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
         // ---------------------------------------------
-        // ★ 雲端檔案管理與預覽 (Manager)
+        // ★ 雲端管理 Manager (New Logic)
         // ---------------------------------------------
-        window.openCloudManager = async function() {
+        window.openCloudManager = function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
-            document.getElementById('mgrModal').style.display = 'block';
+            document.getElementById('mgrModal').style.display = 'flex'; // flex for layout
             document.getElementById('mgrBackdrop').style.display = 'block';
             window.refreshCloudList();
         };
-
         window.closeCloudManager = function() {
             document.getElementById('mgrModal').style.display = 'none';
             document.getElementById('mgrBackdrop').style.display = 'none';
-            document.getElementById('preview-container').style.display = 'none';
         };
 
         window.refreshCloudList = async function() {
-            showLoading(true, "讀取雲端檔案...");
+            showLoading(true, "讀取雲端資料...");
             try {
                 const q = await getDocs(collection(db, COL_PROJ));
                 cloudProjectsCache = [];
-                q.forEach(doc => {
-                    const d = doc.data();
-                    cloudProjectsCache.push({ id: doc.id, ...d });
-                });
+                q.forEach(doc => cloudProjectsCache.push({ id: doc.id, ...doc.data() }));
                 window.renderCloudList();
-            } catch(e) { console.error(e); alert("讀取失敗"); }
+            } catch(e) { console.error(e); }
             showLoading(false);
         };
 
@@ -399,258 +399,333 @@
             cloudProjectsCache.forEach(p => {
                 if(search && !p.id.toLowerCase().includes(search)) return;
                 
-                const note = p.note ? `📝 ${p.note}` : '';
-                const date = new Date(p.timestamp || 0).toLocaleString();
+                const note = p.note ? p.note : '無備註';
+                const date = new Date(p.timestamp || 0).toLocaleDateString();
                 
                 const li = document.createElement('li');
                 li.className = 'cloud-item';
+                li.onclick = (e) => { 
+                    if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); 
+                };
                 li.innerHTML = `
+                    <input type="checkbox" class="batch-check" value="${p.id}">
                     <div class="cloud-info">
                         <div class="cloud-name">${p.id}</div>
-                        <div class="cloud-meta">🕒 ${date}</div>
-                        ${note ? `<div class="cloud-note">${note}</div>` : ''}
-                    </div>
-                    <div class="cloud-actions">
-                        <button class="btn-small" style="background:#0288D1;" onclick="window.previewCloudFile('${p.id}')">👁️ 預覽</button>
-                        <button class="btn-small" style="background:#2E7D32;" onclick="window.downloadCloudExcel('${p.id}')">📊 Excel</button>
-                        <button class="btn-small" style="background:#EF6C00;" onclick="window.loadCloudFile('${p.id}')">📂 讀取</button>
-                        <button class="btn-small" style="background:#c62828;" onclick="window.deleteCloudFile('${p.id}')">🗑️</button>
+                        <div class="cloud-meta">${date}</div>
+                        <div class="cloud-note">${note}</div>
                     </div>
                 `;
                 listEl.appendChild(li);
             });
         };
 
-        // ★ 雲端預覽功能
-        window.previewCloudFile = function(id) {
+        window.selectCloudItem = function(id) {
+            currentPreviewId = id;
+            document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected'));
+            // Find checkbox to highlight row
+            const inputs = document.querySelectorAll('.batch-check');
+            inputs.forEach(inp => {
+                if(inp.value === id) inp.closest('.cloud-item').classList.add('selected');
+            });
+            
+            // Render Preview
             const p = cloudProjectsCache.find(x => x.id === id);
-            if(!p) return;
-            
-            const container = document.getElementById('preview-container');
-            const cvs = document.getElementById('previewCanvas');
-            const title = document.getElementById('preview-title');
-            
-            container.style.display = 'block';
-            title.innerText = `預覽: ${id}`;
-            
-            // 繪製預覽圖
-            const ctx = cvs.getContext('2d');
-            cvs.width = 400; 
-            cvs.height = 400; // 固定高度
-            ctx.fillStyle = "#fff"; ctx.fillRect(0,0,400,400);
+            const detailEl = document.getElementById('preview-details');
+            if(p) {
+                detailEl.innerHTML = `
+                    <strong>專案:</strong> ${p.id}<br>
+                    <strong>備註:</strong> ${p.note || ''}<br>
+                    <strong>層數:</strong> ${p.layers?.length || 0}<br>
+                    <strong>最後修改:</strong> ${new Date(p.timestamp).toLocaleString()}
+                `;
+                window.drawPreviewCanvas(p.layers);
+                document.getElementById('btn-load-preview').style.display = 'inline-block';
+                document.getElementById('btn-del-preview').style.display = 'inline-block';
+            }
+        };
 
-            const layers = p.layers || [];
+        window.drawPreviewCanvas = function(layers) {
+            const cvs = document.getElementById('previewCanvas');
+            const ctx = cvs.getContext('2d');
+            cvs.width = 300; cvs.height = 300;
+            ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,300);
+
+            if(!layers || layers.length === 0) return;
+
             const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1;
-            const scale = 350 / totalThick;
-            const cx = 200;
-            const rw = 160;
-            let cy = 25;
+            const scale = 260 / totalThick;
+            const cx = 150; const rw = 120; let cy = 20;
 
             layers.forEach(l => {
                 const h = (parseFloat(l.thickness)||0) * scale;
-                ctx.fillStyle = l.color || "#ccc";
-                ctx.fillRect(cx - rw/2, cy, rw, h);
-                ctx.strokeStyle = "#333";
-                ctx.strokeRect(cx - rw/2, cy, rw, h);
-                if(h > 10) {
-                     ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.textBaseline="middle"; 
-                     ctx.fillText(l.name, cx, cy+h/2);
-                }
+                ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h);
+                ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h);
+                if(h > 8) { ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(l.name, cx, cy+h/2); }
                 cy += h;
             });
         };
 
-        // ★ 直接下載雲端檔案的 Excel
-        window.downloadCloudExcel = function(id) {
-            const p = cloudProjectsCache.find(x => x.id === id);
-            if(!p) return;
-            
-            // 這裡可以選擇是否只匯出 checked 的層，假設全部匯出
-            // 如果要像主畫面一樣只匯出 checked，需要檢查 p.layers[i].checked
-            // 這裡做通用處理：有 checked 屬性且為 false 才排除，否則全匯出
-            const layers = p.layers || [];
-            const validLayers = layers.filter(l => l.checked !== false);
-            
-            if(validLayers.length === 0) { alert("此檔案沒有可匯出的層"); return; }
-
-            const unit = p.settings?.unit || 'um';
-            const note = p.note || '';
+        // 匯出多選 Excel
+        window.batchExportExcel = function() {
+            const checks = document.querySelectorAll('.batch-check:checked');
+            if(checks.length === 0) { alert("請先勾選左側專案"); return; }
             
             let csv = "\uFEFF"; // BOM
-            if(note) csv += `備註: ${note.replace(/,/g, " ")}\n\n`;
-            csv += "層序,名稱,厚度,單位\n";
             
-            let total = 0;
-            validLayers.forEach((l, i) => {
-                const safeName = (l.name || "").replace(/,/g, " ");
-                const th = parseFloat(l.thickness) || 0;
-                total += th;
-                csv += `${i+1},${safeName},${th},${unit}\n`;
+            checks.forEach(chk => {
+                const id = chk.value;
+                const p = cloudProjectsCache.find(x => x.id === id);
+                if(p) {
+                    csv += `專案名稱: ${p.id}\n`;
+                    csv += `備註: ${(p.note||"").replace(/\n/g," ")}\n`;
+                    csv += `層序,名稱,厚度,單位\n`;
+                    let t = 0;
+                    const unit = p.settings?.unit || 'um';
+                    const layers = p.layers || [];
+                    layers.forEach((l,i) => {
+                         if(l.checked === false) return; // 略過未勾選層(如果有的話)
+                         t += (parseFloat(l.thickness)||0);
+                         csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
+                    });
+                    csv += `,,${t},${unit},總厚度\n\n`; // 空行分隔
+                }
             });
-            csv += `,,${total},${unit},總厚度\n`;
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${id}_stackup.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.download = `Batch_Stackups_${Date.now()}.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        // 讀取進主畫面
-        window.loadCloudFile = function(id) {
-            const p = cloudProjectsCache.find(x => x.id === id);
-            if(!p) return;
-            window.applyConfig(p);
-            document.getElementById('projName').value = id;
-            document.getElementById('projNote').value = p.note || "";
-            window.closeCloudManager();
+        window.loadSelectedToWorkspace = function() {
+            if(!currentPreviewId) return;
+            const p = cloudProjectsCache.find(x => x.id === currentPreviewId);
+            if(p) {
+                window.applyConfig(p);
+                document.getElementById('projName').value = p.id;
+                document.getElementById('projNote').value = p.note || "";
+                window.closeCloudManager();
+            }
         };
-        
-        // 刪除
-        window.deleteCloudFile = async function(id) {
-            if(!confirm(`確定刪除 ${id}?`)) return;
+
+        window.deleteSelectedCloud = async function() {
+            if(!currentPreviewId) return;
+            if(!confirm(`確定刪除 ${currentPreviewId}?`)) return;
             showLoading(true);
-            try { await deleteDoc(doc(db, COL_PROJ, id)); await window.refreshCloudList(); } catch(e) { alert("Error"); }
+            try { await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); await window.refreshCloudList(); currentPreviewId=null;} catch(e) {}
             showLoading(false);
         };
 
         // ---------------------------------------------
-        // 主畫面專案儲存
+        // ★ Full Backup & Restore
         // ---------------------------------------------
-        window.saveToCloud = async function() {
+        window.backupAllCloudData = async function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
-            const name = document.getElementById('projName').value.trim();
-            const note = document.getElementById('projNote').value;
-            if (!name) { alert("請輸入專案名稱"); return; }
+            showLoading(true, "打包所有資料中...");
+            try {
+                // Get Projects
+                const projSnap = await getDocs(collection(db, COL_PROJ));
+                const projects = {};
+                projSnap.forEach(d => projects[d.id] = d.data());
+
+                // Get Units
+                const unitSnap = await getDocs(collection(db, COL_UNITS));
+                const units = {};
+                unitSnap.forEach(d => units[d.id] = d.data());
+
+                const backupData = {
+                    version: "V3",
+                    timestamp: Date.now(),
+                    projects: projects,
+                    units: units
+                };
+
+                const str = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([str], {type: "application/json"});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `FULL_BACKUP_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+            } catch(e) { console.error(e); alert("備份失敗"); }
+            showLoading(false);
+        };
+
+        window.restoreAllCloudData = function(input) {
+            const file = input.files[0]; if(!file) return;
+            if(!confirm("⚠️ 警告：這將會把備份檔中的資料寫入雲端資料庫。\n若有同名檔案將被覆蓋。\n確定執行？")) { input.value = ''; return; }
             
-            const config = { 
-                layers: window.layers, 
-                dimensions: window.dimensions, 
-                settings: { 
-                    unit: document.getElementById('unitInput').value, 
-                    width: document.getElementById('canvasWidth').value, 
-                    fontSize: document.getElementById('globalFontSize').value 
-                },
-                note: note, // ★ 儲存備註
-                timestamp: Date.now() 
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                showLoading(true, "正在還原至雲端...");
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const batch = writeBatch(db);
+                    let count = 0;
+
+                    // Restore Projects
+                    if(data.projects) {
+                        for (const [id, val] of Object.entries(data.projects)) {
+                            const ref = doc(db, COL_PROJ, id);
+                            batch.set(ref, val);
+                            count++;
+                        }
+                    }
+                    // Restore Units
+                    if(data.units) {
+                        for (const [id, val] of Object.entries(data.units)) {
+                            const ref = doc(db, COL_UNITS, id);
+                            batch.set(ref, val);
+                            count++;
+                        }
+                    }
+
+                    // Commit (Firestore batch limit is 500, simple logic here assumes <500 for demo)
+                    // For robust production, need to chunk batches.
+                    await batch.commit();
+                    alert(`還原成功！共寫入 ${count} 筆資料。`);
+                    window.refreshUnitList();
+                } catch(err) { console.error(err); alert("還原失敗，請檢查檔案格式"); }
+                showLoading(false);
+                input.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        // ---------------------------------------------
+        // Main Functions
+        // ---------------------------------------------
+        function showLoading(show, text="處理中") {
+            const ov = document.getElementById('loading-overlay');
+            if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none';
+        }
+
+        window.saveToCloud = async function() {
+            if(!isFirebaseReady) return alert("未連線");
+            const name = document.getElementById('projName').value.trim();
+            if(!name) return alert("請輸入專案名稱");
+            
+            const data = {
+                layers: window.layers,
+                dimensions: window.dimensions,
+                settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value },
+                note: document.getElementById('projNote').value,
+                timestamp: Date.now()
             };
             
-            if(!confirm(`存檔: ${name}?`)) return;
-            showLoading(true, "儲存中...");
-            try { await setDoc(doc(db, COL_PROJ, name), config); alert("儲存成功"); } catch (e) { alert("儲存失敗"); console.error(e); }
+            if(!confirm(`儲存專案: ${name}?`)) return;
+            showLoading(true);
+            try { await setDoc(doc(db, COL_PROJ, name), data); alert("儲存成功"); } catch(e) { alert("Error"); }
             showLoading(false);
         };
 
-        // ---------------------------------------------
-        // ★ 模組 (Unit) 功能
-        // ---------------------------------------------
         window.saveUnitToCloud = async function() {
-            if(!isFirebaseReady) { alert("尚未連線"); return; }
             const name = document.getElementById('unitName').value.trim();
-            if(!name) { alert("請輸入模組名稱"); return; }
-            const selected = window.layers.filter(l => l.checked !== false);
-            if(selected.length === 0) { alert("請勾選要存為模組的層"); return; }
+            const sel = window.layers.filter(l => l.checked!==false);
+            if(!name || sel.length===0) return alert("請輸入名稱並勾選層次");
             
-            if(!confirm(`建立模組: ${name} (含${selected.length}層)?`)) return;
+            if(!confirm(`存模組: ${name}?`)) return;
             showLoading(true);
             try { 
-                await setDoc(doc(db, COL_UNITS, name), { layers: selected, timestamp: Date.now() }); 
-                alert("模組已建立"); 
-                document.getElementById('unitName').value = "";
-                await window.refreshUnitList();
+                await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); 
+                alert("模組已存"); window.refreshUnitList(); document.getElementById('unitName').value='';
             } catch(e) { alert("Error"); }
             showLoading(false);
         };
 
         window.refreshUnitList = async function() {
             if(!isFirebaseReady) return;
-            const sel = document.getElementById('savedUnits');
+            const s = document.getElementById('savedUnits');
             try {
                 const q = await getDocs(collection(db, COL_UNITS));
-                sel.innerHTML = '<option value="">-- 選擇模組 --</option>';
-                q.forEach(doc => {
-                    const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = doc.id; sel.appendChild(opt);
+                s.innerHTML = '<option value="">-- 選擇模組 --</option>';
+                q.forEach(d => {
+                    const opt = document.createElement('option'); opt.value=d.id; opt.innerText=d.id; s.appendChild(opt);
                 });
             } catch(e) {}
         };
 
         window.insertUnit = async function() {
-            const name = document.getElementById('savedUnits').value;
-            if(!name) return;
+            const n = document.getElementById('savedUnits').value;
+            if(!n) return;
             showLoading(true);
             try {
-                const d = await getDoc(doc(db, COL_UNITS, name));
+                const d = await getDoc(doc(db, COL_UNITS, n));
                 if(d.exists()) {
-                    const uLayers = d.data().layers || [];
-                    // 給新ID並設為checked
-                    const newL = uLayers.map(l => ({ ...l, id: Date.now()+Math.random(), checked: true }));
-                    window.layers = [...newL, ...window.layers];
+                    const ul = d.data().layers.map(l => ({...l, id:Date.now()+Math.random(), checked:true}));
+                    window.layers = [...ul, ...window.layers];
                     window.renderList(); window.draw();
                 }
-            } catch(e) { alert("Error"); }
+            } catch(e) {}
             showLoading(false);
         };
         
         window.deleteUnitFromCloud = async function() {
-            const name = document.getElementById('savedUnits').value;
-            if(!name) return;
-            if(confirm(`刪除模組: ${name}?`)) {
-                showLoading(true);
-                await deleteDoc(doc(db, COL_UNITS, name));
-                await window.refreshUnitList();
-                showLoading(false);
+            const n = document.getElementById('savedUnits').value;
+            if(n && confirm(`刪除模組 ${n}?`)) {
+                await deleteDoc(doc(db, COL_UNITS, n)); window.refreshUnitList();
             }
-        };
-
-        // ---------------------------------------------
-        // 通用功能
-        // ---------------------------------------------
-        window.applyConfig = function(config) {
-            window.layers = config.layers || [];
-            window.layers.forEach(l => { if(l.checked === undefined) l.checked = true; });
-            window.dimensions = config.dimensions || [];
-            if(config.settings) {
-                document.getElementById('unitInput').value = config.settings.unit||"um";
-                document.getElementById('canvasWidth').value = config.settings.width||450;
-                document.getElementById('globalFontSize').value = config.settings.fontSize||14;
-            }
-            window.resizeCanvas(); window.renderList(); window.draw();
         };
 
         window.exportCurrentToCSV = function() {
-            const selected = window.layers.filter(l => l.checked !== false);
-            if(selected.length === 0) { alert("請勾選層次"); return; }
+            const sel = window.layers.filter(l => l.checked!==false);
+            if(sel.length===0) return alert("無選取層");
             const name = document.getElementById('projName').value || "Stackup";
             const note = document.getElementById('projNote').value;
             const unit = document.getElementById('unitInput').value;
             
             let csv = "\uFEFF";
-            if(note) csv += `備註: ${note.replace(/,/g, " ")}\n\n`;
+            if(note) csv += `備註: ${note.replace(/\n/g," ")}\n\n`;
             csv += "層序,名稱,厚度,單位\n";
             let t=0;
-            selected.forEach((l,i) => {
+            sel.forEach((l,i) => {
                 t += (parseFloat(l.thickness)||0);
                 csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
             });
             csv += `,,${t},${unit},選取總厚度\n`;
-            const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `${name}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a);
         };
 
+        // Standard Helpers
+        window.applyConfig = (c) => { 
+            window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; 
+            if(c.settings) { document.getElementById('unitInput').value=c.settings.unit||"um"; document.getElementById('canvasWidth').value=c.settings.width||450; }
+            window.renderList(); window.draw();
+        };
         window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
-        window.newProject = () => { if(confirm("清空?")) { window.layers=[]; window.dimensions=[]; window.renderList(); window.draw(); document.getElementById('projName').value=""; document.getElementById('projNote').value=""; } };
-
-        // 繪圖
-        window.resizeCanvas = () => { canvas.width = parseInt(document.getElementById('canvasWidth').value)||450; window.draw(); };
+        window.downloadPPT = () => {
+             let pres = new PptxGenJS();
+             const unit = document.getElementById('unitInput').value;
+             const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
+             if(totalThick===0) return alert("無資料");
+             
+             let maxOff=20; window.dimensions.forEach(d=> {if(d.offset>maxOff)maxOff=d.offset;});
+             const pl=maxOff+150, pt=50, sf=100, cw=canvas.width-(maxOff+40)-20;
+             const ah = Math.max(500, window.layers.length*40);
+             const sc = ah/totalThick;
+             pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:(ah+100)/sf}); pres.layout='C';
+             
+             let s = pres.addSlide(); let cy=pt;
+             window.layers.forEach(l => {
+                 const h = l.thickness*sc;
+                 const fs = l.fontSize||14;
+                 const fc = l.color.replace('#','');
+                 const tc = isColorDark(l.color)?'FFFFFF':'000000';
+                 s.addShape(pres.ShapeType.rect, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, fill:fc, line:'333333'});
+                 s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:fs, align:'center', valign:'middle'});
+                 cy+=h;
+             });
+             pres.writeFile({fileName:"Stack.pptx"});
+        };
+        
+        function isColorDark(hex) { const r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16); return ((r*299+g*587+b*114)/1000)<128; }
+        window.resizeCanvas = () => { canvas.width=parseInt(document.getElementById('canvasWidth').value)||450; window.draw(); };
         window.draw = () => {
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value)||14;
             const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
-            
             if(totalThick===0 && window.layers.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
-
             let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
             const pad = { t:40, b:40, l: maxOff+80, r:20 };
             const dw = canvas.width - pad.l - pad.r;
@@ -674,7 +749,6 @@
                 }
                 cy += h;
             });
-            // Dims
             window.dimensions.forEach(d => {
                 if(!yPos[d.start] || !yPos[d.end]) return;
                 const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=pad.l-d.offset;
@@ -687,9 +761,8 @@
             });
         };
         function drawArrow(ctx,x,y,u) { ctx.beginPath(); const s=5; if(u){ctx.moveTo(x,y);ctx.lineTo(x-s,y+s);ctx.lineTo(x+s,y+s);}else{ctx.moveTo(x,y);ctx.lineTo(x-s,y-s);ctx.lineTo(x+s,y-s);} ctx.fill(); }
-        function isColorDark(hex) { const r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16); return ((r*299+g*587+b*114)/1000)<128; }
-        
-        // Init
+
+        // Start
         if(isFirebaseReady) { window.refreshUnitList(); }
         window.layers = [{name:"Demo",thickness:100,color:"#90CAF9",checked:true}];
         window.renderList(); window.draw();
