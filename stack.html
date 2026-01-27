@@ -2,71 +2,123 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程疊構圖產生器 (Debug Mode)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>工程疊構圖產生器 (Pro V3)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
-        /* --- 基礎佈局 --- */
-        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
-        #sidebar { width: 400px; min-width: 320px; max-width: 800px; background-color: #1e1e1e; padding: 15px; padding-top: 60px; display: flex; flex-direction: column; gap: 12px; z-index: 10; overflow-y: auto; flex-shrink: 0; box-sizing: border-box; }
-        #resizer { width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
-        #resizer::after { content: ""; width: 2px; height: 30px; background: #444; }
-        #resizer:hover, #resizer.active { background: #1976D2; }
-        #main-area { flex-grow: 1; background-color: #222; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; cursor: default; }
-        
-        /* 元件樣式 */
+        /* --- 基礎設定 --- */
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; }
+
+        /* --- 側邊欄 --- */
+        #sidebar { 
+            width: 400px; min-width: 320px; max-width: 800px; 
+            background-color: #1e1e1e; padding: 15px; padding-top: 50px; 
+            display: flex; flex-direction: column; gap: 10px; z-index: 10; 
+            overflow-y: auto; flex-shrink: 0; border-right: 1px solid #333;
+        }
+
+        /* --- 主畫布區 --- */
+        #main-area { 
+            flex-grow: 1; background-color: #222; 
+            display: flex; justify-content: center; align-items: start;
+            overflow: auto; padding: 20px; position: relative;
+        }
+
+        /* --- 手機版 --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow-y: auto; }
+            #sidebar { width: 100% !important; max-width: 100%; height: auto; max-height: none; border-right: none; border-bottom: 2px solid #444; }
+            #main-area { width: 100%; height: 600px; padding: 10px; display: block; text-align: center; }
+            .home-btn { top: 10px; left: 10px; padding: 4px 8px; font-size: 11px; }
+        }
+
+        /* --- 元件樣式 --- */
         h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
-        h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
-        .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
-        label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
-        input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
+        h3 { margin: 10px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* 列表與按鈕 */
+        .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; display: flex; flex-direction: column; gap: 5px; }
+        .sub-group { background: #2f2f2f; padding: 8px; border-radius: 4px; border: 1px dashed #555; margin-bottom: 8px; }
+        
+        label { display: block; margin-bottom: 2px; font-size: 12px; color: #aaa; }
+        input[type="text"], input[type="number"], select, textarea { background: #333; border: 1px solid #555; color: white; padding: 6px; border-radius: 4px; width: 100%; font-size: 13px; }
+        textarea { resize: vertical; min-height: 40px; }
+
+        /* 層次列表 */
         #layer-list { display: flex; flex-direction: column; gap: 6px; }
-        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; cursor: grab; transition: transform 0.2s, box-shadow 0.2s; }
-        .layer-item.dragging { opacity: 0.5; border: 2px dashed #888; }
-        .layer-main-row { display: flex; align-items: center; gap: 6px; }
-        .drag-handle { cursor: grab; color: #666; font-size: 16px; padding: 0 4px; }
+        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; transition: 0.2s; }
+        .layer-item.dragging { opacity: 0.5; border: 2px dashed #4FC3F7; background: #2a2a2a; }
+        .layer-main-row { display: flex; align-items: center; gap: 4px; }
         .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
         .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
         .layer-item.open .layer-details { display: grid; }
-        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; }
+        
+        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; text-align: center; width: 20px;}
         .btn-toggle-details.active { background: #1976D2; color: white; }
         input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
         .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
         .btn-del:hover { color: #ff5252; }
+        .layer-check { width: 18px; height: 18px; cursor: pointer; margin-right: 2px; accent-color: #4CAF50; }
+        .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
+        .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
         .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
-        
+
+        /* 按鈕群組 */
         button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
         button:hover { background-color: #666; }
-        .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
-        .btn-img { background-color: #1976D2; border-color: #1565C0; }
-        .btn-add { background-color: #43A047; border-color: #2E7D32; }
         
-        /* 雲端專案按鈕 */
-        .btn-save-cloud { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
-        .btn-save-cloud:hover { background-color: #26A69A; }
-        .btn-del-cloud { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
-        .btn-del-cloud:hover { background-color: #ef5350; }
-
-        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
-        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
+        .btn-row { display: flex; gap: 5px; }
+        .btn-save { background-color: #00897B; border-color: #00695C; flex: 1; }
+        .btn-cloud-mgr { background-color: #0277BD; border-color: #01579B; flex: 1; }
+        .btn-unit-save { background-color: #7B1FA2; border-color: #4A148C; width: auto; padding: 5px 10px; margin-top:0;}
+        .btn-unit-add { background-color: #5E35B1; border-color: #4527A0; width: auto; padding: 5px 10px; margin-top:0;}
+        .btn-ppt { background-color: #E65100; border-color: #EF6C00; }
+        .btn-img { background-color: #1565C0; border-color: #0D47A1; }
+        .btn-add { background-color: #2E7D32; border-color: #1B5E20; }
+        .btn-backup { background-color: #455A64; border-color: #37474F; flex:1;}
+        .btn-restore { background-color: #D84315; border-color: #BF360C; flex:1;}
 
         .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
-        #fileInput { display: none; }
-        canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; }
+        canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; max-width: 100%; }
+
+        /* --- 雲端管理 / 預覽 Modal (大改版) --- */
+        .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000; display:none;}
+        .modal { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #252525; border: 1px solid #4FC3F7; border-radius: 8px;
+            padding: 20px; z-index: 2001; display: none;
+            width: 900px; max-width: 95%; height: 85vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            flex-direction: column;
+        }
+        .modal-body { display: flex; flex: 1; gap: 15px; overflow: hidden; margin-top: 10px;}
         
-        /* 載入遮罩 */
+        .modal-left { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-right: 5px; border-right: 1px solid #444; }
+        .modal-right { width: 320px; display: flex; flex-direction: column; align-items: center; padding-left: 10px; background: #1e1e1e; border-radius: 4px; }
+        
+        .cloud-list { list-style: none; padding: 0; margin: 0; }
+        .cloud-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            background: #333; padding: 8px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #555; cursor: pointer;
+        }
+        .cloud-item.selected { border-left-color: #4FC3F7; background: #3e3e3e; }
+        .cloud-info { flex: 1; margin-left: 8px;}
+        .cloud-name { font-weight: bold; font-size: 14px; color: #fff; }
+        .cloud-meta { font-size: 11px; color: #aaa; }
+        .cloud-note { font-size: 11px; color: #81C784; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;}
+        
+        /* Checkbox for batch select */
+        .batch-check { width: 18px; height: 18px; accent-color: #0277BD; cursor: pointer; }
+
+        #preview-canvas { max-width: 100%; max-height: 300px; border: 1px solid #555; background: white; margin-bottom: 10px;}
+        
+        /* Loading */
         #loading-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.85); color: white; display: none;
             justify-content: center; align-items: center; z-index: 9999; flex-direction: column;
         }
-        .spinner {
-            border: 4px solid #333; border-top: 4px solid #4FC3F7; border-radius: 50%;
-            width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        .spinner { border: 4px solid #333; border-top: 4px solid #4FC3F7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -74,81 +126,129 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <div id="loading-text" style="font-size: 18px;">☁️ 連線中...</div>
+        <div id="loading-text" style="font-size: 18px;">連線中...</div>
     </div>
 
-    <a href="index.html" class="home-btn">🏠 回首頁</a>
-
-    <div id="sidebar">
-        <h2>📚 疊構資料庫 (Debug)</h2>
-
-        <div class="control-group" style="border-left: 4px solid #00897B;">
-            <label style="color:#80CBC4">☁️ 雲端專案存取</label>
-            <div style="display:flex; gap:5px; margin-bottom:5px;">
-                <input type="text" id="projName" placeholder="輸入名稱 (例: 5層板A款)" style="flex:1">
-                <button class="btn-save-cloud" onclick="window.saveToCloud()">儲存</button>
-            </div>
-            <div style="display:flex; gap:5px;">
-                <select id="savedProjects" onchange="window.loadFromCloud()" style="flex:1">
-                    <option value="">-- 初始化中 --</option>
-                </select>
-                <button class="btn-del-cloud" onclick="window.deleteFromCloud()" title="刪除選定專案">🗑️</button>
-            </div>
+    <div class="modal-backdrop" id="mgrBackdrop" onclick="window.closeCloudManager()"></div>
+    <div class="modal" id="mgrModal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; border:none; color:#4FC3F7;">☁️ 雲端檔案總管</h3>
+            <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:#c62828;">關閉</button>
         </div>
         
-        <div class="project-btns">
-            <button class="btn-clear" onclick="window.newProject()">📄 清空</button>
-            <button class="btn-proj" onclick="window.exportJSON()">📤 備份</button>
-            <button class="btn-proj" onclick="document.getElementById('fileInput').click()">📥 讀取</button>
-            <input type="file" id="fileInput" accept=".json" onchange="window.importJSON(this)">
+        <div style="margin-top: 10px; display: flex; gap: 10px; align-items:center;">
+             <input type="text" id="searchCloud" placeholder="搜尋專案..." oninput="window.renderCloudList()" style="flex:1">
+             <button class="btn-small" onclick="window.refreshCloudList()" style="width:auto; margin:0;">🔄 刷新</button>
+             <button class="btn-small" onclick="window.batchExportExcel()" style="width:auto; margin:0; background:#2E7D32;">📋 匯出選取 Excel</button>
+        </div>
+        <div style="font-size:12px; color:#aaa; margin-top:5px;">💡 提示：勾選左側框框可多選匯出，點擊項目可預覽。</div>
+
+        <div class="modal-body">
+            <div class="modal-left">
+                <ul class="cloud-list" id="cloudListEl"></ul>
+            </div>
+            <div class="modal-right">
+                <h4 style="color:#fff; margin:10px 0;">預覽視窗</h4>
+                <canvas id="previewCanvas"></canvas>
+                <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:12px; padding:10px;">
+                    請選擇左側專案...
+                </div>
+                <button id="btn-load-preview" style="background:#EF6C00; display:none;" onclick="window.loadSelectedToWorkspace()">📂 讀取至畫布</button>
+                <button id="btn-del-preview" style="background:#c62828; display:none;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="home-btn">🏠</a>
+
+    <div id="sidebar">
+        <h2>📚 疊構資料庫 (Pro V3)</h2>
+
+        <div class="control-group" style="border-left: 4px solid #00897B;">
+            <label style="color:#80CBC4">☁️ 專案存取 (Project)</label>
+            <input type="text" id="projName" placeholder="專案名稱..." style="margin-bottom: 5px;">
+            <textarea id="projNote" placeholder="在此輸入備註 (Note)... 例如: 客戶需求、特殊膠材說明"></textarea>
+            
+            <div class="btn-row">
+                <button class="btn-save" onclick="window.saveToCloud()">💾 儲存</button>
+                <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端管理 / 預覽</button>
+            </div>
+            
+            <div class="sub-group" style="margin-top:5px; border-color:#555;">
+                <label>📦 資料庫完整備份/還原</label>
+                <div class="btn-row">
+                    <button class="btn-backup" onclick="window.backupAllCloudData()">⬇️ 完整備份</button>
+                    <button class="btn-restore" onclick="document.getElementById('restoreInput').click()">⬆️ 完整還原</button>
+                    <input type="file" id="restoreInput" accept=".json" onchange="window.restoreAllCloudData(this)" style="display:none">
+                </div>
+            </div>
         </div>
 
         <div class="control-group">
             <label>全域設定</label>
             <div style="display:flex; gap:5px;">
-                <input type="text" id="unitInput" value="um" placeholder="單位" oninput="window.draw()" style="flex:1">
+                <input type="text" id="unitInput" value="um" placeholder="單位" oninput="window.draw()" style="flex:0.5">
                 <input type="number" id="canvasWidth" value="450" placeholder="寬" oninput="window.resizeCanvas()" style="flex:1">
-                <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="window.draw()" style="flex:1">
+                <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="window.draw()" style="flex:0.5">
             </div>
         </div>
 
-        <h3>1. 層次 (可拖曳排序)</h3>
-        <button class="btn-add" onclick="window.addLayer()">➕ 新增一層 (Top)</button>
-        
-        <div id="layer-list" style="margin-top:5px;"></div>
+        <div class="control-group" style="border-left: 4px solid #7B1FA2;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; border:none; color:#E1BEE7;">1. 層次 & 模組</h3>
+                <label style="cursor:pointer; display:flex; align-items:center; gap:5px; margin:0;">
+                    <input type="checkbox" id="selectAllBox" checked onchange="window.toggleAllLayers(this)"> 全選
+                </label>
+            </div>
 
-        <h3>2. 標註 (拖曳紅線調整)</h3>
+            <div class="sub-group">
+                <label style="color:#CE93D8">🧩 模組單元 (Unit)</label>
+                <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                    <input type="text" id="unitName" placeholder="模組名稱..." style="flex:1">
+                    <button class="btn-unit-save" onclick="window.saveUnitToCloud()">存模組</button>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <select id="savedUnits" style="flex:1">
+                        <option value="">-- 選擇模組 --</option>
+                    </select>
+                    <button class="btn-unit-add" onclick="window.insertUnit()">➕ 插入</button>
+                    <button class="btn-tiny" onclick="window.deleteUnitFromCloud()" style="background:#c62828; width:30px;">🗑️</button>
+                </div>
+            </div>
+
+            <button class="btn-add" onclick="window.addLayer()">➕ 新增一層 (Top)</button>
+            <div id="layer-list"></div>
+        </div>
+
         <div class="control-group">
-            <div style="display:flex; gap:5px; margin-bottom:5px;">
+            <label>2. 尺寸標註 (Dimension)</label>
+            <div style="display:flex; gap:5px;">
                 <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
             </div>
-            <div style="display:flex; gap:5px;">
-                <input type="text" id="dimLabel" placeholder="文字 (選填)">
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <input type="text" id="dimLabel" placeholder="文字(選填)">
                 <input type="number" id="dimOffset" value="50" placeholder="偏移">
+                <button onclick="window.addDimension()" style="margin:0; width:auto;">➕</button>
             </div>
-            <button onclick="window.addDimension()">➕ 新增標註</button>
+            <div id="dim-list" style="margin-top:5px;"></div>
         </div>
-        <div id="dim-list" style="margin-top:5px;"></div>
 
-        <div style="margin-top: auto;"></div>
-        
-        <h3>3. 輸出</h3>
-        <button class="btn-img" onclick="window.downloadImage()">💾 下載圖片 (PNG)</button>
-        <button class="btn-ppt" onclick="window.downloadPPT()">📊 下載 PPT (完整版)</button>
+        <div style="margin-top: 10px; display:flex; gap:5px;">
+            <button class="btn-img" onclick="window.downloadImage()">💾 存圖</button>
+            <button class="btn-ppt" onclick="window.downloadPPT()">📊 存 PPT</button>
+            <button style="background-color: #2E7D32;" onclick="window.exportCurrentToCSV()">📋 存 Excel</button>
+        </div>
     </div>
 
     <div id="resizer"></div>
     <div id="main-area"><canvas id="stackCanvas"></canvas></div>
 
     <script type="module">
-        // ---------------------------------------------------------
-        // 1. Firebase 設定區
-        // ---------------------------------------------------------
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ★★★ Firebase Config (已填入你的資料) ★★★
+        // Firebase Config
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -159,217 +259,53 @@
           measurementId: "G-QJNE60W8BB"
         };
 
-        // 初始化變數
         let db = null;
-        let COLLECTION_NAME = "projects";
         let isFirebaseReady = false;
+        const COL_PROJ = "projects";
+        const COL_UNITS = "units";
+        let cloudProjectsCache = []; 
+        let currentPreviewId = null;
 
-        // 檢查 Config 狀態
-        function checkConfig() {
-            if (firebaseConfig.apiKey.includes("你的API_KEY") || firebaseConfig.apiKey === "") {
-                const sel = document.getElementById('savedProjects');
-                sel.innerHTML = '<option>⚠️ 尚未填入 API Key</option>';
-                alert("【重要提示】\n程式碼中的 Firebase API Key 還是預設值！");
-                return false;
-            }
-            return true;
-        }
-
-        // 嘗試初始化
-        if (checkConfig()) {
+        if (!firebaseConfig.apiKey.includes("你的API_KEY")) {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 isFirebaseReady = true;
-                console.log("Firebase initialized");
-            } catch(e) {
-                console.error("Firebase init error:", e);
-                alert("Firebase 初始化失敗：\n" + e.message);
-            }
+            } catch(e) { console.error("Firebase init error", e); }
         }
 
-        // ---------------------------------------------------------
-        // 2. 應用程式核心邏輯
-        // ---------------------------------------------------------
         const canvas = document.getElementById('stackCanvas');
         const ctx = canvas.getContext('2d');
         const listEl = document.getElementById('layer-list');
-        const dimListEl = document.getElementById('dim-list');
 
         window.layers = [];
         window.dimensions = [];
-        let dragTargetType = null, dragIndex = -1, isDraggingCanvas = false;
-        let lastMouseY = 0, lastMouseX = 0;
-        let hitRegions = { layers: [], dims: [] };
+        let dragSrcEl = null;
 
-        const sidebar = document.getElementById('sidebar');
-        const resizer = document.getElementById('resizer');
-        let isResizingSidebar = false;
-
-        // ---------------------------------------------------------
-        // 3. 雲端存取函式 (掛載到 window)
-        // ---------------------------------------------------------
-        
-        function showLoading(show, text = "處理中...") {
-            const overlay = document.getElementById('loading-overlay');
-            const txt = document.getElementById('loading-text');
-            if(show) { txt.innerText = text; overlay.style.display = 'flex'; }
-            else { overlay.style.display = 'none'; }
-        }
-
-        window.refreshProjectList = async function() {
-            if(!isFirebaseReady) return; // 沒連線就不執行
-            
-            const select = document.getElementById('savedProjects');
-            const currentVal = select.value;
-            select.innerHTML = '<option value="">連線中...</option>';
-
-            try {
-                const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
-                select.innerHTML = '<option value="">-- 選擇雲端專案 --</option>';
-                
-                if(querySnapshot.empty) {
-                    select.innerHTML = '<option value="">(目前無專案)</option>';
-                } else {
-                    querySnapshot.forEach((doc) => {
-                        const opt = document.createElement('option');
-                        opt.value = doc.id; opt.innerText = doc.id;
-                        select.appendChild(opt);
-                    });
-                }
-
-                if (currentVal) {
-                    let exists = false;
-                    for(let i=0; i<select.options.length; i++) if(select.options[i].value === currentVal) exists = true;
-                    if(exists) select.value = currentVal;
-                }
-            } catch (e) {
-                console.error("List error:", e);
-                select.innerHTML = '<option value="">讀取失敗: 請檢查權限</option>';
-                
-                if(e.code === 'permission-denied') {
-                    alert("【連線被拒絕】\n請檢查 Firestore Rules 是否已改為 'if true;'");
-                }
-            }
-        };
-
-        window.saveToCloud = async function() {
-            if(!isFirebaseReady) { alert("尚未連線至資料庫"); return; }
-            const name = document.getElementById('projName').value.trim();
-            if (!name) { alert("請輸入專案名稱！"); return; }
-            
-            const config = {
-                layers: window.layers, dimensions: window.dimensions,
-                settings: {
-                    unit: document.getElementById('unitInput').value,
-                    width: document.getElementById('canvasWidth').value,
-                    fontSize: document.getElementById('globalFontSize').value
-                }, timestamp: Date.now()
-            };
-
-            if(!confirm(`確定要將 "${name}" 儲存到雲端嗎？`)) return;
-
-            showLoading(true, "☁️ 正在上傳...");
-            try {
-                await setDoc(doc(db, COLLECTION_NAME, name), config);
-                alert("✅ 儲存成功！");
-                await window.refreshProjectList();
-                document.getElementById('savedProjects').value = name;
-            } catch (e) {
-                console.error(e);
-                alert("儲存失敗：" + e.message);
-            }
-            showLoading(false);
-        };
-
-        window.loadFromCloud = async function() {
-            if(!isFirebaseReady) return;
-            const name = document.getElementById('savedProjects').value;
-            if (!name || name.startsWith("--")) return;
-
-            showLoading(true, "☁️ 下載中...");
-            try {
-                const docSnap = await getDoc(doc(db, COLLECTION_NAME, name));
-                if (docSnap.exists()) {
-                    window.applyConfig(docSnap.data());
-                    document.getElementById('projName').value = name;
-                } else {
-                    alert("找不到該專案");
-                }
-            } catch (e) {
-                alert("載入失敗：" + e.message);
-            }
-            showLoading(false);
-        };
-
-        window.deleteFromCloud = async function() {
-            if(!isFirebaseReady) return;
-            const name = document.getElementById('savedProjects').value;
-            if (!name || name.startsWith("--")) { alert("請先選擇要刪除的專案"); return; }
-            if(!confirm(`⚠️ 確定要永久刪除 "${name}" 嗎？`)) return;
-
-            showLoading(true, "☁️ 刪除中...");
-            try {
-                await deleteDoc(doc(db, COLLECTION_NAME, name));
-                document.getElementById('projName').value = "";
-                await window.refreshProjectList();
-                alert("已刪除");
-            } catch (e) {
-                alert("刪除失敗：" + e.message);
-            }
-            showLoading(false);
-        };
-
-        // ---------------------------------------------------------
-        // 4. 一般操作
-        // ---------------------------------------------------------
-        window.applyConfig = function(config) {
-            window.layers = config.layers || [];
-            window.dimensions = config.dimensions || [];
-            if(config.settings) {
-                document.getElementById('unitInput').value = config.settings.unit || "um";
-                document.getElementById('canvasWidth').value = config.settings.width || 450;
-                document.getElementById('globalFontSize').value = config.settings.fontSize || 14;
-            }
-            window.resizeCanvas(); window.renderList(); window.draw();
-        };
-
-        window.exportJSON = function() {
-            const config = { layers: window.layers, dimensions: window.dimensions, settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value, fontSize: document.getElementById('globalFontSize').value } };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
-            const link = document.createElement('a'); link.href = dataStr; link.download = "stack_backup.json"; link.click();
-        };
-        
-        window.importJSON = function(input) {
-            const file = input.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try { const config = JSON.parse(e.target.result); window.applyConfig(config); alert("匯入成功"); } catch(err) { alert("格式錯誤"); }
-                input.value = '';
-            };
-            reader.readAsText(file);
-        };
-
-        window.newProject = function() {
-            if(!confirm("確定清空？")) return;
-            window.layers = []; window.dimensions = [];
-            document.getElementById('projName').value = ""; document.getElementById('savedProjects').value = "";
-            window.renderList(); window.draw();
-        };
-
-        // --- 5. 渲染 UI (左側列表) ---
+        // ---------------------------------------------
+        // Core: Render & Drag
+        // ---------------------------------------------
         window.renderList = function() {
             listEl.innerHTML = ''; window.updateDimSelects();
+            const allChecked = window.layers.every(l => l.checked !== false);
+            if(document.getElementById('selectAllBox')) document.getElementById('selectAllBox').checked = allChecked;
+
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
                 item.className = 'layer-item';
+                item.setAttribute('draggable', 'true');
+                item.setAttribute('data-index', index);
                 if(layer.showDetails) item.classList.add('open');
-                item.draggable = true; item.style.borderLeftColor = layer.color;
-                const txtColorVal = layer.textColor || "#000000";
-                
+                item.style.borderLeftColor = layer.color;
+                const isChecked = layer.checked !== false ? 'checked' : '';
+
                 item.innerHTML = `
                     <div class="layer-main-row">
-                        <div class="drag-handle">☰</div>
+                        <input type="checkbox" class="layer-check" ${isChecked} onchange="window.toggleLayerCheck(${index})">
+                        <div class="move-btns">
+                            <button class="btn-tiny" onclick="window.moveLayer(${index}, -1)">▲</button>
+                            <button class="btn-tiny" onclick="window.moveLayer(${index}, 1)">▼</button>
+                        </div>
                         <div class="layer-inputs">
                             <input type="text" value="${layer.name}" oninput="window.updateLayer(${index}, 'name', this.value)" placeholder="名稱">
                             <input type="number" value="${layer.thickness}" oninput="window.updateLayer(${index}, 'thickness', this.value)" placeholder="厚度">
@@ -379,181 +315,457 @@
                         <div class="btn-icon btn-del" onclick="window.deleteLayer(${index})">×</div>
                     </div>
                     <div class="layer-details">
-                        <div><label>顏色</label><input type="color" value="${txtColorVal}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%"></div>
+                        <div><label>顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%"></div>
                         <div><label>字體</label><input type="number" value="${layer.fontSize || ''}" placeholder="全域" oninput="window.updateLayer(${index}, 'fontSize', this.value)"></div>
                         <div><label>樣式</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
                 `;
-                item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', index); item.classList.add('dragging'); });
-                item.addEventListener('dragend', () => item.classList.remove('dragging'));
-                item.addEventListener('dragover', e => e.preventDefault());
-                item.addEventListener('drop', e => {
-                    e.preventDefault(); const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-                    if (fromIdx !== index) {
-                        const moved = window.layers.splice(fromIdx, 1)[0]; window.layers.splice(index, 0, moved);
+                
+                item.addEventListener('dragstart', function(e) { this.style.opacity='0.4'; dragSrcEl=this; e.dataTransfer.effectAllowed='move'; this.classList.add('dragging'); });
+                item.addEventListener('dragover', function(e) { if(e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect='move'; return false; });
+                item.addEventListener('drop', function(e) { 
+                    if(e.stopPropagation) e.stopPropagation();
+                    if(dragSrcEl !== this) {
+                        const oldIdx = parseInt(dragSrcEl.getAttribute('data-index'));
+                        const newIdx = parseInt(this.getAttribute('data-index'));
+                        const moved = window.layers.splice(oldIdx, 1)[0];
+                        window.layers.splice(newIdx, 0, moved);
                         window.renderList(); window.draw();
                     }
+                    return false;
                 });
+                item.addEventListener('dragend', function() { this.style.opacity='1'; this.classList.remove('dragging'); });
                 listEl.appendChild(item);
             });
         };
 
-        window.updateLayer = function(index, key, value) { if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0; window.layers[index][key] = value; if(key === 'color') window.renderList(); window.draw(); };
-        window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; window.renderList(); };
-        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); window.renderList(); window.draw(); };
-        window.deleteLayer = function(index) { window.layers.splice(index, 1); window.renderList(); window.draw(); };
-        
-        function loadExample(silent = false) {
-            if(!silent && !confirm("覆蓋設定？")) return;
-            window.layers = [ { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' }, { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, { name: "Ad", thickness: 25, color: "#eeeeee", fontSize: 0, fontStyle:'normal', textColor:'#000000' }, { name: "PI", thickness: 100, color: "#a8a8a8", fontSize: 28, fontStyle:'bold', textColor:'#ffffff' }, { name: "Ad", thickness: 25, color: "#dbeeff", fontSize: 0, fontStyle:'normal', textColor:'#000000' }, { name: "Tape", thickness: 110, color: "#90caf9", fontSize: 0, fontStyle:'bold', textColor:'#000000' } ];
-            window.dimensions = []; 
-            // 確保函式存在再執行
-            if(window.addDimensionByLogic) window.addDimensionByLogic(0, window.layers.length-1, "", 80); 
-            window.renderList(); 
-            window.draw();
-        }
+        window.moveLayer = (i, d) => { const n = i+d; if(n<0||n>=window.layers.length)return; const t=window.layers[i]; window.layers[i]=window.layers[n]; window.layers[n]=t; window.renderList(); window.draw(); };
+        window.toggleLayerCheck = (i) => { window.layers[i].checked = !window.layers[i].checked; window.renderList(); };
+        window.toggleAllLayers = (cb) => { window.layers.forEach(l => l.checked = cb.checked); window.renderList(); };
+        window.updateLayer = (i, k, v) => { if(k==='thickness'||k==='fontSize') v=parseFloat(v)||0; window.layers[i][k]=v; if(k==='color') window.renderList(); window.draw(); };
+        window.toggleDetails = (i) => { window.layers[i].showDetails = !window.layers[i].showDetails; window.renderList(); };
+        window.addLayer = () => { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true }); window.renderList(); window.draw(); };
+        window.deleteLayer = (i) => { window.layers.splice(i, 1); window.renderList(); window.draw(); };
 
-        window.updateDimSelects = function() {
-            const s1 = document.getElementById('dimStart'); const s2 = document.getElementById('dimEnd');
-            const v1 = s1.value; const v2 = s2.value; s1.innerHTML = ''; s2.innerHTML = '';
-            window.layers.forEach((l, i) => { const opt = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML += opt; s2.innerHTML += opt; });
-            if(v1) s1.value = v1; if(v2) s2.value = v2; else if(window.layers.length>0) s2.value = window.layers.length-1;
+        window.updateDimSelects = () => {
+            const s1=document.getElementById('dimStart'), s2=document.getElementById('dimEnd');
+            const v1=s1.value, v2=s2.value; s1.innerHTML=''; s2.innerHTML='';
+            window.layers.forEach((l,i) => { const o = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML+=o; s2.innerHTML+=o; });
+            if(v1) s1.value=v1; if(v2) s2.value=v2; else if(window.layers.length>0) s2.value=window.layers.length-1;
         };
-        window.addDimension = function() { const s = parseInt(document.getElementById('dimStart').value); const e = parseInt(document.getElementById('dimEnd').value); const txt = document.getElementById('dimLabel').value; const off = parseInt(document.getElementById('dimOffset').value) || 50; window.addDimensionByLogic(s, e, txt, off); };
-        window.addDimensionByLogic = function(s, e, l, o) { window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); window.draw(); };
-        function renderDims() { dimListEl.innerHTML = ''; window.dimensions.forEach((d, i) => { const sName = window.layers[d.start]?.name||'?'; const eName = window.layers[d.end]?.name||'?'; const div = document.createElement('div'); div.className = 'dim-item'; div.innerHTML = `<span>${sName}~${eName} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="window.deleteDim(${i})">×</span>`; dimListEl.appendChild(div); }); }
-        window.deleteDim = function(i) { window.dimensions.splice(i, 1); renderDims(); window.draw(); };
+        window.addDimension = () => { 
+            const s=parseInt(document.getElementById('dimStart').value), e=parseInt(document.getElementById('dimEnd').value);
+            window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: document.getElementById('dimLabel').value, offset: parseInt(document.getElementById('dimOffset').value)||50 });
+            renderDims(); window.draw();
+        };
+        function renderDims() { 
+            const dimListEl = document.getElementById('dim-list');
+            dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { 
+            const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name; 
+            dimListEl.innerHTML += `<div class="dim-item"><span>${n1}~${n2} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="window.deleteDim(${i})">×</span></div>`; 
+        }); }
+        window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
-        // --- 6. 畫布互動 ---
-        canvas.addEventListener('mousedown', e => {
-            const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            for (let i = 0; i < hitRegions.dims.length; i++) { const d = hitRegions.dims[i]; if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) { dragTargetType = 'dimension'; dragIndex = d.index; isDraggingCanvas = true; lastMouseX = x; document.body.style.cursor = 'ew-resize'; return; } }
-            for (let i = 0; i < hitRegions.layers.length; i++) { const l = hitRegions.layers[i]; if (y >= l.y && y <= l.y + l.h && x > 50) { dragTargetType = 'layer'; dragIndex = l.index; isDraggingCanvas = true; lastMouseY = y; document.body.style.cursor = 'ns-resize'; return; } }
-        });
-        window.addEventListener('mousemove', e => {
-            if (!isDraggingCanvas) {
-                const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-                let hover = false;
-                for(let d of hitRegions.dims) if (Math.abs(x - d.x) < 15 && y >= d.yStart && y <= d.yEnd) { canvas.style.cursor = 'ew-resize'; hover=true; break; }
-                if(!hover) for(let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h && x > 50) { canvas.style.cursor = 'ns-resize'; hover=true; break; }
-                if(!hover) canvas.style.cursor = 'default'; return;
+        // ---------------------------------------------
+        // ★ 雲端管理 Manager (New Logic)
+        // ---------------------------------------------
+        window.openCloudManager = function() {
+            if(!isFirebaseReady) { alert("尚未連線"); return; }
+            document.getElementById('mgrModal').style.display = 'flex'; // flex for layout
+            document.getElementById('mgrBackdrop').style.display = 'block';
+            window.refreshCloudList();
+        };
+        window.closeCloudManager = function() {
+            document.getElementById('mgrModal').style.display = 'none';
+            document.getElementById('mgrBackdrop').style.display = 'none';
+        };
+
+        window.refreshCloudList = async function() {
+            showLoading(true, "讀取雲端資料...");
+            try {
+                const q = await getDocs(collection(db, COL_PROJ));
+                cloudProjectsCache = [];
+                q.forEach(doc => cloudProjectsCache.push({ id: doc.id, ...doc.data() }));
+                window.renderCloudList();
+            } catch(e) { console.error(e); }
+            showLoading(false);
+        };
+
+        window.renderCloudList = function() {
+            const listEl = document.getElementById('cloudListEl');
+            const search = document.getElementById('searchCloud').value.toLowerCase();
+            listEl.innerHTML = '';
+
+            cloudProjectsCache.forEach(p => {
+                if(search && !p.id.toLowerCase().includes(search)) return;
+                
+                const note = p.note ? p.note : '無備註';
+                const date = new Date(p.timestamp || 0).toLocaleDateString();
+                
+                const li = document.createElement('li');
+                li.className = 'cloud-item';
+                li.onclick = (e) => { 
+                    if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); 
+                };
+                li.innerHTML = `
+                    <input type="checkbox" class="batch-check" value="${p.id}">
+                    <div class="cloud-info">
+                        <div class="cloud-name">${p.id}</div>
+                        <div class="cloud-meta">${date}</div>
+                        <div class="cloud-note">${note}</div>
+                    </div>
+                `;
+                listEl.appendChild(li);
+            });
+        };
+
+        window.selectCloudItem = function(id) {
+            currentPreviewId = id;
+            document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected'));
+            // Find checkbox to highlight row
+            const inputs = document.querySelectorAll('.batch-check');
+            inputs.forEach(inp => {
+                if(inp.value === id) inp.closest('.cloud-item').classList.add('selected');
+            });
+            
+            // Render Preview
+            const p = cloudProjectsCache.find(x => x.id === id);
+            const detailEl = document.getElementById('preview-details');
+            if(p) {
+                detailEl.innerHTML = `
+                    <strong>專案:</strong> ${p.id}<br>
+                    <strong>備註:</strong> ${p.note || ''}<br>
+                    <strong>層數:</strong> ${p.layers?.length || 0}<br>
+                    <strong>最後修改:</strong> ${new Date(p.timestamp).toLocaleString()}
+                `;
+                window.drawPreviewCanvas(p.layers);
+                document.getElementById('btn-load-preview').style.display = 'inline-block';
+                document.getElementById('btn-del-preview').style.display = 'inline-block';
             }
-            const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            if (dragTargetType === 'dimension') { const dx = lastMouseX - x; window.dimensions[dragIndex].offset += dx; if(window.dimensions[dragIndex].offset < 20) window.dimensions[dragIndex].offset = 20; lastMouseX = x; window.draw(); renderDims(); }
-            else if (dragTargetType === 'layer') {
-                let hoveredIndex = -1; for (let l of hitRegions.layers) if (y >= l.y && y <= l.y + l.h) { hoveredIndex = l.index; break; }
-                if (hoveredIndex !== -1 && hoveredIndex !== dragIndex) { const temp = window.layers[dragIndex]; window.layers[dragIndex] = window.layers[hoveredIndex]; window.layers[hoveredIndex] = temp; dragIndex = hoveredIndex; window.renderList(); window.draw(); }
-                lastMouseY = y;
-            }
-        });
-        window.addEventListener('mouseup', () => { isDraggingCanvas = false; dragTargetType = null; document.body.style.cursor = 'default'; canvas.style.cursor = 'default'; });
+        };
 
-        // --- 7. 繪圖核心 ---
-        window.resizeCanvas = function() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; window.draw(); };
-        window.draw = function() {
-            const unit = document.getElementById('unitInput').value;
-            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
-            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
-            if (totalThickness === 0) return;
-            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
-            const padding = { top: 40, bottom: 40, left: maxOffset + 80, right: 20 };
-            const drawWidth = canvas.width - padding.left - padding.right;
-            const availableHeight = Math.max(500, window.layers.length * 40);
-            canvas.height = availableHeight + padding.top + padding.bottom;
-            const scale = availableHeight / totalThickness;
-            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            hitRegions.layers = []; hitRegions.dims = []; let currentY = padding.top; let yPositions = [];
+        window.drawPreviewCanvas = function(layers) {
+            const cvs = document.getElementById('previewCanvas');
+            const ctx = cvs.getContext('2d');
+            cvs.width = 300; cvs.height = 300;
+            ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,300);
 
-            window.layers.forEach((layer, idx) => {
-                const h = layer.thickness * scale; hitRegions.layers.push({ index: idx, y: currentY, h: h }); yPositions.push({ top: currentY, bottom: currentY + h });
-                ctx.fillStyle = layer.color; ctx.fillRect(padding.left, currentY, drawWidth, h); ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.strokeRect(padding.left, currentY, drawWidth, h);
-                if (h > 12) {
-                    if (layer.textColor && layer.textColor !== '#000000') ctx.fillStyle = layer.textColor; else ctx.fillStyle = isColorDark(layer.color) ? "white" : "black";
-                    const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const style = layer.fontStyle === 'bold' ? 'bold' : '';
-                    ctx.font = `${style} ${fs}px "Microsoft JhengHei", Arial`; ctx.fillText(`${layer.name} ${layer.thickness}${unit}`, padding.left + drawWidth / 2, currentY + h / 2);
+            if(!layers || layers.length === 0) return;
+
+            const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1;
+            const scale = 260 / totalThick;
+            const cx = 150; const rw = 120; let cy = 20;
+
+            layers.forEach(l => {
+                const h = (parseFloat(l.thickness)||0) * scale;
+                ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h);
+                ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h);
+                if(h > 8) { ctx.fillStyle = "#000"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(l.name, cx, cy+h/2); }
+                cy += h;
+            });
+        };
+
+        // 匯出多選 Excel
+        window.batchExportExcel = function() {
+            const checks = document.querySelectorAll('.batch-check:checked');
+            if(checks.length === 0) { alert("請先勾選左側專案"); return; }
+            
+            let csv = "\uFEFF"; // BOM
+            
+            checks.forEach(chk => {
+                const id = chk.value;
+                const p = cloudProjectsCache.find(x => x.id === id);
+                if(p) {
+                    csv += `專案名稱: ${p.id}\n`;
+                    csv += `備註: ${(p.note||"").replace(/\n/g," ")}\n`;
+                    csv += `層序,名稱,厚度,單位\n`;
+                    let t = 0;
+                    const unit = p.settings?.unit || 'um';
+                    const layers = p.layers || [];
+                    layers.forEach((l,i) => {
+                         if(l.checked === false) return; // 略過未勾選層(如果有的話)
+                         t += (parseFloat(l.thickness)||0);
+                         csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
+                    });
+                    csv += `,,${t},${unit},總厚度\n\n`; // 空行分隔
                 }
-                currentY += h;
             });
-            window.dimensions.forEach((dim, idx) => {
-                if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom; const h = y2 - y1;
-                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
-                const txt = dim.label ? dim.label : `${val}${unit}`; const x = padding.left - dim.offset;
-                hitRegions.dims.push({ index: idx, x: x, yStart: y1, yEnd: y2 }); drawDimensionLine(x, y1, h, txt);
-            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Batch_Stackups_${Date.now()}.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
-        function drawDimensionLine(x, yStart, height, text) {
-            ctx.strokeStyle = "#D32F2F"; ctx.fillStyle = "#D32F2F"; ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
-            ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x, yStart + height); ctx.stroke();
-            ctx.strokeStyle = "#ccc"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x + 10, yStart); ctx.moveTo(x, yStart + height); ctx.lineTo(x + 10, yStart + height); ctx.stroke();
-            ctx.fillStyle = "#D32F2F"; drawArrow(x, yStart, "up"); drawArrow(x, yStart + height, "down");
-            ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(text, x - 5, yStart + height / 2);
+
+        window.loadSelectedToWorkspace = function() {
+            if(!currentPreviewId) return;
+            const p = cloudProjectsCache.find(x => x.id === currentPreviewId);
+            if(p) {
+                window.applyConfig(p);
+                document.getElementById('projName').value = p.id;
+                document.getElementById('projNote').value = p.note || "";
+                window.closeCloudManager();
+            }
+        };
+
+        window.deleteSelectedCloud = async function() {
+            if(!currentPreviewId) return;
+            if(!confirm(`確定刪除 ${currentPreviewId}?`)) return;
+            showLoading(true);
+            try { await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); await window.refreshCloudList(); currentPreviewId=null;} catch(e) {}
+            showLoading(false);
+        };
+
+        // ---------------------------------------------
+        // ★ Full Backup & Restore
+        // ---------------------------------------------
+        window.backupAllCloudData = async function() {
+            if(!isFirebaseReady) { alert("尚未連線"); return; }
+            showLoading(true, "打包所有資料中...");
+            try {
+                // Get Projects
+                const projSnap = await getDocs(collection(db, COL_PROJ));
+                const projects = {};
+                projSnap.forEach(d => projects[d.id] = d.data());
+
+                // Get Units
+                const unitSnap = await getDocs(collection(db, COL_UNITS));
+                const units = {};
+                unitSnap.forEach(d => units[d.id] = d.data());
+
+                const backupData = {
+                    version: "V3",
+                    timestamp: Date.now(),
+                    projects: projects,
+                    units: units
+                };
+
+                const str = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([str], {type: "application/json"});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `FULL_BACKUP_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+            } catch(e) { console.error(e); alert("備份失敗"); }
+            showLoading(false);
+        };
+
+        window.restoreAllCloudData = function(input) {
+            const file = input.files[0]; if(!file) return;
+            if(!confirm("⚠️ 警告：這將會把備份檔中的資料寫入雲端資料庫。\n若有同名檔案將被覆蓋。\n確定執行？")) { input.value = ''; return; }
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                showLoading(true, "正在還原至雲端...");
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const batch = writeBatch(db);
+                    let count = 0;
+
+                    // Restore Projects
+                    if(data.projects) {
+                        for (const [id, val] of Object.entries(data.projects)) {
+                            const ref = doc(db, COL_PROJ, id);
+                            batch.set(ref, val);
+                            count++;
+                        }
+                    }
+                    // Restore Units
+                    if(data.units) {
+                        for (const [id, val] of Object.entries(data.units)) {
+                            const ref = doc(db, COL_UNITS, id);
+                            batch.set(ref, val);
+                            count++;
+                        }
+                    }
+
+                    // Commit (Firestore batch limit is 500, simple logic here assumes <500 for demo)
+                    // For robust production, need to chunk batches.
+                    await batch.commit();
+                    alert(`還原成功！共寫入 ${count} 筆資料。`);
+                    window.refreshUnitList();
+                } catch(err) { console.error(err); alert("還原失敗，請檢查檔案格式"); }
+                showLoading(false);
+                input.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        // ---------------------------------------------
+        // Main Functions
+        // ---------------------------------------------
+        function showLoading(show, text="處理中") {
+            const ov = document.getElementById('loading-overlay');
+            if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none';
         }
-        function drawArrow(x, y, dir) { ctx.beginPath(); const s = 5; if(dir==="up") { ctx.moveTo(x,y); ctx.lineTo(x-s,y+s); ctx.lineTo(x+s,y+s); } else { ctx.moveTo(x,y); ctx.lineTo(x-s,y-s); ctx.lineTo(x+s,y-s); } ctx.fill(); }
-        function isColorDark(hex) { const r = parseInt(hex.substr(1, 2), 16); const g = parseInt(hex.substr(3, 2), 16); const b = parseInt(hex.substr(5, 2), 16); return ((r*299 + g*587 + b*114)/1000) < 128; }
-        function cleanHex(hex) { if(!hex) return "FFFFFF"; return hex.replace('#', '').toUpperCase(); }
-        
-        resizer.addEventListener('mousedown', () => { isResizingSidebar = true; resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
-        window.addEventListener('mousemove', (e) => { if (!isResizingSidebar) return; let w = e.clientX; if (w < 320) w = 320; if (w > 800) w = 800; sidebar.style.width = w + 'px'; });
-        window.addEventListener('mouseup', () => { isResizingSidebar = false; resizer.classList.remove('active'); document.body.style.cursor = 'default'; });
 
-        window.downloadImage = function() { const link = document.createElement('a'); link.download = 'stack_diagram.png'; link.href = canvas.toDataURL(); link.click(); };
-
-        window.downloadPPT = function() {
-            let pres = new PptxGenJS();
-            const unit = document.getElementById('unitInput').value;
-            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
-            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
-            if (totalThickness === 0) { alert("沒有層次可輸出"); return; }
-            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
-            const pptPaddingLeft = maxOffset + 150; const pptPaddingTop = 50;
-            const scaleFactor = 100; const contentWidth = canvas.width - (maxOffset + 40) - 20; 
-            const slideW = (pptPaddingLeft + contentWidth + 50) / scaleFactor;
-            const availableHeightPx = Math.max(500, window.layers.length * 40);
-            const slideH = (availableHeightPx + 100) / scaleFactor;
-            const pxToThickScale = availableHeightPx / totalThickness;
-            pres.defineLayout({ name:'CUST', width: slideW, height: slideH }); pres.layout = 'CUST';
-            let slide = pres.addSlide();
-            let currentYPx = pptPaddingTop; let yPositions = [];
-            window.layers.forEach(layer => {
-                const hPx = layer.thickness * pxToThickScale;
-                const x = pptPaddingLeft / scaleFactor; const y = currentYPx / scaleFactor; const w = contentWidth / scaleFactor; const h = hPx / scaleFactor;
-                yPositions.push({ top: y, bottom: y + h });
-                const safeFillColor = cleanHex(layer.color);
-                let txtColor = "000000"; if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor); else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
-                const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const isBold = layer.fontStyle === 'bold';
-                const textContent = `${layer.name} ${layer.thickness}${unit}`;
-                slide.addShape(pres.ShapeType.rect, { x: x, y: y, w: w, h: h, fill: { color: safeFillColor }, line: { color: "333333", width: 1 } });
-                slide.addText(textContent, { x: x, y: y, w: w, h: h, color: txtColor, fontSize: fs, align: 'center', valign: 'middle', bold: isBold });
-                currentYPx += hPx;
-            });
-            window.dimensions.forEach(dim => {
-                if (!yPositions[dim.start] || !yPositions[dim.end]) return;
-                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom;
-                const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
-                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
-                const txt = dim.label ? dim.label : `${val}${unit}`;
-                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0, h: y2 - y1, line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' } });
-                const connectorLen = 0.15;
-                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
-                slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: connectorLen, h: 0, line: { color: "CCCCCC", width: 1 } });
-                const textWidth = 2.0; 
-                slide.addText(txt, { x: xLine - textWidth - 0.1, y: (y1 + y2)/2 - 0.3, w: textWidth, h: 0.6, color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle' });
-            });
-            pres.writeFile({ fileName: "Stack_Diagram.pptx" });
+        window.saveToCloud = async function() {
+            if(!isFirebaseReady) return alert("未連線");
+            const name = document.getElementById('projName').value.trim();
+            if(!name) return alert("請輸入專案名稱");
+            
+            const data = {
+                layers: window.layers,
+                dimensions: window.dimensions,
+                settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value },
+                note: document.getElementById('projNote').value,
+                timestamp: Date.now()
+            };
+            
+            if(!confirm(`儲存專案: ${name}?`)) return;
+            showLoading(true);
+            try { await setDoc(doc(db, COL_PROJ, name), data); alert("儲存成功"); } catch(e) { alert("Error"); }
+            showLoading(false);
         };
 
-        // =========================================================
-        // ★★★ 關鍵修改：將執行點移到最後面！ ★★★
-        // =========================================================
+        window.saveUnitToCloud = async function() {
+            const name = document.getElementById('unitName').value.trim();
+            const sel = window.layers.filter(l => l.checked!==false);
+            if(!name || sel.length===0) return alert("請輸入名稱並勾選層次");
+            
+            if(!confirm(`存模組: ${name}?`)) return;
+            showLoading(true);
+            try { 
+                await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); 
+                alert("模組已存"); window.refreshUnitList(); document.getElementById('unitName').value='';
+            } catch(e) { alert("Error"); }
+            showLoading(false);
+        };
+
+        window.refreshUnitList = async function() {
+            if(!isFirebaseReady) return;
+            const s = document.getElementById('savedUnits');
+            try {
+                const q = await getDocs(collection(db, COL_UNITS));
+                s.innerHTML = '<option value="">-- 選擇模組 --</option>';
+                q.forEach(d => {
+                    const opt = document.createElement('option'); opt.value=d.id; opt.innerText=d.id; s.appendChild(opt);
+                });
+            } catch(e) {}
+        };
+
+        window.insertUnit = async function() {
+            const n = document.getElementById('savedUnits').value;
+            if(!n) return;
+            showLoading(true);
+            try {
+                const d = await getDoc(doc(db, COL_UNITS, n));
+                if(d.exists()) {
+                    const ul = d.data().layers.map(l => ({...l, id:Date.now()+Math.random(), checked:true}));
+                    window.layers = [...ul, ...window.layers];
+                    window.renderList(); window.draw();
+                }
+            } catch(e) {}
+            showLoading(false);
+        };
         
-        // 1. 先載入範例 (這時候上面的 function 都已經準備好了)
-        loadExample(true);
+        window.deleteUnitFromCloud = async function() {
+            const n = document.getElementById('savedUnits').value;
+            if(n && confirm(`刪除模組 ${n}?`)) {
+                await deleteDoc(doc(db, COL_UNITS, n)); window.refreshUnitList();
+            }
+        };
 
-        // 2. 如果 Firebase 連線成功，嘗試讀取雲端列表
-        if(isFirebaseReady) window.refreshProjectList();
+        window.exportCurrentToCSV = function() {
+            const sel = window.layers.filter(l => l.checked!==false);
+            if(sel.length===0) return alert("無選取層");
+            const name = document.getElementById('projName').value || "Stackup";
+            const note = document.getElementById('projNote').value;
+            const unit = document.getElementById('unitInput').value;
+            
+            let csv = "\uFEFF";
+            if(note) csv += `備註: ${note.replace(/\n/g," ")}\n\n`;
+            csv += "層序,名稱,厚度,單位\n";
+            let t=0;
+            sel.forEach((l,i) => {
+                t += (parseFloat(l.thickness)||0);
+                csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
+            });
+            csv += `,,${t},${unit},選取總厚度\n`;
+            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        };
 
-        console.log("🚀 程式載入完成，所有功能已就緒！");
+        // Standard Helpers
+        window.applyConfig = (c) => { 
+            window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; 
+            if(c.settings) { document.getElementById('unitInput').value=c.settings.unit||"um"; document.getElementById('canvasWidth').value=c.settings.width||450; }
+            window.renderList(); window.draw();
+        };
+        window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
+        window.downloadPPT = () => {
+             let pres = new PptxGenJS();
+             const unit = document.getElementById('unitInput').value;
+             const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
+             if(totalThick===0) return alert("無資料");
+             
+             let maxOff=20; window.dimensions.forEach(d=> {if(d.offset>maxOff)maxOff=d.offset;});
+             const pl=maxOff+150, pt=50, sf=100, cw=canvas.width-(maxOff+40)-20;
+             const ah = Math.max(500, window.layers.length*40);
+             const sc = ah/totalThick;
+             pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:(ah+100)/sf}); pres.layout='C';
+             
+             let s = pres.addSlide(); let cy=pt;
+             window.layers.forEach(l => {
+                 const h = l.thickness*sc;
+                 const fs = l.fontSize||14;
+                 const fc = l.color.replace('#','');
+                 const tc = isColorDark(l.color)?'FFFFFF':'000000';
+                 s.addShape(pres.ShapeType.rect, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, fill:fc, line:'333333'});
+                 s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:fs, align:'center', valign:'middle'});
+                 cy+=h;
+             });
+             pres.writeFile({fileName:"Stack.pptx"});
+        };
+        
+        function isColorDark(hex) { const r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16); return ((r*299+g*587+b*114)/1000)<128; }
+        window.resizeCanvas = () => { canvas.width=parseInt(document.getElementById('canvasWidth').value)||450; window.draw(); };
+        window.draw = () => {
+            const unit = document.getElementById('unitInput').value;
+            const globalFS = parseInt(document.getElementById('globalFontSize').value)||14;
+            const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
+            if(totalThick===0 && window.layers.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+            let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
+            const pad = { t:40, b:40, l: maxOff+80, r:20 };
+            const dw = canvas.width - pad.l - pad.r;
+            const ah = Math.max(500, window.layers.length*40);
+            canvas.height = ah + pad.t + pad.b;
+            const scale = ah / (totalThick||1);
+            
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.textAlign="center"; ctx.textBaseline="middle";
+            let cy = pad.t;
+            let yPos = [];
+
+            window.layers.forEach(l => {
+                const h = (parseFloat(l.thickness)||0)*scale;
+                yPos.push({t:cy, b:cy+h});
+                ctx.fillStyle = l.color; ctx.fillRect(pad.l, cy, dw, h);
+                ctx.strokeStyle="#333"; ctx.strokeRect(pad.l, cy, dw, h);
+                if(h>12) {
+                     ctx.fillStyle = isColorDark(l.color)?"white":"black"; if(l.textColor) ctx.fillStyle=l.textColor;
+                     const fs = l.fontSize||globalFS; const st = l.fontStyle==='bold'?'bold':'';
+                     ctx.font = `${st} ${fs}px Arial`; ctx.fillText(`${l.name} ${l.thickness}${unit}`, pad.l+dw/2, cy+h/2);
+                }
+                cy += h;
+            });
+            window.dimensions.forEach(d => {
+                if(!yPos[d.start] || !yPos[d.end]) return;
+                const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=pad.l-d.offset;
+                ctx.strokeStyle="#D32F2F"; ctx.fillStyle="#D32F2F"; ctx.lineWidth=2; ctx.font="bold 14px Arial";
+                ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x,y1+h); ctx.stroke();
+                ctx.strokeStyle="#ccc"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x+10,y1); ctx.moveTo(x,y1+h); ctx.lineTo(x+10,y1+h); ctx.stroke();
+                drawArrow(ctx,x,y1,1); drawArrow(ctx,x,y1+h,0);
+                const txt = d.label || `${window.layers.slice(d.start,d.end+1).reduce((s,l)=>s+(parseFloat(l.thickness)||0),0)}${unit}`;
+                ctx.textAlign="right"; ctx.fillText(txt, x-5, y1+h/2);
+            });
+        };
+        function drawArrow(ctx,x,y,u) { ctx.beginPath(); const s=5; if(u){ctx.moveTo(x,y);ctx.lineTo(x-s,y+s);ctx.lineTo(x+s,y+s);}else{ctx.moveTo(x,y);ctx.lineTo(x-s,y-s);ctx.lineTo(x+s,y-s);} ctx.fill(); }
+
+        // Start
+        if(isFirebaseReady) window.refreshUnitList();
+        window.renderList(); window.draw();
+
     </script>
 </body>
 </html>
