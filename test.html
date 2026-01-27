@@ -6,7 +6,7 @@
     <title>工程疊構圖產生器 (Mobile Ver)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
-        /* --- 基礎佈局 (電腦版預設) --- */
+        /* --- 基礎佈局 --- */
         body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
         #sidebar { 
@@ -22,39 +22,22 @@
         
         #main-area { 
             flex-grow: 1; background-color: #222; 
-            display: flex; justify-content: center; align-items: start; /* 改為 start 讓長圖可以往下長 */
+            display: flex; justify-content: center; align-items: start;
             overflow: auto; padding: 20px; cursor: default; 
         }
         
-        /* --- ★★★ 手機版響應式設定 (關鍵修改) ★★★ --- */
+        /* --- 手機版響應式設定 --- */
         @media (max-width: 768px) {
-            body { 
-                flex-direction: column; /* 改為垂直排列 */
-                height: auto; /* 高度自動，允許捲動 */
-                overflow-y: auto; 
-            }
-            #sidebar { 
-                width: 100% !important; /* 寬度佔滿 */
-                max-width: 100%; 
-                height: auto; 
-                max-height: 50vh; /* 限制高度，避免佔據整個畫面 */
-                border-right: none; 
-                border-bottom: 2px solid #444;
-            }
-            #resizer { display: none; } /* 手機版隱藏拉桿 */
-            #main-area { 
-                width: 100%; 
-                height: 600px; /* 給畫布足夠空間 */
-                padding: 10px;
-                display: block; /* 讓 canvas 可以置中 */
-                text-align: center;
-            }
+            body { flex-direction: column; height: auto; overflow-y: auto; }
+            #sidebar { width: 100% !important; max-width: 100%; height: auto; max-height: 50vh; border-right: none; border-bottom: 2px solid #444; }
+            #resizer { display: none; }
+            #main-area { width: 100%; height: 600px; padding: 10px; display: block; text-align: center; }
             .home-btn { top: 10px; left: 10px; padding: 4px 8px; font-size: 11px; }
         }
 
         /* 元件樣式 */
         h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
-        h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
+        h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
         .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
         label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
         input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
@@ -64,7 +47,6 @@
         .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; }
         .layer-main-row { display: flex; align-items: center; gap: 4px; }
         
-        /* 移動按鈕樣式 */
         .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
         .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
         .btn-tiny:hover { background: #666; }
@@ -77,6 +59,9 @@
         input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
         .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
         .btn-del:hover { color: #ff5252; }
+
+        /* ★ checkbox 樣式 */
+        .layer-check { width: 20px; height: 20px; cursor: pointer; margin-right: 2px; accent-color: #4CAF50; }
         
         .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
         
@@ -88,9 +73,8 @@
         
         .btn-save-cloud { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
         .btn-del-cloud { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
-        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;}
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
         .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px; min-width: 50px;}
-        /* ★ 新增 CSV 按鈕樣式 */
         .btn-csv { background-color: #2E7D32; border-color: #1B5E20; flex: 1; min-width: 60px; font-size: 12px; } 
         .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
 
@@ -153,7 +137,12 @@
             </div>
         </div>
 
-        <h3>1. 層次 (用上下鍵排序)</h3>
+        <h3>
+            1. 層次 
+            <label style="font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="selectAllBox" checked onchange="window.toggleAllLayers(this)"> 全選
+            </label>
+        </h3>
         <button class="btn-add" onclick="window.addLayer()">➕ 新增一層 (Top)</button>
         
         <div id="layer-list" style="margin-top:5px;"></div>
@@ -184,7 +173,7 @@
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ★★★ Firebase Config (請自行替換 API Key) ★★★
+        // Firebase Config
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -221,37 +210,38 @@
         window.dimensions = [];
         let hitRegions = { layers: [], dims: [] };
 
-        // ---------------------------------------------------------
-        // ★★★ 新增：圖層移動功能 (解決手機無法拖曳問題) ★★★
-        // ---------------------------------------------------------
         window.moveLayer = function(index, direction) {
             const newIndex = index + direction;
-            // 檢查邊界 (不能移到小於0或超過陣列長度)
             if (newIndex < 0 || newIndex >= window.layers.length) return;
-            
-            // 交換資料
             const temp = window.layers[index];
             window.layers[index] = window.layers[newIndex];
             window.layers[newIndex] = temp;
-            
             window.renderList();
             window.draw();
         };
 
-        // ---------------------------------------------------------
-        // UI 渲染 (修改：加入上下按鈕)
-        // ---------------------------------------------------------
+        // ★★★ 更新 renderList 加入 Checkbox ★★★
         window.renderList = function() {
             listEl.innerHTML = ''; window.updateDimSelects();
+            
+            // 檢查是否所有層都被選取，同步全選按鈕狀態
+            const allChecked = window.layers.every(l => l.checked !== false);
+            const selectAllBox = document.getElementById('selectAllBox');
+            if(selectAllBox) selectAllBox.checked = allChecked;
+
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
                 item.className = 'layer-item';
                 if(layer.showDetails) item.classList.add('open');
                 item.style.borderLeftColor = layer.color;
                 
-                // ★ 新增：左側的上下按鈕
+                // 確保 checked 屬性存在
+                const isChecked = layer.checked !== false ? 'checked' : ''; // 預設為 true
+
                 item.innerHTML = `
                     <div class="layer-main-row">
+                        <input type="checkbox" class="layer-check" ${isChecked} onchange="window.toggleLayerCheck(${index})">
+
                         <div class="move-btns">
                             <button class="btn-tiny" onclick="window.moveLayer(${index}, -1)">▲</button>
                             <button class="btn-tiny" onclick="window.moveLayer(${index}, 1)">▼</button>
@@ -274,10 +264,27 @@
             });
         };
 
-        // ... 其餘核心邏輯保持不變 ...
+        // ★★★ 新增：單選與全選功能 ★★★
+        window.toggleLayerCheck = function(index) {
+            if(window.layers[index].checked === undefined) window.layers[index].checked = true;
+            window.layers[index].checked = !window.layers[index].checked;
+            
+            // 檢查全選按鈕是否需要更新
+            const allChecked = window.layers.every(l => l.checked !== false);
+            document.getElementById('selectAllBox').checked = allChecked;
+        };
+
+        window.toggleAllLayers = function(checkbox) {
+            const isChecked = checkbox.checked;
+            window.layers.forEach(l => l.checked = isChecked);
+            window.renderList();
+        };
+
         window.updateLayer = function(index, key, value) { if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0; window.layers[index][key] = value; if(key === 'color') window.renderList(); window.draw(); };
         window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; window.renderList(); };
-        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); window.renderList(); window.draw(); };
+        
+        // 新增時預設 checked: true
+        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true }); window.renderList(); window.draw(); };
         window.deleteLayer = function(index) { window.layers.splice(index, 1); window.renderList(); window.draw(); };
 
         window.updateDimSelects = function() {
@@ -346,34 +353,41 @@
 
         window.applyConfig = function(config) {
             window.layers = config.layers || [];
+            // 讀取舊檔時補上 checked 屬性
+            window.layers.forEach(l => { if(l.checked === undefined) l.checked = true; });
+            
             window.dimensions = config.dimensions || [];
             if(config.settings) { document.getElementById('unitInput').value = config.settings.unit || "um"; document.getElementById('canvasWidth').value = config.settings.width || 450; document.getElementById('globalFontSize').value = config.settings.fontSize || 14; }
             window.resizeCanvas(); window.renderList(); window.draw();
         };
 
-        // ★★★ 新增：匯出 Excel CSV 功能 ★★★
+        // ★★★ 修改：CSV 匯出邏輯，只匯出打勾的 ★★★
         window.exportCSV = function() {
-            if (window.layers.length === 0) { alert("沒有資料"); return; }
+            // 1. 過濾出有打勾的層
+            const selectedLayers = window.layers.filter(l => l.checked !== false);
+
+            if (selectedLayers.length === 0) { alert("請至少勾選一層！"); return; }
+            
             const unit = document.getElementById('unitInput').value || 'um';
             const name = document.getElementById('projName').value || "Stackup";
             
-            // 加入 BOM 讓 Excel 辨識為 UTF-8 (解決中文亂碼)
             let csv = "\uFEFF"; 
             csv += "層序,名稱,厚度,單位\n";
             
             let total = 0;
-            window.layers.forEach((l, i) => {
-                const safeName = (l.name || "").replace(/,/g, " "); // 移除逗號避免錯位
+            // 2. 只針對打勾的層進行迴圈
+            selectedLayers.forEach((l, i) => {
+                const safeName = (l.name || "").replace(/,/g, " ");
                 const th = parseFloat(l.thickness) || 0;
                 total += th;
                 csv += `${i+1},${safeName},${th},${unit}\n`;
             });
-            csv += `,,${total},${unit},總厚度\n`; // 總結行
+            csv += `,,${total},${unit},選取總厚度\n`; 
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${name}_data.csv`;
+            link.download = `${name}_selected_data.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -404,18 +418,17 @@
             const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
             
-            // ★ 修改：如果沒厚度，就不要畫
             if (totalThickness === 0 && window.layers.length === 0) {
                  ctx.clearRect(0, 0, canvas.width, canvas.height);
                  return;
             }
 
             let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
-            const padding = { top: 40, bottom: 40, left: maxOffset + 80, right: 20 }; // ★ 左邊界加大
+            const padding = { top: 40, bottom: 40, left: maxOffset + 80, right: 20 }; 
             const drawWidth = canvas.width - padding.left - padding.right;
             const availableHeight = Math.max(500, window.layers.length * 40);
             canvas.height = availableHeight + padding.top + padding.bottom;
-            const scale = availableHeight / (totalThickness || 1); // 避免除以0
+            const scale = availableHeight / (totalThickness || 1); 
             ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.textAlign = "center"; ctx.textBaseline = "middle";
             hitRegions.layers = []; hitRegions.dims = []; let currentY = padding.top; let yPositions = [];
 
@@ -491,10 +504,10 @@
 
         // 預設載入範例 (方便手機直接看效果)
         window.layers = [ 
-            { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, 
-            { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' }, 
-            { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, 
-            { name: "Core", thickness: 100, color: "#F5DEB3", fontSize: 0, fontStyle:'normal', textColor:'#000000' }
+            { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff', checked: true }, 
+            { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000', checked: true }, 
+            { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff', checked: true }, 
+            { name: "Core", thickness: 100, color: "#F5DEB3", fontSize: 0, fontStyle:'normal', textColor:'#000000', checked: true }
         ];
         window.addDimensionByLogic(0, 3, "", 80);
         if(isFirebaseReady) window.refreshProjectList();
