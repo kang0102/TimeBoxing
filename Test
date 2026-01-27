@@ -2,1441 +2,474 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cutting 3D Pro v6.5 (Export & Custom Colors)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>工程疊構圖產生器 (Mobile Ver)</title>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #121212; color: #eee; font-family: "Microsoft JhengHei", sans-serif; user-select: none; }
+        /* --- 基礎佈局 (電腦版預設) --- */
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* 側欄 */
-        #sidebar {
-            position: absolute; top: 0; left: 0; width: 380px; height: 100vh;
-            background: rgba(30, 30, 30, 0.95); overflow-y: auto; padding: 0;
-            box-sizing: border-box; border-right: 1px solid #444; backdrop-filter: blur(5px);
-            display: flex; flex-direction: column; z-index: 20;
+        #sidebar { 
+            width: 400px; min-width: 320px; max-width: 800px; 
+            background-color: #1e1e1e; padding: 15px; padding-top: 60px; 
+            display: flex; flex-direction: column; gap: 12px; z-index: 10; 
+            overflow-y: auto; flex-shrink: 0; box-sizing: border-box; 
+            border-right: 1px solid #333;
         }
 
-        .header-area { padding: 12px 15px; background: #1a1a1a; border-bottom: 1px solid #444; }
-        .app-title { color: #4FC3F7; font-size: 18px; margin: 0 0 8px 0; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        #resizer { width: 8px; background-color: #121212; cursor: col-resize; z-index: 20; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+        #resizer::after { content: ""; width: 2px; height: 30px; background: #444; }
         
-        /* 顯示隱藏控制列 */
-        .control-bar-label { font-size: 11px; color: #888; margin-bottom: 2px; display: block;}
-        .vis-bar { display: flex; gap: 5px; margin-bottom: 10px; background: #222; padding: 5px; border-radius: 4px; border: 1px solid #444; }
-        
-        .vis-btn { flex: 1; padding: 4px; font-size: 16px; cursor: pointer; border: 1px solid #555; background: #333; color: #666; border-radius: 3px; text-align: center; transition:0.2s; }
-        .vis-btn:hover { background: #444; }
-        .vis-btn.active { background: #00E676; color: #000; border-color: #00E676; box-shadow: 0 0 5px rgba(0, 230, 118, 0.3); }
-
-        .sel-btn { flex: 1; padding: 6px 4px; font-size: 13px; cursor: pointer; border: 1px solid #555; background: #333; color: #aaa; border-radius: 3px; text-align: center; transition:0.2s; font-weight: bold; }
-        .sel-btn:hover { background: #444; color: #fff; }
-        .sel-btn.active { background: #2979FF; color: #fff; border-color: #2979FF; box-shadow: 0 0 8px rgba(41, 121, 255, 0.4); }
-
-        /* 分頁 */
-        .tabs { display: flex; background: #222; border-bottom: 1px solid #444; }
-        .tab-btn { flex: 1; padding: 10px 0; background: #222; color: #888; border: none; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.2s; font-size: 13px;}
-        .tab-btn.active { color: #fff; background: #333; border-bottom-color: #00E676; }
-        .tab-content { padding: 15px; display: none; overflow-y: auto; flex: 1; }
-        .tab-content.active { display: block; }
-
-        /* UI 元件 */
-        .group { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; border: 1px solid #444; margin-bottom: 10px; }
-        .group-title { font-weight: bold; margin-bottom: 8px; display: flex; justify-content:space-between; align-items:center; font-size: 13px; color: #aaa; }
-        .row { display: flex; align-items: center; margin-bottom: 6px; gap: 5px; }
-        label { flex: 0 0 60px; font-size: 12px; color: #ccc; text-align: right; margin-right: 5px;}
-        input[type="number"] { width: 50px; background: #111; border: 1px solid #555; color: #4FC3F7; padding: 4px; border-radius: 4px; font-size: 12px; text-align: right; }
-        input[type="range"] { flex: 1; cursor: pointer; height: 6px; }
-        input[type="text"] { background: #111; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; }
-        input[type="color"] { background: none; border: none; width: 25px; height: 25px; cursor: pointer; padding: 0; vertical-align: middle;}
-        
-        button.action-btn { width: 100%; padding: 8px; background: #00695C; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px;}
-        button.action-btn:hover { background: #00897B; }
-        .tool-btn { background: #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; border: 1px solid #666; color: white; font-size: 12px;}
-        .tool-btn:hover { background: #666; }
-
-        .export-row { display: flex; gap: 5px; margin-bottom: 10px; }
-        .export-btn { flex: 1; background: #37474F; color: #ECEFF1; border: 1px solid #546E7A; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .export-btn:hover { background: #455A64; }
-        
-        /* 彈窗樣式 */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: none; justify-content: center; align-items: center; }
-        .modal { background: #222; width: 600px; max-height: 85vh; padding: 20px; border-radius: 8px; border: 1px solid #444; display: flex; flex-direction: column; gap: 10px; color: #eee; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .project-card { display: flex; gap: 10px; background: #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #444; align-items: center;}
-        .project-card:hover { border-color: #00E676; background: #3a3a3a; }
-        .project-thumb { width: 100px; height: 70px; background: #000; object-fit: cover; border-radius: 4px; cursor: pointer;}
-        .project-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .default-badge { color: #FFD700; font-size: 18px; cursor: pointer; padding: 5px; }
-        .default-badge.inactive { color: #555; filter: grayscale(1); }
-
-        /* 視角與Gizmo */
-        #view-controls { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 10; }
-        .view-btn { width: 40px; height: 40px; background: rgba(50,50,50,0.8); color: white; border: 1px solid #666; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; justify-content: center; align-items: center; }
-        
-        #gizmo-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(30,30,30,0.9); padding: 10px; border-radius: 8px; border: 1px solid #555; width: 150px; z-index: 10;}
-        .gizmo-row { display: flex; gap: 5px; margin-top: 5px;}
-        .gizmo-btn { flex: 1; padding: 5px; font-size: 11px; cursor: pointer; background: #444; color: #ddd; border: 1px solid #666; border-radius: 4px; }
-        .gizmo-btn.active { background: #FF9800; color: #000; border-color: #FF9800; }
-
-        /* 標註系統 HTML Overlay */
-        #label-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 5; }
-        /* 引導線畫布 */
-        #leader-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
-        
-        .annotation-label { 
-            position: absolute; 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 12px; 
-            pointer-events: auto; 
-            white-space: nowrap; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
-            display: flex; gap: 5px; align-items: center; 
-            border: 1px solid transparent; 
-            transition: background 0.2s, border 0.2s, opacity 0.2s;
-            cursor: move; 
-            backdrop-filter: blur(2px);
+        #main-area { 
+            flex-grow: 1; background-color: #222; 
+            display: flex; justify-content: center; align-items: start; /* 改為 start 讓長圖可以往下長 */
+            overflow: auto; padding: 20px; cursor: default; 
         }
-        .annotation-label:hover { z-index: 100; border-color: rgba(255,255,255,0.8); box-shadow: 0 4px 12px rgba(0,0,0,0.8); }
-        .annotation-label input { background: transparent; border: none; color: inherit; font: inherit; text-align: center; min-width: 50px; outline: none; cursor: text; }
-        .close-btn { width: 18px; height: 18px; background: #e53935; color: white; border-radius: 50%; font-size: 12px; font-weight:bold; display: flex; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transition: 0.2s; border: none; }
-        .annotation-label:hover .close-btn { opacity: 1; }
-
-        #snap-hint { position: absolute; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.7); border: 1px solid #00E676; color: #00E676; padding: 8px 15px; border-radius: 20px; font-weight: bold; pointer-events: none; display: none; z-index: 30; }
-
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 20px; transition: opacity 0.5s; }
-
-        #impact-canvas { display: none; }
-        /* [新增] 標註清單與獨立控制面板樣式 */
-        #anno-list-container { 
-            max-height: 120px; overflow-y: auto; background: #111; 
-            border: 1px solid #444; border-radius: 4px; margin-bottom: 10px; 
-        }
-        .anno-item { 
-            padding: 6px 10px; font-size: 12px; cursor: pointer; 
-            border-bottom: 1px solid #222; display: flex; 
-            justify-content: space-between; align-items: center; 
-        }
-        .anno-item:hover { background: #333; }
-        .anno-item.selected { background: #0D47A1; color: white; border-left: 3px solid #42A5F5; }
-        .anno-type-badge { 
-            font-size: 10px; padding: 2px 4px; background: #444; 
-            border-radius: 3px; margin-right: 5px; color: #aaa; 
-            min-width: 30px; text-align: center; display: inline-block;
-        }
-        .radio-grp { display: flex; gap: 10px; font-size: 12px; color: #ccc; align-items: center; margin-bottom: 5px;}
-        .radio-grp input { width: auto; cursor: pointer; }
-        select { background: #333; color: white; border: 1px solid #555; padding: 4px; border-radius: 4px; }
-
-    </style>
-    
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://esm.sh/three@0.160.0",
-                "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/",
-                "three-bvh-csg": "https://esm.sh/three-bvh-csg@0.0.16?deps=three@0.160.0",
-                "firebase-app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+        
+        /* --- ★★★ 手機版響應式設定 (關鍵修改) ★★★ --- */
+        @media (max-width: 768px) {
+            body { 
+                flex-direction: column; /* 改為垂直排列 */
+                height: auto; /* 高度自動，允許捲動 */
+                overflow-y: auto; 
             }
+            #sidebar { 
+                width: 100% !important; /* 寬度佔滿 */
+                max-width: 100%; 
+                height: auto; 
+                max-height: 50vh; /* 限制高度，避免佔據整個畫面 */
+                border-right: none; 
+                border-bottom: 2px solid #444;
+            }
+            #resizer { display: none; } /* 手機版隱藏拉桿 */
+            #main-area { 
+                width: 100%; 
+                height: 600px; /* 給畫布足夠空間 */
+                padding: 10px;
+                display: block; /* 讓 canvas 可以置中 */
+                text-align: center;
+            }
+            .home-btn { top: 10px; left: 10px; padding: 4px 8px; font-size: 11px; }
         }
-    </script>
+
+        /* 元件樣式 */
+        h2 { margin: 0 0 5px 0; color: #4FC3F7; font-size: 18px; }
+        h3 { margin: 15px 0 5px 0; color: #bbb; font-size: 14px; border-bottom: 1px solid #444; padding-bottom: 2px;}
+        .control-group { background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; }
+        label { display: block; margin-bottom: 3px; font-size: 12px; color: #aaa; }
+        input[type="text"], input[type="number"], select { background: #333; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 13px; }
+        
+        /* 列表樣式調整 */
+        #layer-list { display: flex; flex-direction: column; gap: 6px; }
+        .layer-item { background: #333; border-radius: 4px; padding: 6px; border-left: 4px solid #666; font-size: 13px; }
+        .layer-main-row { display: flex; align-items: center; gap: 4px; }
+        
+        /* 移動按鈕樣式 */
+        .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
+        .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
+        .btn-tiny:hover { background: #666; }
+
+        .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 4px; }
+        .layer-details { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #555; grid-template-columns: 1fr 1fr 1fr; gap: 5px; align-items: end; }
+        .layer-item.open .layer-details { display: grid; }
+        .btn-toggle-details { cursor: pointer; color: #888; font-size: 14px; padding: 4px; border-radius: 4px; background: #2a2a2a; text-align: center; width: 20px;}
+        .btn-toggle-details.active { background: #1976D2; color: white; }
+        input[type="color"] { border: none; width: 24px; height: 24px; cursor: pointer; background: none; padding: 0; }
+        .btn-icon { cursor: pointer; color: #888; font-size: 16px; padding: 2px; }
+        .btn-del:hover { color: #ff5252; }
+        
+        .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
+        
+        button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
+        button:hover { background-color: #666; }
+        .btn-ppt { background-color: #E65100; border-color: #EF6C00; font-weight: bold; }
+        .btn-img { background-color: #1976D2; border-color: #1565C0; }
+        .btn-add { background-color: #43A047; border-color: #2E7D32; }
+        
+        .btn-save-cloud { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
+        .btn-del-cloud { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
+        .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
+
+        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
+        #fileInput { display: none; }
+        canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; max-width: 100%; }
+        
+        #loading-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.85); color: white; display: none;
+            justify-content: center; align-items: center; z-index: 9999; flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid #333; border-top: 4px solid #4FC3F7; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
 
-<div id="loader">☁️ 系統連線中...</div>
-<div id="snap-hint">模式提示</div>
-
-<div id="label-container"></div>
-<canvas id="leader-canvas"></canvas>
-<canvas id="impact-canvas" width="512" height="512"></canvas>
-
-<div id="modal-save" class="modal-overlay">
-    <div class="modal">
-        <h3 style="margin:0;color:#4FC3F7">💾 儲存至雲端</h3>
-        <div style="background:#111; padding:10px; border-radius:4px; text-align:center;">
-            <img id="save-preview-img" style="max-width:100%; max-height:200px; border:1px solid #444;">
-        </div>
-        <input type="text" id="save-name" placeholder="專案名稱" style="width:96%; padding:10px; background:#111; border:1px solid #555; color:white;">
-        <textarea id="save-desc" rows="2" placeholder="描述 (選填)..." style="width:96%; padding:10px; background:#111; border:1px solid #555; color:white; resize:none;"></textarea>
-        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-            <button class="tool-btn" onclick="document.getElementById('modal-save').style.display='none'">取消</button>
-            <button class="action-btn" style="margin:0; width:auto; background:#E65100" onclick="confirmSave()">確認上傳</button>
-        </div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text" style="font-size: 18px;">☁️ 連線中...</div>
     </div>
-</div>
 
-<div id="modal-load" class="modal-overlay">
-    <div class="modal" style="height: 700px; width: 700px;">
-        <h3 style="margin:0;color:#4FC3F7">📂 雲端專案庫</h3>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input type="text" id="search-proj" placeholder="搜尋專案..." oninput="filterProjects()" style="flex:1;">
-        </div>
-        <div id="project-list" style="overflow-y:auto; flex:1; padding-right:5px;">
-            <div style="text-align:center; padding:20px; color:#666;">載入中...</div>
-        </div>
-        <button class="tool-btn" onclick="document.getElementById('modal-load').style.display='none'" style="align-self:flex-end;">關閉</button>
-    </div>
-</div>
+    <a href="index.html" class="home-btn">🏠</a>
 
-<div id="view-controls">
-    <div class="view-btn" onclick="setView('top')">上</div>
-    <div class="view-btn" onclick="setView('front')">前</div>
-    <div class="view-btn" onclick="setView('side')">右</div>
-    <div class="view-btn" onclick="setView('iso')">ISO</div>
-</div>
+    <div id="sidebar">
+        <h2>📚 疊構資料庫 (Mobile)</h2>
 
-<div id="gizmo-panel">
-    <div style="font-size:12px;color:#aaa;text-align:center">變換控制</div>
-    <div class="gizmo-row">
-        <button class="gizmo-btn active" id="mode-translate" onclick="setGizmoMode('translate')">移動 Move</button>
-        <button class="gizmo-btn" id="mode-rotate" onclick="setGizmoMode('rotate')">旋轉 Rot</button>
-    </div>
-    <div class="gizmo-row">
-        <button class="gizmo-btn" onclick="setGizmoAxis('X')">X</button>
-        <button class="gizmo-btn" onclick="setGizmoAxis('Y')">Y</button>
-        <button class="gizmo-btn" onclick="setGizmoAxis('Z')">Z</button>
-    </div>
-    <button class="gizmo-btn" onclick="setGizmoAxis(null)" style="width:100%;margin-top:2px">自由 (Free)</button>
-</div>
-
-<div id="sidebar">
-    <div class="header-area">
-        <div class="app-title">
-            <span>Cutting 3D Pro</span>
+        <div class="control-group" style="border-left: 4px solid #00897B;">
+            <label style="color:#80CBC4">☁️ 雲端專案存取</label>
+            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                <input type="text" id="projName" placeholder="專案名稱" style="flex:1">
+                <button class="btn-save-cloud" onclick="window.saveToCloud()">存</button>
+            </div>
             <div style="display:flex; gap:5px;">
-                <button class="tool-btn" onclick="initFromDefault()" title="初始化 (載入預設)">🔄 重置</button>
-                <button class="tool-btn" onclick="openLoadModal()" title="開啟雲端專案">📂</button>
-                <button class="tool-btn" style="background:#E65100" onclick="openSaveModal()" title="儲存專案">💾</button>
+                <select id="savedProjects" onchange="window.loadFromCloud()" style="flex:1">
+                    <option value="">-- 初始化中 --</option>
+                </select>
+                <button class="btn-del-cloud" onclick="window.deleteFromCloud()">🗑️</button>
             </div>
         </div>
         
-        <div class="export-row">
-             <button class="export-btn" onclick="exportImage()">📷 存圖 (PPT)</button>
-             <button class="export-btn" onclick="exportCSV()">📊 匯出 (Excel)</button>
+        <div class="project-btns">
+            <button class="btn-clear" onclick="window.newProject()">清空</button>
+            <button class="btn-proj" onclick="window.exportJSON()">備份</button>
+            <button class="btn-proj" onclick="document.getElementById('fileInput').click()">讀取</button>
+            <input type="file" id="fileInput" accept=".json" onchange="window.importJSON(this)">
         </div>
 
-        <span class="control-bar-label">👁️ 顯示/隱藏</span>
-        <div class="vis-bar">
-            <div class="vis-btn active" onclick="toggleVis('jig',this)" title="治具">Jig</div>
-            <div class="vis-btn active" onclick="toggleVis('sample',this)" title="樣品">Sample</div>
-            <div class="vis-btn active" onclick="toggleVis('blade',this)" title="刀具">Blade</div>
-            <div class="vis-btn active" onclick="toggleVis('nozzle',this)" title="噴頭">Nozzle</div>
-            <div class="vis-btn active" onclick="toggleVis('anno',this)" title="標註">Label</div>
-        </div>
-
-        <span class="control-bar-label">🎯 選擇編輯對象 (移動/調整)</span>
-        <div class="vis-bar" style="background:#1a1a1a; border-color:#2979FF;">
-            <div id="sel-nozzle" class="sel-btn active" onclick="selectActiveObj('nozzle')">Nozzle</div>
-            <div id="sel-blade" class="sel-btn" onclick="selectActiveObj('blade')">Blade</div>
-            <div id="sel-sample" class="sel-btn" onclick="selectActiveObj('sample')">Sample</div>
-            <div id="sel-jig" class="sel-btn" onclick="selectActiveObj('jig')">Jig</div>
-        </div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('dims')">📏 尺寸</button>
-        <button class="tab-btn" onclick="switchTab('trans')">🔄 變換</button>
-        <button class="tab-btn" onclick="switchTab('anno')">📝 標註</button>
-        <button class="tab-btn" onclick="switchTab('sim')">⚙️ 模擬</button>
-    </div>
-
-    <div id="tab-dims" class="tab-content active">
-        <div id="dims-jig" class="group" style="display:none">
-            <span class="group-title">
-                治具參數 
-                <input type="color" id="col_jig" value="#9C27B0" onchange="updateObjColor('jig', this.value)" title="更改顏色">
-            </span>
-            <div class="row"><label>高度 H</label><input type="number" id="val_j_h" onchange="updateVal('j_h',this.value)"><input type="range" id="rng_j_h" min="1" max="100" step="0.1" oninput="updateVal('j_h',this.value)"></div>
-            <div class="row"><label>角度 A</label><input type="number" id="val_j_a" onchange="updateVal('j_a',this.value)"><input type="range" id="rng_j_a" min="5" max="89" step="1" oninput="updateVal('j_a',this.value)"></div>
-            <div class="row"><label>深度 Z</label><input type="number" id="val_j_w" onchange="updateVal('j_w',this.value)"><input type="range" id="rng_j_w" min="1" max="100" step="0.1" oninput="updateVal('j_w',this.value)"></div>
-        </div>
-        <div id="dims-sample" class="group" style="display:none">
-            <span class="group-title">
-                樣品參數
-                <input type="color" id="col_sample" value="#2196F3" onchange="updateObjColor('sample', this.value)" title="更改顏色">
-            </span>
-            <div class="row"><label>長度 L</label><input type="number" id="val_s_l" onchange="updateVal('s_l',this.value)"><input type="range" id="rng_s_l" min="1" max="100" step="0.1" oninput="updateVal('s_l',this.value)"></div>
-            <div class="row" id="row-s-th"><label>厚度 T</label><input type="number" id="val_s_th" onchange="updateVal('s_th',this.value)"><input type="range" id="rng_s_th" min="0.1" max="20" step="0.01" oninput="updateVal('s_th',this.value)"></div>
-            <div class="row"><label>寬度 Z</label><input type="number" id="val_s_w" onchange="updateVal('s_w',this.value)"><input type="range" id="rng_s_w" min="1" max="100" step="0.1" oninput="updateVal('s_w',this.value)"></div>
-            <div class="row"><label>滑動 P</label><input type="number" id="val_s_t" onchange="updateVal('s_t',this.value)"><input type="range" id="rng_s_t" min="0" max="1" step="0.01" oninput="updateVal('s_t',this.value)"></div>
-        </div>
-        <div id="dims-blade" class="group" style="display:none">
-            <span class="group-title">
-                刀具參數
-                <input type="color" id="col_blade" value="#FFC107" onchange="updateObjColor('blade', this.value)" title="更改顏色">
-            </span>
-            <div class="row"><label>刀厚 X</label><input type="number" id="val_b_t" onchange="updateVal('b_t',this.value)"><input type="range" id="rng_b_t" min="0.01" max="10" step="0.01" oninput="updateVal('b_t',this.value)"></div>
-            <div class="row"><label>刀寬 Z</label><input type="number" id="val_b_w" onchange="updateVal('b_w',this.value)"><input type="range" id="rng_b_w" min="1" max="100" step="0.1" oninput="updateVal('b_w',this.value)"></div>
-            <div class="row"><label>切深 Y</label><input type="number" id="val_b_d" onchange="updateVal('b_d',this.value)"><input type="range" id="rng_b_d" min="0" max="100" step="0.1" oninput="updateVal('b_d',this.value)"></div>
-        </div>
-        <div id="dims-nozzle" class="group">
-            <span class="group-title">
-                噴頭參數
-                <input type="color" id="col_nozzle" value="#9E9E9E" onchange="updateObjColor('nozzle', this.value)" title="更改顏色">
-            </span>
-            <div style="font-size:12px;color:#888;">標準噴頭，無尺寸設定。請使用變換工具移動。</div>
-        </div>
-    </div>
-
-    <div id="tab-trans" class="tab-content">
-        <button id="btn-snap" class="action-btn" style="background:#FF9800; margin-bottom:10px;" onclick="toggleSnapMode()">🧲 表面吸附對齊 (Snap)</button>
-        <div class="group">
-            <span class="group-title" style="color:#00E676;">位置 (mm)</span>
-            <div class="row"><label>X</label><input type="number" id="t_px" onchange="updateTransFromInput()"><input type="range" id="rg_px" min="-50" max="50" oninput="document.getElementById('t_px').value=this.value;updateTransFromInput()"></div>
-            <div class="row"><label>Y</label><input type="number" id="t_py" onchange="updateTransFromInput()"><input type="range" id="rg_py" min="-50" max="50" oninput="document.getElementById('t_py').value=this.value;updateTransFromInput()"></div>
-            <div class="row"><label>Z</label><input type="number" id="t_pz" onchange="updateTransFromInput()"><input type="range" id="rg_pz" min="-50" max="50" oninput="document.getElementById('t_pz').value=this.value;updateTransFromInput()"></div>
-        </div>
-        <div class="group">
-            <span class="group-title" style="color:#FFC107;">旋轉 (°)</span>
-            <div class="row"><label>X</label><input type="number" id="t_rx" onchange="updateTransFromInput()"><input type="range" id="rg_rx" min="-180" max="180" oninput="document.getElementById('t_rx').value=this.value;updateTransFromInput()"></div>
-            <div class="row"><label>Y</label><input type="number" id="t_ry" onchange="updateTransFromInput()"><input type="range" id="rg_ry" min="-180" max="180" oninput="document.getElementById('t_ry').value=this.value;updateTransFromInput()"></div>
-            <div class="row"><label>Z</label><input type="number" id="t_rz" onchange="updateTransFromInput()"><input type="range" id="rg_rz" min="-180" max="180" oninput="document.getElementById('t_rz').value=this.value;updateTransFromInput()"></div>
-        </div>
-    </div>
-
-    <div id="tab-anno" class="tab-content">
-        <div class="group" style="border-left: 3px solid #E91E63;">
-            <span class="group-title" style="color:#E91E63;">標註工具 (Annotation)</span>
-            <div class="row" style="gap:2px;">
-                <button id="btn-anno-text" class="vis-btn" onclick="setAnnoMode('text')">🔤 文字</button>
-                <button id="btn-anno-line" class="vis-btn" onclick="setAnnoMode('line')">📏 拉線</button>
-                <button id="btn-anno-edge" class="vis-btn" onclick="setAnnoMode('edge')">📐 邊緣</button>
-            </div>
-            
-            <div style="background:#222; padding:5px; border-radius:4px; margin-top:5px;">
-                <div style="font-size:12px; color:#4FC3F7; font-weight:bold; margin-bottom:4px;">📏 定向定長標示</div>
-                
-                <div class="row">
-                    <label style="width:30px">長度</label>
-                    <input type="number" id="dir-len" value="20" style="width:60px;">
-                </div>
-
-                <div class="radio-grp">
-                    <input type="radio" name="dir-mode" id="dm-manual" value="manual" onchange="toggleDirUI()">
-                    <label for="dm-manual" style="width:auto; text-align:left;">手動向量 (X,Y,Z)</label>
-                </div>
-                <div id="dir-manual-ui" style="display:none; padding-left:15px; margin-bottom:5px;">
-                    <div class="row"><label style="width:15px">X</label><input type="number" id="dir-x" value="0" step="0.1"><label style="width:15px">Y</label><input type="number" id="dir-y" value="1" step="0.1"><label style="width:15px">Z</label><input type="number" id="dir-z" value="0" step="0.1"></div>
-                </div>
-
-                <div class="radio-grp">
-                    <input type="radio" name="dir-mode" id="dm-mouse" value="mouse" checked onchange="toggleDirUI()">
-                    <label for="dm-mouse" style="width:auto; text-align:left;">滑鼠指向 (點擊起點->移動方向)</label>
-                </div>
-
-                <button id="btn-anno-dir" class="vis-btn" style="margin-top:5px; border-color:#0288D1; color:#0288D1;" onclick="startDirTool()">啟動工具</button>
-            </div>
-
-            <div class="row" style="margin-top:5px;">
-                <button class="vis-btn" style="background:#444;" onclick="clearAnnotations()">🗑️ 清除所有</button>
-                <button class="vis-btn" style="background:#444;" onclick="deleteLastAnnotation()">↩️ 復原</button>
+        <div class="control-group">
+            <label>全域設定</label>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="unitInput" value="um" placeholder="單位" oninput="window.draw()" style="flex:0.5">
+                <input type="number" id="canvasWidth" value="450" placeholder="寬" oninput="window.resizeCanvas()" style="flex:1">
+                <input type="number" id="globalFontSize" value="14" placeholder="字體" oninput="window.draw()" style="flex:0.5">
             </div>
         </div>
 
-        <div style="font-size:12px; color:#aaa; margin-bottom:5px;">標註清單 (點擊下方項目編輯)</div>
-        <div id="anno-list-container"></div>
+        <h3>1. 層次 (用上下鍵排序)</h3>
+        <button class="btn-add" onclick="window.addLayer()">➕ 新增一層 (Top)</button>
+        
+        <div id="layer-list" style="margin-top:5px;"></div>
 
-        <div id="selected-anno-props" class="group" style="display:none; border-color:#2979FF;">
-            <span class="group-title" style="color:#2979FF;">編輯選取項目</span>
-            <div class="row"><label>文字</label><input type="text" id="sa-text" oninput="updateSelectedAnno()"></div>
-            <div class="row"><label>大小</label><input type="range" id="sa-font-size" min="10" max="40" oninput="updateSelectedAnno()"></div>
-            <div class="row"><label>字色</label><input type="color" id="sa-text-color" oninput="updateSelectedAnno()"></div>
-            <div class="row"><label>背景</label><input type="color" id="sa-bg-color" oninput="updateSelectedAnno()"></div>
-            <div class="row"><label>透明度</label><input type="range" id="sa-opacity" min="0" max="1" step="0.1" oninput="updateSelectedAnno()"></div>
-            
-            <div id="sa-line-props">
-                <hr style="border-color:#444; margin:5px 0;">
-                <div class="row"><label>線粗</label><input type="range" id="sa-line-width" min="0.1" max="5" step="0.1" oninput="updateSelectedAnno()"></div>
-                <div class="row"><label>線色</label><input type="color" id="sa-line-color" oninput="updateSelectedAnno()"></div>
+        <h3>2. 標註</h3>
+        <div class="control-group">
+            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                <select id="dimStart"></select> <span>至</span> <select id="dimEnd"></select>
             </div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="dimLabel" placeholder="文字(選填)">
+                <input type="number" id="dimOffset" value="50" placeholder="偏移">
+            </div>
+            <button onclick="window.addDimension()">➕ 新增標註</button>
         </div>
+        <div id="dim-list" style="margin-top:5px;"></div>
+
+        <div style="margin-top: 10px;"></div>
+        <button class="btn-img" onclick="window.downloadImage()">💾 存圖</button>
+        <button class="btn-ppt" onclick="window.downloadPPT()">📊 存 PPT</button>
     </div>
 
-    <div id="tab-sim" class="tab-content">
-        <div class="group" style="border-left: 3px solid #00B0FF;">
-            <span class="group-title" style="color:#00B0FF;">💦 噴水系統</span>
-            <button id="btn-water" class="action-btn" style="background:#0277bd" onclick="toggleWater()">ON / OFF</button>
-            <div class="row" style="margin-top:5px"><label>水壓</label><input type="range" id="w_pressure" min="0" max="200" value="80"></div>
-            <div class="row"><label>擴散</label><input type="range" id="w_spread" min="0" max="45" value="5" oninput="waterSpread=this.value"></div>
-            <div class="row"><label>衝擊顯示</label><select id="water-target" onchange="changeWaterTarget(this.value)" style="flex:1;background:#333;color:white;"><option value="none">無 (穿透)</option><option value="sample" selected>Sample (熱力圖)</option><option value="jig">Jig (熱力圖)</option></select></div>
-        </div>
-
-        <div class="group" style="border-left: 3px solid #FF9800;">
-            <span class="group-title" style="color:#FF9800;">🎯 切割 Boolean</span>
-            <div class="row"><label>目標</label><select id="target-select" onchange="updateModel()" style="flex:1;background:#333;color:white;"><option value="none">不切割</option><option value="sample" selected>切樣品</option><option value="jig">切治具</option></select></div>
-            <button class="action-btn" style="background:#444" onclick="toggleWireframe()">切換網格</button>
-        </div>
-    </div>
-</div>
-
-<div id="canvas-container"></div>
-
-<script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { TransformControls } from 'three/addons/controls/TransformControls.js';
-    import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
-    import { initializeApp } from 'firebase-app';
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy } from 'firebase-firestore';
-
-    // --- Firebase Config ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-        authDomain: "stack-diagram-db.firebaseapp.com",
-        projectId: "stack-diagram-db",
-        storageBucket: "stack-diagram-db.firebasestorage.app",
-        messagingSenderId: "67240747982",
-        appId: "1:67240747982:web:1fb065e40e936a7485419f"
-    };
-    
-    let db = null;
-    try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        console.log("🔥 Firebase Initialized");
-    } catch (e) { console.error("Firebase init failed", e); }
-
-    // --- State & Defaults ---
-    const defaultParams = {
-        j_h: 5, j_a: 45, j_w: 20,
-        s_t: 0.5, s_l: 10, s_th: 0.8, s_w: 15, s_r: 0,
-        b_t: 0.5, b_w: 25, b_d: 3.0
-    };
-    const defaultTransforms = {
-        jig: { px:0, py:0, pz:0, rx:0, ry:0, rz:0 },
-        sample: { px:0, py:0, pz:0, rx:0, ry:0, rz:0 },
-        blade: { px:0, py:20, pz:0, rx:0, ry:0, rz:0 },
-        nozzle: { px:5, py:15, pz:0, rx:0, ry:0, rz:-0.78 }
-    };
-
-    let params = {...defaultParams};
-    let transforms = JSON.parse(JSON.stringify(defaultTransforms));
-    let currentObj = 'nozzle';
-    let waterEnabled = false;
-    let waterSpread = 5;
-    let snapMode = false;
-    
-    // Annotation State (Updated)
-    let annoMode = null; 
-    let annotations = []; 
-    let selectedAnnoId = null; // 追蹤目前選中的標註
-    let annoCounter = 1;       // 用於給予唯一 ID
-    let tempPoints = [];
-    let hoveredEdgeMesh = null;
-
-    // [新增] 預設樣式產生器
-    function getDefaultAnnoStyle() {
-        return {
-            textColor: '#ffffff', bgColor: '#000000', fontSize: 14,
-            opacity: 0.7, lineWidth: 2, lineColor: '#E91E63'
-        };
-    }
-    
-    // --- 3D Scene Setup ---
-    const container = document.getElementById('canvas-container');
-    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x1a1a1a);
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
-    camera.position.set(35,35,45); camera.lookAt(0,0,0);
-    const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    container.appendChild(renderer.domElement);
-
-    scene.add(new THREE.AmbientLight(0x404040, 1.5));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(20,50,20); 
-    dirLight.castShadow=true; dirLight.shadow.mapSize.set(2048,2048); scene.add(dirLight);
-    
-    // Add Camera Light (Headlight) for Cylinders (Shiny effect)
-    const camLight = new THREE.PointLight(0xffffff, 0.6);
-    camera.add(camLight);
-    scene.add(camera);
-
-    scene.add(new THREE.GridHelper(200, 200, 0x333333, 0x222222));
-    scene.add(new THREE.AxesHelper(5));
-
-    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping=true;
-    const tControls = new TransformControls(camera, renderer.domElement);
-    tControls.addEventListener('dragging-changed', e => controls.enabled = !e.value);
-    tControls.addEventListener('change', () => {
-        if(!tControls.object) return;
-        const o=tControls.object; const k=currentObj;
-        transforms[k].px=o.position.x; transforms[k].py=o.position.y; transforms[k].pz=o.position.z;
-        transforms[k].rx=o.rotation.x; transforms[k].ry=o.rotation.y; transforms[k].rz=o.rotation.z;
-        updateTransformUI();
-        if(k!=='nozzle' && document.getElementById('target-select').value!=='none') updateModel(); 
-    });
-    scene.add(tControls);
-
-    // Groups
-    const jigGroup=new THREE.Group(); scene.add(jigGroup);
-    const sampleGroup=new THREE.Group(); jigGroup.add(sampleGroup); 
-    const bladeGroup=new THREE.Group(); scene.add(bladeGroup);
-    const nozzleGroup=new THREE.Group(); scene.add(nozzleGroup);
-    const annoGroup=new THREE.Group(); scene.add(annoGroup); 
-
-    // Materials
-    const matJig=new THREE.MeshStandardMaterial({color:0x9C27B0, roughness:0.3});
-    const matSample=new THREE.MeshStandardMaterial({color:0x2196F3, roughness:0.2});
-    const matBlade=new THREE.MeshStandardMaterial({color:0xFFC107, roughness:0.1, metalness:0.8});
-    const matNozzle=new THREE.MeshStandardMaterial({color:0x9E9E9E});
-
-    // Nozzle Model
-    const nCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,2), matNozzle); nCyl.position.y=1.5;
-    const nCone = new THREE.Mesh(new THREE.ConeGeometry(0.5,1,32,1,true), matNozzle); nCone.rotation.x=Math.PI; nCone.position.y=0.5;
-    const nozMesh = new THREE.Group(); nozMesh.add(nCyl,nCone); nozzleGroup.add(nozMesh);
-
-    let brushJig, brushBlade, sampleBrushes=[], resultMesh, isWireframe=false;
-    const evaluator = new Evaluator();
-
-    // Heatmap
-    const impactCanvas = document.getElementById('impact-canvas');
-    const impactCtx = impactCanvas.getContext('2d');
-    impactCtx.fillStyle = 'black'; impactCtx.fillRect(0, 0, 512, 512);
-    const impactTexture = new THREE.CanvasTexture(impactCanvas);
-    let impactTargetMesh = null;
-    let originalMaterial = null;
-
-    // Raycaster
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    // --- Leader Line System (2D Canvas) ---
-    const leaderCanvas = document.getElementById('leader-canvas');
-    const leaderCtx = leaderCanvas.getContext('2d');
-    
-    function resizeLeaderCanvas() {
-        leaderCanvas.width = window.innerWidth;
-        leaderCanvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeLeaderCanvas);
-    resizeLeaderCanvas();
-
-    function drawLeaderLines() {
-        leaderCtx.clearRect(0, 0, leaderCanvas.width, leaderCanvas.height);
-        leaderCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-        leaderCtx.lineWidth = 1.5;
-        leaderCtx.beginPath();
-
-        annotations.forEach(a => {
-            if(a.dom && a.pos && (a.offsetX !== 0 || a.offsetY !== 0)) {
-                // Calculate 3D point projected
-                const tempV = a.pos.clone();
-                tempV.project(camera);
-                
-                // If point is behind camera, ignore
-                if(Math.abs(tempV.z) > 1) return;
-
-                const originX = (tempV.x * .5 + .5) * leaderCanvas.width;
-                const originY = (tempV.y * -.5 + .5) * leaderCanvas.height;
-
-                // Div Center
-                const rect = a.dom.getBoundingClientRect();
-                const divX = rect.left + rect.width / 2;
-                const divY = rect.top + rect.height / 2;
-
-                leaderCtx.moveTo(originX, originY);
-                leaderCtx.lineTo(divX, divY);
-            }
-        });
-        leaderCtx.stroke();
-    }
-
-    // --- Export Functions ---
-    window.exportImage = () => {
-        // 1. 暫時移除控制搖桿
-        const savedObj = tControls.object;
-        tControls.detach();
-        
-        // 2. 暫時隱藏輔助網格與軸 (可選，讓畫面更乾淨)
-        // const grid = scene.children.find(c => c.type === 'GridHelper'); if(grid) grid.visible = false;
-        
-        // 3. 渲染
-        renderer.render(scene, camera);
-        
-        // 4. 下載
-        const link = document.createElement('a');
-        link.download = `cutting_3d_view_${new Date().toISOString().slice(0,19).replace(/:/g,"-")}.png`;
-        link.href = renderer.domElement.toDataURL('image/png');
-        link.click();
-        
-        // 5. 恢復控制搖桿
-        if(savedObj) tControls.attach(savedObj);
-        // if(grid) grid.visible = true;
-    };
-    window.toggleDirUI = () => {
-        const mode = document.querySelector('input[name="dir-mode"]:checked').value;
-        document.getElementById('dir-manual-ui').style.display = (mode === 'manual') ? 'flex' : 'none';
-    };
-
-    window.startDirTool = () => {
-        const mode = document.querySelector('input[name="dir-mode"]:checked').value;
-        setAnnoMode(mode === 'manual' ? 'dir_manual' : 'dir_mouse');
-    };
-
-    window.exportCSV = () => {
-        let csv = "Category,Parameter,Value\n";
-        
-        // Params
-        for(let k in params) {
-            csv += `Dimension,${k},${params[k]}\n`;
-        }
-        
-        // Transforms
-        for(let obj in transforms) {
-            for(let axis in transforms[obj]) {
-                csv += `Transform,${obj}_${axis},${transforms[obj][axis]}\n`;
-            }
-        }
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "cutting_3d_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    // --- Object Color Change ---
-    window.updateObjColor = (type, hexColor) => {
-        let mat = null;
-        if(type === 'jig') mat = matJig;
-        if(type === 'sample') mat = matSample;
-        if(type === 'blade') mat = matBlade;
-        if(type === 'nozzle') mat = matNozzle;
-
-        if(mat) {
-            mat.color.set(hexColor);
-            // Re-trigger update if needed (mostly for CSG results which might share material)
-            updateModel();
-        }
-    };
-
-    // --- Annotation Logic ---
-    window.setAnnoMode = (mode) => {
-        annoMode = (annoMode === mode) ? null : mode;
-        document.querySelectorAll('#tab-anno .vis-btn').forEach(b=>b.classList.remove('active'));
-        
-        // 更新按鈕狀態
-        if(mode) {
-            if(mode.startsWith('dir')) document.getElementById('btn-anno-dir').classList.add('active');
-            else document.getElementById('btn-anno-'+mode).classList.add('active');
-        }
-        
-        const hint = document.getElementById('snap-hint');
-        if(annoMode) {
-            hint.style.display = 'block';
-            if(mode==='text') hint.innerText = "🔤 點擊表面新增文字";
-            if(mode==='line') hint.innerText = "📏 點擊兩點拉線";
-            if(mode==='edge') hint.innerText = "📐 靠近邊緣 (黃色預覽)，點擊固定";
-            if(mode==='dir_manual') hint.innerText = "📏 點擊 3D 位置放置固定向量";
-            if(mode==='dir_mouse') hint.innerText = "📏 點擊起點 -> 移動決定方向 -> 再次點擊固定";
-            tControls.detach();
-        } else {
-            hint.style.display = 'none';
-            if(hoveredEdgeMesh) { annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh=null; }
-            tempPoints = [];
-            selectActiveObj(currentObj); 
-        }
-    };
-
-    // 選取標註並填入面板
-    window.selectAnno = (id) => {
-        selectedAnnoId = id;
-        renderAnnoList(); // 更新清單高亮
-        const anno = annotations.find(a => a.id === id);
-        if(!anno) return;
-
-        // 顯示面板並填入數值
-        document.getElementById('selected-anno-props').style.display = 'block';
-        document.getElementById('sa-text').value = anno.dom ? anno.dom.querySelector('input').value : '';
-        document.getElementById('sa-font-size').value = anno.style.fontSize;
-        document.getElementById('sa-text-color').value = anno.style.textColor;
-        document.getElementById('sa-bg-color').value = anno.style.bgColor;
-        document.getElementById('sa-opacity').value = anno.style.opacity;
-        
-        // 如果是線條，顯示線條設定
-        const lineProps = document.getElementById('sa-line-props');
-        if(anno.type !== 'text') {
-            lineProps.style.display = 'block';
-            document.getElementById('sa-line-width').value = anno.style.lineWidth;
-            document.getElementById('sa-line-color').value = anno.style.lineColor;
-        } else {
-            lineProps.style.display = 'none';
-        }
-    };
-
-    // 當面板數值改變時觸發
-    window.updateSelectedAnno = () => {
-        if(!selectedAnnoId) return;
-        const anno = annotations.find(a => a.id === selectedAnnoId);
-        if(!anno) return;
-
-        // 更新資料
-        anno.style.fontSize = document.getElementById('sa-font-size').value;
-        anno.style.textColor = document.getElementById('sa-text-color').value;
-        anno.style.bgColor = document.getElementById('sa-bg-color').value;
-        anno.style.opacity = document.getElementById('sa-opacity').value;
-        anno.style.lineWidth = document.getElementById('sa-line-width').value;
-        anno.style.lineColor = document.getElementById('sa-line-color').value;
-
-        // 應用到 DOM (文字)
-        if(anno.dom) {
-            const input = anno.dom.querySelector('input');
-            if(input && document.activeElement !== input) input.value = document.getElementById('sa-text').value;
-            
-            anno.dom.style.fontSize = anno.style.fontSize + 'px';
-            anno.dom.style.color = anno.style.textColor;
-            // Hex to RGBA
-            const c = anno.style.bgColor;
-            const r=parseInt(c.slice(1,3),16), g=parseInt(c.slice(3,5),16), b=parseInt(c.slice(5,7),16);
-            anno.dom.style.backgroundColor = `rgba(${r},${g},${b},${anno.style.opacity})`;
-        }
-
-        // 應用到 3D (線條/圓柱)
-        if(anno.obj) {
-            anno.obj.material.color.set(anno.style.lineColor);
-            anno.obj.material.opacity = anno.style.opacity;
-            const scale = anno.style.lineWidth * 0.1;
-            anno.obj.scale.set(scale, 1, scale); // 圓柱縮放半徑 (Y是長度不變)
-        }
-        renderAnnoList();
-    };
-
-    // 渲染左側清單
-    function renderAnnoList() {
-        const container = document.getElementById('anno-list-container');
-        container.innerHTML = '';
-        annotations.forEach(a => {
-            const div = document.createElement('div');
-            div.className = `anno-item ${a.id === selectedAnnoId ? 'selected' : ''}`;
-            const label = a.dom ? a.dom.querySelector('input').value : '---';
-            div.innerHTML = `<span class="anno-type-badge">${a.type}</span> <span>${label}</span>`;
-            div.onclick = () => selectAnno(a.id);
-            container.appendChild(div);
-        });
-    }
-
-    window.updateAnnoStyle = () => {
-        const thicknessScale = parseFloat(document.getElementById('anno-line-width').value) * 0.2;
-        const color = document.getElementById('anno-line-color').value;
-        const textColor = document.getElementById('anno-text-color').value;
-        const bgColor = document.getElementById('anno-bg-color').value;
-        const textSize = document.getElementById('anno-font-size').value;
-        const opacity = parseFloat(document.getElementById('anno-opacity').value);
-
-        annotations.forEach(a => {
-            // Update 3D Lines (Scaling X and Y only)
-            if((a.type === 'line' || a.type === 'edge') && a.obj) {
-                // FIXED: Scale Thickness (X, Y) but keep Length (Z) intact (1)
-                a.obj.scale.set(thicknessScale, thicknessScale, 1);
-                a.obj.material.color.set(color);
-                a.obj.material.opacity = opacity;
-            }
-            // Update Text
-            if(a.dom) {
-                a.dom.style.color = textColor;
-                a.dom.style.fontSize = textSize + 'px';
-                // Convert Hex to RGBA for background opacity
-                const r = parseInt(bgColor.slice(1,3), 16), g = parseInt(bgColor.slice(3,5), 16), b = parseInt(bgColor.slice(5,7), 16);
-                a.dom.style.backgroundColor = `rgba(${r},${g},${b},${opacity})`;
-            }
-        });
-    };
-
-    window.removeAnnotation = (annoObj) => {
-        if(annoObj.obj) annoGroup.remove(annoObj.obj);
-        if(annoObj.dom) annoObj.dom.remove();
-        annotations = annotations.filter(a => a !== annoObj);
-    };
-
-    window.clearAnnotations = () => {
-        if(!confirm("確定清除所有標註?")) return;
-        annotations.forEach(a => {
-            if(a.obj) annoGroup.remove(a.obj);
-            if(a.dom) a.dom.remove();
-        });
-        annotations = [];
-        document.getElementById('label-container').innerHTML = '';
-        leaderCtx.clearRect(0,0,leaderCanvas.width, leaderCanvas.height);
-    };
-    
-    window.deleteLastAnnotation = () => {
-        if(annotations.length === 0) return;
-        const a = annotations.pop();
-        if(a.obj) annoGroup.remove(a.obj);
-        if(a.dom) a.dom.remove();
-    }
-
-    // Draggable Label Implementation
-    let dragLabel = null;
-    let dragStartPos = { x: 0, y: 0 };
-    let dragStartOffset = { x: 0, y: 0 };
-    
-    window.addEventListener('mousemove', (e) => {
-        if(dragLabel) {
-            const dx = e.clientX - dragStartPos.x;
-            const dy = e.clientY - dragStartPos.y;
-            dragLabel.offsetX = dragStartOffset.x + dx;
-            dragLabel.offsetY = dragStartOffset.y + dy;
-            updateLabels();
-        }
-    });
-    
-    window.addEventListener('mouseup', () => {
-        if(dragLabel && dragLabel.dom) dragLabel.dom.style.cursor = 'move';
-        dragLabel = null;
-    });
-
-    // Helper: Create Cylinder from P1 to P2
-    // CORRECTED: Scale only X/Y for thickness, preserve Length
-    function createCylinderLine(p1, p2, color, scaleFactor) {
-        const vec = new THREE.Vector3().subVectors(p2, p1);
-        const len = vec.length();
-        
-        // Geometry oriented along Z-axis
-        const geo = new THREE.CylinderGeometry(1, 1, len, 32);
-        geo.translate(0, len / 2, 0);
-        geo.rotateX(Math.PI / 2); // Now it lies on Z axis
-        
-        const opacity = parseFloat(document.getElementById('anno-opacity').value);
-        const mat = new THREE.MeshPhongMaterial({ 
-            color: color,
-            transparent: true,
-            opacity: opacity, 
-            depthTest: false, // ALWAYS ON TOP
-            shininess: 100
-        });
-        
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.copy(p1);
-        mesh.lookAt(p2);
-        
-        mesh.renderOrder = 999;
-        // Scale X and Y (Diameter), Z (Length) stays 1
-        mesh.scale.set(scaleFactor, scaleFactor, 1);
-        return mesh;
-    }
-
-// 統一建立標註物件的工廠函式
-    function createAnnotationObject(type, pos, obj = null, text = "Label", customStyle = null) {
-        const id = annoCounter++;
-        const style = customStyle || getDefaultAnnoStyle();
-        
-        // 建立 DOM
-        const div = document.createElement('div');
-        div.className = 'annotation-label';
-        const input = document.createElement('input');
-        input.value = text;
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '×';
-        
-        div.appendChild(input); div.appendChild(closeBtn);
-        document.getElementById('label-container').appendChild(div);
-
-        const anno = { id, type, pos: pos.clone(), obj, dom: div, style, offsetX: 0, offsetY: 0 };
-        annotations.push(anno);
-
-        // 綁定事件
-        closeBtn.onclick = (e) => { e.stopPropagation(); removeAnnotation(anno); };
-        div.addEventListener('mousedown', (e) => {
-            if(e.target===input || e.target===closeBtn) return;
-            e.preventDefault();
-            dragLabel = anno;
-            dragStartPos = { x: e.clientX, y: e.clientY };
-            dragStartOffset = { x: anno.offsetX, y: anno.offsetY };
-            div.style.cursor = 'grabbing';
-            selectAnno(anno.id); // 點擊文字時自動選取
-        });
-        div.onclick = () => selectAnno(anno.id);
-
-        // 初始化
-        selectAnno(id); 
-        updateSelectedAnno();
-        renderAnnoList();
-        updateLabels();
-        return anno;
-    }
-
-    // 滑鼠點擊邏輯 (包含功能 3 的方向選擇)
-    container.addEventListener('mousedown', (e) => {
-        if(e.button !== 0) return;
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        
-        if(annoMode) {
-            raycaster.setFromCamera(mouse, camera);
-            const targets = [jigGroup, sampleGroup, bladeGroup, resultMesh].filter(x=>x);
-            // 忽略標註層，只點擊物件
-            const intersects = raycaster.intersectObjects(targets, true);
-            const hit = intersects.find(i => i.object.visible && i.object.type === 'Mesh');
-            
-            if(hit) {
-                if(annoMode === 'text') {
-                    createAnnotationObject('text', hit.point, null, "Text");
-                    setAnnoMode(null);
-                } 
-                else if(annoMode === 'line') {
-                    tempPoints.push(hit.point);
-                    if(tempPoints.length === 2) {
-                        const mesh = createCylinderLine(tempPoints[0], tempPoints[1]);
-                        annoGroup.add(mesh);
-                        const dist = tempPoints[0].distanceTo(tempPoints[1]).toFixed(1) + "mm";
-                        const mid = tempPoints[0].clone().add(tempPoints[1]).multiplyScalar(0.5);
-                        createAnnotationObject('line', mid, mesh, dist);
-                        tempPoints = []; setAnnoMode(null);
-                    }
-                } 
-                // [功能 3] 手動 XYZ
-                else if(annoMode === 'dir_manual') {
-                    const len = parseFloat(document.getElementById('dir-len').value);
-                    const vx = parseFloat(document.getElementById('dir-x').value);
-                    const vy = parseFloat(document.getElementById('dir-y').value);
-                    const vz = parseFloat(document.getElementById('dir-z').value);
-                    const vec = new THREE.Vector3(vx, vy, vz).normalize().multiplyScalar(len);
-                    const end = hit.point.clone().add(vec);
-                    
-                    const mesh = createCylinderLine(hit.point, end);
-                    annoGroup.add(mesh);
-                    const mid = hit.point.clone().add(end).multiplyScalar(0.5);
-                    createAnnotationObject('dir', mid, mesh, len + "mm");
-                    setAnnoMode(null);
-                } 
-                // [功能 3] 滑鼠互動方向
-                else if(annoMode === 'dir_mouse') {
-                    if(tempPoints.length === 0) {
-                        // 第一點：起點
-                        tempPoints.push(hit.point);
-                        // 建立一個臨時預覽線 (黃色)
-                        hoveredEdgeMesh = createCylinderLine(hit.point, hit.point.clone().add(new THREE.Vector3(0,1,0)), 0xffff00, 0.5);
-                        annoGroup.add(hoveredEdgeMesh);
-                    } else {
-                        // 第二點：決定方向 (不一定要點在物件上，只要有方向即可)
-                        // 計算方向向量
-                        const start = tempPoints[0];
-                        const len = parseFloat(document.getElementById('dir-len').value);
-                        // 這邊使用「目前的滑鼠射線落點」來決定方向
-                        // 為了方便，我們假設第二次點擊也是點在某個物件上，或者我們可以用一個虛擬平面
-                        // 這裡沿用 hit.point 比較直覺
-                        const dir = hit.point.clone().sub(start).normalize().multiplyScalar(len);
-                        const end = start.clone().add(dir);
-                        
-                        // 建立正式物件
-                        annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh = null;
-                        const mesh = createCylinderLine(start, end);
-                        annoGroup.add(mesh);
-                        const mid = start.clone().add(end).multiplyScalar(0.5);
-                        createAnnotationObject('dir', mid, mesh, len+"mm");
-                        
-                        tempPoints = []; setAnnoMode(null);
-                    }
-                } 
-                else if(annoMode === 'edge' && hoveredEdgeMesh) {
-                    const mesh = hoveredEdgeMesh.clone();
-                    mesh.material = hoveredEdgeMesh.material.clone();
-                    mesh.material.color.setHex(0xffffff); // 預設白
-                    annoGroup.add(mesh);
-                    createAnnotationObject('edge', hit.point, mesh, "Edge");
-                    annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh = null;
-                    setAnnoMode(null);
-                }
-            }
-        }
-    });
-
-    // 滑鼠移動邏輯 (用於更新預覽)
-    container.addEventListener('mousemove', (e) => {
-        // ... (保持原有的 mouse 座標計算) ...
-        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        
-        // ... (保持原有的 dragLabel 邏輯) ...
-
-        // [功能 3] 定向標示的即時預覽
-        if(annoMode === 'dir_mouse' && tempPoints.length > 0 && hoveredEdgeMesh) {
-            raycaster.setFromCamera(mouse, camera);
-            // 這裡我們需要一個參考點來決定方向
-            // 簡單做法：射線與「以起點為中心的平面」相交，或者直接與場景物件相交
-            const targets = [jigGroup, sampleGroup, bladeGroup, resultMesh].filter(x=>x);
-            const intersects = raycaster.intersectObjects(targets, true);
-            
-            let targetPt = null;
-            if(intersects.length > 0) {
-                targetPt = intersects[0].point;
-            } else {
-                // 如果沒指到物件，就用相機方向的虛擬平面
-                const plane = new THREE.Plane();
-                const norm = new THREE.Vector3(); camera.getWorldDirection(norm);
-                plane.setFromNormalAndCoplanarPoint(norm, tempPoints[0]);
-                targetPt = new THREE.Vector3();
-                raycaster.ray.intersectPlane(plane, targetPt);
-            }
-
-            if(targetPt) {
-                const start = tempPoints[0];
-                const len = parseFloat(document.getElementById('dir-len').value);
-                const dir = targetPt.clone().sub(start).normalize().multiplyScalar(len);
-                const end = start.clone().add(dir);
-                
-                // 更新預覽線的位置與旋轉
-                // CylinderLine 是 P1 lookAt P2, 且長度固定
-                // 這裡最快的方法是刪掉舊的產生新的 (效能可接受)
-                annoGroup.remove(hoveredEdgeMesh);
-                hoveredEdgeMesh = createCylinderLine(start, end, 0xffff00, 0.5);
-                annoGroup.add(hoveredEdgeMesh);
-            }
-        }
-        // ... (保持原有的 edge 預覽邏輯) ...
-    });
-
-    function highlightEdge(mesh, faceIndex, point) {
-        if(!mesh.geometry) return;
-        
-        const geo = mesh.geometry;
-        const pos = geo.attributes.position;
-        const idx = geo.index ? geo.index.array : null;
-
-        const getV = (i) => new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld);
-        let vA, vB, vC;
-
-        if (idx) {
-            vA = getV(idx[faceIndex * 3]);
-            vB = getV(idx[faceIndex * 3 + 1]);
-            vC = getV(idx[faceIndex * 3 + 2]);
-        } else {
-            vA = getV(faceIndex * 3);
-            vB = getV(faceIndex * 3 + 1);
-            vC = getV(faceIndex * 3 + 2);
-        }
-
-        const lineAB = new THREE.Line3(vA, vB), lineBC = new THREE.Line3(vB, vC), lineCA = new THREE.Line3(vC, vA);
-        const dAB = lineAB.closestPointToPoint(point, true).distanceTo(point);
-        const dBC = lineBC.closestPointToPoint(point, true).distanceTo(point);
-        const dCA = lineCA.closestPointToPoint(point, true).distanceTo(point);
-
-        let p1, p2;
-        if(dAB <= dBC && dAB <= dCA) { p1=vA; p2=vB; }
-        else if(dBC <= dAB && dBC <= dCA) { p1=vB; p2=vC; }
-        else { p1=vC; p2=vA; }
-
-        if(hoveredEdgeMesh) annoGroup.remove(hoveredEdgeMesh);
-        
-        // Preview: Very Thick (1.0), Yellow, Opacity 0.6
-        hoveredEdgeMesh = createCylinderLine(p1, p2, 0xFFFF00, 1.0); 
-        annoGroup.add(hoveredEdgeMesh);
-        
-        return [p1, p2];
-    }
-
-    // --- Interaction ---
-
-    container.addEventListener('mousemove', (e) => {
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
-        if(annoMode === 'edge') {
-            raycaster.setFromCamera(mouse, camera);
-            // FIXED: Ignore AnnoGroup so we can 'see through' the yellow preview line
-            const objectsToIntersect = [jigGroup, sampleGroup, bladeGroup, resultMesh].filter(x=>x);
-            const intersects = raycaster.intersectObjects(objectsToIntersect, true);
-            const hit = intersects.find(i => i.object.visible && i.object.type === 'Mesh');
-            
-            if(hit) {
-                highlightEdge(hit.object, hit.faceIndex, hit.point);
-            } else {
-                if(hoveredEdgeMesh) { annoGroup.remove(hoveredEdgeMesh); hoveredEdgeMesh = null; }
-            }
-        }
-    });
-
-    function updateLabels() {
-        annotations.forEach(a => {
-            if(a.dom && a.pos) {
-                const tempV = a.pos.clone();
-                tempV.project(camera);
-                const x = (tempV.x * .5 + .5) * container.clientWidth;
-                const y = (tempV.y * -.5 + .5) * container.clientHeight;
-                
-                if(Math.abs(tempV.z) > 1) { 
-                     a.dom.style.display = 'none';
-                } else {
-                    a.dom.style.display = 'flex';
-                    const finalX = x + (a.offsetX || 0);
-                    const finalY = y + (a.offsetY || 0);
-                    a.dom.style.left = finalX + 'px';
-                    a.dom.style.top = finalY + 'px';
-                }
-            }
-        });
-        drawLeaderLines();
-    }
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        updateLabels();
-    });
-
-    // --- Object Selection ---
-    window.selectActiveObj = (val) => {
-        currentObj = val;
-        document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('sel-' + val).classList.add('active');
-        
-        tControls.detach();
-        if(val==='jig') tControls.attach(jigGroup);
-        if(val==='sample') tControls.attach(sampleGroup);
-        if(val==='blade') tControls.attach(bladeGroup);
-        if(val==='nozzle') tControls.attach(nozzleGroup);
-        
-        ['jig','sample','blade','nozzle'].forEach(k => { 
-            const el = document.getElementById('dims-'+k); 
-            if(el) el.style.display = (k===val ? 'block' : 'none'); 
-        });
-        updateTransformUI();
-    };
-
-    // --- Main Logic ---
-    window.initFromDefault = async () => {
-        const defId = localStorage.getItem('cutting3d_def_id');
-        if(defId && db) {
-           try {
-               const docSnap = await getDoc(doc(db, "projects_v6", defId));
-               if(docSnap.exists()) {
-                   loadProjectData(docSnap.data());
-                   return;
-               }
-           } catch(e) { console.warn("Default load failed"); }
-        }
-        params = {...defaultParams};
-        transforms = JSON.parse(JSON.stringify(defaultTransforms));
-        updateAllUI();
-        clearAnnotations();
-    };
-
-    window.openSaveModal = () => {
-        if(!db) return alert("資料庫未連線");
-        renderer.render(scene, camera);
-        const url = renderer.domElement.toDataURL('image/jpeg', 0.5);
-        document.getElementById('save-preview-img').src = url;
-        document.getElementById('save-name').value = "Project " + new Date().toLocaleDateString();
-        document.getElementById('modal-save').style.display = 'flex';
-    };
-
-    window.confirmSave = async () => {
-        const name = document.getElementById('save-name').value;
-        const desc = document.getElementById('save-desc').value;
-        const thumb = document.getElementById('save-preview-img').src;
-        
-        const serialAnno = annotations.map(a => {
-            if(a.type === 'text') {
-                 return { type: 'text', pos: a.pos, text: a.dom.querySelector('input').value, 
-                          offsetX: a.offsetX, offsetY: a.offsetY,
-                          style: { color: a.dom.style.color, bg: a.dom.style.backgroundColor, size: a.dom.style.fontSize }};
-            }
-            return null; 
-        }).filter(x => x);
-
-        const data = {
-            name, desc, thumb,
-            params, transforms,
-            annotations: serialAnno,
-            timestamp: serverTimestamp()
+    <div id="resizer"></div>
+    <div id="main-area"><canvas id="stackCanvas"></canvas></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } 
+               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ★★★ Firebase Config (請自行替換 API Key) ★★★
+        const firebaseConfig = {
+          apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+          authDomain: "stack-diagram-db.firebaseapp.com",
+          projectId: "stack-diagram-db",
+          storageBucket: "stack-diagram-db.firebasestorage.app",
+          messagingSenderId: "67240747982",
+          appId: "1:67240747982:web:1fb065e40e936a7485419f",
+          measurementId: "G-QJNE60W8BB"
         };
 
-        try {
-            await addDoc(collection(db, "projects_v6"), data);
-            alert("儲存成功");
-            document.getElementById('modal-save').style.display = 'none';
-        } catch(e) { alert("儲存失敗: " + e.message); }
-    };
+        let db = null;
+        let COLLECTION_NAME = "projects";
+        let isFirebaseReady = false;
 
-    let allProjects = [];
-    window.openLoadModal = async () => {
-        if(!db) return alert("資料庫未連線");
-        document.getElementById('modal-load').style.display = 'flex';
-        const list = document.getElementById('project-list');
-        list.innerHTML = '<div style="text-align:center;padding:20px;">載入中...</div>';
-        try {
-            const q = query(collection(db, "projects_v6"), orderBy("timestamp", "desc"));
-            const snapshot = await getDocs(q);
-            allProjects = [];
-            snapshot.forEach(d => allProjects.push({id: d.id, ...d.data()}));
-            filterProjects();
-        } catch(e) { list.innerHTML = '載入失敗'; }
-    };
+        function checkConfig() {
+            if (firebaseConfig.apiKey.includes("你的API_KEY")) return false;
+            return true;
+        }
 
-    window.filterProjects = () => {
-        const filter = document.getElementById('search-proj').value.toLowerCase();
-        const list = document.getElementById('project-list');
-        list.innerHTML = '';
-        const defId = localStorage.getItem('cutting3d_def_id');
-        
-        allProjects.forEach(p => {
-            if(p.name.toLowerCase().includes(filter)) {
-                const isDef = (p.id === defId);
-                const dateStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleString() : '';
-                const div = document.createElement('div'); div.className = 'project-card';
-                div.innerHTML = `
-                    <div class="default-badge ${isDef?'':'inactive'}" onclick="setDefault('${p.id}', event)" title="設為預設">★</div>
-                    <img src="${p.thumb}" class="project-thumb" onclick="loadProjectById('${p.id}')">
-                    <div class="project-info">
-                        <input type="text" value="${p.name}" onchange="renameProject('${p.id}', this.value)" style="width:100%; font-weight:bold; border:none; background:transparent; padding:0;">
-                        <div style="font-size:11px;color:#aaa">${dateStr}</div>
-                        <div style="font-size:11px;color:#888">${p.desc||''}</div>
+        if (checkConfig()) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                isFirebaseReady = true;
+            } catch(e) { console.error("Firebase init error", e); }
+        }
+
+        const canvas = document.getElementById('stackCanvas');
+        const ctx = canvas.getContext('2d');
+        const listEl = document.getElementById('layer-list');
+        const dimListEl = document.getElementById('dim-list');
+
+        window.layers = [];
+        window.dimensions = [];
+        let hitRegions = { layers: [], dims: [] };
+
+        // ---------------------------------------------------------
+        // ★★★ 新增：圖層移動功能 (解決手機無法拖曳問題) ★★★
+        // ---------------------------------------------------------
+        window.moveLayer = function(index, direction) {
+            const newIndex = index + direction;
+            // 檢查邊界 (不能移到小於0或超過陣列長度)
+            if (newIndex < 0 || newIndex >= window.layers.length) return;
+            
+            // 交換資料
+            const temp = window.layers[index];
+            window.layers[index] = window.layers[newIndex];
+            window.layers[newIndex] = temp;
+            
+            window.renderList();
+            window.draw();
+        };
+
+        // ---------------------------------------------------------
+        // UI 渲染 (修改：加入上下按鈕)
+        // ---------------------------------------------------------
+        window.renderList = function() {
+            listEl.innerHTML = ''; window.updateDimSelects();
+            window.layers.forEach((layer, index) => {
+                const item = document.createElement('div');
+                item.className = 'layer-item';
+                if(layer.showDetails) item.classList.add('open');
+                item.style.borderLeftColor = layer.color;
+                
+                // ★ 新增：左側的上下按鈕
+                item.innerHTML = `
+                    <div class="layer-main-row">
+                        <div class="move-btns">
+                            <button class="btn-tiny" onclick="window.moveLayer(${index}, -1)">▲</button>
+                            <button class="btn-tiny" onclick="window.moveLayer(${index}, 1)">▼</button>
+                        </div>
+                        <div class="layer-inputs">
+                            <input type="text" value="${layer.name}" oninput="window.updateLayer(${index}, 'name', this.value)" placeholder="名稱">
+                            <input type="number" value="${layer.thickness}" oninput="window.updateLayer(${index}, 'thickness', this.value)" placeholder="厚度">
+                        </div>
+                        <input type="color" value="${layer.color}" oninput="window.updateLayer(${index}, 'color', this.value)">
+                        <div class="btn-toggle-details ${layer.showDetails?'active':''}" onclick="window.toggleDetails(${index})">⚙️</div>
+                        <div class="btn-icon btn-del" onclick="window.deleteLayer(${index})">×</div>
                     </div>
-                    <button class="tool-btn" style="background:#c62828" onclick="deleteProject('${p.id}')">🗑️</button>
-                    <button class="tool-btn" style="background:#1565C0" onclick="loadProjectById('${p.id}')">載入</button>
+                    <div class="layer-details">
+                        <div><label>顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%"></div>
+                        <div><label>字體</label><input type="number" value="${layer.fontSize || ''}" placeholder="全域" oninput="window.updateLayer(${index}, 'fontSize', this.value)"></div>
+                        <div><label>樣式</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
+                    </div>
                 `;
-                list.appendChild(div);
-            }
-        });
-    };
-    
-    window.setDefault = (id, e) => {
-        e.stopPropagation();
-        const curr = localStorage.getItem('cutting3d_def_id');
-        localStorage.setItem('cutting3d_def_id', curr === id ? '' : id);
-        filterProjects();
-    };
-    
-    window.renameProject = async (id, newName) => { try { await updateDoc(doc(db, "projects_v6", id), { name: newName }); } catch(e){} };
-    window.deleteProject = async (id) => { if(!confirm("確定刪除?")) return; try { await deleteDoc(doc(db, "projects_v6", id)); allProjects = allProjects.filter(p => p.id !== id); filterProjects(); } catch(e){} };
-    
-    window.loadProjectById = (id) => { const p = allProjects.find(x => x.id === id); if(p) loadProjectData(p); };
-    
-    function loadProjectData(data) {
-        params = data.params;
-        transforms = data.transforms;
-        clearAnnotations();
-        if(data.annotations) {
-            data.annotations.forEach(a => {
-                if(a.type === 'text') {
-                    document.getElementById('anno-text-color').value = a.style.color;
-                    document.getElementById('anno-bg-color').value = a.style.bg;
-                    document.getElementById('anno-font-size').value = parseInt(a.style.size);
-                    const pos = new THREE.Vector3(a.pos.x, a.pos.y, a.pos.z);
-                    const dom = createTextLabel(pos, a.text);
-                    // restore offsets
-                    const anno = annotations[annotations.length-1];
-                    anno.offsetX = a.offsetX || 0;
-                    anno.offsetY = a.offsetY || 0;
-                }
+                listEl.appendChild(item);
             });
+        };
+
+        // ... 其餘核心邏輯保持不變 ...
+        window.updateLayer = function(index, key, value) { if (key === 'thickness' || key === 'fontSize') value = parseFloat(value) || 0; window.layers[index][key] = value; if(key === 'color') window.renderList(); window.draw(); };
+        window.toggleDetails = function(index) { window.layers[index].showDetails = !window.layers[index].showDetails; window.renderList(); };
+        window.addLayer = function() { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold' }); window.renderList(); window.draw(); };
+        window.deleteLayer = function(index) { window.layers.splice(index, 1); window.renderList(); window.draw(); };
+
+        window.updateDimSelects = function() {
+            const s1 = document.getElementById('dimStart'); const s2 = document.getElementById('dimEnd');
+            const v1 = s1.value; const v2 = s2.value; s1.innerHTML = ''; s2.innerHTML = '';
+            window.layers.forEach((l, i) => { const opt = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML += opt; s2.innerHTML += opt; });
+            if(v1) s1.value = v1; if(v2) s2.value = v2; else if(window.layers.length>0) s2.value = window.layers.length-1;
+        };
+        window.addDimension = function() { const s = parseInt(document.getElementById('dimStart').value); const e = parseInt(document.getElementById('dimEnd').value); const txt = document.getElementById('dimLabel').value; const off = parseInt(document.getElementById('dimOffset').value) || 50; window.addDimensionByLogic(s, e, txt, off); };
+        window.addDimensionByLogic = function(s, e, l, o) { window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: l, offset: o }); renderDims(); window.draw(); };
+        function renderDims() { dimListEl.innerHTML = ''; window.dimensions.forEach((d, i) => { const sName = window.layers[d.start]?.name||'?'; const eName = window.layers[d.end]?.name||'?'; const div = document.createElement('div'); div.className = 'dim-item'; div.innerHTML = `<span>${sName}~${eName} (偏${d.offset})</span><span class="btn-icon btn-del" onclick="window.deleteDim(${i})">×</span>`; dimListEl.appendChild(div); }); }
+        window.deleteDim = function(i) { window.dimensions.splice(i, 1); renderDims(); window.draw(); };
+
+        // 雲端功能
+        function showLoading(show, text = "處理中...") {
+            const overlay = document.getElementById('loading-overlay');
+            const txt = document.getElementById('loading-text');
+            if(show) { txt.innerText = text; overlay.style.display = 'flex'; }
+            else { overlay.style.display = 'none'; }
         }
-        updateAllUI();
-        document.getElementById('modal-load').style.display='none';
-    }
 
-    function updateAllUI() {
-        Object.keys(params).forEach(k => {
-            const e1=document.getElementById('val_'+k), e2=document.getElementById('rng_'+k);
-            if(e1) e1.value=params[k]; if(e2) e2.value=params[k];
-        });
-        updateTransformUI();
-        updateModel();
-        applyTransforms();
-    }
-    
-    window.switchTab = (tab) => {
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-        document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
-        document.getElementById(`tab-${tab}`).classList.add('active');
-    };
-    
-    // replaced by selectActiveObj
-    window.changeSelection = (val) => { selectActiveObj(val); };
-    
-    window.updateVal = (key, val) => { params[key]=parseFloat(val); document.getElementById(`val_${key}`).value=val; document.getElementById(`rng_${key}`).value=val; updateModel(); };
-    
-    function updateTransformUI() {
-        const t=transforms[currentObj];
-        document.getElementById('t_px').value=t.px.toFixed(2); document.getElementById('rg_px').value=t.px;
-        document.getElementById('t_py').value=t.py.toFixed(2); document.getElementById('rg_py').value=t.py;
-        document.getElementById('t_pz').value=t.pz.toFixed(2); document.getElementById('rg_pz').value=t.pz;
-        const dx=t.rx*180/Math.PI, dy=t.ry*180/Math.PI, dz=t.rz*180/Math.PI;
-        document.getElementById('t_rx').value=dx.toFixed(1); document.getElementById('rg_rx').value=dx;
-        document.getElementById('t_ry').value=dy.toFixed(1); document.getElementById('rg_ry').value=dy;
-        document.getElementById('t_rz').value=dz.toFixed(1); document.getElementById('rg_rz').value=dz;
-    }
-    window.updateTransFromInput = () => {
-        const t=transforms[currentObj];
-        t.px=parseFloat(document.getElementById('t_px').value); t.py=parseFloat(document.getElementById('t_py').value); t.pz=parseFloat(document.getElementById('t_pz').value);
-        t.rx=parseFloat(document.getElementById('t_rx').value)*Math.PI/180; t.ry=parseFloat(document.getElementById('t_ry').value)*Math.PI/180; t.rz=parseFloat(document.getElementById('t_rz').value)*Math.PI/180;
-        applyTransforms();
-    };
-    window.toggleVis = (name, btn) => {
-        let grp = null;
-        if(name==='jig') grp=jigGroup; if(name==='sample') grp=sampleGroup;
-        if(name==='blade') grp=bladeGroup; if(name==='nozzle') grp=nozzleGroup;
-        if(name==='anno') { annoGroup.visible = !annoGroup.visible; document.getElementById('label-container').style.display = annoGroup.visible ? 'block' : 'none'; btn.classList.toggle('active'); return; }
-        if(grp) { grp.visible = !grp.visible; btn.classList.toggle('active'); }
-    };
-
-    function applyTransforms() {
-        const setT = (grp, t) => { grp.position.set(t.px, t.py, t.pz); grp.rotation.set(t.rx*Math.PI/180, t.ry*Math.PI/180, t.rz*Math.PI/180); grp.updateMatrixWorld(); }
-        setT(jigGroup, transforms.jig); setT(sampleGroup, transforms.sample); setT(bladeGroup, transforms.blade); setT(nozzleGroup, transforms.nozzle);
-    }
-    
-    function createJigGeometry() {
-        const h=params.j_h, w=params.j_w, angleRad=params.j_a*Math.PI/180;
-        const base=(params.j_a>=89)?0.1:h/Math.tan(angleRad);
-        const s=new THREE.Shape(); s.moveTo(0,0); s.lineTo(base,0); s.lineTo(0,h); s.lineTo(0,0);
-        const g=new THREE.ExtrudeGeometry(s,{steps:1,depth:w,bevelEnabled:false}); g.center(); g.translate(0,h/2,0);
-        return {geo:g, base, h};
-    }
-    function updateModel() {
-        if(brushJig) brushJig.geometry.dispose(); if(brushBlade) brushBlade.geometry.dispose();
-        sampleBrushes.forEach(b=>b.geometry.dispose()); sampleBrushes=[];
-        if(resultMesh) { scene.remove(resultMesh); resultMesh.geometry.dispose(); }
-        
-        jigGroup.clear(); sampleGroup.clear(); bladeGroup.clear();
-        jigGroup.add(sampleGroup); 
-
-        const jData = createJigGeometry();
-        brushJig = new Brush(jData.geo, matJig); jigGroup.add(brushJig);
-
-        const dx=jData.base, dy=-jData.h; const slopeLen=Math.sqrt(dx*dx+dy*dy);
-        const ux=dx/slopeLen, uy=dy/slopeLen; const nx=-uy, ny=ux; 
-        const topX=-jData.base/2, topY=jData.h/2;
-        const slideDist = params.s_t * slopeLen;
-        const baseSx=topX+ux*slideDist, baseSy=topY+uy*slideDist;
-        const angleRad=params.j_a*Math.PI/180;
-
-        const g = new THREE.BoxGeometry(params.s_l, params.s_th, params.s_w);
-        const b = new Brush(g, matSample);
-        b.rotation.set(0,0,0); b.rotateZ(-angleRad);
-        const sx = baseSx + nx*(params.s_th/2) + ux*(params.s_l/2);
-        const sy = baseSy + ny*(params.s_th/2) + uy*(params.s_l/2);
-        b.position.set(sx, sy, 0); b.updateMatrixWorld();
-        sampleBrushes.push(b); sampleGroup.add(b);
-
-        applyTransforms();
-
-        const gBlade = new THREE.BoxGeometry(params.b_t, 50, params.b_w); gBlade.translate(0, 25, 0); 
-        brushBlade = new Brush(gBlade, matBlade); bladeGroup.add(brushBlade);
-
-        const target = document.getElementById('target-select').value;
-        jigGroup.updateMatrixWorld(true); sampleGroup.updateMatrixWorld(true); bladeGroup.updateMatrixWorld(true);
-
-        if(target!=='none') {
-            const worldBlade = brushBlade.clone(); worldBlade.applyMatrix4(bladeGroup.matrixWorld); worldBlade.material = matBlade;
-            if(target==='jig') {
-                brushJig.visible=false; 
-                const wJig=brushJig.clone(); wJig.applyMatrix4(jigGroup.matrixWorld);
-                const res=evaluator.evaluate(wJig, worldBlade, SUBTRACTION);
-                res.material=matJig; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
-            } else {
-                sampleBrushes.forEach(b=>{
-                    b.visible=false; 
-                    const wb=b.clone(); wb.applyMatrix4(sampleGroup.matrix); wb.applyMatrix4(jigGroup.matrixWorld);
-                    const res=evaluator.evaluate(wb, worldBlade, SUBTRACTION);
-                    res.material=matSample; res.castShadow=true; res.receiveShadow=true; scene.add(res); resultMesh=res;
+        window.refreshProjectList = async function() {
+            if(!isFirebaseReady) return;
+            const select = document.getElementById('savedProjects');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">連線中...</option>';
+            try {
+                const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
+                select.innerHTML = '<option value="">-- 雲端專案 --</option>';
+                querySnapshot.forEach((doc) => {
+                    const opt = document.createElement('option'); opt.value = doc.id; opt.innerText = doc.id; select.appendChild(opt);
                 });
+                if (currentVal) select.value = currentVal;
+            } catch (e) { select.innerHTML = '<option>讀取失敗</option>'; }
+        };
+
+        window.saveToCloud = async function() {
+            if(!isFirebaseReady) { alert("尚未連線"); return; }
+            const name = document.getElementById('projName').value.trim();
+            if (!name) { alert("請輸入名稱"); return; }
+            const config = { layers: window.layers, dimensions: window.dimensions, settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value, fontSize: document.getElementById('globalFontSize').value }, timestamp: Date.now() };
+            if(!confirm(`存檔: ${name}?`)) return;
+            showLoading(true);
+            try { await setDoc(doc(db, COLLECTION_NAME, name), config); alert("OK"); await window.refreshProjectList(); document.getElementById('savedProjects').value = name; } catch (e) { alert("Error"); }
+            showLoading(false);
+        };
+
+        window.loadFromCloud = async function() {
+            if(!isFirebaseReady) return;
+            const name = document.getElementById('savedProjects').value;
+            if (!name || name.startsWith("--")) return;
+            showLoading(true);
+            try { const docSnap = await getDoc(doc(db, COLLECTION_NAME, name)); if (docSnap.exists()) { window.applyConfig(docSnap.data()); document.getElementById('projName').value = name; } } catch (e) { alert("Error"); }
+            showLoading(false);
+        };
+
+        window.deleteFromCloud = async function() {
+            if(!isFirebaseReady) return;
+            const name = document.getElementById('savedProjects').value;
+            if (!name || name.startsWith("--")) return;
+            if(!confirm(`刪除: ${name}?`)) return;
+            showLoading(true);
+            try { await deleteDoc(doc(db, COLLECTION_NAME, name)); document.getElementById('projName').value = ""; await window.refreshProjectList(); alert("已刪除"); } catch(e) { alert("Error"); }
+            showLoading(false);
+        };
+
+        window.applyConfig = function(config) {
+            window.layers = config.layers || [];
+            window.dimensions = config.dimensions || [];
+            if(config.settings) { document.getElementById('unitInput').value = config.settings.unit || "um"; document.getElementById('canvasWidth').value = config.settings.width || 450; document.getElementById('globalFontSize').value = config.settings.fontSize || 14; }
+            window.resizeCanvas(); window.renderList(); window.draw();
+        };
+
+        window.exportJSON = function() {
+            const config = { layers: window.layers, dimensions: window.dimensions, settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value, fontSize: document.getElementById('globalFontSize').value } };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
+            const link = document.createElement('a'); link.href = dataStr; link.download = "stack_backup.json"; link.click();
+        };
+        
+        window.importJSON = function(input) {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) { try { const config = JSON.parse(e.target.result); window.applyConfig(config); } catch(err) { alert("格式錯誤"); } input.value = ''; };
+            reader.readAsText(file);
+        };
+
+        window.newProject = function() {
+            if(!confirm("清空？")) return;
+            window.layers = []; window.dimensions = []; window.renderList(); window.draw();
+        };
+
+        // 繪圖核心
+        window.resizeCanvas = function() { const w = parseInt(document.getElementById('canvasWidth').value) || 450; canvas.width = w; window.draw(); };
+        window.draw = function() {
+            const unit = document.getElementById('unitInput').value;
+            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
+            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
+            
+            // ★ 修改：如果沒厚度，就不要畫
+            if (totalThickness === 0 && window.layers.length === 0) {
+                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                 return;
             }
-            const ghost = brushBlade.clone(); ghost.material = new THREE.MeshBasicMaterial({color:0xFFEB3B, wireframe:true, opacity:0.3, transparent:true});
-            bladeGroup.add(ghost); brushBlade.visible=false;
+
+            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            const padding = { top: 40, bottom: 40, left: maxOffset + 80, right: 20 }; // ★ 左邊界加大
+            const drawWidth = canvas.width - padding.left - padding.right;
+            const availableHeight = Math.max(500, window.layers.length * 40);
+            canvas.height = availableHeight + padding.top + padding.bottom;
+            const scale = availableHeight / (totalThickness || 1); // 避免除以0
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            hitRegions.layers = []; hitRegions.dims = []; let currentY = padding.top; let yPositions = [];
+
+            window.layers.forEach((layer, idx) => {
+                const h = layer.thickness * scale; 
+                yPositions.push({ top: currentY, bottom: currentY + h });
+                ctx.fillStyle = layer.color; ctx.fillRect(padding.left, currentY, drawWidth, h); ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.strokeRect(padding.left, currentY, drawWidth, h);
+                if (h > 12) {
+                    if (layer.textColor && layer.textColor !== '#000000') ctx.fillStyle = layer.textColor; else ctx.fillStyle = isColorDark(layer.color) ? "white" : "black";
+                    const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const style = layer.fontStyle === 'bold' ? 'bold' : '';
+                    ctx.font = `${style} ${fs}px "Microsoft JhengHei", Arial`; ctx.fillText(`${layer.name} ${layer.thickness}${unit}`, padding.left + drawWidth / 2, currentY + h / 2);
+                }
+                currentY += h;
+            });
+            window.dimensions.forEach((dim, idx) => {
+                if (!yPositions[dim.start] || !yPositions[dim.end]) return;
+                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom; const h = y2 - y1;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
+                const txt = dim.label ? dim.label : `${val}${unit}`; const x = padding.left - dim.offset;
+                drawDimensionLine(x, y1, h, txt);
+            });
+        };
+        function drawDimensionLine(x, yStart, height, text) {
+            ctx.strokeStyle = "#D32F2F"; ctx.fillStyle = "#D32F2F"; ctx.lineWidth = 2; ctx.font = "bold 14px Arial";
+            ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x, yStart + height); ctx.stroke();
+            ctx.strokeStyle = "#ccc"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, yStart); ctx.lineTo(x + 10, yStart); ctx.moveTo(x, yStart + height); ctx.lineTo(x + 10, yStart + height); ctx.stroke();
+            ctx.fillStyle = "#D32F2F"; drawArrow(x, yStart, "up"); drawArrow(x, yStart + height, "down");
+            ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(text, x - 5, yStart + height / 2);
         }
-        updateWireframe();
-        
-        const wTilde = document.getElementById('water-target').value;
-        if(wTilde === 'sample' || wTilde === 'jig') changeWaterTarget(wTilde);
-    }
-    
-    window.toggleWireframe = () => { isWireframe=!isWireframe; updateWireframe(); };
-    function updateWireframe() { scene.traverse(o => { if(o.isMesh && o.material && o.visible && o.name!=='ghost') o.material.wireframe=isWireframe; }); }
-    window.setView = (v) => {
-        const d=60; 
-        if(v==='top') camera.position.set(0,d,0); if(v==='front') camera.position.set(0,0,d);
-        if(v==='side') camera.position.set(d,0,0); if(v==='iso') camera.position.set(30,30,40);
-        camera.lookAt(0,0,0); controls.target.set(0,0,0);
-    };
-    window.setGizmoMode = (m) => { tControls.setMode(m); document.querySelectorAll('.gizmo-btn').forEach(b=>b.classList.remove('active')); document.getElementById('mode-'+m).classList.add('active'); };
-    window.setGizmoAxis = (a) => { tControls.showX=!a||a==='X'; tControls.showY=!a||a==='Y'; tControls.showZ=!a||a==='Z'; };
+        function drawArrow(x, y, dir) { ctx.beginPath(); const s = 5; if(dir==="up") { ctx.moveTo(x,y); ctx.lineTo(x-s,y+s); ctx.lineTo(x+s,y+s); } else { ctx.moveTo(x,y); ctx.lineTo(x-s,y-s); ctx.lineTo(x+s,y-s); } ctx.fill(); }
+        function isColorDark(hex) { const r = parseInt(hex.substr(1, 2), 16); const g = parseInt(hex.substr(3, 2), 16); const b = parseInt(hex.substr(5, 2), 16); return ((r*299 + g*587 + b*114)/1000) < 128; }
+        function cleanHex(hex) { if(!hex) return "FFFFFF"; return hex.replace('#', '').toUpperCase(); }
 
-    const particleCount=2000, waterGeo=new THREE.BufferGeometry(), waterPos=new Float32Array(particleCount*3), waterVel=[];
-    for(let i=0;i<particleCount;i++){waterPos[i*3+1]=-999;waterVel.push({x:0,y:0,z:0});}
-    waterGeo.setAttribute('position',new THREE.BufferAttribute(waterPos,3));
-    const waterMat=new THREE.PointsMaterial({color:0x00FFFF,size:0.2,transparent:true,opacity:0.8,depthWrite:false});
-    const waterSystem=new THREE.Points(waterGeo, waterMat);
-    waterSystem.frustumCulled = false; scene.add(waterSystem);
+        window.downloadImage = function() { const link = document.createElement('a'); link.download = 'stack_diagram.png'; link.href = canvas.toDataURL(); link.click(); };
+        window.downloadPPT = function() {
+            let pres = new PptxGenJS();
+            const unit = document.getElementById('unitInput').value;
+            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
+            const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
+            if (totalThickness === 0) { alert("無資料"); return; }
+            let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
+            const pptPaddingLeft = maxOffset + 150; const pptPaddingTop = 50;
+            const scaleFactor = 100; const contentWidth = canvas.width - (maxOffset + 40) - 20; 
+            const availableHeightPx = Math.max(500, window.layers.length * 40);
+            const pxToThickScale = availableHeightPx / totalThickness;
+            pres.defineLayout({ name:'CUST', width: (pptPaddingLeft+contentWidth+50)/scaleFactor, height: (availableHeightPx+100)/scaleFactor }); pres.layout = 'CUST';
+            let slide = pres.addSlide();
+            let currentYPx = pptPaddingTop; let yPositions = [];
+            window.layers.forEach(layer => {
+                const hPx = layer.thickness * pxToThickScale;
+                const x = pptPaddingLeft / scaleFactor; const y = currentYPx / scaleFactor; const w = contentWidth / scaleFactor; const h = hPx / scaleFactor;
+                yPositions.push({ top: y, bottom: y + h });
+                const safeFillColor = cleanHex(layer.color);
+                let txtColor = "000000"; if (layer.textColor && layer.textColor !== '#000000') txtColor = cleanHex(layer.textColor); else txtColor = isColorDark(layer.color) ? "FFFFFF" : "000000";
+                const fs = layer.fontSize > 0 ? layer.fontSize : globalFS; const isBold = layer.fontStyle === 'bold';
+                slide.addShape(pres.ShapeType.rect, { x: x, y: y, w: w, h: h, fill: { color: safeFillColor }, line: { color: "333333", width: 1 } });
+                slide.addText(`${layer.name} ${layer.thickness}${unit}`, { x: x, y: y, w: w, h: h, color: txtColor, fontSize: fs, align: 'center', valign: 'middle', bold: isBold });
+                currentYPx += hPx;
+            });
+            window.dimensions.forEach(dim => {
+                if (!yPositions[dim.start] || !yPositions[dim.end]) return;
+                const y1 = yPositions[dim.start].top; const y2 = yPositions[dim.end].bottom;
+                const xLine = (pptPaddingLeft - dim.offset) / scaleFactor;
+                let val = 0; for(let k=dim.start; k<=dim.end; k++) val += window.layers[k].thickness;
+                const txt = dim.label ? dim.label : `${val}${unit}`;
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0, h: y2 - y1, line: { color: "D32F2F", width: 2, beginArrowType:'triangle', endArrowType:'triangle' } });
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y1, w: 0.15, h: 0, line: { color: "CCCCCC", width: 1 } });
+                slide.addShape(pres.ShapeType.line, { x: xLine, y: y2, w: 0.15, h: 0, line: { color: "CCCCCC", width: 1 } });
+                slide.addText(txt, { x: xLine - 2.1, y: (y1 + y2)/2 - 0.3, w: 2, h: 0.6, color: "D32F2F", fontSize: 12, align: 'right', valign: 'middle' });
+            });
+            pres.writeFile({ fileName: "Stack_Diagram.pptx" });
+        };
 
-    window.toggleWater = () => { waterEnabled=!waterEnabled; waterSystem.visible=waterEnabled; };
-    window.changeWaterTarget = (val) => {
-        if(impactTargetMesh && originalMaterial) impactTargetMesh.material = originalMaterial;
-        impactTargetMesh = null; originalMaterial = null;
-        impactCtx.fillStyle = 'black'; impactCtx.fillRect(0,0,512,512); impactTexture.needsUpdate=true;
-        
-        let targetGroup = (val==='sample') ? sampleGroup : (val==='jig') ? jigGroup : null;
-        if(targetGroup) {
-             targetGroup.traverse(c => {
-                 if(!impactTargetMesh && c.isMesh && c.material) {
-                     impactTargetMesh = c; originalMaterial = c.material;
-                     const newMat = c.material.clone(); newMat.emissiveMap = impactTexture;
-                     newMat.emissive = new THREE.Color(0xffffff); newMat.emissiveIntensity=1.0;
-                     c.material = newMat;
-                 }
-             });
-        }
-    };
-    window.toggleSnapMode = () => {
-        snapMode = !snapMode;
-        const btn = document.getElementById('btn-snap');
-        btn.style.background = snapMode ? '#00E676' : '#FF9800';
-        if(snapMode) alert("提示：請使用「標註->邊緣」功能進行高精度邊緣吸附");
-    };
+        // 預設載入範例 (方便手機直接看效果)
+        window.layers = [ 
+            { name: "CL2", thickness: 20, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, 
+            { name: "WCR", thickness: 9, color: "#ffc107", fontSize: 0, fontStyle:'bold', textColor:'#000000' }, 
+            { name: "CL1", thickness: 60, color: "#001f5c", fontSize: 0, fontStyle:'bold', textColor:'#ffffff' }, 
+            { name: "Core", thickness: 100, color: "#F5DEB3", fontSize: 0, fontStyle:'normal', textColor:'#000000' }
+        ];
+        window.addDimensionByLogic(0, 3, "", 80);
+        if(isFirebaseReady) window.refreshProjectList();
+        window.renderList(); 
+        window.draw();
 
-    function animateWater() {
-        if(!waterEnabled) return;
-        impactCtx.fillStyle = 'rgba(0,0,0,0.1)'; impactCtx.fillRect(0,0,512,512); impactTexture.needsUpdate=true;
-        const pressure = document.getElementById('w_pressure').value;
-        const tipWorld = new THREE.Vector3(0,0,0).applyMatrix4(nozzleGroup.children[0].matrixWorld);
-        const dirWorld = new THREE.Vector3(0,-1,0).transformDirection(nozzleGroup.matrixWorld).normalize();
-
-        for(let i=0; i<particleCount; i++) {
-             if(waterPos[i*3+1] < -20 || Math.random()<0.005) {
-                waterPos[i*3] = tipWorld.x; waterPos[i*3+1] = tipWorld.y; waterPos[i*3+2] = tipWorld.z;
-                const spd = 0.5 + (pressure/100)*1.0;
-                const spreadRad = (waterSpread||5) * Math.PI / 180;
-                const vel = dirWorld.clone().applyEuler(new THREE.Euler((Math.random()-.5)*spreadRad, 0, (Math.random()-.5)*spreadRad)).multiplyScalar(spd);
-                waterVel[i] = vel;
-             } else {
-                 waterPos[i*3]+=waterVel[i].x; waterPos[i*3+1]+=waterVel[i].y; waterPos[i*3+2]+=waterVel[i].z;
-                 if(impactTargetMesh) {
-                     const p = new THREE.Vector3(waterPos[i*3], waterPos[i*3+1], waterPos[i*3+2]);
-                     const box = new THREE.Box3().setFromObject(impactTargetMesh);
-                     if(box.containsPoint(p)) {
-                         const uvX = (p.x - box.min.x)/(box.max.x-box.min.x)*512;
-                         const uvY = (p.z - box.min.z)/(box.max.z-box.min.z)*512; 
-                         const r = 5 + (pressure/200)*10;
-                         const grad = impactCtx.createRadialGradient(uvX,uvY,0,uvX,uvY,r);
-                         grad.addColorStop(0,'white'); grad.addColorStop(1,'rgba(255,0,0,0)');
-                         impactCtx.fillStyle = grad; impactCtx.beginPath(); impactCtx.arc(uvX,uvY,r,0,Math.PI*2); impactCtx.fill();
-                         waterPos[i*3+1] = -999; 
-                     }
-                 }
-             }
-        }
-        waterGeo.attributes.position.needsUpdate = true;
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        animateWater();
-        updateLabels();
-        renderer.render(scene, camera);
-    }
-    
-    document.getElementById('loader').style.display='none';
-    selectActiveObj('nozzle');
-    initFromDefault();
-    animate();
-
-</script>
+    </script>
 </body>
 </html>
