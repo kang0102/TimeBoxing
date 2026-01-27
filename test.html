@@ -88,8 +88,10 @@
         
         .btn-save-cloud { background-color: #00897B; border-color: #00695C; width: auto; flex:0.4; }
         .btn-del-cloud { background-color: #c62828; border-color: #b71c1c; width: auto; flex:0.2;}
-        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; }
-        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px;}
+        .project-btns { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;}
+        .btn-proj { background-color: #546E7A; border-color: #455A64; flex: 1; font-size: 12px; min-width: 50px;}
+        /* ★ 新增 CSV 按鈕樣式 */
+        .btn-csv { background-color: #2E7D32; border-color: #1B5E20; flex: 1; min-width: 60px; font-size: 12px; } 
         .btn-clear { background-color: #D32F2F; border-color: #C62828; flex: 0.8; }
 
         .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; }
@@ -138,6 +140,7 @@
             <button class="btn-clear" onclick="window.newProject()">清空</button>
             <button class="btn-proj" onclick="window.exportJSON()">備份</button>
             <button class="btn-proj" onclick="document.getElementById('fileInput').click()">讀取</button>
+            <button class="btn-csv" onclick="window.exportCSV()">📊 存 Excel</button>
             <input type="file" id="fileInput" accept=".json" onchange="window.importJSON(this)">
         </div>
 
@@ -346,6 +349,34 @@
             window.dimensions = config.dimensions || [];
             if(config.settings) { document.getElementById('unitInput').value = config.settings.unit || "um"; document.getElementById('canvasWidth').value = config.settings.width || 450; document.getElementById('globalFontSize').value = config.settings.fontSize || 14; }
             window.resizeCanvas(); window.renderList(); window.draw();
+        };
+
+        // ★★★ 新增：匯出 Excel CSV 功能 ★★★
+        window.exportCSV = function() {
+            if (window.layers.length === 0) { alert("沒有資料"); return; }
+            const unit = document.getElementById('unitInput').value || 'um';
+            const name = document.getElementById('projName').value || "Stackup";
+            
+            // 加入 BOM 讓 Excel 辨識為 UTF-8 (解決中文亂碼)
+            let csv = "\uFEFF"; 
+            csv += "層序,名稱,厚度,單位\n";
+            
+            let total = 0;
+            window.layers.forEach((l, i) => {
+                const safeName = (l.name || "").replace(/,/g, " "); // 移除逗號避免錯位
+                const th = parseFloat(l.thickness) || 0;
+                total += th;
+                csv += `${i+1},${safeName},${th},${unit}\n`;
+            });
+            csv += `,,${total},${unit},總厚度\n`; // 總結行
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${name}_data.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
 
         window.exportJSON = function() {
