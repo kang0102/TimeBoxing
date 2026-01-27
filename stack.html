@@ -456,7 +456,7 @@
             const totalThickness = window.layers.reduce((sum, l) => sum + l.thickness, 0);
             if (totalThickness === 0) return;
             let maxOffset = 20; window.dimensions.forEach(d => { if(d.offset > maxOffset) maxOffset = d.offset; });
-            const padding = { top: 40, bottom: 40, left: maxOffset + 40, right: 20 };
+            const padding = { top: 40, bottom: 40, left: maxOffset + 80, right: 20 };
             const drawWidth = canvas.width - padding.left - padding.right;
             const availableHeight = Math.max(500, window.layers.length * 40);
             canvas.height = availableHeight + padding.top + padding.bottom;
