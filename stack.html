@@ -248,7 +248,7 @@
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config
+        // Firebase Config (使用公用 Key 以確保您可以找回資料)
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -763,7 +763,8 @@
         function drawArrow(ctx,x,y,u) { ctx.beginPath(); const s=5; if(u){ctx.moveTo(x,y);ctx.lineTo(x-s,y+s);ctx.lineTo(x+s,y+s);}else{ctx.moveTo(x,y);ctx.lineTo(x-s,y-s);ctx.lineTo(x+s,y-s);} ctx.fill(); }
 
         // Start
-        if(isFirebaseReady) window.refreshUnitList();
+        if(isFirebaseReady) { window.refreshUnitList(); }
+        window.layers = [{name:"Demo",thickness:100,color:"#90CAF9",checked:true}];
         window.renderList(); window.draw();
 
     </script>
