@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V3)</title>
+    <title>工程疊構圖產生器 (Pro V3 + 模擬)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎設定 --- */
@@ -159,6 +159,60 @@
         </div>
     </div>
 
+    <div id="sim-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#121212; z-index:9999; flex-direction:column;">
+        <div style="padding:15px; background:#1e1e1e; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0; color:#FF5252;">🔪 Blade SD5000 切割模擬</h2>
+            <div style="font-size:12px; color:#aaa;">
+                RPM: <span style="color:#fff">40,000</span> | 
+                Blade: <span style="color:#fff">SD5000</span> | 
+                Cut Length: <span style="color:#fff">30mm</span>
+            </div>
+            <button onclick="document.getElementById('sim-modal').style.display='none'" style="width:auto; background:#444;">關閉</button>
+        </div>
+        
+        <div style="flex:1; display:flex; overflow:hidden;">
+            <div style="width:300px; background:#252525; padding:15px; border-right:1px solid #333; overflow-y:auto;">
+                <div class="control-group">
+                    <label style="color:#FF5252">第 1 刀 (Cut 1)</label>
+                    <div class="dim-item">Speed: 2 (Fast)</div>
+                    <div class="dim-item">Height: 95 um</div>
+                    <div class="dim-item">Length: 30 mm</div>
+                </div>
+                <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
+                <div class="control-group">
+                    <label style="color:#4FC3F7">動作 (Action)</label>
+                    <div class="dim-item">Y-Shift: 20 um</div>
+                </div>
+                <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
+                <div class="control-group">
+                    <label style="color:#FF5252">第 2 刀 (Cut 2)</label>
+                    <div class="dim-item">Speed: 1 (Slow)</div>
+                    <div class="dim-item">Height: 95 um</div>
+                </div>
+                
+                <button onclick="window.sim.start()" style="background:#D32F2F; margin-top:20px; font-size:16px;">▶️ 開始模擬 (Start)</button>
+                <button onclick="window.sim.reset()" style="background:#444;">⏮️ 重置 (Reset)</button>
+                
+                <div style="margin-top:20px; border-top:1px solid #444; padding-top:10px;">
+                    <label>模擬設定</label>
+                    <input type="range" id="simBladeThick" min="10" max="100" value="40" oninput="document.getElementById('btVal').innerText=this.value">
+                    <div style="font-size:12px; color:#aaa;">Blade Thickness: <span id="btVal">40</span> um</div>
+                </div>
+            </div>
+
+            <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:20px; background:#000;">
+                <div style="flex:1; border:1px solid #333; position:relative;">
+                    <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Front View (X-Z) - Cutting Length</div>
+                    <canvas id="simCanvasX" style="width:100%; height:100%;"></canvas>
+                </div>
+                <div style="flex:1; border:1px solid #333; position:relative;">
+                    <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Side View (Y-Z) - Cross Section & Y-Shift</div>
+                    <canvas id="simCanvasY" style="width:100%; height:100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <a href="index.html" class="home-btn">🏠</a>
 
     <div id="sidebar">
@@ -173,6 +227,8 @@
                 <button class="btn-save" onclick="window.saveToCloud()">💾 儲存</button>
                 <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端管理 / 預覽</button>
             </div>
+            
+            <button onclick="window.openSim()" style="background-color: #D32F2F; border-color: #B71C1C; margin-top: 5px;">🔪 開啟切割模擬 (Simulation)</button>
             
             <div class="sub-group" style="margin-top:5px; border-color:#555;">
                 <label>📦 資料庫完整備份/還原</label>
@@ -367,7 +423,7 @@
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
         // ---------------------------------------------
-        // ★ 雲端管理 Manager (New Logic)
+        // ★ 雲端管理 Manager
         // ---------------------------------------------
         window.openCloudManager = function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
@@ -422,13 +478,11 @@
         window.selectCloudItem = function(id) {
             currentPreviewId = id;
             document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected'));
-            // Find checkbox to highlight row
             const inputs = document.querySelectorAll('.batch-check');
             inputs.forEach(inp => {
                 if(inp.value === id) inp.closest('.cloud-item').classList.add('selected');
             });
             
-            // Render Preview
             const p = cloudProjectsCache.find(x => x.id === id);
             const detailEl = document.getElementById('preview-details');
             if(p) {
@@ -465,13 +519,11 @@
             });
         };
 
-        // 匯出多選 Excel
         window.batchExportExcel = function() {
             const checks = document.querySelectorAll('.batch-check:checked');
             if(checks.length === 0) { alert("請先勾選左側專案"); return; }
             
-            let csv = "\uFEFF"; // BOM
-            
+            let csv = "\uFEFF"; 
             checks.forEach(chk => {
                 const id = chk.value;
                 const p = cloudProjectsCache.find(x => x.id === id);
@@ -483,11 +535,11 @@
                     const unit = p.settings?.unit || 'um';
                     const layers = p.layers || [];
                     layers.forEach((l,i) => {
-                         if(l.checked === false) return; // 略過未勾選層(如果有的話)
+                         if(l.checked === false) return; 
                          t += (parseFloat(l.thickness)||0);
                          csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
                     });
-                    csv += `,,${t},${unit},總厚度\n\n`; // 空行分隔
+                    csv += `,,${t},${unit},總厚度\n\n`; 
                 }
             });
 
@@ -517,19 +569,14 @@
             showLoading(false);
         };
 
-        // ---------------------------------------------
-        // ★ Full Backup & Restore
-        // ---------------------------------------------
         window.backupAllCloudData = async function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
             showLoading(true, "打包所有資料中...");
             try {
-                // Get Projects
                 const projSnap = await getDocs(collection(db, COL_PROJ));
                 const projects = {};
                 projSnap.forEach(d => projects[d.id] = d.data());
 
-                // Get Units
                 const unitSnap = await getDocs(collection(db, COL_UNITS));
                 const units = {};
                 unitSnap.forEach(d => units[d.id] = d.data());
@@ -563,7 +610,6 @@
                     const batch = writeBatch(db);
                     let count = 0;
 
-                    // Restore Projects
                     if(data.projects) {
                         for (const [id, val] of Object.entries(data.projects)) {
                             const ref = doc(db, COL_PROJ, id);
@@ -571,7 +617,6 @@
                             count++;
                         }
                     }
-                    // Restore Units
                     if(data.units) {
                         for (const [id, val] of Object.entries(data.units)) {
                             const ref = doc(db, COL_UNITS, id);
@@ -580,8 +625,6 @@
                         }
                     }
 
-                    // Commit (Firestore batch limit is 500, simple logic here assumes <500 for demo)
-                    // For robust production, need to chunk batches.
                     await batch.commit();
                     alert(`還原成功！共寫入 ${count} 筆資料。`);
                     window.refreshUnitList();
@@ -687,7 +730,6 @@
             const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a);
         };
 
-        // Standard Helpers
         window.applyConfig = (c) => { 
             window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; 
             if(c.settings) { document.getElementById('unitInput').value=c.settings.unit||"um"; document.getElementById('canvasWidth').value=c.settings.width||450; }
@@ -767,325 +809,189 @@
         window.layers = [{name:"Demo",thickness:100,color:"#90CAF9",checked:true}];
         window.renderList(); window.draw();
 
-    </script>
-    <div id="sim-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#121212; z-index:9999; flex-direction:column;">
-    <div style="padding:15px; background:#1e1e1e; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0; color:#FF5252;">🔪 Blade SD5000 切割模擬</h2>
-        <div style="font-size:12px; color:#aaa;">
-            RPM: <span style="color:#fff">40,000</span> | 
-            Blade: <span style="color:#fff">SD5000</span> | 
-            Cut Length: <span style="color:#fff">30mm</span>
-        </div>
-        <button onclick="document.getElementById('sim-modal').style.display='none'" style="width:auto; background:#444;">關閉</button>
-    </div>
-    
-    <div style="flex:1; display:flex; overflow:hidden;">
-        <div style="width:300px; background:#252525; padding:15px; border-right:1px solid #333; overflow-y:auto;">
-            <div class="control-group">
-                <label style="color:#FF5252">第 1 刀 (Cut 1)</label>
-                <div class="dim-item">Speed: 2 (Fast)</div>
-                <div class="dim-item">Height: 95 um</div>
-                <div class="dim-item">Length: 30 mm</div>
-            </div>
-            <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
-            <div class="control-group">
-                <label style="color:#4FC3F7">動作 (Action)</label>
-                <div class="dim-item">Y-Shift: 20 um</div>
-            </div>
-            <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
-            <div class="control-group">
-                <label style="color:#FF5252">第 2 刀 (Cut 2)</label>
-                <div class="dim-item">Speed: 1 (Slow)</div>
-                <div class="dim-item">Height: 95 um</div>
-            </div>
-            
-            <button onclick="window.sim.start()" style="background:#D32F2F; margin-top:20px; font-size:16px;">▶️ 開始模擬 (Start)</button>
-            <button onclick="window.sim.reset()" style="background:#444;">⏮️ 重置 (Reset)</button>
-            
-            <div style="margin-top:20px; border-top:1px solid #444; padding-top:10px;">
-                <label>模擬設定</label>
-                <input type="range" id="simBladeThick" min="10" max="100" value="40" oninput="document.getElementById('btVal').innerText=this.value">
-                <div style="font-size:12px; color:#aaa;">Blade Thickness: <span id="btVal">40</span> um</div>
-            </div>
-        </div>
-
-        <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:20px; background:#000;">
-            <div style="flex:1; border:1px solid #333; position:relative;">
-                <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Front View (X-Z) - Cutting Length</div>
-                <canvas id="simCanvasX" style="width:100%; height:100%;"></canvas>
-            </div>
-            <div style="flex:1; border:1px solid #333; position:relative;">
-                <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Side View (Y-Z) - Cross Section & Y-Shift</div>
-                <canvas id="simCanvasY" style="width:100%; height:100%;"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-// 初始化模擬器按鈕
-setTimeout(() => {
-    const btnRow = document.querySelector('.btn-row');
-    if(btnRow) {
-        const btn = document.createElement('button');
-        btn.innerHTML = '🔪 切割模擬 (Simulation)';
-        btn.style.backgroundColor = '#D32F2F';
-        btn.style.borderColor = '#B71C1C';
-        btn.onclick = () => {
+        // ---------------------------------------------
+        // ★ 切割模擬邏輯 (Integration)
+        // ---------------------------------------------
+        window.openSim = function() {
+            if(!window.layers || window.layers.length === 0) {
+                alert("請先建立層次資料 (Layers) 才能進行模擬！");
+                return;
+            }
             document.getElementById('sim-modal').style.display = 'flex';
-            window.sim.init();
+            setTimeout(() => {
+                window.sim.init();
+            }, 100);
         };
-        btnRow.appendChild(btn);
-    }
-}, 1000);
 
-// 模擬核心邏輯
-window.sim = {
-    ctxX: null, ctxY: null,
-    wX: 0, hX: 0, wY: 0, hY: 0,
-    layers: [],
-    state: 0, // 0:Idle, 1:Cut1_Down, 2:Cut1_Move, 3:Cut1_Up, 4:Shift, 5:Cut2_Down, 6:Cut2_Move, 7:Cut2_Up
-    bladeX: 0, // mm (0-30)
-    bladeY: 0, // um (Offset)
-    bladeZ: 200, // um (Height from 0)
-    bladeThick: 40,
-    cut1Speed: 0.5, // fast
-    cut2Speed: 0.25, // slow (Speed 1)
-    targetZ: 95,
-    targetLen: 30,
-    shiftY: 20,
-    animReq: null,
-    
-    init: function() {
-        const cX = document.getElementById('simCanvasX');
-        const cY = document.getElementById('simCanvasY');
-        this.ctxX = cX.getContext('2d');
-        this.ctxY = cY.getContext('2d');
-        
-        // Resize
-        cX.width = cX.offsetWidth; cX.height = cX.offsetHeight;
-        cY.width = cY.offsetWidth; cY.height = cY.offsetHeight;
-        this.wX = cX.width; this.hX = cX.height;
-        this.wY = cY.width; this.hY = cY.height;
-        
-        // Load Layers from Main App
-        this.layers = JSON.parse(JSON.stringify(window.layers || []));
-        // Reverse for drawing from bottom up if needed, but let's stick to top-down render logic
-        this.bladeThick = parseInt(document.getElementById('simBladeThick').value);
-        
-        this.reset();
-    },
-    
-    reset: function() {
-        cancelAnimationFrame(this.animReq);
-        this.state = 0;
-        this.bladeX = 0;
-        this.bladeY = 0;
-        this.bladeZ = this.getTotalThickness() + 50; // Start high
-        this.draw();
-    },
-    
-    start: function() {
-        if(this.state !== 0) return;
-        this.state = 1; 
-        this.loop();
-    },
-    
-    loop: function() {
-        this.update();
-        this.draw();
-        if(this.state !== 99) {
-            this.animReq = requestAnimationFrame(() => this.loop());
-        }
-    },
-    
-    update: function() {
-        // Simple State Machine
-        const zSpeed = 2;
-        
-        switch(this.state) {
-            case 1: // Cut 1 Down
-                this.bladeZ -= zSpeed;
-                if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 2; }
-                break;
-            case 2: // Cut 1 Move (Speed 2)
-                this.bladeX += this.cut1Speed;
-                if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 3; }
-                break;
-            case 3: // Cut 1 Up
-                this.bladeZ += zSpeed;
-                if(this.bladeZ >= this.getTotalThickness() + 20) { this.state = 4; }
-                break;
-            case 4: // Shift Y (20um)
-                this.bladeY += 0.5; // shift anim speed
-                this.bladeX = 0; // Reset X for visual pass 2? Or visually return? Let's reset X instantly implies rapid return
-                if(this.bladeY >= this.shiftY) { this.bladeY = this.shiftY; this.state = 5; }
-                break;
-            case 5: // Cut 2 Down
-                this.bladeZ -= zSpeed;
-                if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 6; }
-                break;
-            case 6: // Cut 2 Move (Speed 1 - Slower)
-                this.bladeX += this.cut2Speed;
-                if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 7; }
-                break;
-            case 7: // Cut 2 Up
-                this.bladeZ += zSpeed;
-                if(this.bladeZ >= this.getTotalThickness() + 50) { this.state = 99; } // End
-                break;
-        }
-    },
-    
-    getTotalThickness: function() {
-        return this.layers.reduce((s,l) => s + (parseFloat(l.thickness)||0), 0);
-    },
-    
-    draw: function() {
-        // --- Shared Calc ---
-        const totalThick = this.getTotalThickness() || 100;
-        
-        // --- Draw View X (Front: Length vs Z) ---
-        const ctxX = this.ctxX;
-        ctxX.clearRect(0,0,this.wX, this.hX);
-        
-        // Scaling X
-        const scaleZX = (this.hX - 60) / (totalThick + 100); 
-        const scaleXX = (this.wX - 40) / 35; // 35mm range for 30mm cut
-        const originX_Z = this.hX - 30; // Bottom line
-        const originX_X = 20;
-        
-        // Draw Layers (Side view of material)
-        let currZ = originX_Z;
-        // 疊構通常是從上到下陣列，但在 Z 軸座標系是從下往上算高度
-        // 這裡假設 window.layers[0] 是 TOP。
-        // 所以從 Bottom 算起，我們要反向遍歷或者先算出總高
-        
-        let currentH = totalThick;
-        this.layers.forEach(l => {
-            const th = (parseFloat(l.thickness)||0);
-            const hPx = th * scaleZX;
-            const yPos = originX_Z - (currentH * scaleZX); // Top of this layer
+        window.sim = {
+            ctxX: null, ctxY: null,
+            wX: 0, hX: 0, wY: 0, hY: 0,
+            layers: [],
+            state: 0, 
+            bladeX: 0, bladeY: 0, bladeZ: 200, 
+            bladeThick: 40,
+            cut1Speed: 0.5, cut2Speed: 0.25, 
+            targetZ: 95, targetLen: 30, shiftY: 20,
+            animReq: null,
             
-            ctxX.fillStyle = l.color;
-            ctxX.fillRect(originX_X, originX_Z - (currentH * scaleZX), 30 * scaleXX, hPx); // Draw full 30mm block
+            init: function() {
+                const cX = document.getElementById('simCanvasX');
+                const cY = document.getElementById('simCanvasY');
+                this.ctxX = cX.getContext('2d');
+                this.ctxY = cY.getContext('2d');
+                cX.width = cX.offsetWidth; cX.height = cX.offsetHeight;
+                cY.width = cY.offsetWidth; cY.height = cY.offsetHeight;
+                this.wX = cX.width; this.hX = cX.height;
+                this.wY = cY.width; this.hY = cY.height;
+                this.layers = JSON.parse(JSON.stringify(window.layers || []));
+                this.bladeThick = parseInt(document.getElementById('simBladeThick').value);
+                this.reset();
+            },
             
-            // Draw Cut Void (Visualizing the cut in X-view is just showing depth)
-            // But actually, we want to see the blade position
-            currentH -= th;
-        });
-        
-        // Draw Blade in X View (A wheel or block)
-        const bX = originX_X + this.bladeX * scaleXX;
-        const bZ = originX_Z - (this.bladeZ * scaleZX);
-        const bRad = 30; // visual radius
-        
-        ctxX.fillStyle = "rgba(255,255,255,0.8)";
-        ctxX.beginPath(); ctxX.arc(bX, bZ - bRad, bRad, 0, Math.PI*2); ctxX.fill(); // Wheel
-        ctxX.fillStyle = "#FF5252";
-        ctxX.fillRect(bX - 2, bZ - bRad, 4, bRad); // Spindle axis
-        
-        // Text Info
-        ctxX.fillStyle = "#fff"; ctxX.font = "14px Arial";
-        ctxX.fillText(`X-Pos: ${this.bladeX.toFixed(2)} mm`, 10, 20);
-        ctxX.fillText(`Z-Height: ${this.bladeZ.toFixed(1)} um`, 150, 20);
-        
-        
-        // --- Draw View Y (Side: Cross Section & Shift) ---
-        const ctxY = this.ctxY;
-        ctxY.clearRect(0,0,this.wY, this.hY);
-        
-        // Scaling Y (Zoomed in heavily on the cut area)
-        // Focus on center of blade + 100um width
-        const scaleZY = (this.hY - 60) / (totalThick + 50);
-        const centerMm = 0; // 0 is center
-        const viewWidthUm = 300; // View +/- 150um width
-        const scaleYY = this.wY / viewWidthUm;
-        const originY_X = this.wY / 2; // Center of canvas is 0 um
-        const originY_Z = this.hY - 30;
-        
-        // Draw Layers (Cross section)
-        currentH = totalThick;
-        this.layers.forEach(l => {
-            const th = (parseFloat(l.thickness)||0);
-            const hPx = th * scaleZY;
-            const yStart = originY_Z - (currentH * scaleZY);
+            reset: function() {
+                cancelAnimationFrame(this.animReq);
+                this.state = 0;
+                this.bladeX = 0;
+                this.bladeY = 0;
+                this.bladeZ = this.getTotalThickness() + 50; 
+                this.draw();
+            },
             
-            ctxY.fillStyle = l.color;
-            ctxY.fillRect(0, yStart, this.wY, hPx);
-            ctxY.strokeStyle = "#111";
-            ctxY.strokeRect(0, yStart, this.wY, hPx);
+            start: function() {
+                if(this.state !== 0) return;
+                this.state = 1; 
+                this.loop();
+            },
             
-            // Label
-            if(hPx > 10) {
-                ctxY.fillStyle = "rgba(0,0,0,0.5)";
-                ctxY.fillText(l.name, 5, yStart + hPx/2);
-            }
+            loop: function() {
+                this.update();
+                this.draw();
+                if(this.state !== 99) {
+                    this.animReq = requestAnimationFrame(() => this.loop());
+                }
+            },
             
-            currentH -= th;
-        });
-        
-        // Draw The Cut (Kerf) - "Erasing" the material
-        // Logic: If Blade Z < Layer Top, draw a background-colored rect
-        // We simulate the cut history based on state
-        
-        const drawKerf = (shift, depth) => {
-            const kW = this.bladeThick * scaleYY;
-            const kH = (totalThick - depth) * scaleZY; // Cut from top down to depth? No, from depth up to top
-            // Dicing cuts from top surface down to 'depth'. 
-            // Wait, param is "Height 95um". This means bottom up.
-            // So cut is from (TotalThick) down to (95).
+            update: function() {
+                const zSpeed = 2;
+                switch(this.state) {
+                    case 1: // Cut 1 Down
+                        this.bladeZ -= zSpeed;
+                        if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 2; }
+                        break;
+                    case 2: // Cut 1 Move (Speed 2)
+                        this.bladeX += this.cut1Speed;
+                        if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 3; }
+                        break;
+                    case 3: // Cut 1 Up
+                        this.bladeZ += zSpeed;
+                        if(this.bladeZ >= this.getTotalThickness() + 20) { this.state = 4; }
+                        break;
+                    case 4: // Shift Y (20um)
+                        this.bladeY += 0.5;
+                        this.bladeX = 0; 
+                        if(this.bladeY >= this.shiftY) { this.bladeY = this.shiftY; this.state = 5; }
+                        break;
+                    case 5: // Cut 2 Down
+                        this.bladeZ -= zSpeed;
+                        if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 6; }
+                        break;
+                    case 6: // Cut 2 Move (Speed 1 - Slower)
+                        this.bladeX += this.cut2Speed;
+                        if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 7; }
+                        break;
+                    case 7: // Cut 2 Up
+                        this.bladeZ += zSpeed;
+                        if(this.bladeZ >= this.getTotalThickness() + 50) { this.state = 99; } 
+                        break;
+                }
+            },
             
-            if(depth < totalThick) {
-                const cutBottomY = originY_Z - (depth * scaleZY);
-                const cutTopY = originY_Z - (totalThick * scaleZY);
-                const cutHeight = cutBottomY - cutTopY; 
+            getTotalThickness: function() {
+                return this.layers.reduce((s,l) => s + (parseFloat(l.thickness)||0), 0);
+            },
+            
+            draw: function() {
+                const totalThick = this.getTotalThickness() || 100;
+                const ctxX = this.ctxX;
+                ctxX.clearRect(0,0,this.wX, this.hX);
+                const scaleZX = (this.hX - 60) / (totalThick + 100); 
+                const scaleXX = (this.wX - 40) / 35; 
+                const originX_Z = this.hX - 30;
+                const originX_X = 20;
                 
-                const kX = originY_X + (shift * scaleYY) - (kW/2);
+                let currentH = totalThick;
+                this.layers.forEach(l => {
+                    const th = (parseFloat(l.thickness)||0);
+                    const hPx = th * scaleZX;
+                    ctxX.fillStyle = l.color;
+                    ctxX.fillRect(originX_X, originX_Z - (currentH * scaleZX), 30 * scaleXX, hPx);
+                    currentH -= th;
+                });
                 
-                ctxY.fillStyle = "#000"; // Void color
-                ctxY.fillRect(kX, cutTopY, kW, cutHeight);
+                const bX = originX_X + this.bladeX * scaleXX;
+                const bZ = originX_Z - (this.bladeZ * scaleZX);
+                const bRad = 30;
+                ctxX.fillStyle = "rgba(255,255,255,0.8)";
+                ctxX.beginPath(); ctxX.arc(bX, bZ - bRad, bRad, 0, Math.PI*2); ctxX.fill();
+                ctxX.fillStyle = "#FF5252";
+                ctxX.fillRect(bX - 2, bZ - bRad, 4, bRad);
                 
-                // Outline
-                ctxY.strokeStyle = "#444";
-                ctxY.beginPath();
-                ctxY.moveTo(kX, cutTopY); ctxY.lineTo(kX, cutBottomY); ctxY.lineTo(kX+kW, cutBottomY); ctxY.lineTo(kX+kW, cutTopY);
-                ctxY.stroke();
+                ctxX.fillStyle = "#fff"; ctxX.font = "14px Arial";
+                ctxX.fillText(`X-Pos: ${this.bladeX.toFixed(2)} mm`, 10, 20);
+                ctxX.fillText(`Z-Height: ${this.bladeZ.toFixed(1)} um`, 150, 20);
+                
+                const ctxY = this.ctxY;
+                ctxY.clearRect(0,0,this.wY, this.hY);
+                const scaleZY = (this.hY - 60) / (totalThick + 50);
+                const viewWidthUm = 300; 
+                const scaleYY = this.wY / viewWidthUm;
+                const originY_X = this.wY / 2;
+                const originY_Z = this.hY - 30;
+                
+                currentH = totalThick;
+                this.layers.forEach(l => {
+                    const th = (parseFloat(l.thickness)||0);
+                    const hPx = th * scaleZY;
+                    const yStart = originY_Z - (currentH * scaleZY);
+                    ctxY.fillStyle = l.color;
+                    ctxY.fillRect(0, yStart, this.wY, hPx);
+                    ctxY.strokeStyle = "#111"; ctxY.strokeRect(0, yStart, this.wY, hPx);
+                    if(hPx > 10) { ctxY.fillStyle = "rgba(0,0,0,0.5)"; ctxY.fillText(l.name, 5, yStart + hPx/2); }
+                    currentH -= th;
+                });
+                
+                const drawKerf = (shift, depth) => {
+                    const kW = this.bladeThick * scaleYY;
+                    const cutTopY = originY_Z - (totalThick * scaleZY);
+                    const cutBottomY = originY_Z - (depth * scaleZY);
+                    const cutHeight = cutBottomY - cutTopY; 
+                    const kX = originY_X + (shift * scaleYY) - (kW/2);
+                    
+                    if(depth < totalThick) {
+                        ctxY.fillStyle = "#000"; ctxY.fillRect(kX, cutTopY, kW, cutHeight);
+                        ctxY.strokeStyle = "#444"; ctxY.strokeRect(kX, cutTopY, kW, cutHeight);
+                    }
+                };
+                
+                if(this.state >= 4) drawKerf(0, 95);
+                
+                const bW_px = this.bladeThick * scaleYY;
+                const bX_px = originY_X + (this.bladeY * scaleYY) - (bW_px/2);
+                const bZ_px = originY_Z - (this.bladeZ * scaleZY);
+                
+                ctxY.fillStyle = "rgba(255, 82, 82, 0.5)"; ctxY.fillRect(bX_px, 0, bW_px, bZ_px); 
+                ctxY.fillStyle = "#FF5252"; ctxY.fillRect(bX_px, bZ_px - 5, bW_px, 5);
+                
+                if(this.state === 2 || this.state === 3) drawKerf(0, Math.max(95, this.bladeZ));
+                if(this.state === 6 || this.state === 7) drawKerf(this.shiftY, Math.max(95, this.bladeZ));
+                
+                ctxY.fillStyle = "#00E676"; ctxY.font = "10px monospace";
+                ctxY.fillText("0 um", originY_X - 10, this.hY - 5);
+                ctxY.fillText(`+${this.shiftY} um`, originY_X + (this.shiftY*scaleYY) - 10, this.hY - 5);
+                ctxY.strokeStyle = "#00E676"; ctxY.beginPath(); ctxY.moveTo(originY_X, 0); ctxY.lineTo(originY_X, this.hY); ctxY.stroke();
             }
         };
-        
-        // Visualize Previous Cuts based on state
-        if(this.state >= 4) {
-            // Cut 1 happened at Y=0
-            drawKerf(0, 95); // 0 shift, 95 height
-        }
-        
-        // Visualize Current Blade
-        const bW_px = this.bladeThick * scaleYY;
-        const bX_px = originY_X + (this.bladeY * scaleYY) - (bW_px/2);
-        const bZ_px = originY_Z - (this.bladeZ * scaleZY);
-        
-        // Blade Body (Semi transparent)
-        ctxY.fillStyle = "rgba(255, 82, 82, 0.5)";
-        ctxY.fillRect(bX_px, 0, bW_px, bZ_px); 
-        
-        // Blade Tip (Solid)
-        ctxY.fillStyle = "#FF5252";
-        ctxY.fillRect(bX_px, bZ_px - 5, bW_px, 5);
-        
-        // If cutting now (State 2 or 6), draw dynamic kerf
-        if(this.state === 2 || this.state === 3) drawKerf(0, Math.max(95, this.bladeZ));
-        if(this.state === 6 || this.state === 7) drawKerf(this.shiftY, Math.max(95, this.bladeZ));
-        
-        // Ruler
-        ctxY.fillStyle = "#00E676";
-        ctxY.font = "10px monospace";
-        ctxY.fillText("0 um", originY_X - 10, this.hY - 5);
-        ctxY.fillText(`+${this.shiftY} um`, originY_X + (this.shiftY*scaleYY) - 10, this.hY - 5);
-        
-        ctxY.strokeStyle = "#00E676";
-        ctxY.beginPath(); ctxY.moveTo(originY_X, 0); ctxY.lineTo(originY_X, this.hY); ctxY.stroke();
-    }
-};
-</script>
+
+    </script>
 </body>
 </html>
