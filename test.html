@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V3 + 模擬)</title>
+    <title>工程疊構圖產生器 (Pro V3.5 - Photo Enhanced)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎設定 --- */
@@ -62,6 +62,15 @@
         .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
         .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
         .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
+
+        /* 照片列表樣式 */
+        .photo-item { 
+            background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-top: 5px; border-radius: 4px; 
+            display: flex; gap: 10px; align-items: start;
+        }
+        .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 3px; border: 1px solid #555; }
+        .photo-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .photo-desc { font-size: 12px; color: #ccc; width: 100%; background: #222; border:none; padding: 2px;}
 
         /* 按鈕群組 */
         button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; }
@@ -159,64 +168,10 @@
         </div>
     </div>
 
-    <div id="sim-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#121212; z-index:9999; flex-direction:column;">
-        <div style="padding:15px; background:#1e1e1e; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="margin:0; color:#FF5252;">🔪 Blade SD5000 切割模擬</h2>
-            <div style="font-size:12px; color:#aaa;">
-                RPM: <span style="color:#fff">40,000</span> | 
-                Blade: <span style="color:#fff">SD5000</span> | 
-                Cut Length: <span style="color:#fff">30mm</span>
-            </div>
-            <button onclick="document.getElementById('sim-modal').style.display='none'" style="width:auto; background:#444;">關閉</button>
-        </div>
-        
-        <div style="flex:1; display:flex; overflow:hidden;">
-            <div style="width:300px; background:#252525; padding:15px; border-right:1px solid #333; overflow-y:auto;">
-                <div class="control-group">
-                    <label style="color:#FF5252">第 1 刀 (Cut 1)</label>
-                    <div class="dim-item">Speed: 2 (Fast)</div>
-                    <div class="dim-item">Height: 95 um</div>
-                    <div class="dim-item">Length: 30 mm</div>
-                </div>
-                <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
-                <div class="control-group">
-                    <label style="color:#4FC3F7">動作 (Action)</label>
-                    <div class="dim-item">Y-Shift: 20 um</div>
-                </div>
-                <div style="text-align:center; font-size:20px; padding:5px;">⬇️</div>
-                <div class="control-group">
-                    <label style="color:#FF5252">第 2 刀 (Cut 2)</label>
-                    <div class="dim-item">Speed: 1 (Slow)</div>
-                    <div class="dim-item">Height: 95 um</div>
-                </div>
-                
-                <button onclick="window.sim.start()" style="background:#D32F2F; margin-top:20px; font-size:16px;">▶️ 開始模擬 (Start)</button>
-                <button onclick="window.sim.reset()" style="background:#444;">⏮️ 重置 (Reset)</button>
-                
-                <div style="margin-top:20px; border-top:1px solid #444; padding-top:10px;">
-                    <label>模擬設定</label>
-                    <input type="range" id="simBladeThick" min="10" max="100" value="40" oninput="document.getElementById('btVal').innerText=this.value">
-                    <div style="font-size:12px; color:#aaa;">Blade Thickness: <span id="btVal">40</span> um</div>
-                </div>
-            </div>
-
-            <div style="flex:1; padding:20px; display:flex; flex-direction:column; gap:20px; background:#000;">
-                <div style="flex:1; border:1px solid #333; position:relative;">
-                    <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Front View (X-Z) - Cutting Length</div>
-                    <canvas id="simCanvasX" style="width:100%; height:100%;"></canvas>
-                </div>
-                <div style="flex:1; border:1px solid #333; position:relative;">
-                    <div style="position:absolute; top:5px; left:5px; color:#aaa; font-size:12px;">Side View (Y-Z) - Cross Section & Y-Shift</div>
-                    <canvas id="simCanvasY" style="width:100%; height:100%;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <a href="index.html" class="home-btn">🏠</a>
 
     <div id="sidebar">
-        <h2>📚 疊構資料庫 (Pro V3)</h2>
+        <h2>📚 疊構資料庫 (Pro V3.5)</h2>
 
         <div class="control-group" style="border-left: 4px solid #00897B;">
             <label style="color:#80CBC4">☁️ 專案存取 (Project)</label>
@@ -227,8 +182,6 @@
                 <button class="btn-save" onclick="window.saveToCloud()">💾 儲存</button>
                 <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端管理 / 預覽</button>
             </div>
-            
-            <button onclick="window.openSim()" style="background-color: #D32F2F; border-color: #B71C1C; margin-top: 5px;">🔪 開啟切割模擬 (Simulation)</button>
             
             <div class="sub-group" style="margin-top:5px; border-color:#555;">
                 <label>📦 資料庫完整備份/還原</label>
@@ -289,6 +242,16 @@
             <div id="dim-list" style="margin-top:5px;"></div>
         </div>
 
+        <div class="control-group" style="border-left: 4px solid #FFCA28;">
+            <h3 style="margin:0; border:none; color:#FFF176;">3. 附圖與說明 (Photos)</h3>
+            <div class="sub-group">
+                <input type="file" id="photoInput" accept="image/*" style="margin-bottom:5px;">
+                <input type="text" id="photoDesc" placeholder="輸入圖片說明 (如: SEM 剖面)...">
+                <button onclick="window.addPhoto()" style="background:#FFA000; border-color:#FF6F00;">📷 加入附圖</button>
+            </div>
+            <div id="photo-list"></div>
+        </div>
+
         <div style="margin-top: 10px; display:flex; gap:5px;">
             <button class="btn-img" onclick="window.downloadImage()">💾 存圖</button>
             <button class="btn-ppt" onclick="window.downloadPPT()">📊 存 PPT</button>
@@ -304,7 +267,7 @@
         import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config (使用公用 Key 以確保您可以找回資料)
+        // Firebase Config (使用公用 Key)
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -336,6 +299,7 @@
 
         window.layers = [];
         window.dimensions = [];
+        window.photos = []; // New: Store photos
         let dragSrcEl = null;
 
         // ---------------------------------------------
@@ -423,11 +387,81 @@
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
         // ---------------------------------------------
+        // ★ Photo Handling (New)
+        // ---------------------------------------------
+        window.addPhoto = function() {
+            const input = document.getElementById('photoInput');
+            const descInput = document.getElementById('photoDesc');
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                showLoading(true, "處理圖片中...");
+                
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Compress Image to max width 600px to save DB space
+                        const maxW = 600;
+                        const scale = Math.min(1, maxW / img.width);
+                        const w = img.width * scale;
+                        const h = img.height * scale;
+                        
+                        const cvs = document.createElement('canvas');
+                        cvs.width = w; cvs.height = h;
+                        const ctx = cvs.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        
+                        // High compression for DB storage
+                        const compressedData = cvs.toDataURL('image/jpeg', 0.7); 
+
+                        window.photos.push({
+                            id: Date.now(),
+                            data: compressedData, // store compressed base64
+                            desc: descInput.value || "圖說",
+                            w: w, h: h
+                        });
+                        
+                        descInput.value = '';
+                        input.value = '';
+                        window.renderPhotoList();
+                        window.draw();
+                        showLoading(false);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("請先選擇圖片");
+            }
+        };
+
+        window.renderPhotoList = function() {
+            const list = document.getElementById('photo-list');
+            list.innerHTML = '';
+            window.photos.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'photo-item';
+                div.innerHTML = `
+                    <img src="${p.data}" class="photo-thumb">
+                    <div class="photo-info">
+                        <input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)">
+                        <div class="btn-tiny" onclick="window.deletePhoto(${i})" style="text-align:center; background:#c62828; width:100%; cursor:pointer;">刪除</div>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.updatePhotoDesc = (i, v) => { window.photos[i].desc = v; window.draw(); };
+        window.deletePhoto = (i) => { window.photos.splice(i, 1); window.renderPhotoList(); window.draw(); };
+
+        // ---------------------------------------------
         // ★ 雲端管理 Manager
         // ---------------------------------------------
         window.openCloudManager = function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
-            document.getElementById('mgrModal').style.display = 'flex'; // flex for layout
+            document.getElementById('mgrModal').style.display = 'flex'; 
             document.getElementById('mgrBackdrop').style.display = 'block';
             window.refreshCloudList();
         };
@@ -490,6 +524,7 @@
                     <strong>專案:</strong> ${p.id}<br>
                     <strong>備註:</strong> ${p.note || ''}<br>
                     <strong>層數:</strong> ${p.layers?.length || 0}<br>
+                    <strong>附圖:</strong> ${p.photos?.length || 0} 張<br>
                     <strong>最後修改:</strong> ${new Date(p.timestamp).toLocaleString()}
                 `;
                 window.drawPreviewCanvas(p.layers);
@@ -519,11 +554,13 @@
             });
         };
 
+        // 匯出多選 Excel
         window.batchExportExcel = function() {
             const checks = document.querySelectorAll('.batch-check:checked');
             if(checks.length === 0) { alert("請先勾選左側專案"); return; }
             
-            let csv = "\uFEFF"; 
+            let csv = "\uFEFF"; // BOM
+            
             checks.forEach(chk => {
                 const id = chk.value;
                 const p = cloudProjectsCache.find(x => x.id === id);
@@ -535,9 +572,9 @@
                     const unit = p.settings?.unit || 'um';
                     const layers = p.layers || [];
                     layers.forEach((l,i) => {
-                         if(l.checked === false) return; 
-                         t += (parseFloat(l.thickness)||0);
-                         csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
+                          if(l.checked === false) return; 
+                          t += (parseFloat(l.thickness)||0);
+                          csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`;
                     });
                     csv += `,,${t},${unit},總厚度\n\n`; 
                 }
@@ -569,6 +606,9 @@
             showLoading(false);
         };
 
+        // ---------------------------------------------
+        // ★ Full Backup & Restore
+        // ---------------------------------------------
         window.backupAllCloudData = async function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
             showLoading(true, "打包所有資料中...");
@@ -624,7 +664,6 @@
                             count++;
                         }
                     }
-
                     await batch.commit();
                     alert(`還原成功！共寫入 ${count} 筆資料。`);
                     window.refreshUnitList();
@@ -651,14 +690,21 @@
             const data = {
                 layers: window.layers,
                 dimensions: window.dimensions,
+                photos: window.photos, // Save photos
                 settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value },
                 note: document.getElementById('projNote').value,
                 timestamp: Date.now()
             };
             
+            // Basic size check
+            const size = new Blob([JSON.stringify(data)]).size;
+            if(size > 950000) {
+                 if(!confirm(`⚠️ 警告：專案大小 (${Math.round(size/1024)}KB) 接近資料庫上限(1MB)。\n建議刪除部分照片。確定要儲存嗎？`)) return;
+            }
+
             if(!confirm(`儲存專案: ${name}?`)) return;
             showLoading(true);
-            try { await setDoc(doc(db, COL_PROJ, name), data); alert("儲存成功"); } catch(e) { alert("Error"); }
+            try { await setDoc(doc(db, COL_PROJ, name), data); alert("儲存成功"); } catch(e) { alert("儲存失敗 (可能是圖片太多導致超過大小限制)"); console.error(e); }
             showLoading(false);
         };
 
@@ -730,52 +776,95 @@
             const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a);
         };
 
+        // Standard Helpers
         window.applyConfig = (c) => { 
-            window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; 
+            window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; window.photos=c.photos||[];
             if(c.settings) { document.getElementById('unitInput').value=c.settings.unit||"um"; document.getElementById('canvasWidth').value=c.settings.width||450; }
-            window.renderList(); window.draw();
+            window.renderList(); window.renderPhotoList(); window.draw();
         };
         window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
+        
+        // PPT Generation (Enhanced for Photos)
         window.downloadPPT = () => {
              let pres = new PptxGenJS();
              const unit = document.getElementById('unitInput').value;
              const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
-             if(totalThick===0) return alert("無資料");
+             if(totalThick===0 && window.layers.length===0) return alert("無資料");
              
              let maxOff=20; window.dimensions.forEach(d=> {if(d.offset>maxOff)maxOff=d.offset;});
              const pl=maxOff+150, pt=50, sf=100, cw=canvas.width-(maxOff+40)-20;
              const ah = Math.max(500, window.layers.length*40);
-             const sc = ah/totalThick;
-             pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:(ah+100)/sf}); pres.layout='C';
+             const sc = ah/(totalThick||1);
+             
+             // Calculate Slide Height needed
+             let slideH = (ah+150)/sf; 
+             if(window.photos.length > 0) slideH += (window.photos.length * 4); // Estimate extra pages or space
+
+             pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:slideH}); pres.layout='C';
              
              let s = pres.addSlide(); let cy=pt;
+             
+             // Draw Stack
              window.layers.forEach(l => {
                  const h = l.thickness*sc;
-                 const fs = l.fontSize||14;
                  const fc = l.color.replace('#','');
                  const tc = isColorDark(l.color)?'FFFFFF':'000000';
                  s.addShape(pres.ShapeType.rect, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, fill:fc, line:'333333'});
-                 s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:fs, align:'center', valign:'middle'});
+                 s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:l.fontSize||14, align:'center', valign:'middle'});
                  cy+=h;
              });
-             pres.writeFile({fileName:"Stack.pptx"});
+
+             // Add Dimensions (Simple Text)
+             let dimText = "";
+             window.dimensions.forEach(d => {
+                 const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name;
+                 dimText += `${n1}~${n2}: ${d.label}\n`;
+             });
+             if(dimText) s.addText(dimText, {x:0.5, y:0.5, w:2, h:2, color:'FF0000', fontSize:10});
+
+             // Draw Photos (Each on new slide or below if space)
+             // For simplicity in this version, we add photos to NEW slides to avoid layout mess
+             window.photos.forEach(p => {
+                 let ps = pres.addSlide();
+                 ps.addText("附圖: " + p.desc, { x:0.5, y:0.5, fontSize:18, color:'333333' });
+                 ps.addImage({ data:p.data, x:1, y:1.5, w:8, h:4.5, sizing:{type:'contain', w:8, h:4.5} });
+             });
+
+             pres.writeFile({fileName:"Stack_Photo_Report.pptx"});
         };
         
         function isColorDark(hex) { const r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16); return ((r*299+g*587+b*114)/1000)<128; }
         window.resizeCanvas = () => { canvas.width=parseInt(document.getElementById('canvasWidth').value)||450; window.draw(); };
+        
+        // ★ UPDATED DRAW FUNCTION
         window.draw = () => {
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value)||14;
             const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
-            if(totalThick===0 && window.layers.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+            
+            if(totalThick===0 && window.layers.length===0 && window.photos.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+            
             let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
             const pad = { t:40, b:40, l: maxOff+80, r:20 };
             const dw = canvas.width - pad.l - pad.r;
-            const ah = Math.max(500, window.layers.length*40);
-            canvas.height = ah + pad.t + pad.b;
-            const scale = ah / (totalThick||1);
+            const stackH = Math.max(500, window.layers.length*40);
+            
+            // Calculate Photo Area Height
+            let photoTotalH = 0;
+            const photoGap = 30;
+            window.photos.forEach(p => {
+                // Calculate display height maintaining aspect ratio
+                const displayH = (dw / p.w) * p.h;
+                photoTotalH += displayH + 40; // 40 for text and gap
+            });
+
+            // Set Total Canvas Height
+            canvas.height = stackH + pad.t + pad.b + (photoTotalH > 0 ? photoTotalH + 50 : 0);
+            const scale = stackH / (totalThick||1);
             
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.textAlign="center"; ctx.textBaseline="middle";
+            
+            // 1. Draw Stack
             let cy = pad.t;
             let yPos = [];
 
@@ -791,6 +880,8 @@
                 }
                 cy += h;
             });
+
+            // 2. Draw Dimensions
             window.dimensions.forEach(d => {
                 if(!yPos[d.start] || !yPos[d.end]) return;
                 const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=pad.l-d.offset;
@@ -801,6 +892,30 @@
                 const txt = d.label || `${window.layers.slice(d.start,d.end+1).reduce((s,l)=>s+(parseFloat(l.thickness)||0),0)}${unit}`;
                 ctx.textAlign="right"; ctx.fillText(txt, x-5, y1+h/2);
             });
+
+            // 3. Draw Photos
+            if(window.photos.length > 0) {
+                let py = cy + 60; // Start below stack
+                
+                // Draw Divider
+                ctx.strokeStyle="#555"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(20, py-30); ctx.lineTo(canvas.width-20, py-30); ctx.stroke();
+
+                window.photos.forEach(p => {
+                     const img = new Image();
+                     img.src = p.data; // Already loaded base64
+                     const displayH = (dw / p.w) * p.h;
+                     
+                     // Draw Image
+                     ctx.drawImage(img, pad.l, py, dw, displayH);
+                     ctx.strokeStyle="#666"; ctx.lineWidth=1; ctx.strokeRect(pad.l, py, dw, displayH);
+                     
+                     // Draw Description
+                     ctx.fillStyle="#000"; ctx.textAlign="left"; ctx.font="14px Arial";
+                     ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
+                     
+                     py += displayH + 50;
+                });
+            }
         };
         function drawArrow(ctx,x,y,u) { ctx.beginPath(); const s=5; if(u){ctx.moveTo(x,y);ctx.lineTo(x-s,y+s);ctx.lineTo(x+s,y+s);}else{ctx.moveTo(x,y);ctx.lineTo(x-s,y-s);ctx.lineTo(x+s,y-s);} ctx.fill(); }
 
@@ -808,189 +923,6 @@
         if(isFirebaseReady) { window.refreshUnitList(); }
         window.layers = [{name:"Demo",thickness:100,color:"#90CAF9",checked:true}];
         window.renderList(); window.draw();
-
-        // ---------------------------------------------
-        // ★ 切割模擬邏輯 (Integration)
-        // ---------------------------------------------
-        window.openSim = function() {
-            if(!window.layers || window.layers.length === 0) {
-                alert("請先建立層次資料 (Layers) 才能進行模擬！");
-                return;
-            }
-            document.getElementById('sim-modal').style.display = 'flex';
-            setTimeout(() => {
-                window.sim.init();
-            }, 100);
-        };
-
-        window.sim = {
-            ctxX: null, ctxY: null,
-            wX: 0, hX: 0, wY: 0, hY: 0,
-            layers: [],
-            state: 0, 
-            bladeX: 0, bladeY: 0, bladeZ: 200, 
-            bladeThick: 40,
-            cut1Speed: 0.5, cut2Speed: 0.25, 
-            targetZ: 95, targetLen: 30, shiftY: 20,
-            animReq: null,
-            
-            init: function() {
-                const cX = document.getElementById('simCanvasX');
-                const cY = document.getElementById('simCanvasY');
-                this.ctxX = cX.getContext('2d');
-                this.ctxY = cY.getContext('2d');
-                cX.width = cX.offsetWidth; cX.height = cX.offsetHeight;
-                cY.width = cY.offsetWidth; cY.height = cY.offsetHeight;
-                this.wX = cX.width; this.hX = cX.height;
-                this.wY = cY.width; this.hY = cY.height;
-                this.layers = JSON.parse(JSON.stringify(window.layers || []));
-                this.bladeThick = parseInt(document.getElementById('simBladeThick').value);
-                this.reset();
-            },
-            
-            reset: function() {
-                cancelAnimationFrame(this.animReq);
-                this.state = 0;
-                this.bladeX = 0;
-                this.bladeY = 0;
-                this.bladeZ = this.getTotalThickness() + 50; 
-                this.draw();
-            },
-            
-            start: function() {
-                if(this.state !== 0) return;
-                this.state = 1; 
-                this.loop();
-            },
-            
-            loop: function() {
-                this.update();
-                this.draw();
-                if(this.state !== 99) {
-                    this.animReq = requestAnimationFrame(() => this.loop());
-                }
-            },
-            
-            update: function() {
-                const zSpeed = 2;
-                switch(this.state) {
-                    case 1: // Cut 1 Down
-                        this.bladeZ -= zSpeed;
-                        if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 2; }
-                        break;
-                    case 2: // Cut 1 Move (Speed 2)
-                        this.bladeX += this.cut1Speed;
-                        if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 3; }
-                        break;
-                    case 3: // Cut 1 Up
-                        this.bladeZ += zSpeed;
-                        if(this.bladeZ >= this.getTotalThickness() + 20) { this.state = 4; }
-                        break;
-                    case 4: // Shift Y (20um)
-                        this.bladeY += 0.5;
-                        this.bladeX = 0; 
-                        if(this.bladeY >= this.shiftY) { this.bladeY = this.shiftY; this.state = 5; }
-                        break;
-                    case 5: // Cut 2 Down
-                        this.bladeZ -= zSpeed;
-                        if(this.bladeZ <= this.targetZ) { this.bladeZ = this.targetZ; this.state = 6; }
-                        break;
-                    case 6: // Cut 2 Move (Speed 1 - Slower)
-                        this.bladeX += this.cut2Speed;
-                        if(this.bladeX >= this.targetLen) { this.bladeX = this.targetLen; this.state = 7; }
-                        break;
-                    case 7: // Cut 2 Up
-                        this.bladeZ += zSpeed;
-                        if(this.bladeZ >= this.getTotalThickness() + 50) { this.state = 99; } 
-                        break;
-                }
-            },
-            
-            getTotalThickness: function() {
-                return this.layers.reduce((s,l) => s + (parseFloat(l.thickness)||0), 0);
-            },
-            
-            draw: function() {
-                const totalThick = this.getTotalThickness() || 100;
-                const ctxX = this.ctxX;
-                ctxX.clearRect(0,0,this.wX, this.hX);
-                const scaleZX = (this.hX - 60) / (totalThick + 100); 
-                const scaleXX = (this.wX - 40) / 35; 
-                const originX_Z = this.hX - 30;
-                const originX_X = 20;
-                
-                let currentH = totalThick;
-                this.layers.forEach(l => {
-                    const th = (parseFloat(l.thickness)||0);
-                    const hPx = th * scaleZX;
-                    ctxX.fillStyle = l.color;
-                    ctxX.fillRect(originX_X, originX_Z - (currentH * scaleZX), 30 * scaleXX, hPx);
-                    currentH -= th;
-                });
-                
-                const bX = originX_X + this.bladeX * scaleXX;
-                const bZ = originX_Z - (this.bladeZ * scaleZX);
-                const bRad = 30;
-                ctxX.fillStyle = "rgba(255,255,255,0.8)";
-                ctxX.beginPath(); ctxX.arc(bX, bZ - bRad, bRad, 0, Math.PI*2); ctxX.fill();
-                ctxX.fillStyle = "#FF5252";
-                ctxX.fillRect(bX - 2, bZ - bRad, 4, bRad);
-                
-                ctxX.fillStyle = "#fff"; ctxX.font = "14px Arial";
-                ctxX.fillText(`X-Pos: ${this.bladeX.toFixed(2)} mm`, 10, 20);
-                ctxX.fillText(`Z-Height: ${this.bladeZ.toFixed(1)} um`, 150, 20);
-                
-                const ctxY = this.ctxY;
-                ctxY.clearRect(0,0,this.wY, this.hY);
-                const scaleZY = (this.hY - 60) / (totalThick + 50);
-                const viewWidthUm = 300; 
-                const scaleYY = this.wY / viewWidthUm;
-                const originY_X = this.wY / 2;
-                const originY_Z = this.hY - 30;
-                
-                currentH = totalThick;
-                this.layers.forEach(l => {
-                    const th = (parseFloat(l.thickness)||0);
-                    const hPx = th * scaleZY;
-                    const yStart = originY_Z - (currentH * scaleZY);
-                    ctxY.fillStyle = l.color;
-                    ctxY.fillRect(0, yStart, this.wY, hPx);
-                    ctxY.strokeStyle = "#111"; ctxY.strokeRect(0, yStart, this.wY, hPx);
-                    if(hPx > 10) { ctxY.fillStyle = "rgba(0,0,0,0.5)"; ctxY.fillText(l.name, 5, yStart + hPx/2); }
-                    currentH -= th;
-                });
-                
-                const drawKerf = (shift, depth) => {
-                    const kW = this.bladeThick * scaleYY;
-                    const cutTopY = originY_Z - (totalThick * scaleZY);
-                    const cutBottomY = originY_Z - (depth * scaleZY);
-                    const cutHeight = cutBottomY - cutTopY; 
-                    const kX = originY_X + (shift * scaleYY) - (kW/2);
-                    
-                    if(depth < totalThick) {
-                        ctxY.fillStyle = "#000"; ctxY.fillRect(kX, cutTopY, kW, cutHeight);
-                        ctxY.strokeStyle = "#444"; ctxY.strokeRect(kX, cutTopY, kW, cutHeight);
-                    }
-                };
-                
-                if(this.state >= 4) drawKerf(0, 95);
-                
-                const bW_px = this.bladeThick * scaleYY;
-                const bX_px = originY_X + (this.bladeY * scaleYY) - (bW_px/2);
-                const bZ_px = originY_Z - (this.bladeZ * scaleZY);
-                
-                ctxY.fillStyle = "rgba(255, 82, 82, 0.5)"; ctxY.fillRect(bX_px, 0, bW_px, bZ_px); 
-                ctxY.fillStyle = "#FF5252"; ctxY.fillRect(bX_px, bZ_px - 5, bW_px, 5);
-                
-                if(this.state === 2 || this.state === 3) drawKerf(0, Math.max(95, this.bladeZ));
-                if(this.state === 6 || this.state === 7) drawKerf(this.shiftY, Math.max(95, this.bladeZ));
-                
-                ctxY.fillStyle = "#00E676"; ctxY.font = "10px monospace";
-                ctxY.fillText("0 um", originY_X - 10, this.hY - 5);
-                ctxY.fillText(`+${this.shiftY} um`, originY_X + (this.shiftY*scaleYY) - 10, this.hY - 5);
-                ctxY.strokeStyle = "#00E676"; ctxY.beginPath(); ctxY.moveTo(originY_X, 0); ctxY.lineTo(originY_X, this.hY); ctxY.stroke();
-            }
-        };
 
     </script>
 </body>
