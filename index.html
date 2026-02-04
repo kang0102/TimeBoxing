@@ -31,7 +31,7 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: top 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* 平滑滑動效果 */
+            transition: top 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         #status-msg { margin-bottom: 20px; font-size: 1.2rem; min-height: 24px; }
@@ -41,6 +41,7 @@
         .dot.filled { background-color: white; }
 
         .keypad { display: grid; grid-template-columns: repeat(3, 80px); gap: 15px; transition: opacity 0.3s; }
+        
         .key {
             width: 70px; height: 70px; border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.1);
@@ -48,10 +49,16 @@
             color: white; font-size: 1.5rem;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; user-select: none;
+            transition: background-color 0.1s; /* 加快反應速度 */
         }
-        .key:active { background-color: rgba(255, 255, 255, 0.3); }
         
-        /* 錯誤時的搖晃動畫 */
+        /* 滑鼠點擊效果 */
+        .key:active { background-color: rgba(255, 255, 255, 0.4); }
+        
+        /* 鍵盤按壓模擬效果 (JavaScript 控制) */
+        .key.active-key { background-color: rgba(255, 255, 255, 0.4); transform: scale(0.95); }
+
+        /* 錯誤動畫 */
         .shake { animation: shake 0.3s; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -60,10 +67,10 @@
         }
 
         /* ==================== 
-           主內容 (工具箱) CSS 
+           主內容 CSS 
            ==================== */
         #main-content {
-            display: none; /* 預設隱藏，解鎖後改為 flex */
+            display: none;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
@@ -97,7 +104,6 @@
             box-sizing: border-box;
         }
 
-        /* 卡片樣式 */
         .card {
             background: white;
             width: 300px;
@@ -113,17 +119,8 @@
         }
 
         .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        .card-img { height: 150px; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
 
-        .card-img {
-            height: 150px;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-        }
-
-        /* 各種背景色 */
         .timer-bg { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%); }
         .glue-bg { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
         .stitch-bg { background: linear-gradient(135deg, #FFB74D 0%, #FFCC80 100%); }
@@ -135,7 +132,7 @@
         .card-content { padding: 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
         .card-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
         .card-desc { font-size: 1rem; color: #666; line-height: 1.5; }
-
+        
         .badge {
             position: absolute; top: 10px; right: 10px;
             background: #ff4757; color: white; padding: 2px 8px;
@@ -143,10 +140,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        footer {
-            margin-top: auto; padding: 20px; color: #888;
-            font-size: 0.9rem; text-align: center; width: 100%;
-        }
+        footer { margin-top: auto; padding: 20px; color: #888; font-size: 0.9rem; text-align: center; width: 100%; }
     </style>
 </head>
 <body>
@@ -162,18 +156,18 @@
         </div>
 
         <div class="keypad" id="keypad" style="pointer-events: none; opacity: 0.5;">
-            <div class="key" onclick="enterDigit('1')">1</div>
-            <div class="key" onclick="enterDigit('2')">2</div>
-            <div class="key" onclick="enterDigit('3')">3</div>
-            <div class="key" onclick="enterDigit('4')">4</div>
-            <div class="key" onclick="enterDigit('5')">5</div>
-            <div class="key" onclick="enterDigit('6')">6</div>
-            <div class="key" onclick="enterDigit('7')">7</div>
-            <div class="key" onclick="enterDigit('8')">8</div>
-            <div class="key" onclick="enterDigit('9')">9</div>
+            <div class="key" data-key="1" onclick="enterDigit('1')">1</div>
+            <div class="key" data-key="2" onclick="enterDigit('2')">2</div>
+            <div class="key" data-key="3" onclick="enterDigit('3')">3</div>
+            <div class="key" data-key="4" onclick="enterDigit('4')">4</div>
+            <div class="key" data-key="5" onclick="enterDigit('5')">5</div>
+            <div class="key" data-key="6" onclick="enterDigit('6')">6</div>
+            <div class="key" data-key="7" onclick="enterDigit('7')">7</div>
+            <div class="key" data-key="8" onclick="enterDigit('8')">8</div>
+            <div class="key" data-key="9" onclick="enterDigit('9')">9</div>
             <div class="key" style="background:transparent; cursor:default;"></div>
-            <div class="key" onclick="enterDigit('0')">0</div>
-            <div class="key" onclick="backspace()">⌫</div>
+            <div class="key" data-key="0" onclick="enterDigit('0')">0</div>
+            <div class="key" data-key="Backspace" onclick="backspace()">⌫</div>
         </div>
     </div>
 
@@ -184,7 +178,6 @@
         </header>
     
         <div class="container">
-            
             <a href="timer.html" class="card">
                 <div class="card-img timer-bg">⏱️</div>
                 <div class="card-content">
@@ -192,7 +185,6 @@
                     <div class="card-desc">蕃茄鐘、倒數計時與任務紀錄功能。</div>
                 </div>
             </a>
-    
             <a href="glue.html" class="card">
                 <div class="card-img glue-bg">🧩</div>
                 <div class="card-content">
@@ -200,7 +192,6 @@
                     <div class="card-desc">上傳圖片、畫框並計算膠體面積佔比。</div>
                 </div>
             </a>
-    
             <a href="stitch.html" class="card">
                 <div class="card-img stitch-bg">🖼️</div>
                 <div class="card-content">
@@ -208,7 +199,6 @@
                     <div class="card-desc">多圖手動合成工具。載入兩張圖片，拖曳調整位置與透明度。</div>
                 </div>
             </a>
-    
             <a href="stack.html" class="card">
                 <div class="card-img stack-bg">📚</div>
                 <div class="card-content">
@@ -216,7 +206,6 @@
                     <div class="card-desc">自訂材料層次、厚度與顏色，產生堆疊結構圖。</div>
                 </div>
             </a>
-    
             <a href="cutting.html" class="card">
                 <div class="badge">NEW</div>
                 <div class="card-img cut2d-bg">✂️</div>
@@ -225,7 +214,6 @@
                     <div class="card-desc">平面量測工具。計算切割深度、支援畫線量測與吸附功能。</div>
                 </div>
             </a>
-    
             <a href="cutting_3d.html" class="card">
                 <div class="badge">NEW</div>
                 <div class="card-img cut3d-bg" style="font-size: 3.5rem;">🧊</div>
@@ -234,7 +222,6 @@
                     <div class="card-desc">全 3D 視角。設定長寬高，模擬刀具切割實體後的斷面形狀。</div>
                 </div>
             </a>
-            
             <a href="test.html" class="card">
                 <div class="badge" style="background: #607D8B;">DEV</div>
                 <div class="card-img test-bg">🧪</div>
@@ -243,14 +230,12 @@
                     <div class="card-desc">功能開發測試區。用於調試新程式碼與實驗性功能。</div>
                 </div>
             </a>
-        
         </div>
     
         <footer>
             <div style="margin-bottom: 15px;">
                 &copy; 2024 My Web Tools. Hosted on GitHub Pages.
             </div>
-            
             <div style="font-size: 13px; background: rgba(255,255,255,0.5); padding: 8px 15px; border-radius: 20px; display: inline-flex; gap: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                 <span id="busuanzi_container_site_uv" style="display:none">
                     👤 訪客數: <span id="busuanzi_value_site_uv" style="color:#00897B; font-weight:bold;"></span>
@@ -268,7 +253,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 你的 Firebase Config
+        // Firebase Config (維持不變)
         const firebaseConfig = {
             apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
             authDomain: "stack-diagram-db.firebaseapp.com",
@@ -283,22 +268,23 @@
 
         let currentInput = "";
         let correctPassword = "";
+        let isLocked = true; // 新增狀態判斷
 
         // 1. 連線資料庫獲取密碼
         async function fetchPassword() {
             try {
-                // 讀取 secrets 集合中的 adminConfig 文件
                 const docRef = doc(db, "secrets", "adminConfig");
                 const docSnap = await getDoc(docRef);
                 
                 if (docSnap.exists()) {
                     correctPassword = docSnap.data().password;
-                    
-                    // 成功獲取後，解鎖鍵盤
                     document.getElementById('status-msg').textContent = "請輸入密碼";
                     const keypad = document.getElementById('keypad');
                     keypad.style.pointerEvents = "auto";
                     keypad.style.opacity = "1";
+                    
+                    // 啟用鍵盤監聽
+                    enableKeyboardInput();
                 } else {
                     document.getElementById('status-msg').textContent = "錯誤：找不到設定檔";
                 }
@@ -308,16 +294,45 @@
             }
         }
 
-        // 頁面載入時執行
         fetchPassword();
 
-        // 2. 輸入邏輯
+        // 2. 鍵盤事件監聽 (新增部分)
+        function enableKeyboardInput() {
+            document.addEventListener('keydown', (event) => {
+                // 如果已經解鎖，就不再接收鍵盤輸入
+                if (!isLocked) return;
+
+                const key = event.key;
+
+                // 檢查是否為 0-9 的數字
+                if (/^[0-9]$/.test(key)) {
+                    enterDigit(key);
+                    highlightKey(key); // 視覺回饋
+                } 
+                // 檢查是否為 Backspace
+                else if (key === 'Backspace') {
+                    backspace();
+                    highlightKey('Backspace'); // 視覺回饋
+                }
+            });
+        }
+
+        // 讓按鈕亮一下的視覺效果
+        function highlightKey(key) {
+            // 尋找對應 data-key 的按鈕
+            const btn = document.querySelector(`.key[data-key="${key}"]`);
+            if (btn) {
+                btn.classList.add('active-key');
+                setTimeout(() => btn.classList.remove('active-key'), 150);
+            }
+        }
+
+        // 3. 輸入邏輯
         window.enterDigit = (digit) => {
             if (currentInput.length < 4) {
                 currentInput += digit;
                 updateDots();
                 if (currentInput.length === 4) {
-                    // 稍微延遲一點點，讓使用者看到第四個點亮起
                     setTimeout(checkPin, 100);
                 }
             }
@@ -335,7 +350,7 @@
             });
         }
 
-        // 3. 驗證密碼
+        // 4. 驗證密碼
         function checkPin() {
             if (currentInput === correctPassword) {
                 unlock();
@@ -345,18 +360,14 @@
         }
 
         function unlock() {
+            isLocked = false; // 標記為已解鎖，停止鍵盤監聽
             document.getElementById('status-msg').textContent = "驗證成功";
             document.getElementById('status-msg').style.color = "#2ecc71";
-            
-            // 鎖定畫面向上滑動
             document.getElementById('lock-screen').style.top = "-100%";
             
-            // 顯示主內容並允許捲動
             const mainContent = document.getElementById('main-content');
-            mainContent.style.display = "flex"; // 使用 flex 讓版面居中
-            document.body.style.overflow = "auto"; // 恢復捲動
-            
-            // 修改標題
+            mainContent.style.display = "flex";
+            document.body.style.overflow = "auto";
             document.title = "Neil's 工具箱";
         }
 
