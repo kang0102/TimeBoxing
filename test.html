@@ -419,7 +419,7 @@
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
         // ---------------------------------------------
-        // ★ 照片處理 (手機拍照/上傳核心)
+        // ★ 照片處理 (強力壓縮版)
         // ---------------------------------------------
         window.addPhoto = function() {
             const input = document.getElementById('photoInput');
@@ -434,8 +434,8 @@
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        // ★ 關鍵：圖片壓縮邏輯 (手機照片通常很大，必須壓縮)
-                        const maxW = 600; // 限制最大寬度 600px
+                        // ★ 設定更嚴格的壓縮參數
+                        const maxW = 600; // 限制最大寬度 600px (手機看剛好，又能大幅瘦身)
                         let w = img.width;
                         let h = img.height;
                         
@@ -449,18 +449,24 @@
                         const ctx = cvs.getContext('2d');
                         ctx.drawImage(img, 0, 0, w, h);
                         
-                        // 轉成 JPEG 格式，品質 0.7，大幅減少容量
-                        const compressedData = cvs.toDataURL('image/jpeg', 0.7); 
+                        // ★ 關鍵：品質降為 0.5 (畫質還可以，但檔案會小非常多)
+                        const compressedData = cvs.toDataURL('image/jpeg', 0.5); 
+
+                        // 檢查單張圖片大小，如果還是太大 (超過 200KB) 則警告
+                        if (compressedData.length > 200000) {
+                            console.warn("這張照片細節太多，壓縮後仍然偏大");
+                        }
 
                         window.photos.push({
                             id: Date.now(),
                             data: compressedData, 
                             desc: descInput.value || "圖說",
-                            w: w, h: h
+                            w: w, h: h,
+                            imgElement: null // 重置 image element 快取，讓 draw 重建
                         });
                         
                         descInput.value = '';
-                        input.value = ''; // 重置 input 以便下次能選同一張圖
+                        input.value = ''; // 重置 input
                         window.renderPhotoList();
                         window.draw();
                         showLoading(false);
