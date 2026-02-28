@@ -1,3 +1,23 @@
-<script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.15.0/gradio.js"></script>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 AI 經濟指標自動追蹤器</title>
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.15.0/gradio.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .gradio-container { border: 1px solid #ccc; border-radius: 8px; overflow: hidden; margin-top: 20px;}
+    </style>
+</head>
+<body>
 
-<gradio-app src="https://huggingface.co/spaces/NeilKang/stockA"></gradio-app>
+    <h1>歡迎來到我的 AI 指標追蹤網站 🚀</h1>
+    <p>這是我用 Python 與真實股市數據打造的分析工具。</p>
+
+    <div class="gradio-container">
+        <gradio-app src="https://huggingface.co/spaces/NeilKang/stockA"></gradio-app>
+    </div>
+
+</body>
+</html>
