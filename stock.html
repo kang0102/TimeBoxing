@@ -4,10 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的 AI 經濟指標自動追蹤器</title>
-    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.15.0/gradio.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .gradio-container { border: 1px solid #ccc; border-radius: 8px; overflow: hidden; margin-top: 20px;}
+        /* 網頁基本排版 */
+        body { 
+            font-family: sans-serif; 
+            padding: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background-color: #f8f9fa;
+        }
+        h1, p {
+            text-align: center;
+            color: #333;
+        }
+        /* 幫 iframe 加上漂亮的邊框與高度設定 */
+        .iframe-container { 
+            width: 100%; 
+            height: 85vh; /* 高度佔螢幕的 85%，讓工具盡量大一點 */
+            border: 1px solid #ccc; 
+            border-radius: 10px; 
+            overflow: hidden; 
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 加一點陰影更有質感 */
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* 隱藏原本醜醜的預設邊框 */
+        }
     </style>
 </head>
 <body>
@@ -15,8 +39,8 @@
     <h1>歡迎來到我的 AI 指標追蹤網站 🚀</h1>
     <p>這是我用 Python 與真實股市數據打造的分析工具。</p>
 
-    <div class="gradio-container">
-        <gradio-app space="NeilKang/stockA"></gradio-app>
+    <div class="iframe-container">
+        <iframe src="https://neilkang-stocka.hf.space"></iframe>
     </div>
 
 </body>
