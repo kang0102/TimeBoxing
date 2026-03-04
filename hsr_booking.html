@@ -1,1 +1,274 @@
+import gradio as gr
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+import time
+import json
+import os
+import ddddocr
 
+# --- 設定檔儲存與讀取功能 ---
+CONFIG_FILE = "hsr_config.json"
+
+def load_config():
+    default_config = {
+        "start_station": "左營",
+        "dest_station": "台北",
+        "ride_date": "2026/04/06",
+        "ride_time": "18:00",
+        "ticket_count": "1",
+        "use_credit_card": True,
+        "cc_number": "43045187",
+        "auto_captcha": True,
+        "id_number": "",
+        "phone": "",
+        "email": "",
+        "is_tgo": True,
+        "auto_submit": False
+    }
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                saved = json.load(f)
+                default_config.update(saved)
+                return default_config
+        except:
+            return default_config
+    return default_config
+
+def save_config(start_station, dest_station, ride_date, ride_time, ticket_count, use_credit_card, cc_number, auto_captcha, id_number, phone, email, is_tgo, auto_submit):
+    config = {
+        "start_station": start_station,
+        "dest_station": dest_station,
+        "ride_date": ride_date,
+        "ride_time": ride_time,
+        "ticket_count": ticket_count,
+        "use_credit_card": use_credit_card,
+        "cc_number": cc_number,
+        "auto_captcha": auto_captcha,
+        "id_number": id_number,
+        "phone": phone,
+        "email": email,
+        "is_tgo": is_tgo,
+        "auto_submit": auto_submit
+    }
+    try:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump(config, f, ensure_ascii=False, indent=4)
+    except:
+        pass
+
+# --- 主程式 ---
+def start_booking(start_station, dest_station, ride_date, ride_time, ticket_count, use_credit_card, cc_number, auto_captcha, id_number, phone, email, is_tgo, auto_submit):
+    save_config(start_station, dest_station, ride_date, ride_time, ticket_count, use_credit_card, cc_number, auto_captcha, id_number, phone, email, is_tgo, auto_submit)
+    
+    status_msg = "啟動中，正在開啟瀏覽器..."
+    yield status_msg 
+
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_experimental_option("detach", True) 
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        driver = webdriver.Chrome(options=chrome_options)
+        
+        if use_credit_card:
+            driver.get("https://irs.thsrc.com.tw/IMINT/creditcard")
+        else:
+            driver.get("https://irs.thsrc.com.tw/IMINT/")
+        
+        # 1. 處理彈窗
+        try:
+            agree_btn = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "cookieAccpetBtn")))
+            driver.execute_script("arguments[0].click();", agree_btn)
+            time.sleep(1) 
+        except: pass 
+
+        # 2. 信用卡登入流程
+        if use_credit_card:
+            try:
+                cc_inputs = WebDriverWait(driver, 5).until(EC.presence_of_all_elements_located((By.XPATH, "//input[@type='text' and @maxlength='4']")))
+                visible_cc_inputs = [inp for inp in cc_inputs if inp.is_displayed()]
+                if len(visible_cc_inputs) >= 2 and len(cc_number) >= 8:
+                    visible_cc_inputs[0].clear()
+                    visible_cc_inputs[0].send_keys(cc_number[:4])  
+                    visible_cc_inputs[1].clear()
+                    visible_cc_inputs[1].send_keys(cc_number[4:8]) 
+                
+                checkbox = driver.find_element(By.XPATH, "//input[@type='checkbox']")
+                driver.execute_script("arguments[0].click();", checkbox)
+                login_btn = driver.find_element(By.XPATH, "//*[@value='登入查詢' or contains(text(), '登入查詢')]")
+                driver.execute_script("arguments[0].click();", login_btn)
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "selectStartStation")))
+                time.sleep(1) 
+            except Exception as e:
+                yield f"❌ 失敗：信用卡驗證卡住。詳細: {str(e)}"
+                return
+
+        # 3~6. 填寫首頁訂票資訊
+        Select(driver.find_element(By.NAME, "selectStartStation")).select_by_visible_text(start_station)
+        Select(driver.find_element(By.NAME, "selectDestinationStation")).select_by_visible_text(dest_station)
+        date_input = driver.find_element(By.NAME, "toTimeInputField")
+        driver.execute_script("arguments[0].removeAttribute('readonly'); arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", date_input, ride_date)
+        Select(driver.find_element(By.NAME, "toTimeTable")).select_by_visible_text(ride_time)
+        Select(driver.find_element(By.NAME, "ticketPanel:rows:0:ticketAmount")).select_by_visible_text(ticket_count)
+
+        status_msg = f"✅ 成功填表：{start_station} ➔ {dest_station}，{ride_date} {ride_time}。"
+        yield status_msg
+
+        # 7. AI 辨識與送出
+        try:
+            ocr = ddddocr.DdddOcr(show_ad=False)
+            if auto_captcha:
+                max_retries = 15 
+                for attempt in range(1, max_retries + 1):
+                    captcha_img = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "BookingS1Form_homeCaptcha_passCode")))
+                    img_bytes = captcha_img.screenshot_as_png
+                    captcha_text = ocr.classification(img_bytes)
+                    
+                    captcha_input = driver.find_element(By.ID, "securityCode")
+                    captcha_input.clear()
+                    captcha_input.send_keys(captcha_text)
+                    
+                    submit_btn = driver.find_element(By.ID, "SubmitButton")
+                    driver.execute_script("arguments[0].click();", submit_btn)
+                    
+                    try:
+                        alert = WebDriverWait(driver, 1.5).until(EC.alert_is_present())
+                        alert_text = alert.text
+                        alert.accept() 
+                        if "驗證碼" in alert_text:
+                            time.sleep(1) 
+                            continue      
+                        else:
+                            status_msg += f"\n⚠️ 系統提示：{alert_text}"
+                            break
+                    except TimeoutException:
+                        status_msg += f"\n🎉 在第 {attempt} 次成功破解驗證碼！"
+                        break
+            else:
+                captcha_img = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "BookingS1Form_homeCaptcha_passCode")))
+                captcha_text = ocr.classification(captcha_img.screenshot_as_png)
+                driver.find_element(By.ID, "securityCode").send_keys(captcha_text)
+                status_msg += f"\n🤖 AI 辨識結果：【 {captcha_text} 】請手動確認並送出。"
+        except Exception as e:
+            status_msg += f"\n⚠️ 驗證碼處理發生錯誤: {str(e)}"
+
+        # --- 進入第二階段：背景等待與自動填寫 ---
+        status_msg += "\n\n⏳ 程式正在背景等待中... 請您在網頁上手動「選擇車次」！"
+        yield status_msg
+
+        try:
+            dummy_id = WebDriverWait(driver, 600).until(
+                EC.presence_of_element_located((By.XPATH, "//input[@id='dummyId' or @name='dummyId'] | //label[contains(text(), '身分證字號')]/following::input[1]"))
+            )
+            status_msg += "\n✅ 偵測到「取票人資訊」頁面，開始光速填寫..."
+            yield status_msg
+            
+            # 填寫身分證
+            dummy_id.clear()
+            dummy_id.send_keys(id_number)
+            
+            # 填寫聯絡電話
+            try:
+                phone_input = driver.find_element(By.XPATH, "//input[@placeholder='手機號碼或市話'] | //*[contains(text(), '聯絡電話')]/following::input[1]")
+                phone_input.clear()
+                phone_input.send_keys(phone)
+            except: pass
+            
+            # 填寫 Email
+            try:
+                email_input = driver.find_element(By.XPATH, "//input[@id='emailInput' or @name='email'] | //input[@placeholder='your@email.com']")
+                email_input.clear()
+                email_input.send_keys(email)
+            except: pass
+            
+            # 【關鍵修正】處理高鐵 TGo 會員展開與打勾
+            if is_tgo:
+                try:
+                    # 1. 點擊「高鐵會員 TGo 帳號」的文字標籤來展開隱藏區塊 (直接點擊 label 最穩)
+                    tgo_label = driver.find_element(By.XPATH, "//label[contains(text(), '高鐵會員 TGo')]")
+                    driver.execute_script("arguments[0].click();", tgo_label)
+                    
+                    # 2. 等待 0.8 秒，讓網頁向下的動畫跑完
+                    time.sleep(1.5)
+                    
+                    # 3. 勾選旁邊的「同取票人身分證字號」
+                    same_id_cb = driver.find_element(By.XPATH, "//label[contains(text(), '同取票人身分證字號')]/preceding-sibling::input | //input[@id='ticketMember']")
+                    driver.execute_script("arguments[0].click();", same_id_cb)
+                except Exception as e:
+                    print(f"TGo 勾選失敗: {e}")
+                    pass
+                
+            # 勾選最下方的同意條款
+            try:
+                agree_cb = driver.find_element(By.XPATH, "//input[@name='agree'] | //label[contains(text(), '我已明確了解')]/preceding-sibling::input")
+                driver.execute_script("arguments[0].click();", agree_cb)
+            except: pass
+            
+            # 自動送出判斷
+            if auto_submit:
+                try:
+                    finish_btn = driver.find_element(By.XPATH, "//*[@id='isSubmit' or @value='完成訂位']")
+                    driver.execute_script("arguments[0].click();", finish_btn)
+                    status_msg += "\n🎉 恭喜！已為您自動按下「完成訂位」！請確認最後的付款資訊。"
+                except:
+                    status_msg += "\n⚠️ 找不到完成訂位按鈕，請手動點擊。"
+            else:
+                status_msg += "\n🛑 資料與打勾均已完成！(已停用自動送出，請手動點擊「完成訂位」)"
+                
+            yield status_msg
+
+        except TimeoutException:
+             status_msg += "\n❌ 等待進入取票頁面超時 (超過 10 分鐘)，自動填寫已終止。"
+             yield status_msg
+
+    except Exception as e:
+        yield f"❌ 執行過程中發生未知的錯誤: {str(e)}"
+
+# --- UI 介面設計 ---
+stations = ["南港", "台北", "板橋", "桃園", "新竹", "苗栗", "台中", "彰化", "雲林", "嘉義", "台南", "左營"]
+times = [f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(0, 24) for m in (0, 30)]
+
+last_config = load_config()
+
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    gr.Markdown("## 🚄 高鐵自動填表小工具 (一條龍全自動版)")
+    
+    gr.Markdown("### 🔍 第一階段：搜尋條件")
+    with gr.Row():
+        start_station = gr.Dropdown(choices=stations, label="出發站", value=last_config["start_station"])
+        dest_station = gr.Dropdown(choices=stations, label="抵達站", value=last_config["dest_station"])
+    with gr.Row():
+        ride_date = gr.Textbox(label="搭乘日期 (格式: YYYY/MM/DD)", value=last_config["ride_date"])
+        ride_time = gr.Dropdown(choices=times, label="出發時間", value=last_config["ride_time"])
+        ticket_count = gr.Dropdown(choices=[str(i) for i in range(1, 11)], label="全票張數", value=last_config["ticket_count"])
+
+    gr.Markdown("### 💳 信用卡與 AI 破解設定")
+    with gr.Row():
+        use_credit_card = gr.Checkbox(label="啟用「信用卡合作優惠」自動登入", value=last_config["use_credit_card"])
+        cc_number = gr.Textbox(label="請輸入信用卡號前 8 碼", placeholder="例如: 12345678", max_lines=1, value=last_config["cc_number"])
+        auto_captcha = gr.Checkbox(label="🤖 啟用 AI 驗證碼無限重試 (直到進入選車次頁面)", value=last_config.get("auto_captcha", True))
+
+    gr.Markdown("### 📝 第二階段：取票人資訊 (選完車次後自動填寫)")
+    with gr.Row():
+        id_number = gr.Textbox(label="身分證字號", placeholder="A123456789", value=last_config.get("id_number", ""))
+        phone = gr.Textbox(label="聯絡電話", placeholder="0912345678", value=last_config.get("phone", ""))
+        email = gr.Textbox(label="電子郵件", placeholder="your@email.com", value=last_config.get("email", ""))
+    with gr.Row():
+        is_tgo = gr.Checkbox(label="👑 高鐵會員自動帶入 (自動勾選同身分證字號)", value=last_config.get("is_tgo", True))
+        auto_submit = gr.Checkbox(label="⚡ 資料填妥與打勾後，自動幫我按下「完成訂位」", value=last_config.get("auto_submit", False))
+
+    submit_btn = gr.Button("🚀 送出並啟動全自動流程", variant="primary")
+    output_text = gr.Textbox(label="即時執行狀態", interactive=False, lines=6)
+
+    submit_btn.click(
+        fn=start_booking,
+        inputs=[start_station, dest_station, ride_date, ride_time, ticket_count, use_credit_card, cc_number, auto_captcha, id_number, phone, email, is_tgo, auto_submit],
+        outputs=output_text
+    )
+
+if __name__ == "__main__":
+    demo.launch(inbrowser=True)
