@@ -8,12 +8,12 @@
         html, body {
             margin: 0;
             padding: 0;
-            height: 100vh; /* 關鍵：設定整個頁面高度為視窗的 100% */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             font-family: "Microsoft JhengHei", Arial, sans-serif;
             background-color: #f0f2f5;
-            overflow: hidden; /* 防止出現雙重捲軸 */
+            overflow: hidden; 
         }
 
         header {
@@ -23,7 +23,7 @@
             display: flex;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            flex-shrink: 0; /* 防止 header 被壓縮 */
+            flex-shrink: 0; 
         }
 
         .back-btn {
@@ -41,13 +41,13 @@
         }
 
         .iframe-container {
-            flex-grow: 1; /* 關鍵：讓 iframe 容器自動填滿下方所有剩餘空間 */
+            flex-grow: 1; 
             width: 100%;
             position: relative; 
         }
 
         iframe {
-            position: absolute; /* 使用絕對定位強迫填滿容器，這招最穩不會跑版 */
+            position: absolute; 
             top: 0;
             left: 0;
             width: 100%;
