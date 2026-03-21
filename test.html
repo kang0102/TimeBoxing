@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V4 - Mobile Ready)</title>
+    <title>工程疊構圖產生器 (Pro V5 - 分頁版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 基礎設定 --- */
         body { font-family: "Microsoft JhengHei", Arial, sans-serif; background-color: #121212; color: #ddd; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } /* 移除手機點擊藍框 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         /* --- 側邊欄 (電腦版) --- */
         #sidebar { 
@@ -25,19 +25,16 @@
             overflow: auto; padding: 20px; position: relative;
         }
 
-        /* --- 手機版適配 (關鍵修改) --- */
+        /* --- 手機版適配 --- */
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
-            /* 側邊欄改為流動高度，不再固定 */
             #sidebar { 
                 width: 100% !important; max-width: 100%; height: auto; 
                 max-height: none; border-right: none; border-bottom: 2px solid #444; 
-                padding-top: 60px; /* 留給 Home 按鈕空間 */
+                padding-top: 60px; 
             }
             #main-area { width: 100%; min-height: 500px; padding: 10px; display: block; text-align: center; }
             .home-btn { top: 10px; left: 10px; padding: 6px 12px; font-size: 14px; }
-            
-            /* 加大手機按鈕高度，比較好按 */
             button, select, input { height: 40px; font-size: 14px; }
             .layer-check { width: 24px; height: 24px; } 
         }
@@ -70,17 +67,11 @@
         .layer-check { width: 18px; height: 18px; cursor: pointer; margin-right: 2px; accent-color: #4CAF50; }
         .move-btns { display: flex; flex-direction: column; gap: 1px; margin-right: 2px; }
         .btn-tiny { padding: 0px 4px; font-size: 10px; height: 14px; line-height: 12px; background: #444; color: #fff; border: 1px solid #555; cursor: pointer; }
-        /* 手機版微調移動按鈕 */
-        @media (max-width: 768px) {
-            .btn-tiny { height: 20px; font-size: 12px; line-height: 18px; }
-        }
+        @media (max-width: 768px) { .btn-tiny { height: 20px; font-size: 12px; line-height: 18px; } }
         .dim-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #bbb; }
 
         /* 照片列表樣式 */
-        .photo-item { 
-            background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-top: 5px; border-radius: 4px; 
-            display: flex; gap: 10px; align-items: center;
-        }
+        .photo-item { background: #2a2a2a; border: 1px solid #444; padding: 5px; margin-top: 5px; border-radius: 4px; display: flex; gap: 10px; align-items: center; }
         .photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 3px; border: 1px solid #555; flex-shrink: 0; }
         .photo-info { flex: 1; display: flex; flex-direction: column; gap: 5px; }
         .photo-desc { font-size: 13px; color: #ccc; width: 100%; background: #222; border:none; padding: 5px;}
@@ -88,7 +79,6 @@
         /* 按鈕群組 */
         button { padding: 8px; font-size: 13px; cursor: pointer; background-color: #444; color: white; border: 1px solid #555; border-radius: 4px; width: 100%; transition: 0.2s; margin-top: 5px; display: flex; justify-content: center; align-items: center; }
         button:hover { background-color: #666; }
-        
         .btn-row { display: flex; gap: 5px; }
         .btn-save { background-color: #00897B; border-color: #00695C; flex: 1; }
         .btn-cloud-mgr { background-color: #0277BD; border-color: #01579B; flex: 1; }
@@ -103,7 +93,7 @@
         .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: #444; padding: 6px 12px; border-radius: 20px; color: #fff; font-size: 12px; border: 1px solid #666; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         canvas { box-shadow: 0 0 20px rgba(0,0,0,0.5); background-color: white; max-width: 100%; }
 
-        /* --- 雲端管理 / 預覽 Modal (手機優化版) --- */
+        /* --- 雲端管理 / 預覽 Modal --- */
         .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000; display:none;}
         
         .modal { 
@@ -116,24 +106,45 @@
         }
 
         .modal-body { display: flex; flex: 1; gap: 15px; overflow: hidden; margin-top: 10px;}
-        .modal-left { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-right: 5px; border-right: 1px solid #444; }
-        .modal-right { width: 320px; display: flex; flex-direction: column; align-items: center; padding-left: 10px; background: #1e1e1e; border-radius: 4px; flex-shrink: 0; }
+        .modal-left { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-right: 5px; border-right: 1px solid #444; }
+        .modal-right { width: 320px; display: flex; flex-direction: column; align-items: center; padding-left: 10px; background: #1e1e1e; border-radius: 4px; flex-shrink: 0; overflow-y:auto; }
 
-        /* 手機版 Modal 樣式 */
         @media (max-width: 768px) {
             .modal { width: 100%; height: 100%; border-radius: 0; border: none; padding: 10px; }
-            .modal-body { flex-direction: column; } /* 上下排列 */
+            .modal-body { flex-direction: column; } 
             .modal-left { border-right: none; border-bottom: 1px solid #444; flex: 1; padding-bottom: 10px; }
             .modal-right { width: 100%; height: auto; padding-left: 0; padding-top: 10px; border-top: 1px solid #333; flex: 0.8; }
             #previewCanvas { max-height: 200px; width: auto; max-width: 100%; }
-            .cloud-note { max-width: 150px; }
         }
         
-        .cloud-list { list-style: none; padding: 0; margin: 0; }
+        /* 🔥 新增：分頁系統樣式 */
+        .tabs-header {
+            display: flex; overflow-x: auto; overflow-y: hidden;
+            border-bottom: 2px solid #37474F; margin-bottom: 10px;
+            scrollbar-width: thin; /* Firefox */
+        }
+        .tabs-header::-webkit-scrollbar { height: 6px; }
+        .tabs-header::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+        
+        .tab {
+            padding: 8px 16px; margin-right: 4px; background: #263238; color: #aaa;
+            border-radius: 6px 6px 0 0; cursor: grab; white-space: nowrap; font-size: 14px;
+            border: 1px solid transparent; border-bottom: none; transition: 0.2s;
+            display: flex; align-items: center; gap: 5px; user-select: none;
+        }
+        .tab:active { cursor: grabbing; }
+        .tab:hover { background: #37474F; color: #ddd; }
+        .tab.active { background: #00838F; color: #fff; font-weight: bold; }
+        .tab.drag-over { background: #006064; border: 1px dashed #00E5FF; }
+
+        /* 檔案清單專用樣式 */
+        .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         .cloud-item { 
             display: flex; align-items: center; justify-content: space-between; 
-            background: #333; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #555; cursor: pointer;
+            background: #333; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 4px solid #555; cursor: grab;
         }
+        .cloud-item:active { cursor: grabbing; }
+        .cloud-item.dragging { opacity: 0.5; border: 2px dashed #4FC3F7; background: #2a2a2a; }
         .cloud-item.selected { border-left-color: #4FC3F7; background: #3e3e3e; }
         .cloud-info { flex: 1; margin-left: 10px;}
         .cloud-name { font-weight: bold; font-size: 15px; color: #fff; }
@@ -141,7 +152,6 @@
         .cloud-note { font-size: 12px; color: #81C784; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;}
         
         .batch-check { width: 20px; height: 20px; accent-color: #0277BD; cursor: pointer; }
-
         #preview-canvas { max-width: 100%; max-height: 300px; border: 1px solid #555; background: white; margin-bottom: 10px;}
         
         /* Loading */
@@ -170,23 +180,35 @@
         
         <div style="margin-top: 10px; display: flex; gap: 5px; align-items:center; flex-wrap: wrap;">
              <input type="text" id="searchCloud" placeholder="搜尋專案..." oninput="window.renderCloudList()" style="flex:1; min-width: 120px;">
+             <button class="btn-small" onclick="window.createNewFolder()" style="width:auto; margin:0; background:#00838F; flex-grow:1;">📁 新增分頁</button>
              <button class="btn-small" onclick="window.refreshCloudList()" style="width:auto; margin:0; flex-grow:1;">🔄 刷新</button>
              <button class="btn-small" onclick="window.batchExportExcel()" style="width:auto; margin:0; background:#2E7D32; flex-grow:1;">📋 匯出 Excel</button>
         </div>
-        <div style="font-size:12px; color:#aaa; margin-top:5px;">💡 提示：勾選框框可多選匯出，點擊項目可預覽。</div>
+        <div style="font-size:12px; color:#aaa; margin-top:5px;">💡 提示：按住<b>專案</b>可拖入分頁歸類。按住<b>分頁</b>可排列順序。對著分頁<b>點兩下</b>可重新命名。</div>
 
         <div class="modal-body">
             <div class="modal-left">
-                <ul class="cloud-list" id="cloudListEl"></ul>
+                <div id="cloudTabsEl" class="tabs-header"></div>
+                <ul id="cloudListEl" class="cloud-list"></ul>
             </div>
+            
             <div class="modal-right">
                 <h4 style="color:#fff; margin:5px 0;">預覽視窗</h4>
                 <canvas id="previewCanvas"></canvas>
-                <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:12px; padding:5px;">
+                
+                <div id="preview-category-box" style="width:100%; display:none; margin-top:10px; padding:5px; background:#2a2a2a; border-radius:4px;">
+                    <label style="color:#80DEEA;">移動至：</label>
+                    <div style="display:flex; gap:5px;">
+                        <select id="preview-category-select" style="flex:1;"></select>
+                        <button onclick="window.changeCategoryFromPreview()" style="width:auto; margin:0; padding:5px 10px; background:#00838F;">變更</button>
+                    </div>
+                </div>
+
+                <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:12px; padding:5px; margin-top:5px;">
                     請選擇左側專案...
                 </div>
-                <div style="display:flex; gap:5px; width:100%;">
-                    <button id="btn-load-preview" style="background:#EF6C00; display:none; flex:1;" onclick="window.loadSelectedToWorkspace()">📂 讀取</button>
+                <div style="display:flex; gap:5px; width:100%; margin-top: auto;">
+                    <button id="btn-load-preview" style="background:#EF6C00; display:none; flex:1;" onclick="window.loadSelectedToWorkspace()">📂 讀取至工作區</button>
                     <button id="btn-del-preview" style="background:#c62828; display:none; flex:1;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
                 </div>
             </div>
@@ -196,7 +218,7 @@
     <a href="index.html" class="home-btn">🏠</a>
 
     <div id="sidebar">
-        <h2>📚 疊構資料庫 (Pro V4)</h2>
+        <h2>📚 疊構資料庫 (Pro V5)</h2>
 
         <div class="control-group" style="border-left: 4px solid #00897B;">
             <label style="color:#80CBC4">☁️ 專案存取 (Project)</label>
@@ -205,7 +227,7 @@
             
             <div class="btn-row">
                 <button class="btn-save" onclick="window.saveToCloud()">💾 儲存</button>
-                <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端管理</button>
+                <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端總管</button>
             </div>
             
             <div class="sub-group" style="margin-top:5px; border-color:#555;">
@@ -291,10 +313,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch } 
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch, updateDoc } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config (公用測試 Key，保證可用)
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
           authDomain: "stack-diagram-db.firebaseapp.com",
@@ -309,10 +330,17 @@
         let isFirebaseReady = false;
         const COL_PROJ = "projects";
         const COL_UNITS = "units";
+        
+        // --- 分頁系統變數 ---
         let cloudProjectsCache = []; 
         let currentPreviewId = null;
+        
+        let draggedCloudId = null; // 記錄拖曳中的「專案」
+        let draggedTabCat = null;  // 記錄拖曳中的「分頁標籤」
+        
+        let customFolders = ["未分類"]; // 分頁陣列
+        let activeCategory = "未分類";  // 目前所在的分頁
 
-        // 初始化 Firebase
         if (!firebaseConfig.apiKey.includes("你的API_KEY")) {
             try {
                 const app = initializeApp(firebaseConfig);
@@ -325,15 +353,9 @@
         const ctx = canvas.getContext('2d');
         const listEl = document.getElementById('layer-list');
 
-        // 資料變數
-        window.layers = [];
-        window.dimensions = [];
-        window.photos = []; 
-        let dragSrcEl = null;
+        window.layers = []; window.dimensions = []; window.photos = []; let dragSrcEl = null;
 
-        // ---------------------------------------------
-        // 核心功能：渲染列表 (Render List)
-        // ---------------------------------------------
+        // --- (保留原有繪圖與編輯邏輯) ---
         window.renderList = function() {
             listEl.innerHTML = ''; window.updateDimSelects();
             const allChecked = window.layers.every(l => l.checked !== false);
@@ -341,9 +363,7 @@
 
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
-                item.className = 'layer-item';
-                item.setAttribute('draggable', 'true'); // 電腦版拖拉
-                item.setAttribute('data-index', index);
+                item.className = 'layer-item'; item.setAttribute('draggable', 'true'); item.setAttribute('data-index', index);
                 if(layer.showDetails) item.classList.add('open');
                 item.style.borderLeftColor = layer.color;
                 const isChecked = layer.checked !== false ? 'checked' : '';
@@ -369,8 +389,6 @@
                         <div><label>樣式</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="padding:2px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
                 `;
-                
-                // 電腦版拖拉事件
                 item.addEventListener('dragstart', function(e) { this.style.opacity='0.4'; dragSrcEl=this; e.dataTransfer.effectAllowed='move'; this.classList.add('dragging'); });
                 item.addEventListener('dragover', function(e) { if(e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect='move'; return false; });
                 item.addEventListener('drop', function(e) { 
@@ -381,15 +399,13 @@
                         const moved = window.layers.splice(oldIdx, 1)[0];
                         window.layers.splice(newIdx, 0, moved);
                         window.renderList(); window.draw();
-                    }
-                    return false;
+                    } return false;
                 });
                 item.addEventListener('dragend', function() { this.style.opacity='1'; this.classList.remove('dragging'); });
                 listEl.appendChild(item);
             });
         };
 
-        // 操作函數
         window.moveLayer = (i, d) => { const n = i+d; if(n<0||n>=window.layers.length)return; const t=window.layers[i]; window.layers[i]=window.layers[n]; window.layers[n]=t; window.renderList(); window.draw(); };
         window.toggleLayerCheck = (i) => { window.layers[i].checked = !window.layers[i].checked; window.renderList(); };
         window.toggleAllLayers = (cb) => { window.layers.forEach(l => l.checked = cb.checked); window.renderList(); };
@@ -397,8 +413,6 @@
         window.toggleDetails = (i) => { window.layers[i].showDetails = !window.layers[i].showDetails; window.renderList(); };
         window.addLayer = () => { window.layers.unshift({ id: Date.now(), name: "New", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true }); window.renderList(); window.draw(); };
         window.deleteLayer = (i) => { window.layers.splice(i, 1); window.renderList(); window.draw(); };
-
-        // 尺寸標註函數
         window.updateDimSelects = () => {
             const s1=document.getElementById('dimStart'), s2=document.getElementById('dimEnd');
             const v1=s1.value, v2=s2.value; s1.innerHTML=''; s2.innerHTML='';
@@ -418,89 +432,42 @@
         }); }
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
-        // ---------------------------------------------
-        // ★ 照片處理 (強力壓縮版)
-        // ---------------------------------------------
         window.addPhoto = function() {
             const input = document.getElementById('photoInput');
             const descInput = document.getElementById('photoDesc');
-            
             if(input.files && input.files[0]) {
                 const file = input.files[0];
                 const reader = new FileReader();
-                
                 showLoading(true, "壓縮處理中...");
-                
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        // ★ 設定更嚴格的壓縮參數
-                        const maxW = 600; // 限制最大寬度 600px (手機看剛好，又能大幅瘦身)
-                        let w = img.width;
-                        let h = img.height;
-                        
-                        if (w > maxW) {
-                            h = Math.round(h * (maxW / w));
-                            w = maxW;
-                        }
-                        
-                        const cvs = document.createElement('canvas');
-                        cvs.width = w; cvs.height = h;
-                        const ctx = cvs.getContext('2d');
-                        ctx.drawImage(img, 0, 0, w, h);
-                        
-                        // ★ 關鍵：品質降為 0.5 (畫質還可以，但檔案會小非常多)
+                        const maxW = 600; let w = img.width; let h = img.height;
+                        if (w > maxW) { h = Math.round(h * (maxW / w)); w = maxW; }
+                        const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
+                        const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
                         const compressedData = cvs.toDataURL('image/jpeg', 0.5); 
-
-                        // 檢查單張圖片大小，如果還是太大 (超過 200KB) 則警告
-                        if (compressedData.length > 200000) {
-                            console.warn("這張照片細節太多，壓縮後仍然偏大");
-                        }
-
-                        window.photos.push({
-                            id: Date.now(),
-                            data: compressedData, 
-                            desc: descInput.value || "圖說",
-                            w: w, h: h,
-                            imgElement: null // 重置 image element 快取，讓 draw 重建
-                        });
-                        
-                        descInput.value = '';
-                        input.value = ''; // 重置 input
-                        window.renderPhotoList();
-                        window.draw();
-                        showLoading(false);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert("請先點擊按鈕拍照或選擇圖片");
-            }
+                        window.photos.push({ id: Date.now(), data: compressedData, desc: descInput.value || "圖說", w: w, h: h, imgElement: null });
+                        descInput.value = ''; input.value = ''; 
+                        window.renderPhotoList(); window.draw(); showLoading(false);
+                    }; img.src = e.target.result;
+                }; reader.readAsDataURL(file);
+            } else { alert("請先點擊按鈕拍照或選擇圖片"); }
         };
 
         window.renderPhotoList = function() {
-            const list = document.getElementById('photo-list');
-            list.innerHTML = '';
+            const list = document.getElementById('photo-list'); list.innerHTML = '';
             window.photos.forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = 'photo-item';
-                div.innerHTML = `
-                    <img src="${p.data}" class="photo-thumb">
-                    <div class="photo-info">
-                        <input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)">
-                        <div class="btn-tiny" onclick="window.deletePhoto(${i})" style="text-align:center; background:#c62828; width:100%; cursor:pointer; padding:5px;">刪除</div>
-                    </div>
-                `;
+                const div = document.createElement('div'); div.className = 'photo-item';
+                div.innerHTML = `<img src="${p.data}" class="photo-thumb"><div class="photo-info"><input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)"><div class="btn-tiny" onclick="window.deletePhoto(${i})" style="text-align:center; background:#c62828; width:100%; cursor:pointer; padding:5px;">刪除</div></div>`;
                 list.appendChild(div);
             });
         };
-
         window.updatePhotoDesc = (i, v) => { window.photos[i].desc = v; window.draw(); };
         window.deletePhoto = (i) => { window.photos.splice(i, 1); window.renderPhotoList(); window.draw(); };
 
         // ---------------------------------------------
-        // ★ 雲端管理 (支援手機版介面)
+        // ★ 核心進化：分頁式雲端管理
         // ---------------------------------------------
         window.openCloudManager = function() {
             if(!isFirebaseReady) { alert("尚未連線"); return; }
@@ -513,45 +480,213 @@
             document.getElementById('mgrBackdrop').style.display = 'none';
         };
 
+        // 建立新分頁
+        window.createNewFolder = function() {
+            const newCat = prompt("請輸入新的分頁名稱：");
+            if(newCat && newCat.trim() !== "") {
+                const catName = newCat.trim();
+                if (!customFolders.includes(catName)) {
+                    customFolders.push(catName);
+                    // 儲存順序到 LocalStorage
+                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                }
+                activeCategory = catName; // 自動切換到新分頁
+                window.renderCloudList();
+            }
+        };
+
         window.refreshCloudList = async function() {
             showLoading(true, "讀取雲端...");
             try {
+                // 1. 嘗試從 LocalStorage 讀取記憶的分頁順序
+                const savedFolders = localStorage.getItem('myStackFolders');
+                if(savedFolders) {
+                    customFolders = JSON.parse(savedFolders);
+                } else {
+                    customFolders = ["未分類"]; 
+                }
+
+                // 2. 抓取專案資料
                 const q = await getDocs(collection(db, COL_PROJ));
                 cloudProjectsCache = [];
-                q.forEach(doc => cloudProjectsCache.push({ id: doc.id, ...doc.data() }));
-                // 排序：最新的在上面
+                q.forEach(doc => {
+                    const data = doc.data();
+                    if(!data.category) data.category = "未分類"; 
+                    
+                    // 如果遠端有新分類是 LocalStorage 沒有的，加到最後面
+                    if (!customFolders.includes(data.category)) {
+                        customFolders.push(data.category);
+                    }
+                    cloudProjectsCache.push({ id: doc.id, ...data });
+                });
+                
+                // 依時間排序 (最新在上)
                 cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp);
+                
+                // 再次儲存同步後的順序
+                localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                
+                if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0];
+
                 window.renderCloudList();
             } catch(e) { console.error(e); }
             showLoading(false);
         };
 
         window.renderCloudList = function() {
+            const tabsEl = document.getElementById('cloudTabsEl');
             const listEl = document.getElementById('cloudListEl');
             const search = document.getElementById('searchCloud').value.toLowerCase();
-            listEl.innerHTML = '';
 
-            cloudProjectsCache.forEach(p => {
-                if(search && !p.id.toLowerCase().includes(search)) return;
+            // 防呆：確保 activeCategory 存在
+            if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類";
+
+            // --- 渲染上方的「分頁標籤列」 ---
+            tabsEl.innerHTML = '';
+            customFolders.forEach(cat => {
+                // 計算此分頁內的專案數量
+                const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length;
                 
+                const tab = document.createElement('div');
+                tab.className = `tab ${cat === activeCategory ? 'active' : ''}`;
+                tab.innerHTML = `<span>📂 ${cat}</span><span style="font-size:11px; opacity:0.7">(${count})</span>`;
+                tab.draggable = true;
+                
+                // 點擊切換分頁
+                tab.onclick = () => { activeCategory = cat; window.renderCloudList(); };
+                
+                // ★ 雙擊重新命名分頁
+                tab.ondblclick = () => {
+                    if(cat === "未分類") return alert("預設分類無法更名");
+                    const newName = prompt("重新命名分頁：", cat);
+                    if(newName && newName.trim() && !customFolders.includes(newName.trim())) {
+                        const finalName = newName.trim();
+                        customFolders[customFolders.indexOf(cat)] = finalName;
+                        // 更新快取與遠端
+                        cloudProjectsCache.forEach(p => {
+                            if(p.category === cat) {
+                                p.category = finalName;
+                                updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{});
+                            }
+                        });
+                        if(activeCategory === cat) activeCategory = finalName;
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                        window.renderCloudList();
+                    }
+                };
+
+                // --- 標籤拖曳事件 (支援分頁排序 & 接收專案) ---
+                tab.ondragstart = (e) => {
+                    draggedTabCat = cat;
+                    e.dataTransfer.effectAllowed = 'move';
+                };
+                tab.ondragover = (e) => {
+                    e.preventDefault();
+                    tab.classList.add('drag-over');
+                };
+                tab.ondragleave = (e) => {
+                    tab.classList.remove('drag-over');
+                };
+                tab.ondrop = async (e) => {
+                    e.preventDefault();
+                    tab.classList.remove('drag-over');
+                    e.stopPropagation();
+
+                    if (draggedCloudId) {
+                        // 動作 A：有專案被拖曳到這個分頁上 (改變專案分類)
+                        const p = cloudProjectsCache.find(x => x.id === draggedCloudId);
+                        if (p && (p.category || '未分類') !== cat) {
+                            p.category = cat;
+                            window.renderCloudList(); // 先更新畫面
+                            try { await updateDoc(doc(db, COL_PROJ, p.id), { category: cat }); } catch(err){ console.error(err); }
+                        }
+                        draggedCloudId = null;
+                    } 
+                    else if (draggedTabCat && draggedTabCat !== cat) {
+                        // 動作 B：有分頁標籤被拖曳到這個分頁上 (分頁重新排序)
+                        const fromIdx = customFolders.indexOf(draggedTabCat);
+                        const toIdx = customFolders.indexOf(cat);
+                        customFolders.splice(fromIdx, 1);
+                        customFolders.splice(toIdx, 0, draggedTabCat);
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                        window.renderCloudList();
+                        draggedTabCat = null;
+                    }
+                };
+                tab.ondragend = () => { draggedTabCat = null; };
+                
+                tabsEl.appendChild(tab);
+            });
+
+            // --- 渲染下方的「專案清單」 (只顯示 Active 分頁內的) ---
+            listEl.innerHTML = '';
+            cloudProjectsCache.forEach(p => {
+                let pCat = p.category || '未分類';
+                
+                // 搜尋模式下，如果匹配就顯示（也可以選擇跨分頁顯示，這裡以「顯示當下分頁或有搜尋字串的」為準）
+                if (search) {
+                    if (!p.id.toLowerCase().includes(search) && !(p.note||'').toLowerCase().includes(search)) return;
+                } else {
+                    if (pCat !== activeCategory) return;
+                }
+
                 const note = p.note ? p.note : '無備註';
                 const date = new Date(p.timestamp || 0).toLocaleDateString();
-                
                 const li = document.createElement('li');
-                li.className = 'cloud-item';
+                li.className = `cloud-item ${p.id === currentPreviewId ? 'selected' : ''}`;
+                li.setAttribute('draggable', 'true');
+                
+                // 專案拖曳起點
+                li.ondragstart = (e) => {
+                    draggedCloudId = p.id;
+                    draggedTabCat = null;
+                    e.currentTarget.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                };
+                li.ondragend = (e) => {
+                    e.currentTarget.classList.remove('dragging');
+                    draggedCloudId = null;
+                };
+                
                 li.onclick = (e) => { 
                     if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); 
                 };
+                
                 li.innerHTML = `
                     <input type="checkbox" class="batch-check" value="${p.id}">
                     <div class="cloud-info">
                         <div class="cloud-name">${p.id}</div>
-                        <div class="cloud-meta">${date}</div>
+                        <div class="cloud-meta">${date} <span style="color:#00838F; margin-left:5px;">${search ? '['+pCat+']' : ''}</span></div>
                         <div class="cloud-note">${note}</div>
                     </div>
                 `;
                 listEl.appendChild(li);
             });
+
+            updatePreviewCategorySelect();
+        };
+
+        // --- 手機版輔助：手動變更分類 ---
+        function updatePreviewCategorySelect() {
+            const sel = document.getElementById('preview-category-select');
+            sel.innerHTML = '';
+            customFolders.forEach(c => {
+                sel.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+        }
+
+        window.changeCategoryFromPreview = async function() {
+            if(!currentPreviewId) return;
+            const targetCat = document.getElementById('preview-category-select').value;
+            const p = cloudProjectsCache.find(x => x.id === currentPreviewId);
+            
+            if(p && p.category !== targetCat) {
+                p.category = targetCat;
+                window.renderCloudList();
+                showLoading(true, "更新中...");
+                try { await updateDoc(doc(db, COL_PROJ, p.id), { category: targetCat }); } catch(err) {}
+                showLoading(false);
+            }
         };
 
         window.selectCloudItem = function(id) {
@@ -570,27 +705,27 @@
                     <strong>層數:</strong> ${p.layers?.length || 0} | 
                     <strong>附圖:</strong> ${p.photos?.length || 0} 張<br>
                     <div style="font-size:11px; color:#888;">${new Date(p.timestamp).toLocaleString()}</div>
-                    <div style="color:#81C784;">${p.note || ''}</div>
+                    <div style="color:#81C784; margin-top:3px;">${p.note || ''}</div>
                 `;
+                
+                document.getElementById('preview-category-box').style.display = 'block';
+                document.getElementById('preview-category-select').value = p.category || '未分類';
+
                 window.drawPreviewCanvas(p.layers);
                 document.getElementById('btn-load-preview').style.display = 'block';
                 document.getElementById('btn-del-preview').style.display = 'block';
             }
         };
 
-        // 預覽小圖繪製
         window.drawPreviewCanvas = function(layers) {
             const cvs = document.getElementById('previewCanvas');
             const ctx = cvs.getContext('2d');
-            cvs.width = 300; cvs.height = 200; // 調整高度適合手機
+            cvs.width = 300; cvs.height = 200; 
             ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,200);
-
             if(!layers || layers.length === 0) return;
-
             const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1;
-            const scale = 160 / totalThick; // 縮小比例
+            const scale = 160 / totalThick; 
             const cx = 150; const rw = 100; let cy = 20;
-
             layers.forEach(l => {
                 const h = (parseFloat(l.thickness)||0) * scale;
                 ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h);
@@ -618,17 +753,15 @@
             showLoading(false);
         };
 
-        // Excel 匯出
         window.batchExportExcel = function() {
             const checks = document.querySelectorAll('.batch-check:checked');
             if(checks.length === 0) { alert("請先勾選項目"); return; }
-            
             let csv = "\uFEFF"; 
             checks.forEach(chk => {
                 const id = chk.value;
                 const p = cloudProjectsCache.find(x => x.id === id);
                 if(p) {
-                    csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n`;
+                    csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n`;
                     csv += `層序,名稱,厚度\n`;
                     const layers = p.layers || [];
                     layers.forEach((l,i) => {
@@ -639,15 +772,10 @@
                 }
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `Stackups_${Date.now()}.csv`;
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Stackups_${Date.now()}.csv`;
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        // ---------------------------------------------
-        // 資料備份 / 還原
-        // ---------------------------------------------
         window.backupAllCloudData = async function() {
             if(!isFirebaseReady) { alert("未連線"); return; }
             showLoading(true, "打包中...");
@@ -656,13 +784,9 @@
                 const projects = {}; projSnap.forEach(d => projects[d.id] = d.data());
                 const unitSnap = await getDocs(collection(db, COL_UNITS));
                 const units = {}; unitSnap.forEach(d => units[d.id] = d.data());
-
-                const str = JSON.stringify({ version: "V4", timestamp: Date.now(), projects, units }, null, 2);
+                const str = JSON.stringify({ version: "V4", timestamp: Date.now(), projects, units, customFolders }, null, 2);
                 const blob = new Blob([str], {type: "application/json"});
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `BACKUP_${new Date().toISOString().slice(0,10)}.json`;
-                a.click();
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `BACKUP_${new Date().toISOString().slice(0,10)}.json`; a.click();
             } catch(e) { console.error(e); alert("備份失敗"); }
             showLoading(false);
         };
@@ -670,7 +794,6 @@
         window.restoreAllCloudData = function(input) {
             const file = input.files[0]; if(!file) return;
             if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { input.value = ''; return; }
-            
             const reader = new FileReader();
             reader.onload = async function(e) {
                 showLoading(true, "還原中...");
@@ -680,6 +803,11 @@
                     let count = 0;
                     if(data.projects) for(const [id,v] of Object.entries(data.projects)) { batch.set(doc(db,COL_PROJ,id),v); count++; }
                     if(data.units) for(const [id,v] of Object.entries(data.units)) { batch.set(doc(db,COL_UNITS,id),v); count++; }
+                    // 還原分頁順序
+                    if(data.customFolders) {
+                        customFolders = data.customFolders;
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                    }
                     await batch.commit();
                     alert(`成功還原 ${count} 筆資料。`);
                     window.refreshUnitList();
@@ -690,9 +818,6 @@
             reader.readAsText(file);
         };
 
-        // ---------------------------------------------
-        // 通用功能
-        // ---------------------------------------------
         function showLoading(show, text="處理中") {
             const ov = document.getElementById('loading-overlay');
             if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none';
@@ -703,21 +828,30 @@
             const name = document.getElementById('projName').value.trim();
             if(!name) return alert("請輸入專案名稱");
             
+            let existingCategory = "未分類";
+            const existingProj = cloudProjectsCache.find(x => x.id === name);
+            if (existingProj && existingProj.category) {
+                existingCategory = existingProj.category;
+            } else if(activeCategory) {
+                // 如果是新專案，直接存在當下的分頁
+                existingCategory = activeCategory;
+            }
+
             const data = {
                 layers: window.layers,
                 dimensions: window.dimensions,
                 photos: window.photos,
                 settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value },
                 note: document.getElementById('projNote').value,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                category: existingCategory 
             };
             
-            // 檢查大小 (Firestore 1MB 限制)
             const size = new Blob([JSON.stringify(data)]).size;
             if(size > 950000) if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return;
 
             showLoading(true);
-            try { await setDoc(doc(db, COL_PROJ, name), data); alert("儲存成功"); } catch(e) { alert("儲存失敗 (可能是照片過大)"); }
+            try { await setDoc(doc(db, COL_PROJ, name), data, { merge: true }); alert("儲存成功"); } catch(e) { alert("儲存失敗"); }
             showLoading(false);
         };
 
@@ -765,7 +899,6 @@
             if(sel.length===0) return alert("無選取層");
             const name = document.getElementById('projName').value || "Stackup";
             const unit = document.getElementById('unitInput').value;
-            
             let csv = "\uFEFF層序,名稱,厚度,單位\n";
             let t=0;
             sel.forEach((l,i) => {
@@ -784,23 +917,17 @@
         };
         window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
         
-        // PPT 輸出 (含圖片)
         window.downloadPPT = () => {
              let pres = new PptxGenJS();
              const unit = document.getElementById('unitInput').value;
              const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
              if(totalThick===0 && window.layers.length===0) return alert("無資料");
-             
              let maxOff=20; window.dimensions.forEach(d=> {if(d.offset>maxOff)maxOff=d.offset;});
              const pl=maxOff+150, pt=50, sf=100, cw=canvas.width-(maxOff+40)-20;
              const ah = Math.max(500, window.layers.length*40);
              const sc = ah/(totalThick||1);
-             
              pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:(ah+100)/sf}); pres.layout='C';
-             
              let s = pres.addSlide(); let cy=pt;
-             
-             // 畫疊構
              window.layers.forEach(l => {
                  const h = l.thickness*sc;
                  const fc = l.color.replace('#','');
@@ -809,15 +936,11 @@
                  s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:l.fontSize||14, align:'center', valign:'middle'});
                  cy+=h;
              });
-
-             // 附圖 (每張圖一頁，避免排版混亂)
              window.photos.forEach(p => {
                  let ps = pres.addSlide();
                  ps.addText("附圖: " + p.desc, { x:0.5, y:0.5, fontSize:16, color:'333333' });
-                 // PPT 圖片大小自動縮放
                  ps.addImage({ data:p.data, x:0.5, y:1.5, w:8, h:4.5, sizing:{type:'contain', w:8, h:4.5} });
              });
-
              pres.writeFile({fileName:"Stack_Report.pptx"});
         };
         
@@ -825,37 +948,21 @@
         window.resizeCanvas = () => { canvas.width=parseInt(document.getElementById('canvasWidth').value)||450; window.draw(); };
         function drawArrow(ctx,x,y,u) { ctx.beginPath(); const s=5; if(u){ctx.moveTo(x,y);ctx.lineTo(x-s,y+s);ctx.lineTo(x+s,y+s);}else{ctx.moveTo(x,y);ctx.lineTo(x-s,y-s);ctx.lineTo(x+s,y-s);} ctx.fill(); }
 
-        // ---------------------------------------------
-        // ★ 最終繪圖邏輯 (整合疊構 + 尺寸 + 照片)
-        // ---------------------------------------------
         window.draw = () => {
             const unit = document.getElementById('unitInput').value;
             const globalFS = parseInt(document.getElementById('globalFontSize').value)||14;
             const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
-            
             if(totalThick===0 && window.layers.length===0 && window.photos.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
-            
             let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
             const pad = { t:40, b:40, l: maxOff+80, r:20 };
             const dw = canvas.width - pad.l - pad.r;
             const stackH = Math.max(500, window.layers.length*40);
-            
-            // 計算照片區高度
             let photoTotalH = 0;
-            window.photos.forEach(p => {
-                const displayH = (dw / p.w) * p.h; // 維持寬高比
-                photoTotalH += displayH + 40; // 40px 是文字與間距
-            });
-
-            // 設定畫布總高度
+            window.photos.forEach(p => { const displayH = (dw / p.w) * p.h; photoTotalH += displayH + 40; });
             canvas.height = stackH + pad.t + pad.b + (photoTotalH > 0 ? photoTotalH + 50 : 0);
             const scale = stackH / (totalThick||1);
-            
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.textAlign="center"; ctx.textBaseline="middle";
-            
-            // 1. 畫疊構
-            let cy = pad.t;
-            let yPos = [];
+            let cy = pad.t; let yPos = [];
             window.layers.forEach(l => {
                 const h = (parseFloat(l.thickness)||0)*scale;
                 yPos.push({t:cy, b:cy+h});
@@ -868,8 +975,6 @@
                 }
                 cy += h;
             });
-
-            // 2. 畫尺寸
             window.dimensions.forEach(d => {
                 if(!yPos[d.start] || !yPos[d.end]) return;
                 const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=pad.l-d.offset;
@@ -880,41 +985,22 @@
                 const txt = d.label || `${window.layers.slice(d.start,d.end+1).reduce((s,l)=>s+(parseFloat(l.thickness)||0),0)}${unit}`;
                 ctx.textAlign="right"; ctx.fillText(txt, x-5, y1+h/2);
             });
-
-            // 3. 畫照片 (如果有的話)
             if(window.photos.length > 0) {
-                let py = cy + 60; // 在疊構圖下方 60px 開始
-                
-                // 分隔線
+                let py = cy + 60; 
                 ctx.strokeStyle="#555"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(20, py-30); ctx.lineTo(canvas.width-20, py-30); ctx.stroke();
-
                 window.photos.forEach(p => {
-                     // ★ 修改重點：檢查是否有「快取」的圖片物件，沒有才建立
-                     if (!p.imgElement) {
-                         p.imgElement = new Image();
-                         // 當圖片載入完成後，自動再呼叫一次 draw() 重畫
-                         p.imgElement.onload = () => window.draw();
-                         p.imgElement.src = p.data;
-                     }
-
+                     if (!p.imgElement) { p.imgElement = new Image(); p.imgElement.onload = () => window.draw(); p.imgElement.src = p.data; }
                      const displayH = (dw / p.w) * p.h;
-                     
-                     // 只有當圖片「完全準備好 (complete)」時才畫
                      if (p.imgElement.complete) {
                          ctx.drawImage(p.imgElement, pad.l, py, dw, displayH);
                          ctx.strokeStyle="#666"; ctx.lineWidth=1; ctx.strokeRect(pad.l, py, dw, displayH);
-                         
-                         // 畫說明文字
-                         ctx.fillStyle="#000"; ctx.textAlign="left"; ctx.font="14px Arial";
-                         ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
+                         ctx.fillStyle="#000"; ctx.textAlign="left"; ctx.font="14px Arial"; ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
                      }
-                     
                      py += displayH + 50;
                 });
             }
         };
 
-        // 啟動
         if(isFirebaseReady) { window.refreshUnitList(); }
         window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
         window.renderList(); window.resizeCanvas();
