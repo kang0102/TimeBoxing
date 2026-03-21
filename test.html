@@ -57,7 +57,9 @@
             background-size: 20px 20px;
         }
 
-        /* --- 手機版適配 --- */
+        /* =========================================
+           🔥 手機版終極適配與防卡死優化 
+           ========================================= */
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
             #sidebar { width: 100% !important; max-width: 100%; height: auto; max-height: none; border-right: none; border-bottom: 2px solid var(--border-subtle); padding-top: 60px; }
@@ -66,14 +68,39 @@
             button, select, input[type="text"], input[type="number"] { height: 44px; font-size: 15px; }
             .layer-check { width: 24px; height: 24px; } 
 
-            /* 解決雲端總管手機版卡死與排版問題 */
-            .modal { width: 95%; height: 90vh; padding: 15px; max-height: none; }
-            .modal-body { flex-direction: column; overflow-y: auto; overflow-x: hidden; display: block; }
-            .modal-left { overflow: visible; padding-right: 0; }
-            .cloud-list { overflow: visible; }
-            .modal-right { width: 100%; margin-top: 15px; padding: 15px 0 0 0; background: transparent; border: none; border-top: 1px solid var(--border-subtle); }
-            /* 讓手機忽略 draggable 的觸控攔截，恢復原生上下滑動 */
+            /* 1. 雲端總管滿版化 (Full Screen Modal) */
+            .modal { 
+                width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+                top: 0; left: 0; transform: none; border-radius: 0; 
+                padding: 15px; 
+            }
+            
+            /* 2. 單一滾動軸，打破巢狀滾動陷阱 */
+            .modal-body { 
+                flex-direction: column; 
+                overflow-y: auto; /* 手機版唯一可滾動層 */
+                overflow-x: hidden; 
+                display: flex; 
+                -webkit-overflow-scrolling: touch; /* iOS 順滑滾動 */
+                padding-bottom: 30px; 
+            }
+            .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
+            .cloud-list { overflow: visible; flex-shrink: 0; }
+            
+            .modal-right { 
+                width: 100%; margin-top: 15px; padding: 15px 0 0 0; 
+                background: transparent; border: none; border-top: 1px solid var(--border-subtle); 
+                overflow-y: visible; /* 關閉原本的獨立捲軸 */
+                height: auto; 
+                flex-shrink: 0;
+            }
+            
+            /* 3. 畫布自適應避免把畫面撐破 */
+            #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
+            
+            /* 4. 解除所有原生 draggable 的觸控攔截 */
             .cloud-item { touch-action: pan-y; }
+            .layer-item { touch-action: pan-y; }
             .tab { touch-action: pan-x; }
         }
 
