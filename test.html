@@ -65,6 +65,16 @@
             .home-btn { top: 10px; left: 10px; padding: 8px 16px; font-size: 14px; }
             button, select, input[type="text"], input[type="number"] { height: 44px; font-size: 15px; }
             .layer-check { width: 24px; height: 24px; } 
+
+            /* 解決雲端總管手機版卡死與排版問題 */
+            .modal { width: 95%; height: 90vh; padding: 15px; max-height: none; }
+            .modal-body { flex-direction: column; overflow-y: auto; overflow-x: hidden; display: block; }
+            .modal-left { overflow: visible; padding-right: 0; }
+            .cloud-list { overflow: visible; }
+            .modal-right { width: 100%; margin-top: 15px; padding: 15px 0 0 0; background: transparent; border: none; border-top: 1px solid var(--border-subtle); }
+            /* 讓手機忽略 draggable 的觸控攔截，恢復原生上下滑動 */
+            .cloud-item { touch-action: pan-y; }
+            .tab { touch-action: pan-x; }
         }
 
         /* --- 排版與元件 --- */
@@ -238,6 +248,7 @@
         <div style="margin-bottom: 15px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
              <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 200px; height: 38px;">
              <button onclick="window.createNewFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); height: 38px;">📁 新增分頁</button>
+             <button onclick="window.deleteCurrentFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--btn-red); color:var(--btn-red); height: 38px;">🗑️ 刪除分頁</button>
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
              <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
         </div>
@@ -280,7 +291,7 @@
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
             <input type="text" id="projName" placeholder="輸入專案名稱 / 料號...">
-            <textarea id="projNote" placeholder="在此輸入備註 (Edge cutting, Blade, RPM 等參數)..."></textarea>
+            <textarea id="projNote" placeholder="在此輸入備註 (Edge cutting, Blade, RPM 等參數)..." oninput="window.autoResizeTextarea(this)"></textarea>
             
             <div class="btn-row">
                 <button class="btn-save" onclick="window.saveToCloud()">💾 儲存專案</button>
@@ -395,6 +406,12 @@
         let dragDimIdx = -1;
         let currentStackLeftX = 0;
         window.currentPopIndex = -1;
+
+        // --- 備註輸入框自動調整高度 ---
+        window.autoResizeTextarea = function(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        };
 
         if (!firebaseConfig.apiKey.includes("你的API_KEY")) { try { const app = initializeApp(firebaseConfig); db = getFirestore(app); isFirebaseReady = true; } catch(e) {} }
 
@@ -531,7 +548,33 @@
         // --- 分頁式雲端管理 ---
         window.openCloudManager = function() { if(!isFirebaseReady) { alert("尚未連線"); return; } document.getElementById('mgrModal').style.display = 'flex'; document.getElementById('mgrBackdrop').style.display = 'block'; window.refreshCloudList(); };
         window.closeCloudManager = function() { document.getElementById('mgrModal').style.display = 'none'; document.getElementById('mgrBackdrop').style.display = 'none'; };
+        
         window.createNewFolder = function() { const newCat = prompt("請輸入新的分頁名稱："); if(newCat && newCat.trim() !== "") { const catName = newCat.trim(); if (!customFolders.includes(catName)) { customFolders.push(catName); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } activeCategory = catName; window.renderCloudList(); } };
+        
+        // 新增：刪除當前資料夾邏輯
+        window.deleteCurrentFolder = function() {
+            if (activeCategory === "未分類") {
+                return alert("「未分類」為系統預設，無法刪除！");
+            }
+            
+            // 檢查該資料夾內是否還有專案
+            const count = cloudProjectsCache.filter(p => (p.category || '未分類') === activeCategory).length;
+            if (count > 0) {
+                return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`);
+            }
+            
+            // 確認刪除
+            if (confirm(`確定要刪除分頁「${activeCategory}」嗎？`)) {
+                const idx = customFolders.indexOf(activeCategory);
+                if (idx > -1) {
+                    customFolders.splice(idx, 1);
+                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                    activeCategory = "未分類"; // 刪除後切換回預設分頁
+                    window.renderCloudList();
+                }
+            }
+        };
+
         window.refreshCloudList = async function() { showLoading(true); try { const savedFolders = localStorage.getItem('myStackFolders'); if(savedFolders) { customFolders = JSON.parse(savedFolders); } else { customFolders = ["未分類"]; } const q = await getDocs(collection(db, COL_PROJ)); cloudProjectsCache = []; q.forEach(doc => { const data = doc.data(); if(!data.category) data.category = "未分類"; if (!customFolders.includes(data.category)) { customFolders.push(data.category); } cloudProjectsCache.push({ id: doc.id, ...data }); }); cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0]; window.renderCloudList(); } catch(e) { console.error(e); } showLoading(false); };
         
         window.renderCloudList = function() { 
@@ -591,7 +634,23 @@
         };
 
         window.drawPreviewCanvas = function(layers) { const cvs = document.getElementById('previewCanvas'); const ctx = cvs.getContext('2d'); cvs.width = 300; cvs.height = 200; ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,200); if(!layers || layers.length === 0) return; const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1; const scale = 160 / totalThick; const cx = 150; const rw = 100; let cy = 20; layers.forEach(l => { const h = (parseFloat(l.thickness)||0) * scale; ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h); ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h); cy += h; }); };
-        window.loadSelectedToWorkspace = function() { if(!currentPreviewId) return; const p = cloudProjectsCache.find(x => x.id === currentPreviewId); if(p) { window.applyConfig(p); document.getElementById('projName').value = p.id; document.getElementById('projNote').value = p.note || ""; window.closeCloudManager(); } };
+        
+        // 載入時觸發自動高度
+        window.loadSelectedToWorkspace = function() { 
+            if(!currentPreviewId) return; 
+            const p = cloudProjectsCache.find(x => x.id === currentPreviewId); 
+            if(p) { 
+                window.applyConfig(p); 
+                document.getElementById('projName').value = p.id; 
+                
+                const noteEl = document.getElementById('projNote');
+                noteEl.value = p.note || ""; 
+                window.autoResizeTextarea(noteEl);
+                
+                window.closeCloudManager(); 
+            } 
+        };
+
         window.deleteSelectedCloud = async function() { if(!currentPreviewId) return; if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return; showLoading(true); try { await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); await window.refreshCloudList(); currentPreviewId=null;} catch(e) {} showLoading(false); };
         window.batchExportExcel = function() { const checks = document.querySelectorAll('.batch-check:checked'); if(checks.length === 0) { alert("請先勾選左側的核取方塊"); return; } let csv = "\uFEFF"; checks.forEach(chk => { const id = chk.value; const p = cloudProjectsCache.find(x => x.id === id); if(p) { csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; const layers = p.layers || []; layers.forEach((l,i) => { if(l.checked === false) return; csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; }); csv += `\n`; } }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Stackups_${Date.now()}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
         
