@@ -1,419 +1,752 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neil's 工具箱 (已鎖定)</title>
-    <style>
-        /* ==================== 
-           全域與鎖定畫面 CSS 
-           ==================== */
-        body {
-            font-family: "Microsoft JhengHei", Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden; /* 鎖定時禁止捲動 */
-        }
-
-        /* --- 鎖定畫面 --- */
-        #lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #2c3e50;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: top 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        #status-msg { margin-bottom: 20px; font-size: 1.2rem; min-height: 24px; }
-        
-        .pin-display { display: flex; gap: 15px; margin-bottom: 40px; }
-        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid white; transition: background 0.2s; }
-        .dot.filled { background-color: white; }
-
-        .keypad { display: grid; grid-template-columns: repeat(3, 80px); gap: 15px; transition: opacity 0.3s; }
-        
-        .key {
-            width: 70px; height: 70px; border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white; font-size: 1.5rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; user-select: none;
-            transition: background-color 0.1s; /* 加快反應速度 */
-        }
-        
-        /* 滑鼠點擊效果 */
-        .key:active { background-color: rgba(255, 255, 255, 0.4); }
-        
-        /* 鍵盤按壓模擬效果 (JavaScript 控制) */
-        .key.active-key { background-color: rgba(255, 255, 255, 0.4); transform: scale(0.95); }
-
-        /* 錯誤動畫 */
-        .shake { animation: shake 0.3s; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        /* ==================== 
-           主內容 CSS 
-           ==================== */
-        #main-content {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        header {
-            background-color: #2c3e50;
-            color: white;
-            width: 100%;
-            padding: 2rem 0;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
-
-        h1 { margin: 0; font-size: 2.5rem; }
-        header p { opacity: 0.8; margin-top: 10px; }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            max-width: 1200px;
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .card {
-            background: white;
-            width: 300px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
-        .card-img { height: 150px; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
-
-        .timer-bg { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%); }
-        .glue-bg { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
-        .stitch-bg { background: linear-gradient(135deg, #FFB74D 0%, #FFCC80 100%); }
-        .stack-bg { background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%); }
-        .cut2d-bg { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .cut3d-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .test-bg { background: #cfd8dc; }
-        /* 新增 test 2 的漸層背景 */
-        .test2-bg { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
-
-        .card-content { padding: 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
-        .card-desc { font-size: 1rem; color: #666; line-height: 1.5; }
-        
-        .badge {
-            position: absolute; top: 10px; right: 10px;
-            background: #ff4757; color: white; padding: 2px 8px;
-            border-radius: 10px; font-size: 12px; font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        footer { margin-top: auto; padding: 20px; color: #888; font-size: 0.9rem; text-align: center; width: 100%; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>股票自選清單</title>
+<style>
+:root{
+  --bg:#fff;--bg2:#f1efe8;--bg3:#e8e6de;--bgi:#e6f1fb;--bgd:#fcebeb;--bgs:#eaf3de;--bgw:#faeeda;
+  --t:#2c2c2a;--t2:#5f5e5a;--t3:#888780;--ti:#185fa5;--td:#791f1f;--ts:#27500a;--tw:#633806;
+  --b:rgba(44,44,42,.15);--b2:rgba(44,44,42,.3);--r:8px;--rl:12px;
+  --f:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--bg2:#242420;--bg3:#2c2c2a;--bgi:#0c1e35;--bgd:#2a0d0d;--bgs:#0e1f04;--bgw:#281800;
+  --t:#e8e6de;--t2:#b4b2a9;--t3:#888780;--ti:#85b7eb;--td:#f09595;--ts:#97c459;--tw:#ef9f27;
+  --b:rgba(232,230,222,.15);--b2:rgba(232,230,222,.3)
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;font-size:14px}
+.wrap{max-width:900px;margin:0 auto;padding:12px 10px}
+.keybanner{background:var(--bgw);border:0.5px solid var(--b2);border-radius:var(--rl);padding:14px;margin-bottom:10px}
+.keytitle{font-size:13px;font-weight:500;color:var(--tw);margin-bottom:8px}
+.keyrow{display:flex;gap:7px}
+.keyrow input{flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--b2);border-radius:6px;background:var(--bg);color:var(--t);font-family:monospace;outline:none}
+.keyrow input:focus{border-color:var(--ti)}
+.keyhint{font-size:11px;color:var(--t2);margin-top:7px;line-height:1.7}
+.keyhint a{color:var(--ti)}
+.keyok{font-size:12px;color:var(--ts);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.resetlink{font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline}
+.resetlink:hover{color:var(--ti)}
+.topbar{display:flex;gap:7px;margin-bottom:8px;align-items:center}
+.sq{flex:1;display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:0.5px solid var(--b2);border-radius:var(--r);cursor:pointer;color:var(--t2);font-size:13px}
+.sq:hover{border-color:var(--ti);color:var(--t)}
+.btn{padding:6px 14px;border:0.5px solid var(--b2);border-radius:6px;cursor:pointer;background:transparent;color:var(--t2);font-size:12px;white-space:nowrap;transition:background .15s}
+.btn:hover{background:var(--bg2)}.btn.p{background:var(--ti);color:#fff;border-color:transparent}
+.btn.p:hover{background:#0C447C}.btn.sm{padding:4px 10px;font-size:11px}
+.tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--b);cursor:pointer;white-space:nowrap;font-size:12px;background:transparent;color:var(--t2);flex-shrink:0}
+.tab:hover{background:var(--bg2)}.tab.on{background:var(--bgi);color:var(--ti);border-color:transparent;font-weight:500}
+.tx{font-size:9px;opacity:.4;padding:1px 3px;border-radius:3px;line-height:1}
+.tx:hover{opacity:1;color:#E24B4A;background:rgba(226,75,74,.12)}
+.tadd{padding:5px 10px;border-radius:20px;border:0.5px dashed var(--b2);cursor:pointer;font-size:12px;color:var(--t2);background:transparent;flex-shrink:0}
+.tadd:hover{background:var(--bg2)}
+.bar{display:none;align-items:center;gap:7px;margin-bottom:10px}.bar.on{display:flex}
+.bn{font-size:14px;font-weight:500;flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.card{background:var(--bg);border:0.5px solid var(--b);border-radius:var(--rl);padding:10px 12px;position:relative}
+.card:hover{border-color:var(--b2)}
+.cx{position:absolute;top:5px;right:6px;font-size:10px;cursor:pointer;opacity:0;padding:2px 4px;border-radius:3px;color:var(--t2)}
+.card:hover .cx{opacity:.5}.cx:hover{opacity:1!important;color:#E24B4A!important}
+.cmkt{font-size:10px;color:var(--t3);margin-bottom:3px}
+.ccode{font-size:11px;font-weight:500;color:var(--t2)}
+.cname{font-size:13px;font-weight:500;margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpx{font-size:18px;font-weight:500;margin-bottom:2px;min-height:24px}
+.cchg{font-size:11px;font-weight:500;min-height:15px}
+.cts{font-size:10px;color:var(--t3);margin-top:2px}
+.up{color:var(--ts)}.dn{color:var(--td)}.nc{color:var(--t2)}
+.ld{font-size:11px;color:var(--t3);animation:pu .9s infinite}
+@keyframes pu{0%,100%{opacity:.25}50%{opacity:1}}
+.cbtns{display:flex;gap:4px;margin-top:9px}
+.cbtn{flex:1;padding:4px 0;border:0.5px solid var(--b);border-radius:5px;cursor:pointer;background:transparent;font-size:11px;color:var(--t2)}
+.cbtn:hover{background:var(--bg2)}.cbtn.a{background:var(--bgi);color:var(--ti);border-color:transparent}
+.empty{text-align:center;padding:50px 16px;color:var(--t2)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-start;justify-content:center;padding-top:48px}
+.ov.on{display:flex}
+.ovb{background:var(--bg);border-radius:var(--rl);width:min(480px,95vw);max-height:70vh;overflow:hidden;display:flex;flex-direction:column}
+.ovh{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--b);flex-shrink:0}
+.ovh input{flex:1;font-size:14px;border:none;background:transparent;color:var(--t);outline:none}
+.ovbd{overflow-y:auto;flex:1}
+.si{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:0.5px solid var(--b);cursor:pointer}
+.si:hover{background:var(--bg2)}
+.sic{font-size:11px;font-weight:500;width:56px;flex-shrink:0;color:var(--t2)}
+.sin{flex:1;font-size:13px}
+.sib{font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.btw{background:var(--bgi);color:var(--ti)}.bus{background:var(--bgs);color:var(--ts)}.bjp{background:#FAECE7;color:#993C1D}
+.airow{padding:10px 14px;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.spin{width:13px;height:13px;border:2px solid var(--b);border-top-color:#7F77DD;border-radius:50%;animation:sp .8s linear infinite;display:none;flex-shrink:0}
+.spin.on{display:block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.atag{color:var(--ti);cursor:pointer;text-decoration:underline}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center}
+.modal.on{display:flex}
+.mbox{background:var(--bg);border-radius:var(--rl);padding:20px;width:min(300px,92vw)}
+.mbox h3{font-size:14px;font-weight:500;margin-bottom:10px}
+.mbox input{width:100%;margin-bottom:10px;font-size:13px;padding:7px 10px;border:0.5px solid var(--b2);border-radius:6px;background:var(--bg2);color:var(--t);outline:none}
+.mbtns{display:flex;gap:8px;justify-content:flex-end}
+.anl{padding-top:.25rem}
+.anlhd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.bk{cursor:pointer;color:var(--t2);font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--b);background:transparent}
+.bk:hover{background:var(--bg2)}
+.anln{font-size:17px;font-weight:500;flex:1}
+.anlpx{font-size:24px;font-weight:500}
+.sec{font-size:11px;font-weight:500;color:var(--t2);letter-spacing:.04em;margin:12px 0 7px}
+.irow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.inm{width:60px;color:var(--t2);font-size:11px;flex-shrink:0}
+.ibg{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.ib{height:100%;border-radius:4px}.ibuy{background:#639922}.isell{background:#E24B4A}
+.iv{width:72px;text-align:right;font-weight:500;font-size:11px}
+.ibc{color:var(--ts)}.isc{color:var(--td)}
+.ibar{height:18px;border-radius:5px;background:var(--bg2);overflow:hidden;position:relative;margin:6px 0 3px}
+.ifill{height:100%;border-radius:5px}
+.ilbl{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:500;color:#fff;white-space:nowrap}
+.sigr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--b);font-size:12px}
+.sigr:last-child{border:none}
+.sk2{display:flex;align-items:center;gap:5px;color:var(--t2)}
+.d8{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wb{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.6}
+.lvg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.lvc{border-radius:var(--r);padding:9px 11px}
+.lvl{font-size:10px;margin-bottom:3px;font-weight:500}
+.lvv{font-size:13px;font-weight:500}
+.lvs{font-size:11px;margin-top:2px}
+.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2)}
+.guide{background:var(--bg);border:0.5px solid var(--b);border-radius:var(--rl);padding:14px;margin-top:10px;font-size:12px;color:var(--t2);line-height:1.8}
+.guide h4{font-size:13px;font-weight:500;color:var(--t);margin-bottom:8px}
+.guide code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace}
+.ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
+.nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
+.nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
+.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
+.npos{background:var(--bgs);color:var(--ts)}.nneg{background:var(--bgd);color:var(--td)}.nneu{background:var(--bg3);color:var(--t2)}
+.ntitle{font-size:13px;font-weight:500;line-height:1.5}
+.nbody{font-size:12px;color:var(--t2);line-height:1.6;margin-top:3px}
+.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+<div class="wrap">
 
-    <div id="lock-screen">
-        <div id="status-msg">正在連線至安全性伺服器...</div>
-        
-        <div class="pin-display">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-
-        <div class="keypad" id="keypad" style="pointer-events: none; opacity: 0.5;">
-            <div class="key" data-key="1" onclick="enterDigit('1')">1</div>
-            <div class="key" data-key="2" onclick="enterDigit('2')">2</div>
-            <div class="key" data-key="3" onclick="enterDigit('3')">3</div>
-            <div class="key" data-key="4" onclick="enterDigit('4')">4</div>
-            <div class="key" data-key="5" onclick="enterDigit('5')">5</div>
-            <div class="key" data-key="6" onclick="enterDigit('6')">6</div>
-            <div class="key" data-key="7" onclick="enterDigit('7')">7</div>
-            <div class="key" data-key="8" onclick="enterDigit('8')">8</div>
-            <div class="key" data-key="9" onclick="enterDigit('9')">9</div>
-            <div class="key" style="background:transparent; cursor:default;"></div>
-            <div class="key" data-key="0" onclick="enterDigit('0')">0</div>
-            <div class="key" data-key="Backspace" onclick="backspace()">⌫</div>
-        </div>
+<!-- API Key Section -->
+<div id="key-setup" class="keybanner">
+  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
+  <div class="keyrow">
+    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
+           onkeydown="if(event.key==='Enter')saveKey()">
+    <button class="btn p" onclick="saveKey()">儲存</button>
+  </div>
+  <div class="keyhint">
+    ✅ Key 只存在你的瀏覽器，不會上傳任何地方。<br>
+    ✅ 台股盤中報價用 TWSE 免費 API（不消耗 Key）。<br>
+    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+    免費申請，新帳號有 $5 免費額度，夠用很久。
+  </div>
+</div>
+<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code><br>③ 暫時允許：Chrome 啟動時加參數 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">--disable-web-security</code>（不建議日常使用）</div>
+<div id="key-ok" style="display:none;margin-bottom:8px">
+  <div class="keyok">
+    <span>✅ API Key 已設定</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
+      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
+      <span class="resetlink" onclick="resetKey()">更換 Key</span>
     </div>
+  </div>
+</div>
 
-    <div id="main-content">
-        <header>
-            <h1>🛠️ Neil's 工具箱</h1>
-            <p> 45度切割時分析與日常輔助工具 </p>
-        </header>
-    
-        <div class="container">
-            <a href="timer.html" class="card">
-                <div class="card-img timer-bg">⏱️</div>
-                <div class="card-content">
-                    <div class="card-title">任務計時器</div>
-                    <div class="card-desc">蕃茄鐘、倒數計時與任務紀錄功能。</div>
-                </div>
-            </a>
-            <a href="glue.html" class="card">
-                <div class="card-img glue-bg">🧩</div>
-                <div class="card-content">
-                    <div class="card-title">膠體分析工具</div>
-                    <div class="card-desc">上傳圖片、畫框並計算膠體面積佔比。</div>
-                </div>
-            </a>
-            <a href="stitch.html" class="card">
-                <div class="card-img stitch-bg">🖼️</div>
-                <div class="card-content">
-                    <div class="card-title">圖片拼接工具</div>
-                    <div class="card-desc">多圖手動合成工具。載入兩張圖片，拖曳調整位置與透明度。</div>
-                </div>
-            </a>
-            <a href="stack.html" class="card">
-                <div class="card-img stack-bg">📚</div>
-                <div class="card-content">
-                    <div class="card-title">疊構圖產生器</div>
-                    <div class="card-desc">自訂材料層次、厚度與顏色，產生堆疊結構圖。</div>
-                </div>
-            </a>
-            <a href="cutting.html" class="card">
-                <div class="badge">NEW</div>
-                <div class="card-img cut2d-bg">✂️</div>
-                <div class="card-content">
-                    <div class="card-title">切割佈局 (2D)</div>
-                    <div class="card-desc">平面量測工具。計算切割深度、支援畫線量測與吸附功能。</div>
-                </div>
-            </a>
-            <a href="cutting_3d.html" class="card">
-                <div class="badge">NEW</div>
-                <div class="card-img cut3d-bg" style="font-size: 3.5rem;">🧊</div>
-                <div class="card-content">
-                    <div class="card-title">切割模擬 (3D)</div>
-                    <div class="card-desc">全 3D 視角。設定長寬高，模擬刀具切割實體後的斷面形狀。</div>
-                </div>
-            </a>
-            <a href="stock.html" class="card">
-                <div class="badge" style="background: #4CAF50;">HOT</div>
-                <div class="card-img" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">📈</div>
-                <div class="card-content">
-                    <div class="card-title">股市尋寶</div>
-                    <div class="card-desc">分析台股，找出被低估的潛力股票。計算 RSI 與跌幅，發掘投資機會。</div>
-                </div>
-            </a>
-            
-            <a href="hsr_booking.html" class="card">
-                <div class="badge" style="background: #9C27B0;">BETA</div>
-                <div class="card-img" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%); color: white;">🚄</div>
-                <div class="card-content">
-                    <div class="card-title">高鐵自動訂票</div>
-                    <div class="card-desc">自動化搶票小幫手。設定時間與車次，定時自動執行訂票流程。</div>
-                </div>
-            </a>
-            <a href="test.html" class="card">
-                <div class="badge" style="background: #607D8B;">DEV</div>
-                <div class="card-img test-bg">🧪</div>
-                <div class="card-content">
-                    <div class="card-title">測試實驗室</div>
-                    <div class="card-desc">功能開發測試區。用於調試新程式碼與實驗性功能。</div>
-                </div>
-            </a>
-            <a href="test2.html" class="card">
-                <div class="badge" style="background: #607D8B;">DEV 2</div>
-                <div class="card-img test2-bg">🔬</div>
-                <div class="card-content">
-                    <div class="card-title">測試實驗室 2</div>
-                    <div class="card-desc">第二代測試與開發沙盒，用於除錯與實驗性功能部署。</div>
-                </div>
-            </a>
-        </div>
-    
-        <footer>
-            <div style="margin-bottom: 15px;">
-                &copy; 2024 My Web Tools. Hosted on GitHub Pages.
-            </div>
-            <div style="font-size: 13px; background: rgba(255,255,255,0.5); padding: 8px 15px; border-radius: 20px; display: inline-flex; gap: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <span id="busuanzi_container_site_uv" style="display:none">
-                    👤 訪客數: <span id="busuanzi_value_site_uv" style="color:#00897B; font-weight:bold;"></span>
-                </span>
-                <span style="border-left: 1px solid #ccc;"></span>
-                <span id="busuanzi_container_site_pv" style="display:none">
-                    👀 瀏覽次數: <span id="busuanzi_value_site_pv" style="color:#1976D2; font-weight:bold;"></span>
-                </span>
-            </div>
-            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-        </footer>
+<!-- Main UI -->
+<div class="topbar">
+  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
+  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="bar" id="bar">
+  <span class="bn" id="bn"></span>
+  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
+  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
+</div>
+<div id="main"></div>
+
+<!-- GitHub Guide -->
+<div style="margin-top:16px">
+  <details>
+    <summary style="cursor:pointer;font-size:12px;color:var(--t3);padding:4px 0;list-style:none">
+      📖 如何部署到 GitHub Pages（點開）
+    </summary>
+    <div class="guide">
+      <h4>三步部署，永久免費使用</h4>
+      <p><b>1.</b> 到 <a href="https://github.com/new" target="_blank" style="color:var(--ti)">github.com/new</a> 建立 repository</p>
+      <p><b>2.</b> 把這個 HTML 檔案重新命名為 <code>index.html</code> 並上傳</p>
+      <p><b>3.</b> 進 Settings → Pages → Source 選 <code>main</code> branch → Save</p>
+      <p style="margin-top:6px">幾分鐘後網址：<code>https://你帳號.github.io/repo名稱</code></p>
+      <p style="margin-top:6px;color:var(--t3)">
+        ⚠ API Key 存在瀏覽器 localStorage，每台裝置首次使用要輸入一次。<br>
+        ⚠ 請勿將 API Key 直接寫入 HTML 並公開 repository。
+      </p>
     </div>
+  </details>
+</div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!-- Search Overlay -->
+<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
+  <div class="ovb">
+    <div class="ovh">
+      <span>🔍</span>
+      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
+             oninput="doSrch(this.value)" autocomplete="off">
+      <button class="btn sm" onclick="closeSrch()">✕</button>
+    </div>
+    <div class="ovbd" id="sres"></div>
+  </div>
+</div>
 
-        // Firebase Config (維持不變)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-            authDomain: "stack-diagram-db.firebaseapp.com",
-            projectId: "stack-diagram-db",
-            storageBucket: "stack-diagram-db.firebasestorage.app",
-            messagingSenderId: "67240747982",
-            appId: "1:67240747982:web:1fb065e40e936a7485419f"
-        };
+<!-- New Cat Modal -->
+<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
+  <div class="mbox">
+    <h3>新增分類</h3>
+    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
+           onkeydown="if(event.key==='Enter')mkCat()">
+    <div class="mbtns">
+      <button class="btn" onclick="closeCmod()">取消</button>
+      <button class="btn p" onclick="mkCat()">建立</button>
+    </div>
+  </div>
+</div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+<script>
+// ─── DB ────────────────────────────────────────────────────
+const DB=[
+  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
+  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
+  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
+  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
+  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
+  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
+  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
+  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
+  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
+  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
+  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
+  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
+  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
+  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
+  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
+  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
+  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
+  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
+  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
+  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
+  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
+  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
+  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
+  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
+  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
+  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
+  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
+  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
+  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
+  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
+  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
+  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
+  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
+  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
+  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
+  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
+  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
+  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
+  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
+  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
+  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
+  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
+  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
+  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
+  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
+  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
+  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
+  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
+  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
+  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
+  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
+  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
+  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
+  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
+  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
+  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
+  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
+  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
+  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金','gold etf','us'],
+  ['TLT','長債 ETF','tlt treasury bond','us'],['SOXL','半導體3x ETF','soxl semiconductor 3x','us'],
+  ['7203','Toyota トヨタ 豐田','toyota 豐田 汽車 ev','jp'],['6758','Sony ソニー','sony playstation ps5','jp'],
+  ['9984','SoftBank 軟銀','softbank 孫正義 vision fund','jp'],['6861','Keyence キーエンス','keyence sensor fa','jp'],
+  ['7974','Nintendo 任天堂','nintendo switch mario','jp'],['8306','MUFG 三菱UFJ','mufg bank 銀行','jp'],
+  ['8035','Tokyo Electron 東京威力','tokyo electron tel equipment','jp'],['6920','Lasertec','lasertec euv inspection','jp'],
+  ['6954','Fanuc ファナック','fanuc robot cnc','jp'],['4063','Shin-Etsu 信越化學','shin-etsu silicon wafer','jp'],
+  ['6367','Daikin ダイキン','daikin hvac 空調','jp'],['4568','Daiichi Sankyo 第一三共','daiichi sankyo adc','jp'],
+  ['9432','NTT','ntt 電信 nippon telegraph','jp'],['9433','KDDI','kddi au 5g','jp'],
+  ['7267','Honda 本田','honda ev motorcycle','jp'],['6501','Hitachi 日立','hitachi infrastructure','jp'],
+  ['7751','Canon キヤノン','canon camera printer','jp'],['6752','Panasonic 松下','panasonic battery ev','jp'],
+  ['4519','Chugai 中外製藥','chugai pharma roche','jp'],['6594','Nidec 日本電產','nidec motor ev','jp'],
+  ['7011','MHI 三菱重工','mitsubishi heavy defense aerospace','jp'],['4502','Takeda 武田製藥','takeda pharma','jp'],
+  ['8001','Itochu 伊藤忠','itochu 商社 trading','jp'],['8058','Mitsubishi Corp 三菱商事','mitsubishi 商社','jp'],
+  ['9022','JR東海','jr shinkansen 新幹線','jp'],['6645','Omron オムロン','omron automation sensor','jp'],
+];
 
-        let currentInput = "";
-        let correctPassword = "";
-        let isLocked = true; // 新增狀態判斷
+// ─── API KEY ───────────────────────────────────────────────
+let AKEY='';
+function loadKey(){
+  AKEY=localStorage.getItem('ak-v1')||'';
+  document.getElementById('key-setup').style.display=AKEY?'none':'block';
+  document.getElementById('key-ok').style.display=AKEY?'block':'none';
+  // Detect file:// and warn about CORS
+  if(location.protocol==='file:'){
+    document.getElementById('cors-warn').style.display='block';
+  }
+}
+function saveKey(){
+  const v=document.getElementById('keyinp').value.trim();
+  if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
+  AKEY=v;localStorage.setItem('ak-v1',v);
+  document.getElementById('key-setup').style.display='none';
+  document.getElementById('key-ok').style.display='block';
+}
+function resetKey(){
+  AKEY='';localStorage.removeItem('ak-v1');
+  document.getElementById('keyinp').value='';
+  document.getElementById('key-setup').style.display='block';
+  document.getElementById('key-ok').style.display='none';
+}
+async function checkBal(){
+  if(!AKEY){alert('請先設定 API Key');return;}
+  const btn=document.getElementById('bal-btn');
+  const disp=document.getElementById('bal-display');
+  btn.disabled=true;btn.textContent='查詢中…';
+  disp.textContent='';
+  try{
+    // Use usage API to estimate remaining balance
+    const now=new Date();
+    const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');
+    const r=await fetch(`https://api.anthropic.com/v1/usage?billing_period=${y}-${m}`,{
+      headers:{'x-api-key':AKEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}
+    });
+    if(r.status===401){disp.innerHTML='<span style="color:var(--td)">Key 無效，請重新設定</span>';return;}
+    // usage API may not exist — fallback: try billing endpoint
+    if(!r.ok) throw new Error('no_usage_api');
+    const d=await r.json();
+    const used=((d.total_cost||0)).toFixed(4);
+    disp.innerHTML=`<span style="color:var(--ts)">本月已用 $${used}</span>`;
+  }catch(e){
+    // Fallback: make a minimal API call to test connectivity & show note
+    try{
+      const r2=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':AKEY,
+          'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1,
+          messages:[{role:'user',content:'hi'}]})
+      });
+      const data=await r2.json();
+      if(r2.status===200){
+        disp.innerHTML='<span style="color:var(--ts)">✓ Key 有效，額度充足</span>';
+      }else if(r2.status===400&&data.error?.message?.includes('credit')){
+        disp.innerHTML='<span style="color:var(--td)">⚠ 額度不足，請儲值</span>';
+      }else if(r2.status===401){
+        disp.innerHTML='<span style="color:var(--td)">Key 無效</span>';
+      }else{
+        disp.innerHTML=`<span style="color:var(--t2)">狀態：${r2.status}</span>`;
+      }
+    }catch(e2){
+      disp.innerHTML='<span style="color:var(--td)">網路錯誤</span>';
+    }
+  }finally{
+    btn.disabled=false;btn.textContent='💰 查餘額';
+  }
+}
 
-        // 1. 連線資料庫獲取密碼
-        async function fetchPassword() {
-            try {
-                const docRef = doc(db, "secrets", "adminConfig");
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    correctPassword = docSnap.data().password;
-                    document.getElementById('status-msg').textContent = "請輸入密碼";
-                    const keypad = document.getElementById('keypad');
-                    keypad.style.pointerEvents = "auto";
-                    keypad.style.opacity = "1";
-                    
-                    // 啟用鍵盤監聽
-                    enableKeyboardInput();
-                } else {
-                    document.getElementById('status-msg').textContent = "錯誤：找不到設定檔";
-                }
-            } catch (e) {
-                console.error(e);
-                document.getElementById('status-msg').textContent = "連線失敗，請檢查網路";
-            }
-        }
+// ─── STATE ─────────────────────────────────────────────────
+const SK='wl-v3',PK='pk-v3';
+let S={cats:[]},P={},aiRun=false,view='grid';
 
-        fetchPassword();
+function saveS(){try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}}
+function saveP(){try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}}
+function loadS(){
+  try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(d?.cats)S.cats=d.cats;}catch(e){}
+  try{P=JSON.parse(localStorage.getItem(PK)||'{}')||{};}catch(e){}
+  if(!S.cats.length)S.cats=[{id:'def',name:'自選股',stocks:[]}];
+  S.act=S.cats[0].id;
+}
+const cat=()=>S.cats.find(c=>c.id===S.act)||S.cats[0];
 
-        // 2. 鍵盤事件監聽 (新增部分)
-        function enableKeyboardInput() {
-            document.addEventListener('keydown', (event) => {
-                // 如果已經解鎖，就不再接收鍵盤輸入
-                if (!isLocked) return;
+// ─── PRICE ─────────────────────────────────────────────────
+async function fetchTW(code){
+  // Try direct first, then CORS proxy (needed when opening as file://)
+  const proxies=['', 'https://corsproxy.io/?url='];
+  for(const proxy of proxies){
+    for(const ex of['tse','otc']){
+      try{
+        const url=`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${code}.tw&json=1&delay=0`;
+        const r=await fetch(proxy?proxy+encodeURIComponent(url):url,
+          {mode:'cors',signal:AbortSignal.timeout(6000)});
+        const j=await r.json(),d=j.msgArray?.[0];
+        if(!d||!d.z||d.z==='-')continue;
+        const px=+d.z,pv=+d.y;
+        return{px,chg:px-pv,pct:(px-pv)/pv*100,name:d.n,live:true,proxy:!!proxy};
+      }catch(e){}
+    }
+  }
+  return null;
+}
 
-                const key = event.key;
+async function callAI(prompt,search=false){
+  if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
+  const body={model:'claude-sonnet-4-20250514',max_tokens:900,
+    messages:[{role:'user',content:prompt}]};
+  if(search)body.tools=[{type:'web_search_20250305',name:'web_search'}];
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':AKEY,
+      'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`API ${r.status}: ${e.error?.message||r.statusText}`);}
+  const data=await r.json();
+  const txt=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+  const m=txt.replace(/```json|```/g,'').match(/[\[\{][\s\S]*[\]\}]/);
+  if(!m)throw new Error('回應格式錯誤');
+  return JSON.parse(m[0]);
+}
 
-                // 檢查是否為 0-9 的數字
-                if (/^[0-9]$/.test(key)) {
-                    enterDigit(key);
-                    highlightKey(key); // 視覺回饋
-                } 
-                // 檢查是否為 Backspace
-                else if (key === 'Backspace') {
-                    backspace();
-                    highlightKey('Backspace'); // 視覺回饋
-                }
-            });
-        }
+async function rfStock(code,name,mkt){
+  P[code]={...(P[code]||{}),loading:true};renderCard(code);
+  try{
+    let p=null;
+    if(mkt==='tw')p=await fetchTW(code);
+    if(!p){
+      const j=await callAI(`搜尋${name}(${code})最新收盤價。只回覆純JSON:{"px":數字,"chg":漲跌額,"pct":漲跌百分比}`,true);
+      p={px:+j.px,chg:+j.chg||0,pct:+j.pct||0,live:true};
+    }
+    P[code]={...p,loading:false,ts:Date.now()};saveP();
+  }catch(e){
+    P[code]={...(P[code]||{}),loading:false,err:true,errMsg:e.message};saveP();
+  }
+  renderCard(code);
+}
+async function rfAll(){for(const s of cat().stocks)rfStock(s.code,s.name,s.mkt);}
 
-        // 讓按鈕亮一下的視覺效果
-        function highlightKey(key) {
-            // 尋找對應 data-key 的按鈕
-            const btn = document.querySelector(`.key[data-key="${key}"]`);
-            if (btn) {
-                btn.classList.add('active-key');
-                setTimeout(() => btn.classList.remove('active-key'), 150);
-            }
-        }
+// ─── SEARCH ────────────────────────────────────────────────
+function fDB(q){
+  const n=q.toLowerCase().trim();if(!n)return[];
+  return DB.filter(([c,z,k])=>c.toLowerCase().includes(n)||z.toLowerCase().includes(n)||(k&&k.toLowerCase().includes(n))).slice(0,12);
+}
+function doSrch(q){
+  const res=document.getElementById('sres');
+  if(!q.trim()){res.innerHTML='<div class="airow">輸入代碼或名稱，台股 / 美股 / 日股均可</div>';return;}
+  const items=fDB(q);
+  let html=items.map(([code,zh,,mkt])=>{
+    const nm=zh.split(' ')[0];
+    const lbl=mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
+    const bc=mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
+    return`<div class="si" onclick="addS('${code}','${nm}','${mkt}')">
+      <span class="sic">${code}</span><span class="sin">${nm}</span>
+      <span class="sib ${bc}">${lbl}</span></div>`;
+  }).join('');
+  const qSafe=q.replace(/'/g,"\\'");
+  html+=`<div class="airow">
+    <div class="spin ${aiRun?'on':''}" id="aispin"></div>
+    <span id="aihtxt">${aiRun?'AI 搜尋中…':
+      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
+  res.innerHTML=html;
+}
+async function aiSrch(q){
+  if(aiRun)return;aiRun=true;
+  const sp=document.getElementById('aispin'),ht=document.getElementById('aihtxt');
+  if(sp)sp.classList.add('on');if(ht)ht.textContent='AI 搜尋中…';
+  try{
+    const arr=await callAI(`找出「${q}」對應的股票代碼，回覆純JSON陣列（最多6筆）：[{"code":"代碼","name":"中文名稱","mkt":"tw/us/jp"}]`);
+    const list=Array.isArray(arr)?arr:[arr];
+    document.getElementById('sres').innerHTML=list.map(s=>{
+      const bc=s.mkt==='tw'?'btw':s.mkt==='jp'?'bjp':'bus';
+      const lbl=s.mkt==='tw'?'台股':s.mkt==='jp'?'日股':'美股';
+      return`<div class="si" onclick="addS('${s.code}','${s.name}','${s.mkt||'us'}')">
+        <span class="sic">${s.code}</span><span class="sin">${s.name}</span>
+        <span class="sib ${bc}">${lbl}</span></div>`;
+    }).join('')||'<div class="airow">找不到此股票</div>';
+  }catch(e){
+    const ht2=document.getElementById('aihtxt');
+    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="aiSrch('${q}')">重試</span>`;
+  }
+  aiRun=false;
+}
+function openSrch(){
+  document.getElementById('sov').classList.add('on');
+  const i=document.getElementById('sq');i.value='';doSrch('');
+  setTimeout(()=>i.focus(),60);
+}
+function closeSrch(){document.getElementById('sov').classList.remove('on');aiRun=false;}
 
-        // 3. 輸入邏輯
-        window.enterDigit = (digit) => {
-            if (currentInput.length < 4) {
-                currentInput += digit;
-                updateDots();
-                if (currentInput.length === 4) {
-                    setTimeout(checkPin, 100);
-                }
-            }
-        };
+// ─── CATEGORY ──────────────────────────────────────────────
+function showNewCat(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);}
+function closeCmod(){document.getElementById('cmod').classList.remove('on');}
+function mkCat(){
+  const n=document.getElementById('cinp').value.trim();if(!n)return;
+  const c={id:'c'+Date.now(),name:n,stocks:[]};
+  S.cats.push(c);S.act=c.id;closeCmod();saveS();renderAll();
+}
+function delCat(id,e){
+  e?.stopPropagation();
+  if(S.cats.length<=1){alert('至少保留一個分類');return;}
+  if(!confirm(`刪除「${S.cats.find(c=>c.id===id)?.name}」？`))return;
+  S.cats=S.cats.filter(c=>c.id!==id);
+  if(S.act===id)S.act=S.cats[0].id;
+  saveS();renderAll();
+}
+function setAct(id){S.act=id;view='grid';renderAll();}
+function addS(code,name,mkt){
+  const c=cat();
+  if(c.stocks.find(s=>s.code===code)){closeSrch();return;}
+  c.stocks.push({code,name,mkt});saveS();closeSrch();renderGrid();rfStock(code,name,mkt);
+}
+function rmS(code,e){
+  e?.stopPropagation();
+  const c=cat();c.stocks=c.stocks.filter(s=>s.code!==code);
+  delete P[code];saveS();saveP();renderGrid();
+}
 
-        window.backspace = () => {
-            currentInput = currentInput.slice(0, -1);
-            updateDots();
-        };
+// ─── RENDER ────────────────────────────────────────────────
+const renderAll=()=>{renderTabs();if(view==='grid')renderGrid();};
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=
+    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="setAct('${c.id}')">
+      ${c.name}<span class="tx" onclick="delCat('${c.id}',event)">✕</span></div>`).join('')+
+    `<button class="tadd" onclick="showNewCat()">＋ 新分類</button>`;
+}
+function tsLbl(ts){
+  if(!ts)return'';
+  const d=new Date(ts);
+  return d.toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'})+' '+
+         d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+}
+function cardHTML(s){
+  const p=P[s.code];
+  const cur=s.mkt==='jp'?'¥':s.mkt==='us'?'$':'';
+  const mktLbl=s.mkt==='tw'?'🇹🇼 台股':s.mkt==='us'?'🇺🇸 美股':'🇯🇵 日股';
+  let ph='',ch='',ts='';
+  if(p?.loading)ph=`<div class="ld">更新中…</div>`;
+  else if(p?.px){
+    const sg=p.chg>=0?'▲':'▼',cl=p.chg>0?'up':p.chg<0?'dn':'nc';
+    ph=`<div class="cpx">${cur}${(+p.px).toLocaleString(undefined,{maximumFractionDigits:2})}</div>`;
+    ch=`<div class="cchg ${cl}">${sg}${Math.abs(p.pct).toFixed(2)}%</div>`;
+    if(p.ts)ts=`<div class="cts">${tsLbl(p.ts)}</div>`;
+  }else if(p?.err)ph=`<div class="ld" title="${p.errMsg||''}">取得失敗 — 按↺</div>`;
+  else ph=`<div class="cpx" style="font-size:12px;color:var(--t3)">— 按 ↺ 更新</div>`;
+  return`<div class="card" id="card-${s.code}">
+    <span class="cx" onclick="rmS('${s.code}',event)">✕</span>
+    <div class="cmkt">${mktLbl}</div>
+    <div class="ccode">${s.code}</div>
+    <div class="cname" title="${s.name}">${s.name}</div>
+    ${ph}${ch}${ts}
+    <div class="cbtns">
+      <button class="cbtn a" onclick="goAnl('${s.code}','${s.name}','${s.mkt}')">分析</button>
+      <button class="cbtn" onclick="rfStock('${s.code}','${s.name}','${s.mkt}')">↺</button>
+    </div></div>`;
+}
+function renderCard(code){
+  const el=document.getElementById('card-'+code);if(!el)return;
+  const s=cat().stocks.find(x=>x.code===code);if(!s)return;
+  el.outerHTML=cardHTML(s);
+}
+function renderGrid(){
+  view='grid';
+  const c=cat();
+  document.getElementById('bn').textContent=c.name;
+  document.getElementById('bar').classList.add('on');
+  const m=document.getElementById('main');
+  if(!c.stocks.length){
+    m.innerHTML=`<div class="empty">
+      <div style="font-size:32px;margin-bottom:8px">📋</div>
+      <div style="font-weight:500;margin-bottom:6px">分類是空的</div>
+      <div style="font-size:12px;color:var(--t3)">按上方搜尋欄加入台股、美股、日股</div></div>`;
+    return;
+  }
+  m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
+}
 
-        function updateDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('filled', i < currentInput.length);
-            });
-        }
+// ─── ANALYSIS ──────────────────────────────────────────────
+const DC={red:'#E24B4A',amber:'#EF9F27',green:'#639922'};
+async function goAnl(code,name,mkt){
+  view='analysis';
+  document.getElementById('bar').classList.remove('on');
+  document.getElementById('main').innerHTML=`<div class="anl">
+    <div class="anlhd">
+      <button class="bk" onclick="renderGrid()">← 返回</button>
+      <span class="anln">${name}</span>
+      <span style="font-size:11px;color:var(--t2)">${code}</span>
+    </div>
+    <div class="aspinner"><div class="spin on"></div>取得報價並分析中（約 5~15 秒）…</div></div>`;
 
-        // 4. 驗證密碼
-        function checkPin() {
-            if (currentInput === correctPassword) {
-                unlock();
-            } else {
-                showError();
-            }
-        }
+  let p=P[code];
+  if(!p?.px&&mkt==='tw'){
+    try{const fp=await fetchTW(code);if(fp){p=fp;P[code]={...fp,ts:Date.now()};saveP();}}catch(e){}
+  }
 
-        function unlock() {
-            isLocked = false; // 標記為已解鎖，停止鍵盤監聽
-            document.getElementById('status-msg').textContent = "驗證成功";
-            document.getElementById('status-msg').style.color = "#2ecc71";
-            document.getElementById('lock-screen').style.top = "-100%";
-            
-            const mainContent = document.getElementById('main-content');
-            mainContent.style.display = "flex";
-            document.body.style.overflow = "auto";
-            document.title = "Neil's 工具箱";
-        }
+  try{
+    const px=p?.px||null,isTW=mkt==='tw';
+    const c0=isTW?'外資':'機構ETF',c1=isTW?'投信':'主動基金',c2=isTW?'自營商':'散戶做空';
+    const ai=await callAI(
+      `分析${name}(${code})${px?`現價${px}`:',請搜尋最新股價'}。只回覆純JSON:
+{"price":{"px":0,"chg":0,"pct":0},
+"institution":{"a":{"label":"${c0}","val":"說明","pct":0,"buy":false},"b":{"label":"${c1}","val":"說明","pct":0,"buy":false},"c":{"label":"${c2}","val":"說明","pct":0,"buy":false},"bearPct":0,"bearLabel":"偏空/偏多","note":"重點一句"},
+"signals":[{"color":"red","label":"訊","val":"說"},{"color":"red","label":"訊","val":"說"},{"color":"amber","label":"訊","val":"說"},{"color":"green","label":"訊","val":"說"},{"color":"green","label":"訊","val":"說"}],
+"verdict":"2-3句研判",
+"levels":{"r1":"強壓","r2":"壓力","s1":"支撐","s2":"強撐"},
+"strategy":{"entry":"買點","stop":"停損","t1":"短線目標","t2":"題材目標"}}`, !px);
 
-        function showError() {
-            const ls = document.getElementById('lock-screen');
-            const msg = document.getElementById('status-msg');
-            
-            msg.textContent = "密碼錯誤";
-            msg.style.color = "#e74c3c";
-            ls.classList.add('shake');
-            
-            setTimeout(() => {
-                ls.classList.remove('shake');
-                currentInput = "";
-                updateDots();
-                msg.textContent = "請輸入密碼";
-                msg.style.color = "white";
-            }, 500);
-        }
-    </script>
+    if(ai.price?.px&&!px){
+      p={px:+ai.price.px,chg:+ai.price.chg||0,pct:+ai.price.pct||0,live:true};
+      P[code]={...p,ts:Date.now()};saveP();renderCard(code);
+    }
+    drawAnl(code,name,mkt,p||P[code],ai);
+  }catch(e){
+    document.getElementById('main').innerHTML=`<div class="anl">
+      <div class="anlhd"><button class="bk" onclick="renderGrid()">← 返回</button>
+      <span class="anln">${name}</span></div>
+      <div style="color:var(--td);padding:16px;font-size:13px;line-height:1.8">
+        ⚠ ${e.message}</div></div>`;
+  }
+}
+
+// ─── NEWS ANALYSIS ────────────────────────────────────────
+let newsCache={};
+async function goNews(code,name,mkt){
+  const el=document.getElementById('news-body');
+  if(!el)return;
+  if(newsCache[code]){el.innerHTML=newsCache[code];return;}
+  el.innerHTML=`<div class="aspinner"><div class="spin on"></div>搜尋最新新聞並分析中（約 10~20 秒）…</div>`;
+  try{
+    const mktCtx=mkt==='tw'?'台股':mkt==='jp'?'日股':'美股';
+    const txt=await callAIRaw(
+      `搜尋${name}(${code})最近1個月的重要新聞（${mktCtx}）。分析每則新聞對股價的影響（正面/負面/中性）。
+回覆純JSON（不加markdown）:
+{"summary":"整體新聞情緒總結2句","sentiment":"positive/negative/neutral","news":[{"title":"新聞標題","date":"日期","body":"摘要50字","sentiment":"positive/negative/neutral"},{"title":"","date":"","body":"","sentiment":""},{"title":"","date":"","body":"","sentiment":""},{"title":"","date":"","body":"","sentiment":""},{"title":"","date":"","body":"","sentiment":""}]}`,
+      true);
+    const d=JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').match(/\{[\s\S]*\}/)[0]);
+    const sentMap={positive:'正面 ↑',negative:'負面 ↓',neutral:'中性'};
+    const sentCls={positive:'npos',negative:'nneg',neutral:'nneu'};
+    const html=`
+      <div class="nsum"><b style="font-weight:500">整體研判：</b>${d.summary}</div>
+      ${(d.news||[]).filter(n=>n.title).map(n=>`
+      <div class="ncard">
+        <div class="nhead">
+          <span class="nsent ${sentCls[n.sentiment]||'nneu'}">${sentMap[n.sentiment]||'中性'}</span>
+          <span class="ntitle">${n.title}</span>
+        </div>
+        <div class="nbody">${n.body||''}${n.date?` <span style="color:var(--t3);font-size:10px">— ${n.date}</span>`:''}</div>
+      </div>`).join('')}`;
+    newsCache[code]=html;
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML=`<div style="color:var(--td);padding:12px;font-size:13px">新聞取得失敗：${e.message}</div>`;
+  }
+}
+
+async function callAIRaw(prompt,search=false){
+  if(!AKEY)throw new Error('請先設定 API Key');
+  const body={model:'claude-sonnet-4-20250514',max_tokens:1200,
+    messages:[{role:'user',content:prompt}]};
+  if(search)body.tools=[{type:'web_search_20250305',name:'web_search'}];
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':AKEY,
+      'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`API ${r.status}: ${e.error?.message||r.statusText}`);}
+  const data=await r.json();
+  return data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+}
+
+function drawAnl(code,name,mkt,p,ai){
+  const cur=mkt==='jp'?'¥':mkt==='us'?'$':'',px=p?.px,pct=p?.pct||0;
+  const sg=pct>=0?'▲':'▼',cl=pct>0?'up':pct<0?'dn':'nc';
+  const inst=ai.institution||{};
+  const bear=+inst.bearPct||50;
+  const rows=[inst.a,inst.b,inst.c].filter(Boolean);
+  const ihtml=rows.map(r=>`<div class="irow">
+    <span class="inm">${r.label}</span>
+    <div class="ibg"><div class="ib ${r.buy?'ibuy':'isell'}" style="width:${Math.min(+r.pct||0,100)}%"></div></div>
+    <span class="iv ${r.buy?'ibc':'isc'}">${r.val}</span></div>`).join('');
+  const shtml=(ai.signals||[]).map(s=>`<div class="sigr">
+    <span class="sk2"><span class="d8" style="background:${DC[s.color]||'#888'}"></span>${s.label}</span>
+    <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+  const lv=ai.levels||{},st=ai.strategy||{};
+  document.getElementById('main').innerHTML=`<div class="anl">
+    <div class="anlhd">
+      <button class="bk" onclick="renderGrid()">← 返回</button>
+      <span class="anln">${name}</span>
+      <span style="font-size:11px;color:var(--t2)">${code}</span>
+    </div>
+    ${px?`<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+      <span class="anlpx">${cur}${(+px).toLocaleString(undefined,{maximumFractionDigits:2})}</span>
+      <span class="${cl}" style="font-size:14px;font-weight:500">${sg}${Math.abs(pct).toFixed(2)}%</span>
+      <span style="font-size:11px;color:var(--t3)">${tsLbl(P[code]?.ts)}</span></div>`:''}
+    <div class="ntab">
+      <button class="nt on" id="tab-anl" onclick="switchTab('anl','${code}','${name}','${mkt}')">📊 技術分析</button>
+      <button class="nt" id="tab-news" onclick="switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
+    </div>
+    <div id="tab-anl-body">
+    <div class="sec">法人籌碼</div>${ihtml}
+    <div class="ibar"><div class="ifill" style="width:${bear}%;background:${bear>50?'#E24B4A99':'#63992299'}"></div>
+    <span class="ilbl">${inst.bearLabel||''}  ${bear}%</span></div>
+    <div style="font-size:11px;color:var(--t2);margin-bottom:2px">${inst.note||''}</div>
+    <div class="sec">主力訊號</div>${shtml}
+    <div class="wb"><b style="font-weight:500">研判：</b>${ai.verdict||''}</div>
+    <div class="lvg">
+      <div class="lvc" style="background:var(--bgd)">
+        <div class="lvl" style="color:var(--td)">壓力</div>
+        <div class="lvv" style="color:var(--td)">${lv.r1||'—'}</div>
+        <div class="lvs" style="color:var(--td)">${lv.r2||''}</div></div>
+      <div class="lvc" style="background:var(--bgs)">
+        <div class="lvl" style="color:var(--ts)">支撐</div>
+        <div class="lvv" style="color:var(--ts)">${lv.s1||'—'}</div>
+        <div class="lvs" style="color:var(--ts)">${lv.s2||''}</div></div>
+      <div class="lvc" style="background:var(--bgw)">
+        <div class="lvl" style="color:var(--tw)">進場</div>
+        <div class="lvv" style="color:var(--tw)">${st.entry||'—'}</div>
+        <div class="lvs" style="color:var(--tw)">停損：${st.stop||'—'}</div></div>
+      <div class="lvc" style="background:var(--bgi)">
+        <div class="lvl" style="color:var(--ti)">目標</div>
+        <div class="lvv" style="color:var(--ti)">${st.t1||'—'}</div>
+        <div class="lvs" style="color:var(--ti)">${st.t2||'—'}</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--t3)">⚠ 僅供分析參考，非投資建議</div>
+    </div>
+    <div id="news-body" style="display:none"></div></div>`;
+}
+
+// ─── TABS ──────────────────────────────────────────────────
+function switchTab(tab,code,name,mkt){
+  const anl=document.getElementById('tab-anl-body');
+  const news=document.getElementById('news-body');
+  const btnAnl=document.getElementById('tab-anl');
+  const btnNews=document.getElementById('tab-news');
+  if(!anl||!news)return;
+  if(tab==='anl'){
+    anl.style.display='';news.style.display='none';
+    btnAnl.classList.add('on');btnNews.classList.remove('on');
+  }else{
+    anl.style.display='none';news.style.display='';
+    btnAnl.classList.remove('on');btnNews.classList.add('on');
+    goNews(code,name,mkt);
+  }
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+loadKey();loadS();renderTabs();renderGrid();
+</script>
 </body>
 </html>
