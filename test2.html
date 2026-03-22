@@ -4,6 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>股票自選清單</title>
+<script type="module">
+// ─── FIREBASE INIT ──────────────────────────────────────────
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getFirestore,doc,getDoc,setDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const fbCfg={
+  apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+  authDomain:"stack-diagram-db.firebaseapp.com",
+  projectId:"stack-diagram-db",
+  storageBucket:"stack-diagram-db.firebasestorage.app",
+  messagingSenderId:"67240747982",
+  appId:"1:67240747982:web:1fb065e40e936a7485419f"
+};
+const fbApp=initializeApp(fbCfg);
+const db=getFirestore(fbApp);
+
+// Expose helpers to global scope for rest of the page
+async function fbGet(path){
+  try{const s=await getDoc(doc(db,...path.split('/')));return s.exists()?s.data():null;}catch(e){return null;}
+}
+async function fbSet(path,data){
+  try{await setDoc(doc(db,...path.split('/')),data);}catch(e){console.warn('fbSet fail',e);}
+}
+window._fb={get:fbGet,set:fbSet,ready:true};
+
+// Signal that firebase is ready
+document.dispatchEvent(new Event('fb-ready'));
+</script>
 <style>
 :root{
   --bg:#fff;--bg2:#f1efe8;--bg3:#e8e6de;--bgi:#e6f1fb;--bgd:#fcebeb;--bgs:#eaf3de;--bgw:#faeeda;
@@ -150,7 +178,7 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 <div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code><br>③ 暫時允許：Chrome 啟動時加參數 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">--disable-web-security</code>（不建議日常使用）</div>
 <div id="key-ok" style="display:none;margin-bottom:8px">
   <div class="keyok">
-    <span>✅ API Key 已設定</span>
+    <span>✅ API Key 已設定 <span id="sync-status" style="font-size:11px;color:var(--t3)">（雲端同步）</span></span>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
       <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
@@ -297,26 +325,47 @@ const DB=[
   ['9022','JR東海','jr shinkansen 新幹線','jp'],['6645','Omron オムロン','omron automation sensor','jp'],
 ];
 
-// ─── API KEY ───────────────────────────────────────────────
+// ─── API KEY + FIREBASE SYNC ────────────────────────────────
 let AKEY='';
-function loadKey(){
-  AKEY=localStorage.getItem('ak-v1')||'';
+const FB_CFG='config/settings';  // Firestore path
+const FB_WL='watchlist/data';
+const FB_PX='prices/data';
+
+// Wait for Firebase module to be ready
+function waitFB(){return new Promise(res=>{
+  if(window._fb?.ready)return res();
+  document.addEventListener('fb-ready',()=>res(),{once:true});
+  setTimeout(res,3000); // fallback after 3s if firebase fails
+});}
+
+async function loadKey(){
+  await waitFB();
+  // Try Firestore first
+  let key='';
+  if(window._fb){
+    const d=await window._fb.get(FB_CFG);
+    if(d?.anthropicKey) key=d.anthropicKey;
+  }
+  // Fallback to localStorage
+  if(!key) key=localStorage.getItem('ak-v1')||'';
+  AKEY=key;
   document.getElementById('key-setup').style.display=AKEY?'none':'block';
   document.getElementById('key-ok').style.display=AKEY?'block':'none';
-  // Detect file:// and warn about CORS
-  if(location.protocol==='file:'){
-    document.getElementById('cors-warn').style.display='block';
-  }
+  if(location.protocol==='file:') document.getElementById('cors-warn').style.display='block';
 }
-function saveKey(){
+async function saveKey(){
   const v=document.getElementById('keyinp').value.trim();
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
-  AKEY=v;localStorage.setItem('ak-v1',v);
+  AKEY=v;
+  localStorage.setItem('ak-v1',v); // local backup
+  if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
+  document.getElementById('bal-display').innerHTML='<span style="color:var(--ts)">✓ 已同步到雲端</span>';
 }
-function resetKey(){
+async function resetKey(){
   AKEY='';localStorage.removeItem('ak-v1');
+  if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
@@ -371,12 +420,39 @@ async function checkBal(){
 // ─── STATE ─────────────────────────────────────────────────
 const SK='wl-v3',PK='pk-v3';
 let S={cats:[]},P={},aiRun=false,view='grid';
+let _saveSTimer=null,_savePTimer=null;
 
-function saveS(){try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}}
-function saveP(){try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}}
-function loadS(){
-  try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(d?.cats)S.cats=d.cats;}catch(e){}
-  try{P=JSON.parse(localStorage.getItem(PK)||'{}')||{};}catch(e){}
+function saveS(){
+  // localStorage backup
+  try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}
+  // Firestore debounced (avoid too many writes)
+  clearTimeout(_saveSTimer);
+  _saveSTimer=setTimeout(async()=>{
+    if(window._fb) await window._fb.set(FB_WL,{cats:S.cats,updatedAt:Date.now()});
+  },800);
+}
+function saveP(){
+  try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}
+  clearTimeout(_savePTimer);
+  _savePTimer=setTimeout(async()=>{
+    if(window._fb) await window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
+  },800);
+}
+async function loadS(){
+  await waitFB();
+  // Try Firestore first
+  if(window._fb){
+    const [wl,px]=await Promise.all([window._fb.get(FB_WL),window._fb.get(FB_PX)]);
+    if(wl?.cats&&wl.cats.length){S.cats=wl.cats;}
+    if(px?.data){P=px.data;}
+  }
+  // Fallback to localStorage
+  if(!S.cats.length){
+    try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(d?.cats)S.cats=d.cats;}catch(e){}
+  }
+  if(!Object.keys(P).length){
+    try{P=JSON.parse(localStorage.getItem(PK)||'{}')||{};}catch(e){}
+  }
   if(!S.cats.length)S.cats=[{id:'def',name:'自選股',stocks:[]}];
   S.act=S.cats[0].id;
 }
@@ -746,7 +822,15 @@ function switchTab(tab,code,name,mkt){
 }
 
 // ─── INIT ──────────────────────────────────────────────────
-loadKey();loadS();renderTabs();renderGrid();
+(async()=>{
+  // Show loading state
+  document.getElementById('main').innerHTML=
+    '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>同步雲端資料中…</div>';
+  await loadKey();
+  await loadS();
+  renderTabs();
+  renderGrid();
+})();
 </script>
 </body>
 </html>
