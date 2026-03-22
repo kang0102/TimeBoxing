@@ -352,7 +352,7 @@ async function checkBal(){
       });
       const data=await r2.json();
       if(r2.status===200){
-        disp.innerHTML='<span style="color:var(--ts)">✓ Key 有效，額度充足</span>';
+        disp.innerHTML='<span style="color:var(--ts)">✓ 餘額充足</span>';
       }else if(r2.status===400&&data.error?.message?.includes('credit')){
         disp.innerHTML='<span style="color:var(--td)">⚠ 額度不足，請儲值</span>';
       }else if(r2.status===401){
@@ -404,7 +404,7 @@ async function fetchTW(code){
 
 async function callAI(prompt,search=false){
   if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
-  const body={model:'claude-sonnet-4-20250514',max_tokens:900,
+  const body={model:'claude-sonnet-4-6',max_tokens:900,
     messages:[{role:'user',content:prompt}]};
   if(search)body.tools=[{type:'web_search_20250305',name:'web_search'}];
   const r=await fetch('https://api.anthropic.com/v1/messages',{
@@ -656,7 +656,7 @@ async function goNews(code,name,mkt){
 
 async function callAIRaw(prompt,search=false){
   if(!AKEY)throw new Error('請先設定 API Key');
-  const body={model:'claude-sonnet-4-20250514',max_tokens:1200,
+  const body={model:'claude-sonnet-4-6',max_tokens:1200,
     messages:[{role:'user',content:prompt}]};
   if(search)body.tools=[{type:'web_search_20250305',name:'web_search'}];
   const r=await fetch('https://api.anthropic.com/v1/messages',{
