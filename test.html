@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro Ultimate - 完整特效版)</title>
+    <title>工程疊構圖產生器 (Pro Ultimate - 完整展開版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
         :root {
-            --bg-main: #121317;         /* 最底層背景 */
-            --bg-panel: #1A1C23;        /* 側邊欄背景 */
-            --bg-card: #252830;         /* 卡片/區塊背景 */
-            --bg-input: #121317;        /* 輸入框背景 */
-            --border-subtle: #333842;   /* 柔和邊框 */
-            --text-primary: #E2E4E9;    /* 主要文字 */
-            --text-secondary: #949BA4;  /* 次要文字 */
-            --text-note: #68D391;       /* 備註綠色 (符合截圖) */
-            
+            --bg-main: #121317;
+            --bg-panel: #1A1C23;
+            --bg-card: #252830;
+            --bg-input: #121317;
+            --border-subtle: #333842;
+            --text-primary: #E2E4E9;
+            --text-secondary: #949BA4;
+            --text-note: #68D391;
+
             --accent-cyan: #00E5FF;
-            --btn-teal: #0DA69B;        /* 儲存按鈕綠 */
-            --btn-blue: #276FBF;        /* 雲端按鈕藍 */
-            --btn-red: #D93D42;         /* 刪除按鈕紅 */
-            --btn-orange: #E67E22;      /* 匯出/還原橘 */
-            --btn-gray: #4B5563;        /* 備份灰 */
-            
+            --btn-teal: #0DA69B;
+            --btn-blue: #276FBF;
+            --btn-red: #D93D42;
+            --btn-orange: #E67E22;
+            --btn-gray: #4B5563;
+
             --radius-sm: 4px;
             --radius-md: 8px;
             --radius-lg: 12px;
         }
 
         /* --- 基礎設定 --- */
-        body { font-family: "Inter", "Microsoft JhengHei", Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { 
+            font-family: "Inter", "Microsoft JhengHei", Arial, sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-primary); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         /* --- 隱藏式精緻捲軸 --- */
@@ -41,25 +49,36 @@
 
         /* --- 側邊欄 (Sidebar) --- */
         #sidebar { 
-            width: 380px; min-width: 320px; max-width: 800px; 
-            background-color: var(--bg-panel); padding: 20px 16px; 
-            display: flex; flex-direction: column; gap: 14px; z-index: 10; 
-            overflow-y: auto; flex-shrink: 0; border-right: 1px solid var(--border-subtle);
+            width: 380px; 
+            min-width: 320px; 
+            max-width: 800px; 
+            background-color: var(--bg-panel); 
+            padding: 20px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 14px; 
+            z-index: 10; 
+            overflow-y: auto; 
+            flex-shrink: 0; 
+            border-right: 1px solid var(--border-subtle);
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         }
 
         /* --- 主畫布區 --- */
         #main-area { 
-            flex-grow: 1; background-color: var(--bg-main); 
-            display: flex; justify-content: center; align-items: start;
-            overflow: auto; padding: 20px; position: relative;
-            background-image: radial-gradient(#2a2d35 1px, transparent 0); /* 點陣背景增加科技感 */
+            flex-grow: 1; 
+            background-color: var(--bg-main); 
+            display: flex; 
+            justify-content: center; 
+            align-items: start;
+            overflow: auto; 
+            padding: 20px; 
+            position: relative;
+            background-image: radial-gradient(#2a2d35 1px, transparent 0); 
             background-size: 20px 20px;
         }
 
-        /* =========================================
-            🔥 手機版終極適配與防卡死優化 
-            ========================================= */
+        /* 手機版適配 */
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
             #sidebar { width: 100% !important; max-width: 100%; height: auto; max-height: none; border-right: none; border-bottom: 2px solid var(--border-subtle); padding-top: 60px; }
@@ -68,31 +87,13 @@
             button, select, input[type="text"], input[type="number"] { height: 44px; font-size: 15px; }
             .layer-check { width: 24px; height: 24px; } 
 
-            .modal { 
-                width: 100%; height: 100%; max-width: 100%; max-height: 100%;
-                top: 0; left: 0; transform: none; border-radius: 0; 
-                padding: 15px; 
-            }
-            .modal-body { 
-                flex-direction: column; 
-                overflow-y: auto; 
-                overflow-x: hidden; 
-                display: flex; 
-                -webkit-overflow-scrolling: touch; 
-                padding-bottom: 30px; 
-            }
+            .modal { width: 100%; height: 100%; max-width: 100%; max-height: 100%; top: 0; left: 0; transform: none; border-radius: 0; padding: 15px; }
+            .modal-body { flex-direction: column; overflow-y: auto; overflow-x: hidden; display: flex; -webkit-overflow-scrolling: touch; padding-bottom: 30px; }
             .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
             .cloud-list { overflow: visible; flex-shrink: 0; }
-            .modal-right { 
-                width: 100%; margin-top: 15px; padding: 15px 0 0 0; 
-                background: transparent; border: none; border-top: 1px solid var(--border-subtle); 
-                overflow-y: visible; 
-                height: auto; 
-                flex-shrink: 0;
-            }
+            .modal-right { width: 100%; margin-top: 15px; padding: 15px 0 0 0; background: transparent; border: none; border-top: 1px solid var(--border-subtle); overflow-y: visible; height: auto; flex-shrink: 0;}
             #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
-            .cloud-item { touch-action: pan-y; }
-            .layer-item { touch-action: pan-y; }
+            .cloud-item, .layer-item { touch-action: pan-y; }
             .tab { touch-action: pan-x; }
         }
 
@@ -136,7 +137,6 @@
         .btn-unit-add { background-color: #5E35B1; width: auto; padding: 6px 12px; }
         .btn-img { background-color: var(--btn-blue); }
         .btn-ppt { background-color: var(--btn-orange); }
-        .btn-excel { background-color: #2E7D32; }
 
         /* --- 層次列表優化 --- */
         #layer-list { display: flex; flex-direction: column; gap: 8px; }
@@ -159,13 +159,10 @@
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
         
         .layer-check { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
-        .move-btns { display: flex; flex-direction: column; gap: 2px; margin-right: 2px; }
         .btn-tiny { padding: 0; font-size: 10px; height: 14px; width: 20px; line-height: 12px; background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 3px; cursor: pointer; }
         .btn-tiny:hover { background: #444; color: white; }
-        @media (max-width: 768px) { .btn-tiny { height: 22px; width: 28px; font-size: 12px; line-height: 18px; } }
         .dim-item { background: #1C1E22; border: 1px solid var(--border-subtle); padding: 6px 10px; margin-bottom: 4px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-primary); }
 
-        /* 照片列表樣式 */
         .photo-item { background: #1C1E22; border: 1px solid var(--border-subtle); padding: 8px; margin-top: 5px; border-radius: var(--radius-md); display: flex; gap: 10px; align-items: center; }
         .photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid #000; flex-shrink: 0; }
         .photo-info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
@@ -174,28 +171,21 @@
         .home-btn:hover { background: var(--bg-card); border-color: var(--accent-cyan); }
         canvas { box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; max-width: 100%; border-radius: 4px;}
 
-        /* --- ☁️ 雲端管理 / 預覽 Modal (精緻化) --- */
+        /* Modal */
         .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85); backdrop-filter: blur(3px); z-index:2000; display:none;}
-        .modal { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: var(--bg-panel); border: 1px solid #333; border-radius: var(--radius-lg); 
-            padding: 20px; z-index: 2001; display: none; width: 950px; max-width: 95%; height: 85vh; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-direction: column; 
-        }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-panel); border: 1px solid #333; border-radius: var(--radius-lg); padding: 20px; z-index: 2001; display: none; width: 950px; max-width: 95%; height: 85vh; box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-direction: column; }
         .modal-header { display:flex; justify-content:space-between; align-items:center; padding-bottom: 15px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 10px;}
         .modal-body { display: flex; flex: 1; gap: 20px; overflow: hidden;}
         .modal-left { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-right: 5px; }
         .modal-right { width: 340px; display: flex; flex-direction: column; align-items: center; padding: 15px; background: #121317; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-shrink: 0; overflow-y:auto; }
 
-        /* 分頁系統樣式 (Tabs) */
         .tabs-header { display: flex; overflow-x: auto; overflow-y: hidden; border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px; scrollbar-width: none; }
         .tabs-header::-webkit-scrollbar { display: none; }
         .tab { padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary); border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px; border: 1px solid transparent; border-bottom: none; transition: 0.2s; display: flex; align-items: center; gap: 6px; user-select: none; position: relative; }
         .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .tab.active { color: var(--accent-cyan); font-weight: bold; background: rgba(0, 229, 255, 0.05); }
         .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); }
-        .tab.drag-over { background: rgba(0, 229, 255, 0.1); border: 1px dashed var(--accent-cyan); }
-
+        
         .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; padding-right: 5px;}
         .cloud-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 12px 15px; margin-bottom: 8px; border-radius: var(--radius-md); border-left: 4px solid transparent; cursor: grab; transition: 0.2s; border: 1px solid var(--border-subtle); }
         .cloud-item:hover { background: #2D3039; transform: translateX(2px); border-color: #444;}
@@ -210,18 +200,10 @@
         
         .batch-check { width: 18px; height: 18px; accent-color: var(--btn-blue); cursor: pointer; }
 
-        #preview-canvas { max-width: 100%; max-height: 250px; border: 1px solid #000; background: white; margin-bottom: 15px; border-radius: 4px;}
-        
-        /* 🔥 畫布浮動編輯框 (Glassmorphism) */
-        #layerPopup {
-            display: none; position: absolute; background: rgba(30, 32, 38, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-md); 
-            z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 220px;
-        }
+        #layerPopup { display: none; position: absolute; background: rgba(30, 32, 38, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-md); z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 220px; }
         #layerPopup input { margin-bottom: 8px; height: 34px; font-size: 14px;}
         #layerPopup button { width: auto; height: 32px; padding: 0 12px; margin: 0; font-size: 13px;}
 
-        /* Loading */
         #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
         .spinner { border: 4px solid #333; border-top: 4px solid var(--accent-cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -229,7 +211,10 @@
 </head>
 <body>
 
-    <div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="font-size: 16px; font-weight:600; letter-spacing:1px;">PROCESSING...</div></div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text" style="font-size: 16px; font-weight:600; letter-spacing:1px;">PROCESSING...</div>
+    </div>
 
     <div id="layerPopup">
         <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">編輯層次 (Edit Layer)</div>
@@ -247,7 +232,7 @@
     <div class="modal-backdrop" id="mgrBackdrop" onclick="window.closeCloudManager()"></div>
     <div class="modal" id="mgrModal">
         <div class="modal-header">
-            <h3 style="margin:0; border:none; color:var(--accent-cyan); font-size: 1.3rem;">☁️ 雲端專案總管 (Cloud Manager)</h3>
+            <h3 style="margin:0; border:none; color:var(--accent-cyan); font-size: 1.3rem;">☁️ 雲端專案總管</h3>
             <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:transparent; border:1px solid #555; color:#ccc;">關閉 ✕</button>
         </div>
         
@@ -266,8 +251,8 @@
             </div>
             
             <div class="modal-right">
-                <h4 style="color:#fff; margin:0 0 10px 0; align-self:flex-start;">視覺預覽 (Preview)</h4>
-                <canvas id="previewCanvas"></canvas>
+                <h4 style="color:#fff; margin:0 0 10px 0; align-self:flex-start;">視覺預覽</h4>
+                <canvas id="previewCanvas" style="max-width: 100%; max-height: 250px; border: 1px solid #000; background: white; margin-bottom: 15px; border-radius: 4px;"></canvas>
                 
                 <div id="preview-category-box" style="width:100%; display:none; margin-top:10px; padding:12px; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
                     <label style="color:var(--text-secondary); margin-bottom:6px;">📁 將此專案移動至：</label>
@@ -293,27 +278,6 @@
 
     <div id="sidebar">
         <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro Ultimate)</span></h2>
-
-        <div class="control-group" style="border-color: var(--accent-cyan);">
-            <h3 style="color:var(--accent-cyan); border-bottom-color:var(--accent-cyan);">✨ 光影與結構特效 (Effects)</h3>
-            
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkGlossy" checked onchange="window.toggleGlossy(this)" style="accent-color:var(--accent-cyan);"> 啟用金屬高光</label>
-                <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkExplode" onchange="window.toggleExplode(this)" style="accent-color:#E67E22;"> 展開模式 (Exploded)</label>
-                <label style="margin:0; cursor:pointer; grid-column: span 2;"><input type="checkbox" id="chkHideSub" onchange="window.toggleHideSub(this)" style="accent-color:#D93D42;"> 隱藏絕緣基板 (僅保留線路)</label>
-            </div>
-            
-            <div style="display:flex; gap:12px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
-                <div style="flex:1;">
-                    <label style="margin-bottom:6px;">高光強度 <span id="valHl" style="color:white; float:right;">40</span></label>
-                    <input type="range" id="hlIntensity" min="0" max="100" value="40" oninput="window.updateEffects()">
-                </div>
-                <div style="flex:1;">
-                    <label style="margin-bottom:6px;">陰影深度 <span id="valSh" style="color:white; float:right;">30</span></label>
-                    <input type="range" id="shIntensity" min="0" max="100" value="30" oninput="window.updateEffects()">
-                </div>
-            </div>
-        </div>
 
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
@@ -347,6 +311,25 @@
                 <div style="flex:0.5;"><label>單位</label><input type="text" id="unitInput" value="um" oninput="window.draw()"></div>
                 <div style="flex:1;"><label>疊構寬度</label><input type="number" id="canvasWidth" value="250" oninput="window.resizeCanvas()"></div>
                 <div style="flex:0.5;"><label>字體大小</label><input type="number" id="globalFontSize" value="14" oninput="window.draw()"></div>
+            </div>
+
+            <button onclick="document.getElementById('effectsPanel').style.display = document.getElementById('effectsPanel').style.display === 'none' ? 'block' : 'none'" style="background: #333842; margin-top: 8px; border: 1px solid var(--border-subtle);">✨ 進階光影與特效設定</button>
+            
+            <div id="effectsPanel" style="display:none; margin-top: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px dashed var(--accent-cyan);">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                    <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkGlossy" checked onchange="window.toggleGlossy(this)" style="accent-color:var(--accent-cyan);"> 啟用金屬高光</label>
+                    <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkHideSub" onchange="window.toggleHideSub(this)" style="accent-color:#D93D42;"> 隱藏絕緣基板</label>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label style="margin-bottom:6px;">高光強度 <span id="valHl" style="color:white; float:right;">40</span></label>
+                        <input type="range" id="hlIntensity" min="0" max="100" value="40" oninput="window.updateEffects()">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="margin-bottom:6px;">陰影深度 <span id="valSh" style="color:white; float:right;">30</span></label>
+                        <input type="range" id="shIntensity" min="0" max="100" value="30" oninput="window.updateEffects()">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -416,14 +399,20 @@
           projectId: "stack-diagram-db",
           storageBucket: "stack-diagram-db.firebasestorage.app",
           messagingSenderId: "67240747982",
-          appId: "1:67240747982:web:1fb065e40e936a7485419f",
-          measurementId: "G-QJNE60W8BB"
+          appId: "1:67240747982:web:1fb065e40e936a7485419f"
         };
 
-        let db = null; let isFirebaseReady = false; const COL_PROJ = "projects"; const COL_UNITS = "units";
+        let db = null; 
+        let isFirebaseReady = false; 
+        const COL_PROJ = "projects"; 
+        const COL_UNITS = "units";
         
-        let cloudProjectsCache = []; let currentPreviewId = null; let draggedCloudId = null; let draggedTabCat = null;
-        let customFolders = ["未分類"]; let activeCategory = "未分類";
+        let cloudProjectsCache = []; 
+        let currentPreviewId = null; 
+        let draggedCloudId = null; 
+        let draggedTabCat = null;
+        let customFolders = ["未分類"]; 
+        let activeCategory = "未分類";
 
         window.compareLayers = null;
         window.is3D = false;
@@ -435,15 +424,21 @@
 
         // --- 🌟 特效狀態變數 ---
         window.enableGlossy = true;
-        window.isExploded = false;
         window.hideSubstrate = false;
         window.hlInt = 40;
         window.shInt = 30;
 
-        window.toggleGlossy = (cb) => { window.enableGlossy = cb.checked; window.draw(); };
-        window.toggleExplode = (cb) => { window.isExploded = cb.checked; window.draw(); };
-        window.toggleHideSub = (cb) => { window.hideSubstrate = cb.checked; window.draw(); };
-        window.updateEffects = () => { 
+        window.toggleGlossy = function(cb) { 
+            window.enableGlossy = cb.checked; 
+            window.draw(); 
+        };
+
+        window.toggleHideSub = function(cb) { 
+            window.hideSubstrate = cb.checked; 
+            window.draw(); 
+        };
+
+        window.updateEffects = function() { 
             window.hlInt = parseInt(document.getElementById('hlIntensity').value); 
             window.shInt = parseInt(document.getElementById('shIntensity').value); 
             document.getElementById('valHl').innerText = window.hlInt;
@@ -451,25 +446,48 @@
             window.draw(); 
         };
 
-        // --- 備註輸入框自動調整高度 ---
-        window.autoResizeTextarea = function(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; };
+        window.autoResizeTextarea = function(el) { 
+            el.style.height = 'auto'; 
+            el.style.height = (el.scrollHeight) + 'px'; 
+        };
 
-        if (!firebaseConfig.apiKey.includes("你的API_KEY")) { try { const app = initializeApp(firebaseConfig); db = getFirestore(app); isFirebaseReady = true; } catch(e) {} }
+        if (!firebaseConfig.apiKey.includes("你的API_KEY")) { 
+            try { 
+                const app = initializeApp(firebaseConfig); 
+                db = getFirestore(app); 
+                isFirebaseReady = true; 
+            } catch(e) {
+                console.error("Firebase initialization error:", e);
+            } 
+        }
 
-        const canvas = document.getElementById('stackCanvas'); const ctx = canvas.getContext('2d'); const listEl = document.getElementById('layer-list');
-        window.layers = []; window.dimensions = []; window.photos = []; let dragSrcEl = null;
+        const canvas = document.getElementById('stackCanvas'); 
+        const ctx = canvas.getContext('2d'); 
+        const listEl = document.getElementById('layer-list');
+        
+        window.layers = []; 
+        window.dimensions = []; 
+        window.photos = []; 
+        let dragSrcEl = null;
 
-        // --- UI 改版：清單渲染 (加入線路厚度/數量) ---
+        // --- UI 改版：清單渲染 ---
         window.renderList = function() {
-            listEl.innerHTML = ''; window.updateDimSelects();
+            listEl.innerHTML = ''; 
+            window.updateDimSelects();
+            
             const allChecked = window.layers.every(l => l.checked !== false);
-            if(document.getElementById('selectAllBox')) document.getElementById('selectAllBox').checked = allChecked;
+            if(document.getElementById('selectAllBox')) {
+                document.getElementById('selectAllBox').checked = allChecked;
+            }
 
             window.layers.forEach((layer, index) => {
                 const item = document.createElement('div');
-                item.className = 'layer-item'; item.setAttribute('draggable', 'true'); item.setAttribute('data-index', index);
+                item.className = 'layer-item'; 
+                item.setAttribute('draggable', 'true'); 
+                item.setAttribute('data-index', index);
                 if(layer.showDetails) item.classList.add('open'); 
                 item.style.borderLeftColor = layer.color;
+                
                 const isChecked = layer.checked !== false ? 'checked' : '';
 
                 item.innerHTML = `
@@ -488,16 +506,28 @@
                         <div><label style="color:#E67E22;">線路數量</label><input type="number" value="${layer.traces || 0}" min="0" oninput="window.updateLayer(${index}, 'traces', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
                         <div><label style="color:#E67E22;">線路厚度</label><input type="number" value="${layer.traceHeight || 15}" oninput="window.updateLayer(${index}, 'traceHeight', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
                         <div><label style="color:#E67E22;">線路顏色</label><input type="color" value="${layer.traceColor||'#E67E22'}" oninput="window.updateLayer(${index}, 'traceColor', this.value)" style="width:100%; height:28px; border-color:#E67E22;"></div>
-                        <div><label>線路寬度(寬度)</label><input type="number" value="${layer.traceWidth || 10}" oninput="window.updateLayer(${index}, 'traceWidth', this.value)" style="height:28px; padding:0 5px;"></div>
+                        
+                        <div><label style="color:var(--accent-cyan);">上方間距(展開)</label><input type="number" value="${layer.spacing || 0}" min="0" oninput="window.updateLayer(${index}, 'spacing', this.value)" style="height:28px; padding:0 5px; border-color:var(--accent-cyan);"></div>
+                        <div><label>線路寬度(視覺)</label><input type="number" value="${layer.traceWidth || 10}" oninput="window.updateLayer(${index}, 'traceWidth', this.value)" style="height:28px; padding:0 5px;"></div>
                         
                         <div><label>字體顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%; height:28px;"></div>
-                        <div><label>字體大小</label><input type="number" value="${layer.fontSize || ''}" placeholder="預設" oninput="window.updateLayer(${index}, 'fontSize', this.value)" style="height:28px; padding:0 5px;"></div>
-                        <div><label>文字粗細</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="height:28px; padding:0 5px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
                 `;
                 
-                item.addEventListener('dragstart', function(e) { this.style.opacity='0.4'; dragSrcEl=this; e.dataTransfer.effectAllowed='move'; this.classList.add('dragging'); });
-                item.addEventListener('dragover', function(e) { if(e.preventDefault) e.preventDefault(); e.dataTransfer.dropEffect='move'; return false; });
+                // 拖拉功能設定
+                item.addEventListener('dragstart', function(e) { 
+                    this.style.opacity = '0.4'; 
+                    dragSrcEl = this; 
+                    e.dataTransfer.effectAllowed = 'move'; 
+                    this.classList.add('dragging'); 
+                });
+                
+                item.addEventListener('dragover', function(e) { 
+                    if(e.preventDefault) e.preventDefault(); 
+                    e.dataTransfer.dropEffect = 'move'; 
+                    return false; 
+                });
+                
                 item.addEventListener('drop', function(e) { 
                     if(e.stopPropagation) e.stopPropagation();
                     if(dragSrcEl !== this) {
@@ -505,110 +535,508 @@
                         const newIdx = parseInt(this.getAttribute('data-index'));
                         const moved = window.layers.splice(oldIdx, 1)[0];
                         window.layers.splice(newIdx, 0, moved);
-                        window.renderList(); window.draw();
-                    } return false;
+                        window.renderList(); 
+                        window.draw();
+                    } 
+                    return false;
                 });
-                item.addEventListener('dragend', function() { this.style.opacity='1'; this.classList.remove('dragging'); });
+                
+                item.addEventListener('dragend', function() { 
+                    this.style.opacity = '1'; 
+                    this.classList.remove('dragging'); 
+                });
+                
                 listEl.appendChild(item);
             });
         };
 
-        // --- 核心邏輯層 ---
-        window.moveLayer = (i, d) => { const n = i+d; if(n<0||n>=window.layers.length)return; const t=window.layers[i]; window.layers[i]=window.layers[n]; window.layers[n]=t; window.renderList(); window.draw(); };
-        window.toggleLayerCheck = (i) => { window.layers[i].checked = !window.layers[i].checked; window.renderList(); };
-        window.toggleAllLayers = (cb) => { window.layers.forEach(l => l.checked = cb.checked); window.renderList(); };
-        window.updateLayer = (i, k, v) => { if(k==='thickness'||k==='fontSize'||k==='traces'||k==='traceHeight'||k==='traceWidth') v=parseFloat(v)||0; window.layers[i][k]=v; if(k==='color') window.renderList(); window.draw(); };
-        window.toggleDetails = (i) => { window.layers[i].showDetails = !window.layers[i].showDetails; window.renderList(); };
-        window.addLayer = () => { window.layers.unshift({ id: Date.now(), name: "New Layer", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true, traces: 0, traceHeight: 15, traceWidth: 10, traceColor: '#E67E22' }); window.renderList(); window.draw(); };
-        window.deleteLayer = (i) => { window.layers.splice(i, 1); window.renderList(); window.draw(); };
+        // --- 核心操作邏輯層 ---
+        window.moveLayer = function(i, d) { 
+            const n = i + d; 
+            if(n < 0 || n >= window.layers.length) return; 
+            const t = window.layers[i]; 
+            window.layers[i] = window.layers[n]; 
+            window.layers[n] = t; 
+            window.renderList(); 
+            window.draw(); 
+        };
+
+        window.toggleLayerCheck = function(i) { 
+            window.layers[i].checked = !window.layers[i].checked; 
+            window.renderList(); 
+        };
+
+        window.toggleAllLayers = function(cb) { 
+            window.layers.forEach(l => l.checked = cb.checked); 
+            window.renderList(); 
+        };
+
+        window.updateLayer = function(i, k, v) { 
+            if(k === 'thickness' || k === 'fontSize' || k === 'traces' || k === 'traceHeight' || k === 'traceWidth' || k === 'spacing') {
+                v = parseFloat(v) || 0; 
+            }
+            window.layers[i][k] = v; 
+            if(k === 'color') {
+                window.renderList(); 
+            }
+            window.draw(); 
+        };
+
+        window.toggleDetails = function(i) { 
+            window.layers[i].showDetails = !window.layers[i].showDetails; 
+            window.renderList(); 
+        };
+
+        window.addLayer = function() { 
+            window.layers.unshift({ 
+                id: Date.now(), 
+                name: "New Layer", 
+                thickness: 20, 
+                color: "#cccccc", 
+                fontSize: 0, 
+                fontStyle: 'bold', 
+                checked: true, 
+                traces: 0, 
+                traceHeight: 15, 
+                traceWidth: 10, 
+                traceColor: '#E67E22', 
+                spacing: 0 
+            }); 
+            window.renderList(); 
+            window.draw(); 
+        };
+
+        window.deleteLayer = function(i) { 
+            window.layers.splice(i, 1); 
+            window.renderList(); 
+            window.draw(); 
+        };
         
         // --- 尺寸線邏輯 ---
-        window.updateDimSelects = () => { const s1=document.getElementById('dimStart'), s2=document.getElementById('dimEnd'); const v1=s1.value, v2=s2.value; s1.innerHTML=''; s2.innerHTML=''; window.layers.forEach((l,i) => { const o = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML+=o; s2.innerHTML+=o; }); if(v1) s1.value=v1; if(v2) s2.value=v2; else if(window.layers.length>0) s2.value=window.layers.length-1; };
-        window.addDimension = () => { const s=parseInt(document.getElementById('dimStart').value), e=parseInt(document.getElementById('dimEnd').value); window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: document.getElementById('dimLabel').value, offset: parseInt(document.getElementById('dimOffset').value)||50 }); renderDims(); window.draw(); };
-        function renderDims() { const dimListEl = document.getElementById('dim-list'); dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name; dimListEl.innerHTML += `<div class="dim-item"><span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span><span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span></div>`; }); }
-        window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
+        window.updateDimSelects = function() { 
+            const s1 = document.getElementById('dimStart');
+            const s2 = document.getElementById('dimEnd');
+            const v1 = s1.value;
+            const v2 = s2.value; 
+            
+            s1.innerHTML = ''; 
+            s2.innerHTML = ''; 
+            
+            window.layers.forEach((l, i) => { 
+                const o = `<option value="${i}">${i+1}. ${l.name}</option>`; 
+                s1.innerHTML += o; 
+                s2.innerHTML += o; 
+            }); 
+            
+            if(v1) s1.value = v1; 
+            if(v2) s2.value = v2; 
+            else if(window.layers.length > 0) s2.value = window.layers.length - 1; 
+        };
+
+        window.addDimension = function() { 
+            const s = parseInt(document.getElementById('dimStart').value);
+            const e = parseInt(document.getElementById('dimEnd').value); 
+            window.dimensions.push({ 
+                start: Math.min(s, e), 
+                end: Math.max(s, e), 
+                label: document.getElementById('dimLabel').value, 
+                offset: parseInt(document.getElementById('dimOffset').value) || 50 
+            }); 
+            renderDims(); 
+            window.draw(); 
+        };
+
+        function renderDims() { 
+            const dimListEl = document.getElementById('dim-list'); 
+            dimListEl.innerHTML = ''; 
+            window.dimensions.forEach((d, i) => { 
+                const n1 = window.layers[d.start]?.name;
+                const n2 = window.layers[d.end]?.name; 
+                dimListEl.innerHTML += `
+                    <div class="dim-item">
+                        <span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span>
+                        <span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span>
+                    </div>
+                `; 
+            }); 
+        }
+
+        window.deleteDim = function(i) { 
+            window.dimensions.splice(i, 1); 
+            renderDims(); 
+            window.draw(); 
+        };
 
         // --- 附圖邏輯 ---
-        window.addPhoto = function() { const input = document.getElementById('photoInput'); const descInput = document.getElementById('photoDesc'); if(input.files && input.files[0]) { const file = input.files[0]; const reader = new FileReader(); showLoading(true, "壓縮處理中..."); reader.onload = function(e) { const img = new Image(); img.onload = function() { const maxW = 600; let w = img.width; let h = img.height; if (w > maxW) { h = Math.round(h * (maxW / w)); w = maxW; } const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h; const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); const compressedData = cvs.toDataURL('image/jpeg', 0.5); window.photos.push({ id: Date.now(), data: compressedData, desc: descInput.value || "圖說", w: w, h: h, imgElement: null }); descInput.value = ''; input.value = ''; window.renderPhotoList(); window.draw(); showLoading(false); }; img.src = e.target.result; }; reader.readAsDataURL(file); } else { alert("請先選擇圖片"); } };
-        window.renderPhotoList = function() { const list = document.getElementById('photo-list'); list.innerHTML = ''; window.photos.forEach((p, i) => { const div = document.createElement('div'); div.className = 'photo-item'; div.innerHTML = `<img src="${p.data}" class="photo-thumb"><div class="photo-info"><input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;"><button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button></div>`; list.appendChild(div); }); };
-        window.updatePhotoDesc = (i, v) => { window.photos[i].desc = v; window.draw(); };
-        window.deletePhoto = (i) => { window.photos.splice(i, 1); window.renderPhotoList(); window.draw(); };
+        window.addPhoto = function() { 
+            const input = document.getElementById('photoInput'); 
+            const descInput = document.getElementById('photoDesc'); 
+            
+            if(input.files && input.files[0]) { 
+                const file = input.files[0]; 
+                const reader = new FileReader(); 
+                showLoading(true, "壓縮處理中..."); 
+                
+                reader.onload = function(e) { 
+                    const img = new Image(); 
+                    img.onload = function() { 
+                        const maxW = 600; 
+                        let w = img.width; 
+                        let h = img.height; 
+                        
+                        if (w > maxW) { 
+                            h = Math.round(h * (maxW / w)); 
+                            w = maxW; 
+                        } 
+                        
+                        const cvs = document.createElement('canvas'); 
+                        cvs.width = w; 
+                        cvs.height = h; 
+                        const ctx = cvs.getContext('2d'); 
+                        ctx.drawImage(img, 0, 0, w, h); 
+                        
+                        const compressedData = cvs.toDataURL('image/jpeg', 0.5); 
+                        
+                        window.photos.push({ 
+                            id: Date.now(), 
+                            data: compressedData, 
+                            desc: descInput.value || "圖說", 
+                            w: w, 
+                            h: h, 
+                            imgElement: null 
+                        }); 
+                        
+                        descInput.value = ''; 
+                        input.value = ''; 
+                        window.renderPhotoList(); 
+                        window.draw(); 
+                        showLoading(false); 
+                    }; 
+                    img.src = e.target.result; 
+                }; 
+                reader.readAsDataURL(file); 
+            } else { 
+                alert("請先選擇圖片"); 
+            } 
+        };
+
+        window.renderPhotoList = function() { 
+            const list = document.getElementById('photo-list'); 
+            list.innerHTML = ''; 
+            window.photos.forEach((p, i) => { 
+                const div = document.createElement('div'); 
+                div.className = 'photo-item'; 
+                div.innerHTML = `
+                    <img src="${p.data}" class="photo-thumb">
+                    <div class="photo-info">
+                        <input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;">
+                        <button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button>
+                    </div>
+                `; 
+                list.appendChild(div); 
+            }); 
+        };
+
+        window.updatePhotoDesc = function(i, v) { 
+            window.photos[i].desc = v; 
+            window.draw(); 
+        };
+
+        window.deletePhoto = function(i) { 
+            window.photos.splice(i, 1); 
+            window.renderPhotoList(); 
+            window.draw(); 
+        };
 
         // --- 3D 模式與對比模式 ---
-        window.toggle3D = function() { window.is3D = !window.is3D; const btn = document.getElementById('btn3D'); btn.innerHTML = window.is3D ? "🧊 關閉 3D 視角" : "🧊 開啟 3D 視角"; btn.style.background = window.is3D ? "#3949AB" : "#5E35B1"; window.draw(); };
-        window.setCompareBaseline = function() { if(window.layers.length === 0) return alert("無疊構資料可作基準"); window.compareLayers = JSON.parse(JSON.stringify(window.layers)); document.getElementById('btnClearCompare').style.display = 'flex'; window.draw(); };
-        window.clearCompareBaseline = function() { window.compareLayers = null; document.getElementById('btnClearCompare').style.display = 'none'; window.draw(); };
+        window.toggle3D = function() { 
+            window.is3D = !window.is3D; 
+            const btn = document.getElementById('btn3D'); 
+            btn.innerHTML = window.is3D ? "🧊 關閉 3D 視角" : "🧊 開啟 3D 視角"; 
+            btn.style.background = window.is3D ? "#3949AB" : "#5E35B1"; 
+            window.draw(); 
+        };
+
+        window.setCompareBaseline = function() { 
+            if(window.layers.length === 0) return alert("無疊構資料可作基準"); 
+            window.compareLayers = JSON.parse(JSON.stringify(window.layers)); 
+            document.getElementById('btnClearCompare').style.display = 'flex'; 
+            window.draw(); 
+        };
+
+        window.clearCompareBaseline = function() { 
+            window.compareLayers = null; 
+            document.getElementById('btnClearCompare').style.display = 'none'; 
+            window.draw(); 
+        };
 
         // --- 畫布滑鼠事件 (拖曳與編輯) ---
-        canvas.addEventListener('mousedown', e => {
-            let rect = canvas.getBoundingClientRect(); let mx = e.clientX - rect.left, my = e.clientY - rect.top;
+        canvas.addEventListener('mousedown', function(e) {
+            let rect = canvas.getBoundingClientRect(); 
+            let mx = e.clientX - rect.left;
+            let my = e.clientY - rect.top;
             
             let dHit = dimHitZones.find(z => Math.abs(mx - z.x) < 20 && my >= z.y1 && my <= z.y2);
-            if(dHit) { dragDimIdx = dHit.i; document.getElementById('layerPopup').style.display = 'none'; return; }
+            if(dHit) { 
+                dragDimIdx = dHit.i; 
+                document.getElementById('layerPopup').style.display = 'none'; 
+                return; 
+            }
             
             let lHit = layerHitZones.find(z => mx >= z.x1 && mx <= z.x2 && my >= z.y1 && my <= z.y2);
             if(lHit) {
                 window.currentPopIndex = lHit.i;
                 let pop = document.getElementById('layerPopup'); 
-                pop.style.display = 'block'; pop.style.left = e.pageX + 15 + 'px'; pop.style.top = e.pageY + 'px';
+                pop.style.display = 'block'; 
+                pop.style.left = e.pageX + 15 + 'px'; 
+                pop.style.top = e.pageY + 'px';
                 document.getElementById('popName').value = window.layers[lHit.i].name;
                 document.getElementById('popThick').value = window.layers[lHit.i].thickness;
-            } else { document.getElementById('layerPopup').style.display = 'none'; }
+            } else { 
+                document.getElementById('layerPopup').style.display = 'none'; 
+            }
         });
 
-        canvas.addEventListener('mousemove', e => {
-            let rect = canvas.getBoundingClientRect(); let mx = e.clientX - rect.left, my = e.clientY - rect.top;
+        canvas.addEventListener('mousemove', function(e) {
+            let rect = canvas.getBoundingClientRect(); 
+            let mx = e.clientX - rect.left;
+            let my = e.clientY - rect.top;
+            
             if(dragDimIdx !== -1) {
                 window.dimensions[dragDimIdx].offset = Math.max(10, currentStackLeftX - mx);
-                window.draw(); return;
+                window.draw(); 
+                return;
             }
+            
             let hoverDim = dimHitZones.some(z => Math.abs(mx - z.x) < 20 && my >= z.y1 && my <= z.y2);
             let hoverLay = layerHitZones.some(z => mx >= z.x1 && mx <= z.x2 && my >= z.y1 && my <= z.y2);
             canvas.style.cursor = hoverDim ? 'ew-resize' : (hoverLay ? 'pointer' : 'default');
         });
 
-        canvas.addEventListener('mouseup', () => dragDimIdx = -1);
-        canvas.addEventListener('mouseleave', () => dragDimIdx = -1);
+        canvas.addEventListener('mouseup', function() { 
+            dragDimIdx = -1; 
+        });
 
-        window.movePopLayer = (d) => { let i = window.currentPopIndex; let n = i + d; if(n < 0 || n >= window.layers.length) return; const t = window.layers[i]; window.layers[i] = window.layers[n]; window.layers[n] = t; window.currentPopIndex = n; window.renderList(); window.draw(); };
+        canvas.addEventListener('mouseleave', function() { 
+            dragDimIdx = -1; 
+        });
+
+        window.movePopLayer = function(d) { 
+            let i = window.currentPopIndex; 
+            let n = i + d; 
+            if(n < 0 || n >= window.layers.length) return; 
+            
+            const t = window.layers[i]; 
+            window.layers[i] = window.layers[n]; 
+            window.layers[n] = t; 
+            
+            window.currentPopIndex = n; 
+            window.renderList(); 
+            window.draw(); 
+        };
 
         // --- 分頁式雲端管理 ---
-        window.openCloudManager = function() { if(!isFirebaseReady) { alert("尚未連線"); return; } document.getElementById('mgrModal').style.display = 'flex'; document.getElementById('mgrBackdrop').style.display = 'block'; window.refreshCloudList(); };
-        window.closeCloudManager = function() { document.getElementById('mgrModal').style.display = 'none'; document.getElementById('mgrBackdrop').style.display = 'none'; };
-        
-        window.createNewFolder = function() { const newCat = prompt("請輸入新的分頁名稱："); if(newCat && newCat.trim() !== "") { const catName = newCat.trim(); if (!customFolders.includes(catName)) { customFolders.push(catName); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } activeCategory = catName; window.renderCloudList(); } };
-        
+        window.openCloudManager = function() { 
+            if(!isFirebaseReady) { 
+                alert("尚未連線"); 
+                return; 
+            } 
+            document.getElementById('mgrModal').style.display = 'flex'; 
+            document.getElementById('mgrBackdrop').style.display = 'block'; 
+            window.refreshCloudList(); 
+        };
+
+        window.closeCloudManager = function() { 
+            document.getElementById('mgrModal').style.display = 'none'; 
+            document.getElementById('mgrBackdrop').style.display = 'none'; 
+        };
+
+        window.createNewFolder = function() { 
+            const newCat = prompt("請輸入新的分頁名稱："); 
+            if(newCat && newCat.trim() !== "") { 
+                const catName = newCat.trim(); 
+                if (!customFolders.includes(catName)) { 
+                    customFolders.push(catName); 
+                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                } 
+                activeCategory = catName; 
+                window.renderCloudList(); 
+            } 
+        };
+
         window.deleteCurrentFolder = function() {
-            if (activeCategory === "未分類") { return alert("「未分類」為系統預設，無法刪除！"); }
+            if (activeCategory === "未分類") { 
+                return alert("「未分類」為系統預設，無法刪除！"); 
+            }
+            
             const count = cloudProjectsCache.filter(p => (p.category || '未分類') === activeCategory).length;
-            if (count > 0) { return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`); }
+            if (count > 0) { 
+                return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`); 
+            }
             
             if (confirm(`確定要刪除分頁「${activeCategory}」嗎？`)) {
                 const idx = customFolders.indexOf(activeCategory);
-                if (idx > -1) { customFolders.splice(idx, 1); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); activeCategory = "未分類"; window.renderCloudList(); }
+                if (idx > -1) { 
+                    customFolders.splice(idx, 1); 
+                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                    activeCategory = "未分類"; 
+                    window.renderCloudList(); 
+                }
             }
         };
 
-        window.refreshCloudList = async function() { showLoading(true); try { const savedFolders = localStorage.getItem('myStackFolders'); if(savedFolders) { customFolders = JSON.parse(savedFolders); } else { customFolders = ["未分類"]; } const q = await getDocs(collection(db, COL_PROJ)); cloudProjectsCache = []; q.forEach(doc => { const data = doc.data(); if(!data.category) data.category = "未分類"; if (!customFolders.includes(data.category)) { customFolders.push(data.category); } cloudProjectsCache.push({ id: doc.id, ...data }); }); cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0]; window.renderCloudList(); } catch(e) { console.error(e); } showLoading(false); };
+        window.refreshCloudList = async function() { 
+            showLoading(true); 
+            try { 
+                const savedFolders = localStorage.getItem('myStackFolders'); 
+                if(savedFolders) { 
+                    customFolders = JSON.parse(savedFolders); 
+                } else { 
+                    customFolders = ["未分類"]; 
+                } 
+                
+                const q = await getDocs(collection(db, COL_PROJ)); 
+                cloudProjectsCache = []; 
+                
+                q.forEach(doc => { 
+                    const data = doc.data(); 
+                    if(!data.category) data.category = "未分類"; 
+                    if (!customFolders.includes(data.category)) { 
+                        customFolders.push(data.category); 
+                    } 
+                    cloudProjectsCache.push({ id: doc.id, ...data }); 
+                }); 
+                
+                cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp); 
+                localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                
+                if (!customFolders.includes(activeCategory)) {
+                    activeCategory = customFolders[0]; 
+                }
+                window.renderCloudList(); 
+            } catch(e) { 
+                console.error(e); 
+            } 
+            showLoading(false); 
+        };
         
         window.renderCloudList = function() { 
-            const tabsEl = document.getElementById('cloudTabsEl'); const listEl = document.getElementById('cloudListEl'); const search = document.getElementById('searchCloud').value.toLowerCase(); 
-            if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類"; tabsEl.innerHTML = ''; 
+            const tabsEl = document.getElementById('cloudTabsEl'); 
+            const listEl = document.getElementById('cloudListEl'); 
+            const search = document.getElementById('searchCloud').value.toLowerCase(); 
+            
+            if (!customFolders.includes(activeCategory)) {
+                activeCategory = customFolders[0] || "未分類"; 
+            }
+            tabsEl.innerHTML = ''; 
+            
             customFolders.forEach(cat => { 
                 const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length; 
-                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `📂 ${cat} <span style="font-size:11px; opacity:0.6; margin-left:4px;">${count}</span>`; tab.draggable = true; 
-                tab.onclick = () => { activeCategory = cat; window.renderCloudList(); }; 
-                tab.ondblclick = () => { if(cat === "未分類") return alert("預設分類無法更名"); const newName = prompt("重新命名分頁：", cat); if(newName && newName.trim() && !customFolders.includes(newName.trim())) { const finalName = newName.trim(); customFolders[customFolders.indexOf(cat)] = finalName; cloudProjectsCache.forEach(p => { if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); } }); if(activeCategory === cat) activeCategory = finalName; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); } }; 
-                tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; }; tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); }; tab.ondragleave = (e) => { tab.classList.remove('drag-over'); }; 
-                tab.ondrop = async (e) => { e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation(); if (draggedCloudId) { const p = cloudProjectsCache.find(x => x.id === draggedCloudId); if (p && (p.category || '未分類') !== cat) { p.category = cat; window.renderCloudList(); try { await updateDoc(doc(db, COL_PROJ, p.id), { category: cat }); } catch(err){} } draggedCloudId = null; } else if (draggedTabCat && draggedTabCat !== cat) { const fromIdx = customFolders.indexOf(draggedTabCat); const toIdx = customFolders.indexOf(cat); customFolders.splice(fromIdx, 1); customFolders.splice(toIdx, 0, draggedTabCat); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); draggedTabCat = null; } }; tab.ondragend = () => { draggedTabCat = null; }; tabsEl.appendChild(tab); 
+                const tab = document.createElement('div'); 
+                tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; 
+                tab.innerHTML = `📂 ${cat} <span style="font-size:11px; opacity:0.6; margin-left:4px;">${count}</span>`; 
+                tab.draggable = true; 
+                
+                tab.onclick = () => { 
+                    activeCategory = cat; 
+                    window.renderCloudList(); 
+                }; 
+                
+                tab.ondblclick = () => { 
+                    if(cat === "未分類") return alert("預設分類無法更名"); 
+                    const newName = prompt("重新命名分頁：", cat); 
+                    if(newName && newName.trim() && !customFolders.includes(newName.trim())) { 
+                        const finalName = newName.trim(); 
+                        customFolders[customFolders.indexOf(cat)] = finalName; 
+                        
+                        cloudProjectsCache.forEach(p => { 
+                            if(p.category === cat) { 
+                                p.category = finalName; 
+                                updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); 
+                            } 
+                        }); 
+                        
+                        if(activeCategory === cat) activeCategory = finalName; 
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                        window.renderCloudList(); 
+                    } 
+                }; 
+                
+                tab.ondragstart = (e) => { 
+                    draggedTabCat = cat; 
+                    e.dataTransfer.effectAllowed = 'move'; 
+                }; 
+                
+                tab.ondragover = (e) => { 
+                    e.preventDefault(); 
+                    tab.classList.add('drag-over'); 
+                }; 
+                
+                tab.ondragleave = (e) => { 
+                    tab.classList.remove('drag-over'); 
+                }; 
+                
+                tab.ondrop = async (e) => { 
+                    e.preventDefault(); 
+                    tab.classList.remove('drag-over'); 
+                    e.stopPropagation(); 
+                    
+                    if (draggedCloudId) { 
+                        const p = cloudProjectsCache.find(x => x.id === draggedCloudId); 
+                        if (p && (p.category || '未分類') !== cat) { 
+                            p.category = cat; 
+                            window.renderCloudList(); 
+                            try { 
+                                await updateDoc(doc(db, COL_PROJ, p.id), { category: cat }); 
+                            } catch(err){} 
+                        } 
+                        draggedCloudId = null; 
+                    } else if (draggedTabCat && draggedTabCat !== cat) { 
+                        const fromIdx = customFolders.indexOf(draggedTabCat); 
+                        const toIdx = customFolders.indexOf(cat); 
+                        customFolders.splice(fromIdx, 1); 
+                        customFolders.splice(toIdx, 0, draggedTabCat); 
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                        window.renderCloudList(); 
+                        draggedTabCat = null; 
+                    } 
+                }; 
+                
+                tab.ondragend = () => { draggedTabCat = null; }; 
+                tabsEl.appendChild(tab); 
             }); 
             
             listEl.innerHTML = ''; 
             cloudProjectsCache.forEach(p => { 
                 let pCat = p.category || '未分類'; 
-                if (search) { if (!p.id.toLowerCase().includes(search) && !(p.note||'').toLowerCase().includes(search)) return; } else { if (pCat !== activeCategory) return; } 
-                const note = p.note ? p.note : '無備註'; const date = new Date(p.timestamp || 0).toLocaleDateString(); const li = document.createElement('li'); li.className = `cloud-item ${p.id === currentPreviewId ? 'selected' : ''}`; li.setAttribute('draggable', 'true'); 
-                li.ondragstart = (e) => { draggedCloudId = p.id; draggedTabCat = null; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }; li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; }; li.onclick = (e) => { if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); }; 
+                if (search) { 
+                    if (!p.id.toLowerCase().includes(search) && !(p.note||'').toLowerCase().includes(search)) return; 
+                } else { 
+                    if (pCat !== activeCategory) return; 
+                } 
+                
+                const note = p.note ? p.note : '無備註'; 
+                const date = new Date(p.timestamp || 0).toLocaleDateString(); 
+                const li = document.createElement('li'); 
+                li.className = `cloud-item ${p.id === currentPreviewId ? 'selected' : ''}`; 
+                li.setAttribute('draggable', 'true'); 
+                
+                li.ondragstart = (e) => { 
+                    draggedCloudId = p.id; 
+                    draggedTabCat = null; 
+                    e.currentTarget.classList.add('dragging'); 
+                    e.dataTransfer.effectAllowed = 'move'; 
+                }; 
+                
+                li.ondragend = (e) => { 
+                    e.currentTarget.classList.remove('dragging'); 
+                    draggedCloudId = null; 
+                }; 
+                
+                li.onclick = (e) => { 
+                    if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); 
+                }; 
+                
                 li.innerHTML = `
                     <input type="checkbox" class="batch-check" value="${p.id}">
                     <div class="cloud-info">
@@ -624,11 +1052,40 @@
             updatePreviewCategorySelect(); 
         };
 
-        function updatePreviewCategorySelect() { const sel = document.getElementById('preview-category-select'); sel.innerHTML = ''; customFolders.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; }); }
-        window.changeCategoryFromPreview = async function() { if(!currentPreviewId) return; const targetCat = document.getElementById('preview-category-select').value; const p = cloudProjectsCache.find(x => x.id === currentPreviewId); if(p && p.category !== targetCat) { p.category = targetCat; window.renderCloudList(); showLoading(true); try { await updateDoc(doc(db, COL_PROJ, p.id), { category: targetCat }); } catch(err) {} showLoading(false); } };
+        function updatePreviewCategorySelect() { 
+            const sel = document.getElementById('preview-category-select'); 
+            sel.innerHTML = ''; 
+            customFolders.forEach(c => { 
+                sel.innerHTML += `<option value="${c}">${c}</option>`; 
+            }); 
+        }
+
+        window.changeCategoryFromPreview = async function() { 
+            if(!currentPreviewId) return; 
+            const targetCat = document.getElementById('preview-category-select').value; 
+            const p = cloudProjectsCache.find(x => x.id === currentPreviewId); 
+            if(p && p.category !== targetCat) { 
+                p.category = targetCat; 
+                window.renderCloudList(); 
+                showLoading(true); 
+                try { 
+                    await updateDoc(doc(db, COL_PROJ, p.id), { category: targetCat }); 
+                } catch(err) {} 
+                showLoading(false); 
+            } 
+        };
         
         window.selectCloudItem = function(id) { 
-            currentPreviewId = id; document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected')); const inputs = document.querySelectorAll('.batch-check'); inputs.forEach(inp => { if(inp.value === id) inp.closest('.cloud-item').classList.add('selected'); }); const p = cloudProjectsCache.find(x => x.id === id); const detailEl = document.getElementById('preview-details'); 
+            currentPreviewId = id; 
+            document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected')); 
+            
+            const inputs = document.querySelectorAll('.batch-check'); 
+            inputs.forEach(inp => { 
+                if(inp.value === id) inp.closest('.cloud-item').classList.add('selected'); 
+            }); 
+            
+            const p = cloudProjectsCache.find(x => x.id === id); 
+            const detailEl = document.getElementById('preview-details'); 
             if(p) { 
                 detailEl.innerHTML = `
                     <div style="background:#1C1E22; padding:12px; border-radius:8px; border:1px solid #333;">
@@ -641,11 +1098,39 @@
                         <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${p.note || '無備註'}</div>
                     </div>
                 `; 
-                document.getElementById('preview-category-box').style.display = 'block'; document.getElementById('preview-category-select').value = p.category || '未分類'; window.drawPreviewCanvas(p.layers); document.getElementById('btn-load-preview').style.display = 'flex'; document.getElementById('btn-del-preview').style.display = 'flex'; 
+                document.getElementById('preview-category-box').style.display = 'block'; 
+                document.getElementById('preview-category-select').value = p.category || '未分類'; 
+                window.drawPreviewCanvas(p.layers); 
+                document.getElementById('btn-load-preview').style.display = 'flex'; 
+                document.getElementById('btn-del-preview').style.display = 'flex'; 
             } 
         };
 
-        window.drawPreviewCanvas = function(layers) { const cvs = document.getElementById('previewCanvas'); const ctx = cvs.getContext('2d'); cvs.width = 300; cvs.height = 200; ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,200); if(!layers || layers.length === 0) return; const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1; const scale = 160 / totalThick; const cx = 150; const rw = 100; let cy = 20; layers.forEach(l => { const h = (parseFloat(l.thickness)||0) * scale; ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h); ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h); cy += h; }); };
+        window.drawPreviewCanvas = function(layers) { 
+            const cvs = document.getElementById('previewCanvas'); 
+            const ctx = cvs.getContext('2d'); 
+            cvs.width = 300; 
+            cvs.height = 200; 
+            ctx.fillStyle = "#fff"; 
+            ctx.fillRect(0, 0, 300, 200); 
+            
+            if(!layers || layers.length === 0) return; 
+            
+            const totalThick = layers.reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0) || 1; 
+            const scale = 160 / totalThick; 
+            const cx = 150; 
+            const rw = 100; 
+            let cy = 20; 
+            
+            layers.forEach(l => { 
+                const h = (parseFloat(l.thickness) || 0) * scale; 
+                ctx.fillStyle = l.color || "#ccc"; 
+                ctx.fillRect(cx - rw/2, cy, rw, h); 
+                ctx.strokeStyle = "#333"; 
+                ctx.strokeRect(cx - rw/2, cy, rw, h); 
+                cy += h; 
+            }); 
+        };
         
         window.loadSelectedToWorkspace = function() { 
             if(!currentPreviewId) return; 
@@ -660,88 +1145,402 @@
             } 
         };
 
-        window.deleteSelectedCloud = async function() { if(!currentPreviewId) return; if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return; showLoading(true); try { await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); await window.refreshCloudList(); currentPreviewId=null;} catch(e) {} showLoading(false); };
-        window.batchExportExcel = function() { const checks = document.querySelectorAll('.batch-check:checked'); if(checks.length === 0) { alert("請先勾選左側的核取方塊"); return; } let csv = "\uFEFF"; checks.forEach(chk => { const id = chk.value; const p = cloudProjectsCache.find(x => x.id === id); if(p) { csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; const layers = p.layers || []; layers.forEach((l,i) => { if(l.checked === false) return; csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; }); csv += `\n`; } }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Stackups_${Date.now()}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
+        window.deleteSelectedCloud = async function() { 
+            if(!currentPreviewId) return; 
+            if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return; 
+            showLoading(true); 
+            try { 
+                await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); 
+                await window.refreshCloudList(); 
+                currentPreviewId = null;
+            } catch(e) {} 
+            showLoading(false); 
+        };
+
+        window.batchExportExcel = function() { 
+            const checks = document.querySelectorAll('.batch-check:checked'); 
+            if(checks.length === 0) { 
+                alert("請先勾選左側的核取方塊"); 
+                return; 
+            } 
+            let csv = "\uFEFF"; 
+            checks.forEach(chk => { 
+                const id = chk.value; 
+                const p = cloudProjectsCache.find(x => x.id === id); 
+                if(p) { 
+                    csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; 
+                    const layers = p.layers || []; 
+                    layers.forEach((l,i) => { 
+                        if(l.checked === false) return; 
+                        csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; 
+                    }); 
+                    csv += `\n`; 
+                } 
+            }); 
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
+            const link = document.createElement("a"); 
+            link.href = URL.createObjectURL(blob); 
+            link.download = `Stackups_${Date.now()}.csv`; 
+            document.body.appendChild(link); 
+            link.click(); 
+            document.body.removeChild(link); 
+        };
         
-        window.backupAllCloudData = async function() { if(!isFirebaseReady) { alert("未連線"); return; } showLoading(true, "資料打包中..."); try { const projSnap = await getDocs(collection(db, COL_PROJ)); const projects = {}; projSnap.forEach(d => projects[d.id] = d.data()); const unitSnap = await getDocs(collection(db, COL_UNITS)); const units = {}; unitSnap.forEach(d => units[d.id] = d.data()); const str = JSON.stringify({ version: "V5", timestamp: Date.now(), projects, units, customFolders }, null, 2); const blob = new Blob([str], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Stackup_Backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); } catch(e) { alert("備份失敗"); } showLoading(false); };
-        window.restoreAllCloudData = function(input) { const file = input.files[0]; if(!file) return; if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { input.value = ''; return; } const reader = new FileReader(); reader.onload = async function(e) { showLoading(true, "資料還原中..."); try { const data = JSON.parse(e.target.result); const batch = writeBatch(db); let count = 0; if(data.projects) for(const [id,v] of Object.entries(data.projects)) { batch.set(doc(db,COL_PROJ,id),v); count++; } if(data.units) for(const [id,v] of Object.entries(data.units)) { batch.set(doc(db,COL_UNITS,id),v); count++; } if(data.customFolders) { customFolders = data.customFolders; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } await batch.commit(); alert(`成功還原 ${count} 筆資料。`); window.refreshUnitList(); } catch(err) { alert("還原失敗"); } showLoading(false); input.value = ''; }; reader.readAsText(file); };
-        function showLoading(show, text="處理中") { const ov = document.getElementById('loading-overlay'); if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none'; }
+        window.backupAllCloudData = async function() { 
+            if(!isFirebaseReady) { 
+                alert("未連線"); 
+                return; 
+            } 
+            showLoading(true, "資料打包中..."); 
+            try { 
+                const projSnap = await getDocs(collection(db, COL_PROJ)); 
+                const projects = {}; 
+                projSnap.forEach(d => projects[d.id] = d.data()); 
+                
+                const unitSnap = await getDocs(collection(db, COL_UNITS)); 
+                const units = {}; 
+                unitSnap.forEach(d => units[d.id] = d.data()); 
+                
+                const str = JSON.stringify({ version: "V5", timestamp: Date.now(), projects, units, customFolders }, null, 2); 
+                const blob = new Blob([str], {type: "application/json"}); 
+                const a = document.createElement('a'); 
+                a.href = URL.createObjectURL(blob); 
+                a.download = `Stackup_Backup_${new Date().toISOString().slice(0,10)}.json`; 
+                a.click(); 
+            } catch(e) { 
+                alert("備份失敗"); 
+            } 
+            showLoading(false); 
+        };
+
+        window.restoreAllCloudData = function(input) { 
+            const file = input.files[0]; 
+            if(!file) return; 
+            if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { 
+                input.value = ''; 
+                return; 
+            } 
+            const reader = new FileReader(); 
+            reader.onload = async function(e) { 
+                showLoading(true, "資料還原中..."); 
+                try { 
+                    const data = JSON.parse(e.target.result); 
+                    const batch = writeBatch(db); 
+                    let count = 0; 
+                    
+                    if(data.projects) {
+                        for(const [id,v] of Object.entries(data.projects)) { 
+                            batch.set(doc(db, COL_PROJ, id), v); 
+                            count++; 
+                        }
+                    } 
+                    if(data.units) {
+                        for(const [id,v] of Object.entries(data.units)) { 
+                            batch.set(doc(db, COL_UNITS, id), v); 
+                            count++; 
+                        } 
+                    }
+                    if(data.customFolders) { 
+                        customFolders = data.customFolders; 
+                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
+                    } 
+                    
+                    await batch.commit(); 
+                    alert(`成功還原 ${count} 筆資料。`); 
+                    window.refreshUnitList(); 
+                } catch(err) { 
+                    alert("還原失敗"); 
+                } 
+                showLoading(false); 
+                input.value = ''; 
+            }; 
+            reader.readAsText(file); 
+        };
+
+        function showLoading(show, text="處理中") { 
+            const ov = document.getElementById('loading-overlay'); 
+            if(show) { 
+                document.getElementById('loading-text').innerText = text; 
+                ov.style.display = 'flex'; 
+            } else {
+                ov.style.display = 'none'; 
+            }
+        }
         
-        window.saveToCloud = async function() { if(!isFirebaseReady) return alert("未連線"); const name = document.getElementById('projName').value.trim(); if(!name) return alert("請輸入專案名稱"); let existingCategory = "未分類"; const existingProj = cloudProjectsCache.find(x => x.id === name); if (existingProj && existingProj.category) { existingCategory = existingProj.category; } else if(activeCategory) { existingCategory = activeCategory; } const data = { layers: window.layers, dimensions: window.dimensions, photos: window.photos, settings: { unit: document.getElementById('unitInput').value, width: document.getElementById('canvasWidth').value }, note: document.getElementById('projNote').value, timestamp: Date.now(), category: existingCategory }; const size = new Blob([JSON.stringify(data)]).size; if(size > 950000) if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return; showLoading(true); try { await setDoc(doc(db, COL_PROJ, name), data, { merge: true }); alert("儲存成功"); } catch(e) { alert("儲存失敗"); } showLoading(false); };
-        window.saveUnitToCloud = async function() { const name = document.getElementById('unitName').value.trim(); const sel = window.layers.filter(l => l.checked!==false); if(!name || sel.length===0) return alert("請輸入名稱並勾選層次"); showLoading(true); try { await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); alert("已存"); window.refreshUnitList(); } catch(e) {} showLoading(false); };
-        window.refreshUnitList = async function() { if(!isFirebaseReady) return; const s = document.getElementById('savedUnits'); try { const q = await getDocs(collection(db, COL_UNITS)); s.innerHTML = '<option value="">-- 選擇模組 --</option>'; q.forEach(d => { const opt = document.createElement('option'); opt.value=d.id; opt.innerText=d.id; s.appendChild(opt); }); } catch(e) {} };
-        window.insertUnit = async function() { const n = document.getElementById('savedUnits').value; if(!n) return; showLoading(true); try { const d = await getDoc(doc(db, COL_UNITS, n)); if(d.exists()) { const ul = d.data().layers.map(l => ({...l, id:Date.now()+Math.random(), checked:true})); window.layers = [...ul, ...window.layers]; window.renderList(); window.draw(); } } catch(e) {} showLoading(false); };
-        window.deleteUnitFromCloud = async function() { const n = document.getElementById('savedUnits').value; if(n && confirm(`刪除模組 ${n}?`)) { await deleteDoc(doc(db, COL_UNITS, n)); window.refreshUnitList(); } };
-        window.exportCurrentToCSV = function() { const sel = window.layers.filter(l => l.checked!==false); if(sel.length===0) return alert("無選取層"); const name = document.getElementById('projName').value || "Stackup"; const unit = document.getElementById('unitInput').value; let csv = "\uFEFF層序,名稱,厚度,單位\n"; let t=0; sel.forEach((l,i) => { t += (parseFloat(l.thickness)||0); csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`; }); csv += `,,${t},${unit},總厚度\n`; const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); };
-        window.applyConfig = (c) => { window.layers=c.layers||[]; window.dimensions=c.dimensions||[]; window.photos=c.photos||[]; if(c.settings) { document.getElementById('unitInput').value=c.settings.unit||"um"; document.getElementById('canvasWidth').value=c.settings.width||250; } window.renderList(); window.renderPhotoList(); window.draw(); };
+        window.saveToCloud = async function() { 
+            if(!isFirebaseReady) return alert("未連線"); 
+            const name = document.getElementById('projName').value.trim(); 
+            if(!name) return alert("請輸入專案名稱"); 
+            
+            let existingCategory = "未分類"; 
+            const existingProj = cloudProjectsCache.find(x => x.id === name); 
+            if (existingProj && existingProj.category) { 
+                existingCategory = existingProj.category; 
+            } else if(activeCategory) { 
+                existingCategory = activeCategory; 
+            } 
+            
+            const data = { 
+                layers: window.layers, 
+                dimensions: window.dimensions, 
+                photos: window.photos, 
+                settings: { 
+                    unit: document.getElementById('unitInput').value, 
+                    width: document.getElementById('canvasWidth').value 
+                }, 
+                note: document.getElementById('projNote').value, 
+                timestamp: Date.now(), 
+                category: existingCategory 
+            }; 
+            
+            const size = new Blob([JSON.stringify(data)]).size; 
+            if(size > 950000) {
+                if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return; 
+            }
+            
+            showLoading(true); 
+            try { 
+                await setDoc(doc(db, COL_PROJ, name), data, { merge: true }); 
+                alert("儲存成功"); 
+            } catch(e) { 
+                alert("儲存失敗"); 
+            } 
+            showLoading(false); 
+        };
+
+        window.saveUnitToCloud = async function() { 
+            const name = document.getElementById('unitName').value.trim(); 
+            const sel = window.layers.filter(l => l.checked !== false); 
+            if(!name || sel.length === 0) return alert("請輸入名稱並勾選層次"); 
+            
+            showLoading(true); 
+            try { 
+                await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); 
+                alert("已存"); 
+                window.refreshUnitList(); 
+            } catch(e) {} 
+            showLoading(false); 
+        };
+
+        window.refreshUnitList = async function() { 
+            if(!isFirebaseReady) return; 
+            const s = document.getElementById('savedUnits'); 
+            try { 
+                const q = await getDocs(collection(db, COL_UNITS)); 
+                s.innerHTML = '<option value="">-- 選擇模組 --</option>'; 
+                q.forEach(d => { 
+                    const opt = document.createElement('option'); 
+                    opt.value = d.id; 
+                    opt.innerText = d.id; 
+                    s.appendChild(opt); 
+                }); 
+            } catch(e) {} 
+        };
+
+        window.insertUnit = async function() { 
+            const n = document.getElementById('savedUnits').value; 
+            if(!n) return; 
+            
+            showLoading(true); 
+            try { 
+                const d = await getDoc(doc(db, COL_UNITS, n)); 
+                if(d.exists()) { 
+                    const ul = d.data().layers.map(l => ({...l, id:Date.now() + Math.random(), checked:true})); 
+                    window.layers = [...ul, ...window.layers]; 
+                    window.renderList(); 
+                    window.draw(); 
+                } 
+            } catch(e) {} 
+            showLoading(false); 
+        };
+
+        window.deleteUnitFromCloud = async function() { 
+            const n = document.getElementById('savedUnits').value; 
+            if(n && confirm(`刪除模組 ${n}?`)) { 
+                await deleteDoc(doc(db, COL_UNITS, n)); 
+                window.refreshUnitList(); 
+            } 
+        };
+
+        window.exportCurrentToCSV = function() { 
+            const sel = window.layers.filter(l => l.checked !== false); 
+            if(sel.length === 0) return alert("無選取層"); 
+            
+            const name = document.getElementById('projName').value || "Stackup"; 
+            const unit = document.getElementById('unitInput').value; 
+            let csv = "\uFEFF層序,名稱,厚度,單位\n"; 
+            let t = 0; 
+            
+            sel.forEach((l,i) => { 
+                t += (parseFloat(l.thickness)||0); 
+                csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`; 
+            }); 
+            csv += `,,${t},${unit},總厚度\n`; 
+            
+            const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); 
+            const a = document.createElement("a"); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = `${name}.csv`; 
+            document.body.appendChild(a); 
+            a.click(); 
+            document.body.removeChild(a); 
+        };
+
+        window.applyConfig = function(c) { 
+            window.layers = c.layers || []; 
+            window.dimensions = c.dimensions || []; 
+            window.photos = c.photos || []; 
+            if(c.settings) { 
+                document.getElementById('unitInput').value = c.settings.unit || "um"; 
+                document.getElementById('canvasWidth').value = c.settings.width || 250; 
+            } 
+            window.renderList(); 
+            window.renderPhotoList(); 
+            window.draw(); 
+        };
         
-        window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
-        window.downloadPPT = () => { let pres = new PptxGenJS(); const unit = document.getElementById('unitInput').value; const totalThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0); if(totalThick===0 && window.layers.length===0) return alert("無資料"); let maxOff=20; window.dimensions.forEach(d=> {if(d.offset>maxOff)maxOff=d.offset;}); const pl=maxOff+150, pt=50, sf=100, cw=canvas.width-(maxOff+40)-20; const ah = Math.max(500, window.layers.length*40); const sc = ah/(totalThick||1); pres.defineLayout({name:'C',width:(pl+cw+50)/sf,height:(ah+100)/sf}); pres.layout='C'; let s = pres.addSlide(); let cy=pt; window.layers.forEach(l => { const h = l.thickness*sc; const fc = l.color.replace('#',''); const tc = isColorDark(l.color)?'FFFFFF':'000000'; s.addShape(pres.ShapeType.rect, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, fill:fc, line:'333333'}); s.addText(`${l.name} ${l.thickness}${unit}`, {x:pl/sf, y:cy/sf, w:cw/sf, h:h/sf, color:tc, fontSize:l.fontSize||14, align:'center', valign:'middle'}); cy+=h; }); window.photos.forEach(p => { let ps = pres.addSlide(); ps.addText("附圖: " + p.desc, { x:0.5, y:0.5, fontSize:16, color:'333333' }); ps.addImage({ data:p.data, x:0.5, y:1.5, w:8, h:4.5, sizing:{type:'contain', w:8, h:4.5} }); }); pres.writeFile({fileName:"Stack_Report.pptx"}); };
+        window.downloadImage = function() { 
+            const a = document.createElement('a'); 
+            a.download = 'stack_3d_pro.png'; 
+            a.href = canvas.toDataURL(); 
+            a.click(); 
+        };
+
+        window.downloadPPT = function() { 
+            let pres = new PptxGenJS(); 
+            const unit = document.getElementById('unitInput').value; 
+            const totalThick = window.layers.reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0); 
+            
+            if(totalThick === 0 && window.layers.length === 0) return alert("無資料"); 
+            
+            let maxOff = 20; 
+            window.dimensions.forEach(d => { if(d.offset > maxOff) maxOff = d.offset; }); 
+            
+            const pl = maxOff + 150;
+            const pt = 50;
+            const sf = 100;
+            const cw = canvas.width - (maxOff + 40) - 20; 
+            
+            const ah = Math.max(500, window.layers.length * 40); 
+            const sc = ah / (totalThick || 1); 
+            
+            pres.defineLayout({ name: 'C', width: (pl + cw + 50) / sf, height: (ah + 100) / sf }); 
+            pres.layout = 'C'; 
+            let s = pres.addSlide(); 
+            let cy = pt; 
+            
+            window.layers.forEach(l => { 
+                const h = l.thickness * sc; 
+                const fc = l.color.replace('#', ''); 
+                const tc = isColorDark(l.color) ? 'FFFFFF' : '000000'; 
+                
+                s.addShape(pres.ShapeType.rect, { x: pl / sf, y: cy / sf, w: cw / sf, h: h / sf, fill: fc, line: '333333' }); 
+                s.addText(`${l.name} ${l.thickness}${unit}`, { x: pl / sf, y: cy / sf, w: cw / sf, h: h / sf, color: tc, fontSize: l.fontSize || 14, align: 'center', valign: 'middle' }); 
+                cy += h; 
+            }); 
+            
+            window.photos.forEach(p => { 
+                let ps = pres.addSlide(); 
+                ps.addText("附圖: " + p.desc, { x: 0.5, y: 0.5, fontSize: 16, color: '333333' }); 
+                ps.addImage({ data: p.data, x: 0.5, y: 1.5, w: 8, h: 4.5, sizing: { type: 'contain', w: 8, h: 4.5 } }); 
+            }); 
+            
+            pres.writeFile({ fileName: "Stack_Report.pptx" }); 
+        };
         
         function shadeColor(col, amt) {
-            let usePound = false; if (col[0] == "#") { col = col.slice(1); usePound = true; }
-            let num = parseInt(col,16);
-            let r = (num >> 16) + amt; if (r > 255) r = 255; else if (r < 0) r = 0;
-            let b = ((num >> 8) & 0x00FF) + amt; if (b > 255) b = 255; else if (b < 0) b = 0;
-            let g = (num & 0x0000FF) + amt; if (g > 255) g = 255; else if (g < 0) g = 0;
-            return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
+            let usePound = false; 
+            if (col[0] == "#") { 
+                col = col.slice(1); 
+                usePound = true; 
+            }
+            let num = parseInt(col, 16);
+            let r = (num >> 16) + amt; 
+            if (r > 255) r = 255; else if (r < 0) r = 0;
+            let b = ((num >> 8) & 0x00FF) + amt; 
+            if (b > 255) b = 255; else if (b < 0) b = 0;
+            let g = (num & 0x0000FF) + amt; 
+            if (g > 255) g = 255; else if (g < 0) g = 0;
+            return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
         }
-        function isColorDark(hex) { const r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16); return ((r*299+g*587+b*114)/1000)<128; }
+
+        function isColorDark(hex) { 
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16); 
+            return ((r * 299 + g * 587 + b * 114) / 1000) < 128; 
+        }
         
-        window.resizeCanvas = () => { window.draw(); }; 
+        window.resizeCanvas = function() { 
+            window.draw(); 
+        }; 
 
         // ---------------------------------------------
-        // ★ 核心 3D 繪製邏輯 (結合你的尺寸線與照片邏輯)
+        // ★ 核心 3D 繪製邏輯 (結合尺寸線、照片與特效)
         // ---------------------------------------------
-        window.draw = () => {
+        window.draw = function() {
             const unit = document.getElementById('unitInput').value;
-            const globalFS = parseInt(document.getElementById('globalFontSize').value)||14;
+            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
             
             let baseStackWidth = parseInt(document.getElementById('canvasWidth').value) || 250; 
             const dw = baseStackWidth; 
 
             const isComp = !!window.compareLayers;
-            let maxThick = window.layers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0);
+            let maxThick = window.layers.reduce((s, l) => s + (parseFloat(l.thickness) || 0), 0);
+            
             if(isComp) { 
-                let cThick = window.compareLayers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0); 
+                let cThick = window.compareLayers.reduce((s, l) => s + (parseFloat(l.thickness) || 0), 0); 
                 if(cThick > maxThick) maxThick = cThick; 
             }
-            if(maxThick===0 && window.layers.length===0 && window.photos.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+            if(maxThick === 0 && window.layers.length === 0 && window.photos.length === 0) { 
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                return; 
+            }
             
-            let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
-            const pad = { t:80, b:40, l: maxOff+80, r: window.is3D ? 160 : 120 }; 
+            let maxOff = 20; 
+            window.dimensions.forEach(d => { if(d.offset > maxOff) maxOff = d.offset; });
+            const pad = { t: 80, b: 40, l: maxOff + 80, r: window.is3D ? 160 : 120 }; 
             const gap = isComp ? (window.is3D ? 200 : 140) : 0; 
             
-            // 處理展開模式的間距
-            const explodeGap = window.isExploded ? 60 : 0;
+            // 計算各層展開間距總和
+            let totalSpacing = window.layers.reduce((sum, l) => sum + (parseFloat(l.spacing) || 0), 0);
 
             canvas.width = pad.l + (isComp ? (dw * 2 + gap) : dw) + pad.r;
             
-            // 高度必須加上爆開的間距
-            const stackH = Math.max(500, window.layers.length*40) + (window.layers.length * explodeGap);
-            let photoTotalH = 0; window.photos.forEach(p => { photoTotalH += (((isComp?dw*2+gap:dw)) / p.w) * p.h + 40; });
+            const stackH = Math.max(500, window.layers.length * 40) + totalSpacing;
+            let photoTotalH = 0; 
+            window.photos.forEach(p => { 
+                photoTotalH += (((isComp ? dw * 2 + gap : dw)) / p.w) * p.h + 40; 
+            });
             canvas.height = stackH + pad.t + pad.b + (photoTotalH > 0 ? photoTotalH + 50 : 0);
             
-            // 這裡的 scale 不算入 explodeGap，維持厚度比例正確
-            const scale = (Math.max(500, window.layers.length*40)) / (maxThick||1);
+            const scale = (Math.max(500, window.layers.length * 40)) / (maxThick || 1);
             
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.textBaseline="middle";
-            dimHitZones = []; layerHitZones = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            ctx.textBaseline = "middle";
+            dimHitZones = []; 
+            layerHitZones = [];
 
-            let drawStk = (lyrs, startX, isMain) => {
-                let cy = pad.t; let yPos = [];
+            let drawStk = function(lyrs, startX, isMain) {
+                let cy = pad.t; 
+                let yPos = [];
+                
                 lyrs.forEach((l, i) => {
-                    const h = (parseFloat(l.thickness)||0)*scale;
-                    yPos.push({t:cy, b:cy+h, h:h, l:l, i:i});
-                    cy += h + explodeGap; // 展開模式每層多加距離
+                    cy += parseFloat(l.spacing) || 0; // 展開模式的各層獨立間距
+                    const h = (parseFloat(l.thickness) || 0) * scale;
+                    yPos.push({ t: cy, b: cy + h, h: h, l: l, i: i });
+                    cy += h;
                 });
 
                 const depth = window.is3D ? 40 : 0;
                 const tiltY = depth * 0.5;
 
                 for(let j = yPos.length - 1; j >= 0; j--) {
-                    let p = yPos[j]; let l = p.l; let startY = p.t;
-                    if(isMain) layerHitZones.push({i:p.i, x1:startX, x2:startX+dw, y1:startY, y2:p.b});
+                    let p = yPos[j]; 
+                    let l = p.l; 
+                    let startY = p.t;
+                    
+                    if(isMain) layerHitZones.push({ i: p.i, x1: startX, x2: startX + dw, y1: startY, y2: p.b });
                     
                     // --- 1. 繪製基板 (Substrate) 如果沒被隱藏 ---
                     if (!window.hideSubstrate) {
@@ -774,41 +1573,64 @@
                         if(depth > 0) {
                             // 畫 3D 右側面
                             ctx.fillStyle = sideFill;
-                            ctx.beginPath(); ctx.moveTo(startX+dw, startY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, p.b-tiltY); ctx.lineTo(startX+dw, p.b); ctx.closePath();
-                            ctx.fill(); ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.lineWidth = 0.5; ctx.stroke();
+                            ctx.beginPath(); 
+                            ctx.moveTo(startX + dw, startY); 
+                            ctx.lineTo(startX + dw + depth, startY - tiltY); 
+                            ctx.lineTo(startX + dw + depth, p.b - tiltY); 
+                            ctx.lineTo(startX + dw, p.b); 
+                            ctx.closePath();
+                            ctx.fill(); 
+                            ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
+                            ctx.lineWidth = 0.5; 
+                            ctx.stroke();
                             
                             // 畫 3D 頂面
                             ctx.fillStyle = topFill;
-                            ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(startX+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw, startY); ctx.closePath();
-                            ctx.fill(); ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.stroke();
+                            ctx.beginPath(); 
+                            ctx.moveTo(startX, startY); 
+                            ctx.lineTo(startX + depth, startY - tiltY); 
+                            ctx.lineTo(startX + dw + depth, startY - tiltY); 
+                            ctx.lineTo(startX + dw, startY); 
+                            ctx.closePath();
+                            ctx.fill(); 
+                            ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
+                            ctx.stroke();
                         }
                         
                         // 畫正面
                         ctx.fillStyle = frontFill; 
                         ctx.fillRect(startX, startY, dw, p.h);
-                        ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.lineWidth = 1; ctx.strokeRect(startX, startY, dw, p.h);
+                        ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
+                        ctx.lineWidth = 1; 
+                        ctx.strokeRect(startX, startY, dw, p.h);
 
                         // 畫文字標籤
-                        const fs = l.fontSize||globalFS; 
-                        ctx.font = `${l.fontStyle==='bold'?'bold ':''}${fs}px Arial`;
+                        const fs = l.fontSize || globalFS; 
+                        ctx.font = `${l.fontStyle === 'bold' ? 'bold ' : ''}${fs}px Arial`;
                         
                         if(p.h > fs + 4) {
-                             ctx.fillStyle = isColorDark(l.color)?"white":"black"; if(l.textColor) ctx.fillStyle=l.textColor;
-                             ctx.textAlign="center"; ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw/2, startY+p.h/2);
+                             ctx.fillStyle = isColorDark(l.color) ? "white" : "black"; 
+                             if(l.textColor) ctx.fillStyle = l.textColor;
+                             ctx.textAlign = "center"; 
+                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX + dw / 2, startY + p.h / 2);
                         } else {
-                             ctx.fillStyle = "#888"; ctx.textAlign="left"; 
-                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw + depth + 15, startY+p.h/2 - tiltY/2);
-                             ctx.strokeStyle="#ccc"; ctx.beginPath(); ctx.moveTo(startX+dw, startY+p.h/2); ctx.lineTo(startX+dw+depth+10, startY+p.h/2 - tiltY/2); ctx.stroke();
+                             ctx.fillStyle = "#888"; 
+                             ctx.textAlign = "left"; 
+                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX + dw + depth + 15, startY + p.h / 2 - tiltY / 2);
+                             ctx.strokeStyle = "#ccc"; 
+                             ctx.beginPath(); 
+                             ctx.moveTo(startX + dw, startY + p.h / 2); 
+                             ctx.lineTo(startX + dw + depth + 10, startY + p.h / 2 - tiltY / 2); 
+                             ctx.stroke();
                         }
                     }
 
-                    // --- 2. 獨立繪製 3D 立體金屬線路 (Traces) ---
+                    // --- 2. 獨立繪製鑲嵌的金屬線路 (Embedded Traces) ---
                     let tracesCount = parseInt(l.traces) || 0;
                     if(tracesCount > 0) {
                         let tColor = l.traceColor || '#E67E22';
                         let tVisualWidth = Math.min((dw * 0.6) / tracesCount, 25); 
                         
-                        // **真正的線路高度** = 輸入的高度 * 比例尺 (確保在畫面上有感，最小給 4)
                         let rawTh = parseFloat(l.traceHeight) || 15;
                         let tVisualHeight = Math.max(rawTh * scale, 4); 
                         
@@ -816,7 +1638,7 @@
 
                         for(let k = 0; k < tracesCount; k++) {
                             let tx = startX + spacing + k * (tVisualWidth + spacing);
-                            let ty = startY; 
+                            let ty = p.b; // ★ 改變：線路的底部貼齊這層的底部，往上畫
                             
                             // 金屬光澤材質
                             let traceFront = tColor;
@@ -836,13 +1658,26 @@
                             if(depth > 0) {
                                 // 畫線路的 3D 頂部
                                 ctx.fillStyle = traceTop;
-                                ctx.beginPath(); ctx.moveTo(tx, ty - tVisualHeight); ctx.lineTo(tx+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth, ty - tVisualHeight); ctx.closePath();
-                                ctx.fill(); ctx.strokeStyle="#111"; ctx.stroke();
+                                ctx.beginPath(); 
+                                ctx.moveTo(tx, ty - tVisualHeight); 
+                                ctx.lineTo(tx + depth, ty - tVisualHeight - tiltY); 
+                                ctx.lineTo(tx + tVisualWidth + depth, ty - tVisualHeight - tiltY); 
+                                ctx.lineTo(tx + tVisualWidth, ty - tVisualHeight); 
+                                ctx.closePath();
+                                ctx.fill(); 
+                                ctx.strokeStyle = "#111"; 
+                                ctx.stroke();
                                 
                                 // 畫線路的 3D 右側
                                 ctx.fillStyle = traceSide;
-                                ctx.beginPath(); ctx.moveTo(tx+tVisualWidth, ty); ctx.lineTo(tx+tVisualWidth+depth, ty-tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth, ty - tVisualHeight); ctx.closePath();
-                                ctx.fill(); ctx.stroke();
+                                ctx.beginPath(); 
+                                ctx.moveTo(tx + tVisualWidth, ty); 
+                                ctx.lineTo(tx + tVisualWidth + depth, ty - tiltY); 
+                                ctx.lineTo(tx + tVisualWidth + depth, ty - tVisualHeight - tiltY); 
+                                ctx.lineTo(tx + tVisualWidth, ty - tVisualHeight); 
+                                ctx.closePath();
+                                ctx.fill(); 
+                                ctx.stroke();
                             }
 
                             // 畫線路的 2D 正面
@@ -851,24 +1686,31 @@
                             ctx.strokeRect(tx, ty - tVisualHeight, tVisualWidth, tVisualHeight);
 
                             // 如果隱藏了基板，且是第一條線，就在旁邊補上原本的文字
-                            if (window.hideSubstrate && k === tracesCount-1) {
-                                 ctx.fillStyle = tColor; ctx.textAlign="left"; ctx.font = `bold ${globalFS}px Arial`;
-                                 ctx.fillText(`${l.name} (${l.thickness} / 線厚${rawTh})`, startX + dw + depth + 15, ty - tVisualHeight/2 - tiltY/2);
+                            if (window.hideSubstrate && k === tracesCount - 1) {
+                                 ctx.fillStyle = tColor; 
+                                 ctx.textAlign = "left"; 
+                                 ctx.font = `bold ${globalFS}px Arial`;
+                                 ctx.fillText(`${l.name} (${l.thickness} / 線厚${rawTh})`, startX + dw + depth + 15, ty - tVisualHeight / 2 - tiltY / 2);
                             }
 
                             // 標示線寬文字
                             if(k === 0 && isMain && !window.hideSubstrate) {
-                                ctx.fillStyle = "#FFF"; ctx.font = "10px Arial"; ctx.textAlign = "center";
-                                ctx.shadowColor="black"; ctx.shadowBlur=3;
-                                ctx.fillText(`${l.traceWidth||10} ${unit}`, tx + tVisualWidth/2, ty - tVisualHeight - 5);
-                                ctx.shadowBlur=0; 
+                                ctx.fillStyle = "#FFF"; 
+                                ctx.font = "10px Arial"; 
+                                ctx.textAlign = "center";
+                                ctx.shadowColor = "black"; 
+                                ctx.shadowBlur = 3;
+                                ctx.fillText(`${l.traceWidth||10} ${unit}`, tx + tVisualWidth / 2, ty - tVisualHeight - 5);
+                                ctx.shadowBlur = 0; 
                             }
                         }
                     }
                 }
                 
-                ctx.fillStyle="#00E5FF"; ctx.textAlign="center"; ctx.font="bold 16px Arial";
-                ctx.fillText(isMain ? "Active Project" : "Reference Baseline", startX + dw/2, pad.t - 30);
+                ctx.fillStyle = "#00E5FF"; 
+                ctx.textAlign = "center"; 
+                ctx.font = "bold 16px Arial";
+                ctx.fillText(isMain ? "Active Project" : "Reference Baseline", startX + dw / 2, pad.t - 30);
                 return yPos;
             };
 
@@ -876,47 +1718,89 @@
             currentStackLeftX = isComp ? pad.l + dw + gap : pad.l;
             let yPos = drawStk(window.layers, currentStackLeftX, true);
 
-            // --- 繪製尺寸線 (恢復原功能並適應爆開模式) ---
+            // --- 繪製尺寸線 ---
             window.dimensions.forEach((d, i) => {
                 if(!yPos[d.start] || !yPos[d.end]) return;
-                const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=currentStackLeftX-d.offset;
-                dimHitZones.push({i:i, x:x, y1:y1, y2:y2}); 
+                const y1 = yPos[d.start].t;
+                const y2 = yPos[d.end].b;
+                const h = y2 - y1;
+                const x = currentStackLeftX - d.offset;
                 
-                ctx.strokeStyle="#D93D42"; ctx.fillStyle="#D93D42"; ctx.lineWidth=2; ctx.font="bold 14px Arial";
-                ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x,y1+h); ctx.stroke();
-                ctx.strokeStyle="#ccc"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x+10,y1); ctx.moveTo(x,y1+h); ctx.lineTo(x+10,y1+h); ctx.stroke();
+                dimHitZones.push({ i: i, x: x, y1: y1, y2: y2 }); 
                 
-                const txt = d.label || `${window.layers.slice(d.start,d.end+1).reduce((s,l)=>s+(parseFloat(l.thickness)||0),0)}${unit}`;
-                ctx.textAlign="right"; ctx.fillText(txt, x-5, y1+h/2);
+                ctx.strokeStyle = "#D93D42"; 
+                ctx.fillStyle = "#D93D42"; 
+                ctx.lineWidth = 2; 
+                ctx.font = "bold 14px Arial";
+                
+                ctx.beginPath(); 
+                ctx.moveTo(x, y1); 
+                ctx.lineTo(x, y1 + h); 
+                ctx.stroke();
+                
+                ctx.strokeStyle = "#ccc"; 
+                ctx.lineWidth = 1; 
+                ctx.beginPath(); 
+                ctx.moveTo(x, y1); 
+                ctx.lineTo(x + 10, y1); 
+                ctx.moveTo(x, y1 + h); 
+                ctx.lineTo(x + 10, y1 + h); 
+                ctx.stroke();
+                
+                const txt = d.label || `${window.layers.slice(d.start, d.end + 1).reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0)}${unit}`;
+                ctx.textAlign = "right"; 
+                ctx.fillText(txt, x - 5, y1 + h / 2);
             });
 
-            // --- 繪製照片 (恢復原功能) ---
+            // --- 繪製照片 ---
             if(window.photos.length > 0) {
                 let py = stackH + pad.t + 60; 
-                ctx.strokeStyle="#eee"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(20, py-30); ctx.lineTo(canvas.width-20, py-30); ctx.stroke();
+                ctx.strokeStyle = "#eee"; 
+                ctx.lineWidth = 1; 
+                ctx.beginPath(); 
+                ctx.moveTo(20, py - 30); 
+                ctx.lineTo(canvas.width - 20, py - 30); 
+                ctx.stroke();
+                
                 window.photos.forEach(p => {
-                     if (!p.imgElement) { p.imgElement = new Image(); p.imgElement.onload = () => window.draw(); p.imgElement.src = p.data; }
-                     const photoDw = isComp ? dw*2+gap : dw;
+                     if (!p.imgElement) { 
+                         p.imgElement = new Image(); 
+                         p.imgElement.onload = () => window.draw(); 
+                         p.imgElement.src = p.data; 
+                     }
+                     const photoDw = isComp ? dw * 2 + gap : dw;
                      const displayH = (photoDw / p.w) * p.h;
+                     
                      if (p.imgElement.complete) {
                          ctx.drawImage(p.imgElement, pad.l, py, photoDw, displayH);
-                         ctx.strokeStyle="#eee"; ctx.lineWidth=1; ctx.strokeRect(pad.l, py, photoDw, displayH);
-                         ctx.fillStyle="#000"; ctx.textAlign="left"; ctx.font="14px Arial"; ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
+                         ctx.strokeStyle = "#eee"; 
+                         ctx.lineWidth = 1; 
+                         ctx.strokeRect(pad.l, py, photoDw, displayH);
+                         ctx.fillStyle = "#000"; 
+                         ctx.textAlign = "left"; 
+                         ctx.font = "14px Arial"; 
+                         ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
                      }
                      py += displayH + 50;
                 });
             }
         };
 
-        if(isFirebaseReady) { window.refreshUnitList(); }
+        // --- 初始化 ---
+        if(isFirebaseReady) { 
+            window.refreshUnitList(); 
+        }
+        
         window.layers = [
-            {name:"Solder Mask", thickness:20, color:"#2E7D32", traces:0, traceHeight:15},
-            {name:"Top Layer", thickness:35, color:"#1E88E5", traces:3, traceHeight:35, traceWidth: 50, traceColor:"#F5B041"},
-            {name:"Dielectric 1", thickness:100, color:"#F5F5DC", traces:0},
-            {name:"Inner Layer 1", thickness:35, color:"#1E88E5", traces:2, traceHeight:35, traceWidth: 40, traceColor:"#F5B041"},
-            {name:"Core", thickness:200, color:"#F5F5DC", traces:0},
+            {name:"Solder Mask", thickness:20, color:"#2E7D32", traces:0, traceHeight:15, spacing: 0},
+            {name:"Top Layer", thickness:35, color:"#1E88E5", traces:3, traceHeight:35, traceWidth: 50, traceColor:"#F5B041", spacing: 0},
+            {name:"Dielectric 1", thickness:100, color:"#F5F5DC", traces:0, spacing: 0},
+            {name:"Inner Layer 1", thickness:35, color:"#1E88E5", traces:2, traceHeight:35, traceWidth: 40, traceColor:"#F5B041", spacing: 0},
+            {name:"Core", thickness:200, color:"#F5F5DC", traces:0, spacing: 0},
         ];
-        window.renderList(); window.resizeCanvas();
+        
+        window.renderList(); 
+        window.resizeCanvas();
 
     </script>
 </body>
