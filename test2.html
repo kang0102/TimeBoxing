@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (防卡死雙核版)</title>
+<title>股票自選清單 (混合動力完全體)</title>
 
 <script type="module">
 try {
@@ -185,8 +185,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
   <div class="keyrow">
     <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
+           onkeydown="if(event.key==='Enter')window.saveKey()">
+    <button class="btn p" onclick="window.saveKey()">儲存</button>
   </div>
   <div class="keyhint">
     ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
@@ -200,8 +200,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
     <span>✅ API Key 已設定</span>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
+      <button class="btn sm" onclick="window.checkBal()" id="bal-btn">💰 查餘額</button>
+      <span class="resetlink" onclick="window.resetKey()">更換 Key</span>
     </div>
   </div>
 </div>
@@ -213,44 +213,44 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
   <span style="color:var(--b2)">│</span>
   <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
+  <button class="btn sm" onclick="window.resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
 </div>
 
 <div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)">
   ☁️ 雲端狀態檢查中...
 </div>
 <div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
+  <div class="sq" onclick="window.openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
+  <button class="btn p" onclick="window.showNewCat()">＋ 分類</button>
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="bar" id="bar">
   <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
+  <button class="btn sm" onclick="window.rfAll()">↺ 全部更新</button>
+  <button class="btn sm p" onclick="window.openSrch()">＋ 加股票</button>
 </div>
 <div id="main"></div>
 
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
+<div class="ov" id="sov" onclick="if(event.target.id==='sov')window.closeSrch()">
   <div class="ovb">
     <div class="ovh">
       <span>🔍</span>
       <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
+             oninput="window.doSrch(this.value)" autocomplete="off">
+      <button class="btn sm" onclick="window.closeSrch()">✕</button>
     </div>
     <div class="ovbd" id="sres"></div>
   </div>
 </div>
 
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
+<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')window.closeCmod()">
   <div class="mbox">
     <h3>新增分類</h3>
     <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
+           onkeydown="if(event.key==='Enter')window.mkCat()">
     <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
+      <button class="btn" onclick="window.closeCmod()">取消</button>
+      <button class="btn p" onclick="window.mkCat()">建立</button>
     </div>
   </div>
 </div>
@@ -341,7 +341,7 @@ function waitFB(){
   return new Promise(res=>{
     if(window._fb?.ready) return res();
     document.addEventListener('fb-ready',()=>res(),{once:true});
-    setTimeout(res, 800); // 🌟 0.8秒超級逃生門：連不上雲端就強制放行！
+    setTimeout(res, 800); 
   });
 }
 
@@ -359,7 +359,7 @@ async function loadKey(){
   if(location.protocol==='file:') document.getElementById('cors-warn').style.display='block';
 }
 
-async function saveKey(){
+window.saveKey = async function(){
   const v=document.getElementById('keyinp').value.trim();
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
   AKEY=v;
@@ -367,17 +367,17 @@ async function saveKey(){
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
-}
+};
 
-async function resetKey(){
+window.resetKey = async function(){
   AKEY='';localStorage.removeItem('ak-v1');
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
-}
+};
 
-async function checkBal(){
+window.checkBal = async function(){
   if(!AKEY){alert('請先設定 API Key');return;}
   const btn=document.getElementById('bal-btn');
   const disp=document.getElementById('bal-display');
@@ -399,7 +399,7 @@ async function checkBal(){
   }finally{
     btn.disabled=false;btn.textContent='💰 查餘額';
   }
-}
+};
 
 const SK='wl-v3',PK='pk-v3';
 let S={cats:[]},P={},aiRun=false,view='grid';
@@ -422,7 +422,6 @@ function saveP(){
   },800);
 }
 
-// 🌟 最穩固的資料還原機制：優先讀取本機，絕對不搞丟你的板子！
 async function loadS(){
   await waitFB();
   let cloudLoaded = false;
@@ -433,19 +432,15 @@ async function loadS(){
       if(px?.data){ P=px.data; }
     }catch(e){ console.warn("Cloud load failed"); }
   }
-  
   if(!cloudLoaded){
     try{
       const d=JSON.parse(localStorage.getItem(SK)||'null');
-      // 相容你舊版的資料 (wl-v3)
       if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats;
     }catch(e){}
   }
-  
   if(!P || Object.keys(P).length === 0){
     try{ const parsed=JSON.parse(localStorage.getItem(PK)||'{}'); if(parsed) P=parsed; }catch(e){}
   }
-  
   if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
   S.act=S.cats[0].id;
 }
@@ -495,17 +490,30 @@ async function fetchYFHistory(code, mkt){
   return null;
 }
 
-async function fetchFreeNews(code, mkt){
-  let t = code;
-  if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
-  const pxs = ['', 'https://corsproxy.io/?url='];
-  for(const proxy of pxs){
-    try{
-      const u = `https://query2.finance.yahoo.com/v1/finance/search?q=${t}&newsCount=5`;
-      const r = await fetch(proxy ? proxy + encodeURIComponent(u) : u);
-      const j = await r.json();
-      if(j.news && j.news.length > 0) return j.news;
-    }catch(e){}
+// 🌟 Google 新聞 RSS 引擎 (保證抓得到、不吃 Token、無 CORS 阻擋)
+async function fetchFreeNews(code, name, mkt){
+  try {
+    const q = encodeURIComponent(`${name} ${code} 股票`);
+    const rssUrl = `https://news.google.com/rss/search?q=${q}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    
+    const r = await fetch(apiUrl);
+    const j = await r.json();
+    
+    if(j.status === 'ok' && j.items && j.items.length > 0){
+       return j.items.slice(0, 5).map(item => {
+         const dateObj = new Date(item.pubDate.replace(/-/g, '/'));
+         const dateStr = !isNaN(dateObj) ? `${dateObj.getMonth()+1}/${dateObj.getDate()}` : item.pubDate.split(' ')[0];
+         return {
+           title: item.title,
+           link: item.link,
+           publisher: item.source || '新聞',
+           date: dateStr
+         };
+       });
+    }
+  } catch(e) {
+    console.error("新聞載入失敗:", e);
   }
   return [];
 }
@@ -584,12 +592,12 @@ function renderTokBar(){
   document.getElementById('tok-cost').textContent='$'+tokSession.cost.toFixed(6);
   document.getElementById('tok-total-cost').textContent='$'+tokTotal.cost.toFixed(4);
 }
-function resetTokStats(){
+window.resetTokStats = function(){
   tokSession={in:0,out:0,cost:0}; tokTotal={in:0,out:0,cost:0};
   saveTokTotal();
   const bar=document.getElementById('tok-bar');
   if(bar)bar.style.display='none';
-}
+};
 
 async function apiCall(prompt,maxTok=700,isSearch=false){
   if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
@@ -621,27 +629,43 @@ async function callAI(prompt,search=false){
   return JSON.parse(m[0]);
 }
 
-function doSrch(q){
+// 🌟 最穩固的傳統搜尋演算法 (保證不當機)
+window.fDB = function(q){
+  const n = q.toLowerCase().trim();
+  if(!n) return [];
+  return DB.filter(item => {
+    const code = item[0].toLowerCase();
+    const zh = item[1].toLowerCase();
+    const kw = item[2] ? item[2].toLowerCase() : '';
+    return code.includes(n) || zh.includes(n) || kw.includes(n);
+  }).slice(0, 12);
+};
+
+window.doSrch = function(q){
   const res=document.getElementById('sres');
   if(!q.trim()){res.innerHTML='<div class="airow">輸入代碼或名稱，台股 / 美股 / 日股均可</div>';return;}
-  const items=fDB(q);
-  let html=items.map(([code,zh,,mkt])=>{
-    const nm=zh.split(' ')[0];
-    const lbl=mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
-    const bc=mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
-    return`<div class="si" onclick="addS('${code}','${nm}','${mkt}')">
+  const items = window.fDB(q);
+  
+  let html = items.map(item => {
+    const code = item[0];
+    const nm = item[1].split(' ')[0];
+    const mkt = item[3];
+    const lbl = mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
+    const bc = mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
+    return `<div class="si" onclick="window.addS('${code}','${nm}','${mkt}')">
       <span class="sic">${code}</span><span class="sin">${nm}</span>
       <span class="sib ${bc}">${lbl}</span></div>`;
   }).join('');
-  const qSafe=q.replace(/'/g,"\\'");
-  html+=`<div class="airow">
+  
+  const qSafe = q.replace(/'/g,"\\'");
+  html += `<div class="airow">
     <div class="spin ${aiRun?'on':''}" id="aispin"></div>
     <span id="aihtxt">${aiRun?'AI 搜尋中…':
-      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
-  res.innerHTML=html;
-}
+      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="window.aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
+  res.innerHTML = html;
+};
 
-async function aiSrch(q){
+window.aiSrch = async function(q){
   if(aiRun)return;aiRun=true;
   const sp=document.getElementById('aispin'),ht=document.getElementById('aihtxt');
   if(sp)sp.classList.add('on');if(ht)ht.textContent='AI 搜尋中…';
@@ -651,57 +675,56 @@ async function aiSrch(q){
     document.getElementById('sres').innerHTML=list.map(s=>{
       const bc=s.mkt==='tw'?'btw':s.mkt==='jp'?'bjp':'bus';
       const lbl=s.mkt==='tw'?'台股':s.mkt==='jp'?'日股':'美股';
-      return`<div class="si" onclick="addS('${s.code}','${s.name}','${s.mkt||'us'}')">
+      return`<div class="si" onclick="window.addS('${s.code}','${s.name}','${s.mkt||'us'}')">
         <span class="sic">${s.code}</span><span class="sin">${s.name}</span>
         <span class="sib ${bc}">${lbl}</span></div>`;
     }).join('')||'<div class="airow">找不到此股票</div>';
   }catch(e){
     const ht2=document.getElementById('aihtxt');
-    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="aiSrch('${q}')">重試</span>`;
+    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="window.aiSrch('${q}')">重試</span>`;
   }
   aiRun=false;
-}
+};
 
-function openSrch(){
+window.openSrch = function(){
   document.getElementById('sov').classList.add('on');
-  const i=document.getElementById('sq');i.value='';doSrch('');
+  const i=document.getElementById('sq');i.value='';window.doSrch('');
   setTimeout(()=>i.focus(),60);
-}
-function closeSrch(){document.getElementById('sov').classList.remove('on');aiRun=false;}
-
-function showNewCat(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);}
-function closeCmod(){document.getElementById('cmod').classList.remove('on');}
-function mkCat(){
+};
+window.closeSrch = function(){document.getElementById('sov').classList.remove('on');aiRun=false;};
+window.showNewCat = function(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);};
+window.closeCmod = function(){document.getElementById('cmod').classList.remove('on');};
+window.mkCat = function(){
   const n=document.getElementById('cinp').value.trim();if(!n)return;
   const c={id:'c'+Date.now(),name:n,stocks:[]};
-  S.cats.push(c);S.act=c.id;closeCmod();saveS();renderAll();
-}
-function delCat(id,e){
+  S.cats.push(c);S.act=c.id;window.closeCmod();saveS();renderAll();
+};
+window.delCat = function(id,e){
   e?.stopPropagation();
   if(S.cats.length<=1){alert('至少保留一個分類');return;}
   if(!confirm(`刪除「${S.cats.find(c=>c.id===id)?.name}」？`))return;
   S.cats=S.cats.filter(c=>c.id!==id);
   if(S.act===id)S.act=S.cats[0].id;
   saveS();renderAll();
-}
-function setAct(id){S.act=id;view='grid';renderAll();}
-function addS(code,name,mkt){
+};
+window.setAct = function(id){S.act=id;view='grid';renderAll();};
+window.addS = function(code,name,mkt){
   const c=cat();
-  if(c.stocks.find(s=>s.code===code)){closeSrch();return;}
-  c.stocks.push({code,name,mkt});saveS();closeSrch();renderGrid();rfStock(code,name,mkt);
-}
-function rmS(code,e){
+  if(c.stocks.find(s=>s.code===code)){window.closeSrch();return;}
+  c.stocks.push({code,name,mkt});saveS();window.closeSrch();window.renderGrid();window.rfStock(code,name,mkt);
+};
+window.rmS = function(code,e){
   e?.stopPropagation();
   const c=cat();c.stocks=c.stocks.filter(s=>s.code!==code);
-  delete P[code];saveS();saveP();renderGrid();
-}
+  delete P[code];saveS();saveP();window.renderGrid();
+};
 
-const renderAll=()=>{renderTabs();if(view==='grid')renderGrid();};
+const renderAll=()=>{renderTabs();if(view==='grid')window.renderGrid();};
 function renderTabs(){
   document.getElementById('tabs').innerHTML=
-    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="setAct('${c.id}')">
-      ${c.name}<span class="tx" onclick="delCat('${c.id}',event)">✕</span></div>`).join('')+
-    `<button class="tadd" onclick="showNewCat()">＋ 新分類</button>`;
+    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="window.setAct('${c.id}')">
+      ${c.name}<span class="tx" onclick="window.delCat('${c.id}',event)">✕</span></div>`).join('')+
+    `<button class="tadd" onclick="window.showNewCat()">＋ 新分類</button>`;
 }
 function tsLbl(ts){
   if(!ts)return'';
@@ -723,8 +746,8 @@ function cardHTML(s){
   }else if(p?.err)ph=`<div class="ld" title="${p.errMsg||''}">取得失敗 — 點擊重試</div>`;
   else ph=`<div class="cpx" style="font-size:12px;color:var(--t3)">— 點擊進入</div>`;
   
-  return`<div class="card" id="card-${s.code}" onclick="openDetail('${s.code}','${s.name}','${s.mkt}')">
-    <span class="cx" onclick="rmS('${s.code}',event)">✕</span>
+  return`<div class="card" id="card-${s.code}" onclick="window.openDetail('${s.code}','${s.name}','${s.mkt}')">
+    <span class="cx" onclick="window.rmS('${s.code}',event)">✕</span>
     <div class="cmkt">${mktLbl}</div>
     <div class="ccode">${s.code}</div>
     <div class="cname" title="${s.name}">${s.name}</div>
@@ -737,7 +760,7 @@ function renderCard(code){
   el.outerHTML=cardHTML(s);
 }
 
-function renderGrid(){
+window.renderGrid = function(){
   view='grid';
   currentDetail=null;
   currentTab='anl';
@@ -753,9 +776,9 @@ function renderGrid(){
     return;
   }
   m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
-}
+};
 
-async function rfStock(code,name,mkt){
+window.rfStock = async function(code,name,mkt){
   P[code]={...(P[code]||{}),loading:true};
   renderCard(code);
   if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
@@ -776,14 +799,10 @@ async function rfStock(code,name,mkt){
          const techData = calculateTechIndicators(hist);
          if(techData) P[code].tech = techData;
       }
-      const newsItems = await fetchFreeNews(code, mkt);
+      // 🌟 這裡換成 Google 新聞引擎
+      const newsItems = await fetchFreeNews(code, name, mkt);
       if(newsItems.length > 0){
-          P[code].newsList = newsItems.map(n => ({
-             title: n.title,
-             link: n.link,
-             publisher: n.publisher,
-             date: new Date(n.providerPublishTime * 1000).toLocaleDateString('zh-TW')
-          }));
+          P[code].newsList = newsItems;
       }
     }else{
       P[code]={...P[code],loading:false,err:true,errMsg:'無報價資料'};
@@ -795,19 +814,19 @@ async function rfStock(code,name,mkt){
   }
   renderCard(code);
   if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
-}
+};
 
-async function rfAll(){
-  for(const s of cat().stocks) rfStock(s.code,s.name,s.mkt);
-}
+window.rfAll = async function(){
+  for(const s of cat().stocks) window.rfStock(s.code,s.name,s.mkt);
+};
 
-function openDetail(code,name,mkt){
+window.openDetail = function(code,name,mkt){
   view='detail';
   currentDetail=code;
   document.getElementById('bar').classList.remove('on');
-  if(!P[code]?.px && !P[code]?.loading) rfStock(code,name,mkt);
+  if(!P[code]?.px && !P[code]?.loading) window.rfStock(code,name,mkt);
   renderDetailBody(code,name,mkt);
-}
+};
 
 function renderDetailBody(code,name,mkt){
   if(view!=='detail'||currentDetail!==code) return;
@@ -851,10 +870,10 @@ function renderDetailBody(code,name,mkt){
     let aiSummaryBlock = '';
     if(p.aiRun) aiSummaryBlock = `<div class="aspinner"><div class="spin on"></div>機器人正在閱讀新聞中…</div>`;
     else if(p.aiSummary) aiSummaryBlock = `<div class="nsum"><b style="font-weight:500">🤖 AI 新聞總結：</b><br>${p.aiSummary}</div>`;
-    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
+    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="window.triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
 
     const listHtml = p.newsList.map(n=>`
-      <a href="${n.link}" target="_blank" class="ncard">
+      <a href="${n.link}" target="_blank" class="ncard" style="text-decoration:none;display:block;color:inherit;">
         <div class="nhead">
           <span class="nsent nneu">${n.publisher}</span>
           <span class="ntitle">${n.title}</span>
@@ -870,18 +889,18 @@ function renderDetailBody(code,name,mkt){
   m.innerHTML = `
   <div class="anl">
     <div class="anlhd">
-      <button class="bk" onclick="renderGrid()">← 返回</button>
+      <button class="bk" onclick="window.renderGrid()">← 返回</button>
       <span class="anln">${name}</span>
       <span style="font-size:11px;color:var(--t2)">${code}</span>
       <div style="flex:1"></div>
-      <button class="btn sm p" onclick="rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
+      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
       ${pxHtml}
     </div>
     <div class="ntab">
-      <button class="nt ${currentTab==='anl'?'on':''}" onclick="switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
-      <button class="nt ${currentTab==='news'?'on':''}" onclick="switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
+      <button class="nt ${currentTab==='anl'?'on':''}" onclick="window.switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
+      <button class="nt ${currentTab==='news'?'on':''}" onclick="window.switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
     </div>
     <div id="tab-anl-body" style="display:${currentTab==='anl'?'block':'none'}">
       ${techHtml}
@@ -892,7 +911,7 @@ function renderDetailBody(code,name,mkt){
   </div>`;
 }
 
-async function triggerAISummary(code, name){
+window.triggerAISummary = async function(code, name){
   if(!P[code] || !P[code].newsList) return;
   P[code].aiRun = true;
   renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
@@ -909,14 +928,14 @@ async function triggerAISummary(code, name){
     saveP(); 
     renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
   }
-}
+};
 
-function switchTab(tab,code,name,mkt){
+window.switchTab = function(tab,code,name,mkt){
   currentTab=tab;
   renderDetailBody(code,name,mkt);
-}
+};
 
-// ─── STARTUP (絕對防當機啟動程序) ───
+// ─── STARTUP ───
 (async()=>{
   try {
     const mainBox = document.getElementById('main');
@@ -926,7 +945,7 @@ function switchTab(tab,code,name,mkt){
     loadTokTotal();
     await loadS();
     renderTabs();
-    renderGrid();
+    window.renderGrid();
   } catch (error) {
     const mainBox = document.getElementById('main');
     if(mainBox) {
