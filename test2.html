@@ -3,55 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (混合動力修復版)</title>
-<script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,doc,getDoc,setDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-const fbCfg={
-  apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-  authDomain:"stack-diagram-db.firebaseapp.com",
-  projectId:"stack-diagram-db",
-  storageBucket:"stack-diagram-db.firebasestorage.app",
-  messagingSenderId:"67240747982",
-  appId:"1:67240747982:web:1fb065e40e936a7485419f"
-};
-const fbApp=initializeApp(fbCfg);
-const db=getFirestore(fbApp);
-
-function updateSyncUI(ok, msg=""){
-   const el = document.getElementById('sync-indicator');
-   if(!el) return;
-   if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
-   else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步被擋：請檢查 Firebase Rules！(目前僅存本機)</span>`;
-}
-
-async function fbGet(path){
-  try{
-    const s=await getDoc(doc(db,...path.split('/')));
-    return s.exists()?s.data():null;
-  }catch(e){
-    console.warn('fbGet fail',e);
-    updateSyncUI(false, "讀取權限被拒絕");
-    return null;
-  }
-}
-async function fbSet(path,data){
-  try{
-    await setDoc(doc(db,...path.split('/')),data);
-    updateSyncUI(true);
-  }catch(e){
-    console.warn('fbSet fail',e);
-    updateSyncUI(false, e.message);
-  }
-}
-// 把雲端功能掛載到全域，給下面的主程式使用
-window._fb={get:fbGet,set:fbSet,ready:true};
-document.dispatchEvent(new Event('fb-ready'));
-</script>
-
+<title>股票自選清單 (滿血混合動力版)</title>
 <style>
-/* CSS 樣式維持不變 */
 :root{
   --bg:#fff;--bg2:#f1efe8;--bg3:#e8e6de;--bgi:#e6f1fb;--bgd:#fcebeb;--bgs:#eaf3de;--bgw:#faeeda;
   --t:#2c2c2a;--t2:#5f5e5a;--t3:#888780;--ti:#185fa5;--td:#791f1f;--ts:#27500a;--tw:#633806;
@@ -178,8 +131,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
   <div class="keyrow">
     <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
+           onkeydown="if(event.key==='Enter')window.saveKey()">
+    <button class="btn p" onclick="window.saveKey()">儲存</button>
   </div>
   <div class="keyhint">
     ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
@@ -193,8 +146,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
     <span>✅ API Key 已設定</span>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
+      <button class="btn sm" onclick="window.checkBal()" id="bal-btn">💰 查餘額</button>
+      <span class="resetlink" onclick="window.resetKey()">更換 Key</span>
     </div>
   </div>
 </div>
@@ -206,702 +159,93 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
   <span style="color:var(--b2)">│</span>
   <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
+  <button class="btn sm" onclick="window.resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
 </div>
 
 <div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)">
   ☁️ 雲端狀態檢查中...
 </div>
 <div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
+  <div class="sq" onclick="window.openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
+  <button class="btn p" onclick="window.showNewCat()">＋ 分類</button>
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="bar" id="bar">
   <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
+  <button class="btn sm" onclick="window.rfAll()">↺ 全部更新</button>
+  <button class="btn sm p" onclick="window.openSrch()">＋ 加股票</button>
 </div>
 <div id="main"></div>
 
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
+<div class="ov" id="sov" onclick="if(event.target.id==='sov')window.closeSrch()">
   <div class="ovb">
     <div class="ovh">
       <span>🔍</span>
       <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
+             oninput="window.doSrch(this.value)" autocomplete="off">
+      <button class="btn sm" onclick="window.closeSrch()">✕</button>
     </div>
     <div class="ovbd" id="sres"></div>
   </div>
 </div>
 
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
+<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')window.closeCmod()">
   <div class="mbox">
     <h3>新增分類</h3>
     <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
+           onkeydown="if(event.key==='Enter')window.mkCat()">
     <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
+      <button class="btn" onclick="window.closeCmod()">取消</button>
+      <button class="btn p" onclick="window.mkCat()">建立</button>
     </div>
   </div>
 </div>
 
-<script>
-// ─── DB ────────────────────────────────────────────────────
-const DB=[
-  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
-  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
-  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
-  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
-  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
-  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
-  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
-  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
-  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
-  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
-  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
-  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
-  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
-  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
-  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
-  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
-  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
-  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
-  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
-  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
-  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
-  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
-  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
-  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
-  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
-  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
-  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
-  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
-  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
-  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
-  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
-  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
-  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
-  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
-  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
-  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
-  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
-  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
-  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
-  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
-  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
-  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
-  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
-  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
-  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
-  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
-  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
-  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
-  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
-  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
-  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
-  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
-  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
-  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
-  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
-  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
-  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
-  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
-  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金','gold etf','us'],
-  ['TLT','長債 ETF','tlt.sigr:last-child{border:none}
-.sk2{display:flex;align-items:center;gap:5px;color:var(--t2)}
-.d8{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.wb{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.6}
-.lvg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
-.lvc{border-radius:var(--r);padding:9px 11px}
-.lvl{font-size:10px;margin-bottom:3px;font-weight:500}
-.lvv{font-size:13px;font-weight:500}
-.lvs{font-size:11px;margin-top:2px}
-.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
-.ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
-.nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
-.nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
-.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;text-decoration:none;display:block;color:inherit}
-.ncard:hover{border:0.5px solid var(--b2)}
-.nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
-.nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
-.npos{background:var(--bgs);color:var(--ts)}.nneg{background:var(--bgd);color:var(--td)}.nneu{background:var(--bg3);color:var(--t2)}
-.ntitle{font-size:13px;font-weight:500;line-height:1.5;flex:1}
-.nbody{font-size:11px;color:var(--t3);line-height:1.6;margin-top:3px}
-.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
-@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-<div id="key-setup" class="keybanner">
-  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
-  <div class="keyrow">
-    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
-  </div>
-  <div class="keyhint">
-    ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
-    ✅ 只有當你手動按下「🤖 AI 總結新聞」時，才會消耗 Token，精準控管成本。<br>
-    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
-  </div>
-</div>
-<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code></div>
-<div id="key-ok" style="display:none;margin-bottom:8px">
-  <div class="keyok">
-    <span>✅ API Key 已設定</span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
-    </div>
-  </div>
-</div>
+// ─── FIREBASE INIT ───
+const fbCfg={
+  apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+  authDomain:"stack-diagram-db.firebaseapp.com",
+  projectId:"stack-diagram-db",
+  storageBucket:"stack-diagram-db.firebasestorage.app",
+  messagingSenderId:"67240747982",
+  appId:"1:67240747982:web:1fb065e40e936a7485419f"
+};
+const fbApp=initializeApp(fbCfg);
+const db=getFirestore(fbApp);
 
-<div id="tok-bar" style="display:none;background:var(--bg);border:0.5px solid var(--b);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px">
-  <span style="color:var(--t3)">本次使用</span>
-  <span style="color:var(--t2)">輸入 <b id="tok-in" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">輸出 <b id="tok-out" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
-  <span style="color:var(--b2)">│</span>
-  <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
-</div>
+function updateSyncUI(ok, msg=""){
+   const el = document.getElementById('sync-indicator');
+   if(!el) return;
+   if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
+   else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步被擋：請檢查 Firebase Rules！(目前僅存本機)</span>`;
+}
 
-<div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)">
-  ☁️ 雲端狀態檢查中...
-</div>
-<div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
-</div>
-<div class="tabs" id="tabs"></div>
-<div class="bar" id="bar">
-  <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
-</div>
-<div id="main"></div>
+async function fbGet(path){
+  try{
+    const s=await getDoc(doc(db,...path.split('/')));
+    return s.exists()?s.data():null;
+  }catch(e){
+    console.warn('fbGet fail',e);
+    updateSyncUI(false, "讀取權限被拒絕");
+    return null;
+  }
+}
+async function fbSet(path,data){
+  try{
+    await setDoc(doc(db,...path.split('/')),data);
+    updateSyncUI(true);
+  }catch(e){
+    console.warn('fbSet fail',e);
+    updateSyncUI(false, e.message);
+  }
+}
+window._fb={get:fbGet,set:fbSet,ready:true};
 
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
-  <div class="ovb">
-    <div class="ovh">
-      <span>🔍</span>
-      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
-    </div>
-    <div class="ovbd" id="sres"></div>
-  </div>
-</div>
-
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
-  <div class="mbox">
-    <h3>新增分類</h3>
-    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
-    <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ─── DB ────────────────────────────────────────────────────
-const DB=[
-  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
-  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
-  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
-  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
-  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
-  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
-  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
-  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
-  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
-  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
-  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
-  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
-  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
-  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
-  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
-  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
-  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
-  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
-  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
-  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
-  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
-  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
-  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
-  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
-  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
-  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
-  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
-  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
-  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
-  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
-  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
-  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
-  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
-  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
-  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
-  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
-  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
-  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
-  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
-  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
-  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
-  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
-  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
-  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
-  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
-  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
-  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
-  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
-  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
-  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
-  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
-  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
-  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
-  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
-  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
-  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
-  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
-  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
-  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金'.irow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
-.inm{width:60px;color:var(--t2);font-size:11px;flex-shrink:0}
-.ibg{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.ib{height:100%;border-radius:4px}.ibuy{background:#639922}.isell{background:#E24B4A}
-.iv{width:72px;text-align:right;font-weight:500;font-size:11px}
-.ibc{color:var(--ts)}.isc{color:var(--td)}
-.ibar{height:18px;border-radius:5px;background:var(--bg2);overflow:hidden;position:relative;margin:6px 0 3px}
-.ifill{height:100%;border-radius:5px}
-.ilbl{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:500;color:#fff;white-space:nowrap}
-.sigr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--b);font-size:12px}
-.sigr:last-child{border:none}
-.sk2{display:flex;align-items:center;gap:5px;color:var(--t2)}
-.d8{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.wb{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.6}
-.lvg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
-.lvc{border-radius:var(--r);padding:9px 11px}
-.lvl{font-size:10px;margin-bottom:3px;font-weight:500}
-.lvv{font-size:13px;font-weight:500}
-.lvs{font-size:11px;margin-top:2px}
-.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
-.guide{background:var(--bg);border:0.5px solid var(--b);border-radius:var(--rl);padding:14px;margin-top:10px;font-size:12px;color:var(--t2);line-height:1.8}
-.guide h4{font-size:13px;font-weight:500;color:var(--t);margin-bottom:8px}
-.guide code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace}
-.ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
-.nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
-.nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
-.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;text-decoration:none;display:block;color:inherit}
-.ncard:hover{border:0.5px solid var(--b2)}
-.nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
-.nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
-.npos{background:var(--bgs);color:var(--ts)}.nneg{background:var(--bgd);color:var(--td)}.nneu{background:var(--bg3);color:var(--t2)}
-.ntitle{font-size:13px;font-weight:500;line-height:1.5;flex:1}
-.nbody{font-size:11px;color:var(--t3);line-height:1.6;margin-top:3px}
-.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
-@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-<div id="key-setup" class="keybanner">
-  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
-  <div class="keyrow">
-    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
-  </div>
-  <div class="keyhint">
-    ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
-    ✅ 只有當你手動按下「🤖 AI 總結新聞」時，才會消耗 Token，精準控管成本。<br>
-    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
-  </div>
-</div>
-<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code></div>
-<div id="key-ok" style="display:none;margin-bottom:8px">
-  <div class="keyok">
-    <span>✅ API Key 已設定 <span id="sync-status" style="font-size:11px;color:var(--t3)">（雲端同步）</span></span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
-    </div>
-  </div>
-</div>
-
-<div id="tok-bar" style="display:none;background:var(--bg);border:0.5px solid var(--b);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px">
-  <span style="color:var(--t3)">本次使用</span>
-  <span style="color:var(--t2)">輸入 <b id="tok-in" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">輸出 <b id="tok-out" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
-  <span style="color:var(--b2)">│</span>
-  <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
-</div>
-
-<div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
-</div>
-<div class="tabs" id="tabs"></div>
-<div class="bar" id="bar">
-  <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
-</div>
-<div id="main"></div>
-
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
-  <div class="ovb">
-    <div class="ovh">
-      <span>🔍</span>
-      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
-    </div>
-    <div class="ovbd" id="sres"></div>
-  </div>
-</div>
-
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
-  <div class="mbox">
-    <h3>新增分類</h3>
-    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
-    <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ─── DB ────────────────────────────────────────────────────
-const DB=[
-  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
-  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
-  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
-  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
-  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
-  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
-  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
-  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
-  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
-  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
-  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
-  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
-  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
-  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
-  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
-  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
-  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
-  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
-  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
-  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
-  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
-  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
-  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
-  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
-  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
-  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
-  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
-  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
-  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
-  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
-  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
-  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
-  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
-  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
-  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
-  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
-  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
-  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
-  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
-  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
-  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
-  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
-  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
-  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
-  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
-  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
-  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
-  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
-  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
-  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
-  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
-  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
-  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
-  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
-  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
-  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
-  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
-  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
-  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金','gold etf','us'],
-  ['TLT','長債 ETF','tlt treasury bond','us'],['SOXL','半導體3x ETF','soxl semiconductor 3x','us'],
-  ['7203','Toyota トヨタ 豐田','toyota 豐田 汽車 ev','jp'],['6758','Sony ソニー','sony playstation ps5','jp'],
-  ['9984','SoftBan.irow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
-.inm{width:60px;color:var(--t2);font-size:11px;flex-shrink:0}
-.ibg{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.ib{height:100%;border-radius:4px}.ibuy{background:#639922}.isell{background:#E24B4A}
-.iv{width:72px;text-align:right;font-weight:500;font-size:11px}
-.ibc{color:var(--ts)}.isc{color:var(--td)}
-.ibar{height:18px;border-radius:5px;background:var(--bg2);overflow:hidden;position:relative;margin:6px 0 3px}
-.ifill{height:100%;border-radius:5px}
-.ilbl{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:500;color:#fff;white-space:nowrap}
-.sigr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--b);font-size:12px}
-.sigr:last-child{border:none}
-.sk2{display:flex;align-items:center;gap:5px;color:var(--t2)}
-.d8{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.wb{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.6}
-.lvg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
-.lvc{border-radius:var(--r);padding:9px 11px}
-.lvl{font-size:10px;margin-bottom:3px;font-weight:500}
-.lvv{font-size:13px;font-weight:500}
-.lvs{font-size:11px;margin-top:2px}
-.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
-.guide{background:var(--bg);border:0.5px solid var(--b);border-radius:var(--rl);padding:14px;margin-top:10px;font-size:12px;color:var(--t2);line-height:1.8}
-.guide h4{font-size:13px;font-weight:500;color:var(--t);margin-bottom:8px}
-.guide code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace}
-.ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
-.nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
-.nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
-.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
-.nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
-.nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
-.npos{background:var(--bgs);color:var(--ts)}.nneg{background:var(--bgd);color:var(--td)}.nneu{background:var(--bg3);color:var(--t2)}
-.ntitle{font-size:13px;font-weight:500;line-height:1.5}
-.nbody{font-size:12px;color:var(--t2);line-height:1.6;margin-top:3px}
-.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
-@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-<div id="key-setup" class="keybanner">
-  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
-  <div class="keyrow">
-    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
-  </div>
-  <div class="keyhint">
-    ✅ Key 只存在你的瀏覽器，不會上傳任何地方。<br>
-    ✅ 股價更新使用免費 API（不扣除額度）。只有執行 AI 分析時才會消耗 Token。<br>
-    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
-  </div>
-</div>
-<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code><br>③ 暫時允許：Chrome 啟動時加參數 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">--disable-web-security</code>（不建議日常使用）</div>
-<div id="key-ok" style="display:none;margin-bottom:8px">
-  <div class="keyok">
-    <span>✅ API Key 已設定 <span id="sync-status" style="font-size:11px;color:var(--t3)">（雲端同步）</span></span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
-    </div>
-  </div>
-</div>
-
-<div id="tok-bar" style="display:none;background:var(--bg);border:0.5px solid var(--b);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px">
-  <span style="color:var(--t3)">本次使用</span>
-  <span style="color:var(--t2)">輸入 <b id="tok-in" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">輸出 <b id="tok-out" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
-  <span style="color:var(--b2)">│</span>
-  <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <span id="bal-est-wrap" style="color:var(--t2);display:none">餘額約 <b id="bal-est" style="color:var(--ts);font-weight:500">—</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
-</div>
-
-<div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
-</div>
-<div class="tabs" id="tabs"></div>
-<div class="bar" id="bar">
-  <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
-</div>
-<div id="main"></div>
-
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
-  <div class="ovb">
-    <div class="ovh">
-      <span>🔍</span>
-      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
-    </div>
-    <div class="ovbd" id="sres"></div>
-  </div>
-</div>
-
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
-  <div class="mbox">
-    <h3>新增分類</h3>
-    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
-    <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ─── DB ────────────────────────────────────────────────────
-const DB=[
-  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
-  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅ٹیic','tw'],
-  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
-  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
-  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
-  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
-  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
-  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
-  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
-  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
-  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
-  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
-  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
-  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
-  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
-  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
-  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
-  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
-  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
-  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
-  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
-  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
-  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
-  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
-  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
-  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
-  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
-  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
-  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
-  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
-  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
-  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
-  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
-  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
-  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
-  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
-  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
-  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
-  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
-  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
-  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
-  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
-  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
-  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
-  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
-  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
-  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
-  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
-  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
-  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
-  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
-  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
-  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
-  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
-  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
-  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
-  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
-  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
-  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金','gold etf','us'],
-  ['TLT','長債 ETF','tlt treasury bond','us'],['.nbody{font-size:12px;color:var(--t2);line-height:1.6;margin-top:3px}
-.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
-@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-<div id="key-setup" class="keybanner">
-  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
-  <div class="keyrow">
-    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')saveKey()">
-    <button class="btn p" onclick="saveKey()">儲存</button>
-  </div>
-  <div class="keyhint">
-    ✅ Key 只存在你的瀏覽器，不會上傳任何地方。<br>
-    ✅ 股價更新使用免費 API（不扣除額度）。只有執行 AI 分析時才會消耗 Token。<br>
-    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
-  </div>
-</div>
-<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code><br>③ 暫時允許：Chrome 啟動時加參數 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">--disable-web-security</code>（不建議日常使用）</div>
-<div id="key-ok" style="display:none;margin-bottom:8px">
-  <div class="keyok">
-    <span>✅ API Key 已設定 <span id="sync-status" style="font-size:11px;color:var(--t3)">（雲端同步）</span></span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="resetKey()">更換 Key</span>
-    </div>
-  </div>
-</div>
-
-<div id="tok-bar" style="display:none;background:var(--bg);border:0.5px solid var(--b);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px">
-  <span style="color:var(--t3)">本次使用</span>
-  <span style="color:var(--t2)">輸入 <b id="tok-in" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">輸出 <b id="tok-out" style="color:var(--t);font-weight:500">0</b> tokens</span>
-  <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
-  <span style="color:var(--b2)">│</span>
-  <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <span id="bal-est-wrap" style="color:var(--t2);display:none">餘額約 <b id="bal-est" style="color:var(--ts);font-weight:500">—</b></span>
-  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
-</div>
-
-<div class="topbar">
-  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
-</div>
-<div class="tabs" id="tabs"></div>
-<div class="bar" id="bar">
-  <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
-</div>
-<div id="main"></div>
-
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
-  <div class="ovb">
-    <div class="ovh">
-      <span>🔍</span>
-      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="closeSrch()">✕</button>
-    </div>
-    <div class="ovbd" id="sres"></div>
-  </div>
-</div>
-
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
-  <div class="mbox">
-    <h3>新增分類</h3>
-    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')mkCat()">
-    <div class="mbtns">
-      <button class="btn" onclick="closeCmod()">取消</button>
-      <button class="btn p" onclick="mkCat()">建立</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ─── DB ────────────────────────────────────────────────────
+// ─── DB ───
 const DB=[
   ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
   ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
@@ -978,32 +322,12 @@ const DB=[
   ['9022','JR東海','jr shinkansen 新幹線','jp'],['6645','Omron オムロン','omron automation sensor','jp'],
 ];
 
-// ─── API KEY + FIREBASE SYNC ────────────────────────────────
 let AKEY='';
 const FB_CFG='config/settings';  
 const FB_WL='watchlist/data';
 const FB_PX='prices/data';
 
-function waitFB(){return new Promise(res=>{
-  if(window._fb?.ready)return res();
-  document.addEventListener('fb-ready',()=>res(),{once:true});
-  setTimeout(res,3000); 
-});}
-
-async function loadKey(){
-  await waitFB();
-  let key='';
-  if(window._fb){
-    const d=await window._fb.get(FB_CFG);
-    if(d?.anthropicKey) key=d.anthropicKey;
-  }
-  if(!key) key=localStorage.getItem('ak-v1')||'';
-  AKEY=key;
-  document.getElementById('key-setup').style.display=AKEY?'none':'block';
-  document.getElementById('key-ok').style.display=AKEY?'block':'none';
-  if(location.protocol==='file:') document.getElementById('cors-warn').style.display='block';
-}
-async function saveKey(){
+window.saveKey = async function(){
   const v=document.getElementById('keyinp').value.trim();
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
   AKEY=v;
@@ -1011,16 +335,17 @@ async function saveKey(){
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
-  document.getElementById('bal-display').innerHTML='<span style="color:var(--ts)">✓ 已同步到雲端</span>';
-}
-async function resetKey(){
+};
+
+window.resetKey = async function(){
   AKEY='';localStorage.removeItem('ak-v1');
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
-}
-async function checkBal(){
+};
+
+window.checkBal = async function(){
   if(!AKEY){alert('請先設定 API Key');return;}
   const btn=document.getElementById('bal-btn');
   const disp=document.getElementById('bal-display');
@@ -1038,43 +363,18 @@ async function checkBal(){
     const used=((d.total_cost||0)).toFixed(4);
     disp.innerHTML=`<span style="color:var(--ts)">本月已用 $${used}</span>`;
   }catch(e){
-    try{
-      const r2=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':AKEY,
-          'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1,
-          messages:[{role:'user',content:'hi'}]})
-      });
-      const data=await r2.json();
-      if(r2.status===200){
-        disp.innerHTML='<span style="color:var(--ts)">✓ 餘額充足</span>';
-        if(tokTotal.cost>0){
-          document.getElementById('bal-est-wrap').style.display='inline';
-          document.getElementById('bal-est').textContent='已用 $'+tokTotal.cost.toFixed(4);
-        }
-      }else if(r2.status===400&&data.error?.message?.includes('credit')){
-        disp.innerHTML='<span style="color:var(--td)">⚠ 額度不足，請儲值</span>';
-      }else if(r2.status===401){
-        disp.innerHTML='<span style="color:var(--td)">Key 無效</span>';
-      }else{
-        disp.innerHTML=`<span style="color:var(--t2)">狀態：${r2.status}</span>`;
-      }
-    }catch(e2){
-      disp.innerHTML='<span style="color:var(--td)">網路錯誤</span>';
-    }
+    disp.innerHTML='<span style="color:var(--td)">網路錯誤或無查詢權限</span>';
   }finally{
     btn.disabled=false;btn.textContent='💰 查餘額';
   }
-}
+};
 
-// ─── STATE ─────────────────────────────────────────────────
+// ─── STATE ───
 const SK='wl-v3',PK='pk-v3';
 let S={cats:[]},P={},aiRun=false,view='grid';
 let _saveSTimer=null,_savePTimer=null;
 let currentDetail = null;
-let currentTab = 'anl'; // 'anl' or 'news'
-let newsCache = {};
+let currentTab = 'anl';
 
 function saveS(){
   try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}
@@ -1090,33 +390,15 @@ function saveP(){
     if(window._fb) await window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
   },800);
 }
-async function loadS(){
-  await waitFB();
-  if(window._fb){
-    const [wl,px]=await Promise.all([window._fb.get(FB_WL),window._fb.get(FB_PX)]);
-    if(wl?.cats&&wl.cats.length){S.cats=wl.cats;}
-    if(px?.data){P=px.data;}
-  }
-  if(!S.cats.length){
-    try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(d?.cats)S.cats=d.cats;}catch(e){}
-  }
-  if(!Object.keys(P).length){
-    try{P=JSON.parse(localStorage.getItem(PK)||'{}')||{};}catch(e){}
-  }
-  if(!S.cats.length)S.cats=[{id:'def',name:'自選股',stocks:[]}];
-  S.act=S.cats[0].id;
-}
-const cat=()=>S.cats.find(c=>c.id===S.act)||S.cats[0];
 
-// ─── FREE PRICE FETCHING ──────────────────────────────────
-// 1. Taiwan Stock Exchange (For local stocks)
+// ─── FETCHING ───
 async function fetchTW(code){
   const proxies=['', 'https://corsproxy.io/?url='];
   for(const proxy of proxies){
     for(const ex of['tse','otc']){
       try{
         const url=`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${code}.tw&json=1&delay=0`;
-        const r=await fetch(proxy?proxy+encodeURIComponent(url):url, {mode:'cors',signal:AbortSignal.timeout(6000)});
+        const r=await fetch(proxy?proxy+encodeURIComponent(url):url, {mode:'cors'});
         const j=await r.json(),d=j.msgArray?.[0];
         if(!d||!d.z||d.z==='-')continue;
         const px=+d.z,pv=+d.y;
@@ -1127,31 +409,99 @@ async function fetchTW(code){
   return null;
 }
 
-// 2. Yahoo Finance (Fallback for US/JP and failed TW)
-async function fetchYF(code, mkt){
+async function fetchYFHistory(code, mkt){
   let t = code;
   if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
   const pxs = ['', 'https://corsproxy.io/?url=', 'https://api.allorigins.win/raw?url='];
   for(const proxy of pxs){
     try{
-      const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=1d&range=1d`;
-      const fetchUrl = proxy ? (proxy.includes('allorigins') ? proxy + encodeURIComponent(u) : proxy + encodeURIComponent(u)) : u;
-      const r = await fetch(fetchUrl, {signal:AbortSignal.timeout(5000)});
+      const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=1d&range=1mo`;
+      const fetchUrl = proxy ? proxy + encodeURIComponent(u) : u;
+      const r = await fetch(fetchUrl);
       const j = await r.json();
       const res = j.chart.result[0];
-      const px = res.meta.regularMarketPrice;
-      const prv = res.meta.chartPreviousClose;
-      if(px){ return {px, chg:px-prv, pct:(px-prv)/prv*100, live:true}; }
+      const quotes = res.indicators.quote[0];
+      
+      return {
+         close: quotes.close.filter(x=>x!==null),
+         high: quotes.high.filter(x=>x!==null),
+         low: quotes.low.filter(x=>x!==null),
+         px: res.meta.regularMarketPrice,
+         prevClose: res.meta.chartPreviousClose,
+         chg: res.meta.regularMarketPrice - res.meta.chartPreviousClose,
+         pct: ((res.meta.regularMarketPrice - res.meta.chartPreviousClose) / res.meta.chartPreviousClose) * 100,
+         live: true
+      };
     }catch(e){}
   }
   return null;
 }
 
-// ─── TOKEN TRACKING ───────────────────────────────────────
-const PRICE={
-  'claude-sonnet-4-6':     {in:3.00, out:15.00},
-  'claude-haiku-4-5-20251001': {in:0.80, out:4.00},
-};
+async function fetchFreeNews(code, mkt){
+  let t = code;
+  if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
+  const pxs = ['', 'https://corsproxy.io/?url='];
+  for(const proxy of pxs){
+    try{
+      const u = `https://query2.finance.yahoo.com/v1/finance/search?q=${t}&newsCount=5`;
+      const fetchUrl = proxy ? proxy + encodeURIComponent(u) : u;
+      const r = await fetch(fetchUrl);
+      const j = await r.json();
+      if(j.news && j.news.length > 0) return j.news;
+    }catch(e){}
+  }
+  return [];
+}
+
+function calculateTechIndicators(hist) {
+  if(!hist || hist.close.length < 2) return null;
+  const c = hist.close, h = hist.high, l = hist.low;
+  
+  const pC = c[c.length-2] || c[c.length-1];
+  const pH = h[h.length-2] || h[h.length-1];
+  const pL = l[l.length-2] || l[l.length-1];
+  
+  const P = (pH + pL + pC) / 3;
+  const R1 = (P * 2) - pL;
+  const R2 = P + (pH - pL);
+  const S1 = (P * 2) - pH;
+  const S2 = P - (pH - pL);
+
+  const curr = c[c.length-1];
+  const sma10 = c.slice(-10).reduce((a,b)=>a+b,0) / Math.min(10, c.length);
+  const sma20 = c.slice(-20).reduce((a,b)=>a+b,0) / Math.min(20, c.length);
+
+  const signals = [];
+  if(curr > sma10) signals.push({color:'green', label:'短線', val:'站上10日均線 (偏多)'});
+  else signals.push({color:'amber', label:'短線', val:'跌破10日均線 (偏弱)'});
+
+  if(curr > sma20) signals.push({color:'green', label:'中線', val:'多頭排列 (站上月線)'});
+  else signals.push({color:'red', label:'中線', val:'空頭排列 (月線之下)'});
+
+  let gains = 0, losses = 0;
+  const rsiPeriod = Math.min(14, c.length - 1);
+  for(let i = c.length - rsiPeriod; i < c.length; i++){
+      const diff = c[i] - c[i-1];
+      if(diff > 0) gains += diff;
+      else losses -= diff;
+  }
+  const avgGain = gains / rsiPeriod;
+  const avgLoss = losses / rsiPeriod;
+  const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+  const rsi = 100 - (100 / (1 + rs));
+
+  if(rsi > 70) signals.push({color:'red', label:'RSI指標', val:`超買區 (${rsi.toFixed(1)}) - 注意回檔`});
+  else if(rsi < 30) signals.push({color:'green', label:'RSI指標', val:`超賣區 (${rsi.toFixed(1)}) - 具反彈契機`});
+  else signals.push({color:'amber', label:'RSI指標', val:`中性區 (${rsi.toFixed(1)})`});
+
+  return {
+    levels: { r1: R1.toFixed(2), r2: R2.toFixed(2), s1: S1.toFixed(2), s2: S2.toFixed(2) },
+    signals: signals
+  };
+}
+
+// ─── TOKENS ───
+const PRICE={ 'claude-haiku-4-5-20251001': {in:0.80, out:4.00}, 'claude-sonnet-4-6': {in:3.00, out:15.00} };
 let tokSession={in:0,out:0,cost:0}; 
 let tokTotal={in:0,out:0,cost:0};   
 
@@ -1178,19 +528,18 @@ function renderTokBar(){
   document.getElementById('tok-cost').textContent='$'+tokSession.cost.toFixed(6);
   document.getElementById('tok-total-cost').textContent='$'+tokTotal.cost.toFixed(4);
 }
-function resetTokStats(){
-  tokSession={in:0,out:0,cost:0};
-  tokTotal={in:0,out:0,cost:0};
+window.resetTokStats = function(){
+  tokSession={in:0,out:0,cost:0}; tokTotal={in:0,out:0,cost:0};
   saveTokTotal();
   const bar=document.getElementById('tok-bar');
   if(bar)bar.style.display='none';
-}
+};
 
-async function apiCall(prompt,search=false,maxTok=700){
+async function apiCall(prompt,maxTok=700,isSearch=false){
   if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
-  const model=search?'claude-sonnet-4-6':'claude-haiku-4-5-20251001';
+  const model= isSearch ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001';
   const body={model,max_tokens:maxTok,messages:[{role:'user',content:prompt}]};
-  if(search)body.tools=[{type:'web_search_20250305',name:'web_search'}];
+  
   for(let attempt=0;attempt<3;attempt++){
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -1199,61 +548,25 @@ async function apiCall(prompt,search=false,maxTok=700){
       body:JSON.stringify(body)
     });
     if(r.status===429){
-      const wait=(attempt+1)*15000;
-      const el=document.querySelector('.aspinner')||document.getElementById('news-body');
-      if(el)el.innerHTML=`<div class="aspinner"><div class="spin on"></div>速率限制，${wait/1000}秒後重試…</div>`;
-      await new Promise(res=>setTimeout(res,wait));
+      await new Promise(res=>setTimeout(res,10000));
       continue;
     }
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`API ${r.status}: ${e.error?.message||r.statusText}`);}
     const data=await r.json();
     if(data.usage) addUsage(model, data.usage.input_tokens||0, data.usage.output_tokens||0);
-    const txt=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
-    return txt;
+    return data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
   }
   throw new Error('超過重試次數，請稍後再試');
 }
 async function callAI(prompt,search=false){
-  const txt=await apiCall(prompt,search,700);
+  const txt=await apiCall(prompt,700,search);
   const m=txt.replace(/```json|```/g,'').match(/[\[\{][\s\S]*[\]\}]/);
   if(!m)throw new Error('回應格式錯誤');
   return JSON.parse(m[0]);
 }
 
-// ─── FETCH & REFRESH ───────────────────────────────────────
-async function rfStock(code,name,mkt){
-  P[code]={...(P[code]||{}),loading:true};
-  renderCard(code);
-  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
-
-  try{
-    let p=null;
-    if(mkt==='tw') p=await fetchTW(code);
-    if(!p) p=await fetchYF(code, mkt);
-
-    if(p){
-      P[code]={...P[code],...p,loading:false,ts:Date.now()};
-      delete P[code].err; delete P[code].errMsg;
-    }else{
-      P[code]={...P[code],loading:false,err:true,errMsg:'無報價資料'};
-    }
-    saveP();
-  }catch(e){
-    P[code]={...(P[code]||{}),loading:false,err:true,errMsg:e.message};
-    saveP();
-  }
-  
-  renderCard(code);
-  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
-}
-async function rfAll(){for(const s of cat().stocks)rfStock(s.code,s.name,s.mkt);}
-
-// ─── SEARCH ────────────────────────────────────────────────
-function fDB(q){
-  const n=q.toLowerCase().trim();if(!n)return[];
-  return DB.filter(([c,z,k])=>c.toLowerCase().includes(n)||z.toLowerCase().includes(n)||(k&&k.toLowerCase().includes(n))).slice(0,12);
-}
-function doSrch(q){
+// ─── UI BINDINGS ───
+window.doSrch = function(q){
   const res=document.getElementById('sres');
   if(!q.trim()){res.innerHTML='<div class="airow">輸入代碼或名稱，台股 / 美股 / 日股均可</div>';return;}
   const items=fDB(q);
@@ -1261,7 +574,7 @@ function doSrch(q){
     const nm=zh.split(' ')[0];
     const lbl=mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
     const bc=mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
-    return`<div class="si" onclick="addS('${code}','${nm}','${mkt}')">
+    return`<div class="si" onclick="window.addS('${code}','${nm}','${mkt}')">
       <span class="sic">${code}</span><span class="sin">${nm}</span>
       <span class="sib ${bc}">${lbl}</span></div>`;
   }).join('');
@@ -1269,71 +582,70 @@ function doSrch(q){
   html+=`<div class="airow">
     <div class="spin ${aiRun?'on':''}" id="aispin"></div>
     <span id="aihtxt">${aiRun?'AI 搜尋中…':
-      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
+      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="window.aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
   res.innerHTML=html;
-}
-async function aiSrch(q){
+};
+
+window.aiSrch = async function(q){
   if(aiRun)return;aiRun=true;
   const sp=document.getElementById('aispin'),ht=document.getElementById('aihtxt');
   if(sp)sp.classList.add('on');if(ht)ht.textContent='AI 搜尋中…';
   try{
-    const arr=await callAI(`「${q}」的股票代碼，JSON:[{"code":"","name":"","mkt":"tw/us/jp"}]`);
+    const arr=await callAI(`「${q}」的股票代碼，JSON:[{"code":"","name":"","mkt":"tw/us/jp"}]`, true);
     const list=Array.isArray(arr)?arr:[arr];
     document.getElementById('sres').innerHTML=list.map(s=>{
       const bc=s.mkt==='tw'?'btw':s.mkt==='jp'?'bjp':'bus';
       const lbl=s.mkt==='tw'?'台股':s.mkt==='jp'?'日股':'美股';
-      return`<div class="si" onclick="addS('${s.code}','${s.name}','${s.mkt||'us'}')">
+      return`<div class="si" onclick="window.addS('${s.code}','${s.name}','${s.mkt||'us'}')">
         <span class="sic">${s.code}</span><span class="sin">${s.name}</span>
         <span class="sib ${bc}">${lbl}</span></div>`;
     }).join('')||'<div class="airow">找不到此股票</div>';
   }catch(e){
     const ht2=document.getElementById('aihtxt');
-    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="aiSrch('${q}')">重試</span>`;
+    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="window.aiSrch('${q}')">重試</span>`;
   }
   aiRun=false;
-}
-function openSrch(){
-  document.getElementById('sov').classList.add('on');
-  const i=document.getElementById('sq');i.value='';doSrch('');
-  setTimeout(()=>i.focus(),60);
-}
-function closeSrch(){document.getElementById('sov').classList.remove('on');aiRun=false;}
+};
 
-// ─── CATEGORY ──────────────────────────────────────────────
-function showNewCat(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);}
-function closeCmod(){document.getElementById('cmod').classList.remove('on');}
-function mkCat(){
+window.openSrch = function(){
+  document.getElementById('sov').classList.add('on');
+  const i=document.getElementById('sq');i.value='';window.doSrch('');
+  setTimeout(()=>i.focus(),60);
+};
+window.closeSrch = function(){document.getElementById('sov').classList.remove('on');aiRun=false;};
+window.showNewCat = function(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);};
+window.closeCmod = function(){document.getElementById('cmod').classList.remove('on');};
+window.mkCat = function(){
   const n=document.getElementById('cinp').value.trim();if(!n)return;
   const c={id:'c'+Date.now(),name:n,stocks:[]};
-  S.cats.push(c);S.act=c.id;closeCmod();saveS();renderAll();
-}
-function delCat(id,e){
+  S.cats.push(c);S.act=c.id;window.closeCmod();saveS();renderAll();
+};
+window.delCat = function(id,e){
   e?.stopPropagation();
   if(S.cats.length<=1){alert('至少保留一個分類');return;}
   if(!confirm(`刪除「${S.cats.find(c=>c.id===id)?.name}」？`))return;
   S.cats=S.cats.filter(c=>c.id!==id);
   if(S.act===id)S.act=S.cats[0].id;
   saveS();renderAll();
-}
-function setAct(id){S.act=id;view='grid';renderAll();}
-function addS(code,name,mkt){
+};
+window.setAct = function(id){S.act=id;view='grid';renderAll();};
+window.addS = function(code,name,mkt){
   const c=cat();
-  if(c.stocks.find(s=>s.code===code)){closeSrch();return;}
-  c.stocks.push({code,name,mkt});saveS();closeSrch();renderGrid();rfStock(code,name,mkt);
-}
-function rmS(code,e){
+  if(c.stocks.find(s=>s.code===code)){window.closeSrch();return;}
+  c.stocks.push({code,name,mkt});saveS();window.closeSrch();window.renderGrid();window.rfStock(code,name,mkt);
+};
+window.rmS = function(code,e){
   e?.stopPropagation();
   const c=cat();c.stocks=c.stocks.filter(s=>s.code!==code);
-  delete P[code];saveS();saveP();renderGrid();
-}
+  delete P[code];saveS();saveP();window.renderGrid();
+};
 
-// ─── RENDER MAIN VIEW ──────────────────────────────────────
-const renderAll=()=>{renderTabs();if(view==='grid')renderGrid();};
+const renderAll=()=>{renderTabs();if(view==='grid')window.renderGrid();};
 function renderTabs(){
   document.getElementById('tabs').innerHTML=
-    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="setAct('${c.id}')">
-      ${c.name}<span class="tx" onclick="delCat('${c.id}',event)">✕</span></div>`).join('')+
-    `<button class="tadd" onclick="showNewCat()">＋ 新分類</button>`;
+    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="window.setAct('${c.id}')">
+      ${c.name}<span class="tx" onclick="window.delCat('${c.id}',event)">✕</span></div>`).join('')+
+    `<button class="tadd" onclick="window.showNewCat()">＋ 新分類</button>`;
 }
 function tsLbl(ts){
   if(!ts)return'';
@@ -1355,8 +667,8 @@ function cardHTML(s){
   }else if(p?.err)ph=`<div class="ld" title="${p.errMsg||''}">取得失敗 — 點擊重試</div>`;
   else ph=`<div class="cpx" style="font-size:12px;color:var(--t3)">— 點擊進入</div>`;
   
-  return`<div class="card" id="card-${s.code}" onclick="openDetail('${s.code}','${s.name}','${s.mkt}')">
-    <span class="cx" onclick="rmS('${s.code}',event)">✕</span>
+  return`<div class="card" id="card-${s.code}" onclick="window.openDetail('${s.code}','${s.name}','${s.mkt}')">
+    <span class="cx" onclick="window.rmS('${s.code}',event)">✕</span>
     <div class="cmkt">${mktLbl}</div>
     <div class="ccode">${s.code}</div>
     <div class="cname" title="${s.name}">${s.name}</div>
@@ -1368,7 +680,8 @@ function renderCard(code){
   const s=cat().stocks.find(x=>x.code===code);if(!s)return;
   el.outerHTML=cardHTML(s);
 }
-function renderGrid(){
+
+window.renderGrid = function(){
   view='grid';
   currentDetail=null;
   currentTab='anl';
@@ -1380,27 +693,68 @@ function renderGrid(){
     m.innerHTML=`<div class="empty">
       <div style="font-size:32px;margin-bottom:8px">📋</div>
       <div style="font-weight:500;margin-bottom:6px">分類是空的</div>
-      <div style="font-size:12px;color:var(--t3)">按上方搜尋欄加入台股、美股、日股</div></div>`;
+      <div style="font-size:12px;color:var(--t3)">按上方搜尋欄加入股票</div></div>`;
     return;
   }
   m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
-}
+};
 
-// ─── DETAILED ANALYSIS VIEW ────────────────────────────────
-function openDetail(code,name,mkt){
+window.rfStock = async function(code,name,mkt){
+  P[code]={...(P[code]||{}),loading:true};
+  renderCard(code);
+  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
+
+  try{
+    let p = null;
+    let hist = null;
+    if(mkt==='tw') p=await fetchTW(code);
+    
+    hist = await fetchYFHistory(code, mkt);
+    if(hist && !p) p = {px: hist.px, chg: hist.chg, pct: hist.pct, live:true};
+
+    if(p){
+      P[code]={...P[code],...p,loading:false,ts:Date.now()};
+      delete P[code].err; delete P[code].errMsg;
+      
+      if(hist){
+         const techData = calculateTechIndicators(hist);
+         if(techData) P[code].tech = techData;
+      }
+      const newsItems = await fetchFreeNews(code, mkt);
+      if(newsItems.length > 0){
+          P[code].newsList = newsItems.map(n => ({
+             title: n.title,
+             link: n.link,
+             publisher: n.publisher,
+             date: new Date(n.providerPublishTime * 1000).toLocaleDateString('zh-TW')
+          }));
+      }
+    }else{
+      P[code]={...P[code],loading:false,err:true,errMsg:'無報價資料'};
+    }
+    saveP();
+  }catch(e){
+    P[code]={...(P[code]||{}),loading:false,err:true,errMsg:e.message};
+    saveP();
+  }
+  renderCard(code);
+  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
+};
+
+window.rfAll = async function(){
+  for(const s of cat().stocks) window.rfStock(s.code,s.name,s.mkt);
+};
+
+window.openDetail = function(code,name,mkt){
   view='detail';
   currentDetail=code;
   document.getElementById('bar').classList.remove('on');
-  
-  // If we never fetched price, try to fetch it passively.
-  if(!P[code]?.px && !P[code]?.loading) rfStock(code,name,mkt);
-  
+  if(!P[code]?.px && !P[code]?.loading) window.rfStock(code,name,mkt);
   renderDetailBody(code,name,mkt);
-}
+};
 
 function renderDetailBody(code,name,mkt){
   if(view!=='detail'||currentDetail!==code) return;
-  
   const m = document.getElementById('main');
   let p = P[code] || {};
   
@@ -1408,154 +762,113 @@ function renderDetailBody(code,name,mkt){
   const px = p.px, pct = p.pct||0;
   const sg = pct>=0?'▲':'▼', cl = pct>0?'up':pct<0?'dn':'nc';
 
-  let pxHtml = '';
-  if(p.loading) pxHtml = `<div class="ld" style="font-size:14px;margin-top:5px">報價更新中…</div>`;
-  else if(px) pxHtml = `
-    <span class="anlpx">${cur}${(+px).toLocaleString(undefined,{maximumFractionDigits:2})}</span>
-    <span class="${cl}" style="font-size:14px;font-weight:500">${sg}${Math.abs(pct).toFixed(2)}%</span>
-    <span style="font-size:11px;color:var(--t3)">${tsLbl(p.ts)}</span>`;
-  else pxHtml = `<span style="font-size:12px;color:var(--t3);margin-top:5px">無報價資料</span>`;
+  let pxHtml = p.loading ? `<div class="ld" style="font-size:14px;margin-top:5px">報價更新中…</div>` :
+               px ? `<span class="anlpx">${cur}${(+px).toLocaleString(undefined,{maximumFractionDigits:2})}</span>
+                     <span class="${cl}" style="font-size:14px;font-weight:500">${sg}${Math.abs(pct).toFixed(2)}%</span>
+                     <span style="font-size:11px;color:var(--t3)">${tsLbl(p.ts)}</span>` : 
+                    `<span style="font-size:12px;color:var(--t3);margin-top:5px">無報價資料</span>`;
 
-  let aiHtml = '';
-  if(p.aiRun) aiHtml = `<div class="aspinner"><div class="spin on"></div>AI 分析中（約 5~15 秒）…</div>`;
-  else if(p.ai) aiHtml = buildAiHtml(p.ai);
-  else aiHtml = `<div class="empty">尚未產生 AI 分析，請點擊上方 ✨ AI 分析。</div>`;
+  let techHtml = '';
+  if(p.tech){
+    const DC={red:'#E24B4A',amber:'#EF9F27',green:'#639922'};
+    const shtml=(p.tech.signals||[]).map(s=>`<div class="sigr">
+      <span class="sk2"><span class="d8" style="background:${DC[s.color]||'#888'}"></span>${s.label}</span>
+      <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+    const lv = p.tech.levels;
+    techHtml = `
+      <div class="sec">💡 技術與均線訊號 (演算法分析)</div>${shtml}
+      <div class="sec">📉 樞軸點支撐/壓力位 (Pivot Points)</div>
+      <div class="lvg">
+        <div class="lvc" style="background:var(--bgd)"><div class="lvl" style="color:var(--td)">第二壓力 (R2)</div><div class="lvv" style="color:var(--td)">${lv.r2}</div></div>
+        <div class="lvc" style="background:var(--bgs)"><div class="lvl" style="color:var(--ts)">第一壓力 (R1)</div><div class="lvv" style="color:var(--ts)">${lv.r1}</div></div>
+        <div class="lvc" style="background:var(--bgw)"><div class="lvl" style="color:var(--tw)">第一支撐 (S1)</div><div class="lvv" style="color:var(--tw)">${lv.s1}</div></div>
+        <div class="lvc" style="background:var(--bgi)"><div class="lvl" style="color:var(--ti)">第二支撐 (S2)</div><div class="lvv" style="color:var(--ti)">${lv.s2}</div></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--t3)">※ 此為純數學模型計算，完全不消耗 Token。</div>
+    `;
+  } else {
+    techHtml = `<div class="empty">點擊右上角「⚡ 深度分析」載入最新技術指標。</div>`;
+  }
+
+  let newsHtml = '';
+  if(p.newsList && p.newsList.length > 0){
+    let aiSummaryBlock = '';
+    if(p.aiRun) aiSummaryBlock = `<div class="aspinner"><div class="spin on"></div>機器人正在閱讀新聞中…</div>`;
+    else if(p.aiSummary) aiSummaryBlock = `<div class="nsum"><b style="font-weight:500">🤖 AI 新聞總結：</b><br>${p.aiSummary}</div>`;
+    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="window.triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
+
+    const listHtml = p.newsList.map(n=>`
+      <a href="${n.link}" target="_blank" class="ncard">
+        <div class="nhead">
+          <span class="nsent nneu">${n.publisher}</span>
+          <span class="ntitle">${n.title}</span>
+        </div>
+        <div class="nbody">${n.date}</div>
+      </a>`).join('');
+    
+    newsHtml = aiSummaryBlock + listHtml;
+  } else {
+    newsHtml = `<div class="empty">目前尚無最新新聞。</div>`;
+  }
 
   m.innerHTML = `
   <div class="anl">
     <div class="anlhd">
-      <button class="bk" onclick="renderGrid()">← 返回</button>
+      <button class="bk" onclick="window.renderGrid()">← 返回</button>
       <span class="anln">${name}</span>
       <span style="font-size:11px;color:var(--t2)">${code}</span>
       <div style="flex:1"></div>
-      <button class="btn sm" onclick="rfStock('${code}','${name}','${mkt}')">↺ 更新報價</button>
-      <button class="btn sm p" onclick="triggerAIAnl('${code}','${name}','${mkt}')">✨ AI 分析</button>
+      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
       ${pxHtml}
     </div>
     <div class="ntab">
-      <button class="nt ${currentTab==='anl'?'on':''}" id="tab-anl" onclick="switchTab('anl','${code}','${name}','${mkt}')">📊 技術分析</button>
-      <button class="nt ${currentTab==='news'?'on':''}" id="tab-news" onclick="switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
+      <button class="nt ${currentTab==='anl'?'on':''}" onclick="window.switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
+      <button class="nt ${currentTab==='news'?'on':''}" onclick="window.switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
     </div>
     <div id="tab-anl-body" style="display:${currentTab==='anl'?'block':'none'}">
-      ${aiHtml}
+      ${techHtml}
     </div>
     <div id="news-body" style="display:${currentTab==='news'?'block':'none'}">
-      ${newsCache[code]||''}
+      ${newsHtml}
     </div>
   </div>`;
-
-  if(currentTab==='news' && !newsCache[code]) goNews(code,name,mkt);
 }
 
-function buildAiHtml(ai){
-  const DC={red:'#E24B4A',amber:'#EF9F27',green:'#639922'};
-  const inst=ai.institution||{};
-  const bear=+inst.bearPct||50;
-  const rows=[inst.a,inst.b,inst.c].filter(Boolean);
-  const ihtml=rows.map(r=>`<div class="irow">
-    <span class="inm">${r.label}</span>
-    <div class="ibg"><div class="ib ${r.buy?'ibuy':'isell'}" style="width:${Math.min(+r.pct||0,100)}%"></div></div>
-    <span class="iv ${r.buy?'ibc':'isc'}">${r.val}</span></div>`).join('');
-  const shtml=(ai.signals||[]).map(s=>`<div class="sigr">
-    <span class="sk2"><span class="d8" style="background:${DC[s.color]||'#888'}"></span>${s.label}</span>
-    <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
-  const lv=ai.levels||{},st=ai.strategy||{};
-  return `
-    <div class="sec">法人籌碼</div>${ihtml}
-    <div class="ibar"><div class="ifill" style="width:${bear}%;background:${bear>50?'#E24B4A99':'#63992299'}"></div>
-    <span class="ilbl">${inst.bearLabel||''}  ${bear}%</span></div>
-    <div style="font-size:11px;color:var(--t2);margin-bottom:2px">${inst.note||''}</div>
-    <div class="sec">主力訊號</div>${shtml}
-    <div class="wb"><b style="font-weight:500">研判：</b>${ai.verdict||''}</div>
-    <div class="lvg">
-      <div class="lvc" style="background:var(--bgd)">
-        <div class="lvl" style="color:var(--td)">壓力</div>
-        <div class="lvv" style="color:var(--td)">${lv.r1||'—'}</div>
-        <div class="lvs" style="color:var(--td)">${lv.r2||''}</div></div>
-      <div class="lvc" style="background:var(--bgs)">
-        <div class="lvl" style="color:var(--ts)">支撐</div>
-        <div class="lvv" style="color:var(--ts)">${lv.s1||'—'}</div>
-        <div class="lvs" style="color:var(--ts)">${lv.s2||''}</div></div>
-      <div class="lvc" style="background:var(--bgw)">
-        <div class="lvl" style="color:var(--tw)">進場</div>
-        <div class="lvv" style="color:var(--tw)">${st.entry||'—'}</div>
-        <div class="lvs" style="color:var(--tw)">停損：${st.stop||'—'}</div></div>
-      <div class="lvc" style="background:var(--bgi)">
-        <div class="lvl" style="color:var(--ti)">目標</div>
-        <div class="lvv" style="color:var(--ti)">${st.t1||'—'}</div>
-        <div class="lvs" style="color:var(--ti)">${st.t2||'—'}</div></div>
-    </div>
-    <div style="margin-top:10px;font-size:11px;color:var(--t3)">⚠ 僅供分析參考，非投資建議</div>`;
-}
-
-async function triggerAIAnl(code,name,mkt){
-  P[code] = P[code]||{};
+window.triggerAISummary = async function(code, name){
+  if(!P[code] || !P[code].newsList) return;
   P[code].aiRun = true;
-  renderDetailBody(code,name,mkt);
+  renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
   
   try{
-    const px=P[code]?.px||null, isTW=mkt==='tw';
-    const c0=isTW?'外資':'機構ETF',c1=isTW?'投信':'主動基金',c2=isTW?'自營商':'散戶做空';
-    const ai=await callAI(
-      `${name}(${code})現價${px||'未知'}分析。JSON:{"institution":{"a":{"label":"${c0}","val":"說","pct":0,"buy":false},"b":{"label":"${c1}","val":"說","pct":0,"buy":false},"c":{"label":"${c2}","val":"說","pct":0,"buy":false},"bearPct":0,"bearLabel":"空/多","note":"一句"},"signals":[{"color":"red","label":"訊","val":"說"},{"color":"red","label":"訊","val":"說"},{"color":"amber","label":"訊","val":"說"},{"color":"green","label":"訊","val":"說"},{"color":"green","label":"訊","val":"說"}],"verdict":"2句","levels":{"r1":"強壓","r2":"壓","s1":"撐","s2":"強撐"},"strategy":{"entry":"買點","stop":"停損","t1":"短線","t2":"題材"}}`, false);
-
-    P[code].ai = ai;
-    P[code].aiRun = false;
-    saveP();
+    const newsText = P[code].newsList.map(n => `- ${n.title}`).join('\n');
+    const prompt = `我是投資人，請根據以下關於「${name}(${code})」的最新新聞標題，用繁體中文給出一段約 50 字的專業投資總結，指出目前的市場情緒是偏多還是偏空：\n\n${newsText}`;
+    const summary = await apiCall(prompt, 300);
+    P[code].aiSummary = summary;
   }catch(e){
-    P[code].aiRun = false;
     alert('AI 分析失敗: ' + e.message);
+  }finally{
+    P[code].aiRun = false;
+    saveP(); 
+    renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
   }
-  renderDetailBody(code,name,mkt);
-}
+};
 
-// ─── NEWS ANALYSIS ────────────────────────────────────────
-async function goNews(code,name,mkt){
-  const el=document.getElementById('news-body');
-  if(!el)return;
-  if(newsCache[code]){el.innerHTML=newsCache[code];return;}
-  el.innerHTML=`<div class="aspinner"><div class="spin on"></div>搜尋最新新聞並分析中…</div>`;
-  try{
-    const mktCtx=mkt==='tw'?'台股':mkt==='jp'?'日股':'美股';
-    const txt=await apiCall(`搜尋${name}(${code})近期新聞(${mktCtx})，分析對股價影響。純JSON:{"summary":"2句","news":[{"title":"標題","date":"日期","body":"30字","sentiment":"positive/negative/neutral"},{"title":"","date":"","body":"","sentiment":""}]}`,true,1000);
-    const d=JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').match(/\{[\s\S]*\}/)[0]);
-    const sentMap={positive:'正面 ↑',negative:'負面 ↓',neutral:'中性'};
-    const sentCls={positive:'npos',negative:'nneg',neutral:'nneu'};
-    const html=`
-      <div class="nsum"><b style="font-weight:500">整體研判：</b>${d.summary}</div>
-      ${(d.news||[]).filter(n=>n.title).map(n=>`
-      <div class="ncard">
-        <div class="nhead">
-          <span class="nsent ${sentCls[n.sentiment]||'nneu'}">${sentMap[n.sentiment]||'中性'}</span>
-          <span class="ntitle">${n.title}</span>
-        </div>
-        <div class="nbody">${n.body||''}${n.date?` <span style="color:var(--t3);font-size:10px">— ${n.date}</span>`:''}</div>
-      </div>`).join('')}`;
-    newsCache[code]=html;
-    if(currentDetail===code && currentTab==='news') el.innerHTML=html;
-  }catch(e){
-    const errHtml=`<div style="color:var(--td);padding:12px;font-size:13px">新聞取得失敗：${e.message}</div>`;
-    newsCache[code]=errHtml;
-    if(currentDetail===code && currentTab==='news') el.innerHTML=errHtml;
-  }
-}
-
-function switchTab(tab,code,name,mkt){
+window.switchTab = function(tab,code,name,mkt){
   currentTab=tab;
   renderDetailBody(code,name,mkt);
-}
+};
 
-// ─── INIT ──────────────────────────────────────────────────
+// ─── STARTUP ───
 (async()=>{
   document.getElementById('main').innerHTML=
-    '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>同步雲端資料中…</div>';
+    '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>連線至 Firebase 雲端資料庫…</div>';
   await loadKey();
   loadTokTotal();
   await loadS();
   renderTabs();
-  renderGrid();
+  window.renderGrid();
 })();
 </script>
 </body>
