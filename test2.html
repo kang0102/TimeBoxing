@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (SMC 專業圖表版)</title>
+<title>股票自選清單 (離線防護 + SMC 版)</title>
 
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
@@ -23,34 +23,24 @@ try {
   const fbApp = initializeApp(fbCfg);
   const db = getFirestore(fbApp);
 
-  function updateSyncUI(ok, msg=""){
-     const el = document.getElementById('sync-indicator');
-     if(!el) return;
-     if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：已連線 (資料一致)</span>';
-     else el.innerHTML = `<span style="color:var(--td)">⚠ 雲端異常：${msg} (目前為本機模式)</span>`;
-  }
-
   async function fbGet(path){
     try{
-      const req = getDoc(doc(db,...path.split('/')));
-      // 🌟 放寬到 5 秒，確保手機 4G/5G 來得及連線！
-      const timer = new Promise((_, r) => setTimeout(() => r(new Error("timeout")), 5000));
-      const s = await Promise.race([req, timer]);
-      return s.exists() ? s.data() : null;
+      const req = await getDoc(doc(db,...path.split('/')));
+      return req.exists() ? req.data() : null;
     }catch(e){
-      updateSyncUI(false, "網路太慢或被阻擋");
+      console.warn("FB 讀取失敗", e);
       return null;
     }
   }
   
   async function fbSet(path,data){
+    if(window.isOfflineMode) return; // 🛡️ 離線模式絕對禁止寫入雲端
     try{
-      const req = setDoc(doc(db,...path.split('/')), data);
-      const timer = new Promise((_, r) => setTimeout(() => r(new Error("timeout")), 5000));
-      await Promise.race([req, timer]);
-      updateSyncUI(true);
+      await setDoc(doc(db,...path.split('/')), data);
+      window.updateSyncUI(true);
     }catch(e){
-      updateSyncUI(false, "寫入失敗");
+      console.warn("FB 寫入失敗", e);
+      window.updateSyncUI(false, "寫入失敗");
     }
   }
 
@@ -166,7 +156,7 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 .lvl{font-size:10px;margin-bottom:3px;font-weight:500}
 .lvv{font-size:13px;font-weight:500}
 .lvs{font-size:11px;margin-top:2px}
-.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
+.aspinner{padding:20px;display:flex;flex-direction:column;align-items:center;gap:15px;font-size:13px;color:var(--t2);justify-content:center}
 .ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
 .nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
 .nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
@@ -199,7 +189,6 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
     還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
   </div>
 </div>
-<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code></div>
 <div id="key-ok" style="display:none;margin-bottom:8px">
   <div class="keyok">
     <span>✅ API Key 已設定</span>
@@ -261,6 +250,31 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 </div>
 
 <script>
+window.isOfflineMode = false; // 🛡️ 全域離線模式標記
+window.updateSyncUI = function(ok, msg=""){
+   const el = document.getElementById('sync-indicator');
+   if(!el) return;
+   if(window.isOfflineMode) el.innerHTML = '<span style="color:var(--t2)">⚡ 離線模式運作中 (不寫入雲端)</span>';
+   else if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
+   else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步異常 (切換為本機模式)</span>`;
+}
+
+// ─── 進入離線模式 (使用者手動觸發) ───
+window.enterOfflineMode = function() {
+   window.isOfflineMode = true;
+   window.updateSyncUI(false, "使用者選擇離線模式");
+   document.getElementById('main').innerHTML = ''; // 清除載入畫面
+   
+   // 讀取本機資料
+   try{ const d=JSON.parse(localStorage.getItem('wl-v3')||'null'); if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats; }catch(e){}
+   try{ const parsed=JSON.parse(localStorage.getItem('pk-v3')||'{}'); if(parsed) P=parsed; }catch(e){}
+   if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
+   S.act=S.cats[0].id;
+   
+   renderTabs();
+   window.renderGrid();
+};
+
 const DB=[
   ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
   ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
@@ -281,7 +295,7 @@ const DB=[
   ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
   ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
   ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
-  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆生銀','tw'],
+  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
   ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
   ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
   ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
@@ -342,41 +356,19 @@ const FB_CFG='config/settings';
 const FB_WL='watchlist/data';
 const FB_PX='prices/data';
 
-function waitFB(){
-  return new Promise(res=>{
-    if(window._fb?.ready) return res();
-    document.addEventListener('fb-ready',()=>res(),{once:true});
-    setTimeout(res, 5000); // 🌟 延長至 5 秒，確保手機有足夠時間連上雲端
-  });
-}
-
-async function loadKey(){
-  await waitFB();
-  let key='';
-  if(window._fb){
-    const d = await window._fb.get(FB_CFG);
-    if(d?.anthropicKey) key=d.anthropicKey;
-  }
-  if(!key) key=localStorage.getItem('ak-v1')||'';
-  AKEY=key;
-  document.getElementById('key-setup').style.display=AKEY?'none':'block';
-  document.getElementById('key-ok').style.display=AKEY?'block':'none';
-  if(location.protocol==='file:') document.getElementById('cors-warn').style.display='block';
-}
-
 window.saveKey = async function(){
   const v=document.getElementById('keyinp').value.trim();
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
   AKEY=v;
   localStorage.setItem('ak-v1',v); 
-  if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
+  if(window._fb && !window.isOfflineMode) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
 };
 
 window.resetKey = async function(){
   AKEY='';localStorage.removeItem('ak-v1');
-  if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
+  if(window._fb && !window.isOfflineMode) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
@@ -414,6 +406,7 @@ let currentTab = 'anl';
 
 function saveS(){
   try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}
+  if(window.isOfflineMode) return; // 🌟 離線模式禁止寫入雲端
   clearTimeout(_saveSTimer);
   _saveSTimer=setTimeout(async()=>{
     if(window._fb) await window._fb.set(FB_WL,{cats:S.cats,updatedAt:Date.now()});
@@ -421,40 +414,14 @@ function saveS(){
 }
 function saveP(){
   try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}
+  if(window.isOfflineMode) return; // 🌟 離線模式禁止寫入雲端
   clearTimeout(_savePTimer);
   _savePTimer=setTimeout(async()=>{
     if(window._fb) await window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
   },800);
 }
 
-async function loadS(){
-  await waitFB();
-  let cloudLoaded = false;
-  if(window._fb){
-    try{
-      const [wl,px]=await Promise.all([window._fb.get(FB_WL),window._fb.get(FB_PX)]);
-      if(wl?.cats && Array.isArray(wl.cats) && wl.cats.length > 0){ S.cats=wl.cats; cloudLoaded = true; }
-      if(px?.data){ P=px.data; }
-    }catch(e){ console.warn("Cloud load failed"); }
-  }
-  
-  if(!cloudLoaded){
-    try{
-      const d=JSON.parse(localStorage.getItem(SK)||'null');
-      if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats;
-    }catch(e){}
-  }
-  
-  if(!P || Object.keys(P).length === 0){
-    try{ const parsed=JSON.parse(localStorage.getItem(PK)||'{}'); if(parsed) P=parsed; }catch(e){}
-  }
-  
-  if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
-  S.act=S.cats[0].id;
-}
-
-const cat=()=>S.cats.find(c=>c.id===S.act)||S.cats[0];
-
+// ─── FETCHING ───
 async function fetchTW(code){
   const proxies=['', 'https://corsproxy.io/?url='];
   for(const proxy of proxies){
@@ -472,7 +439,6 @@ async function fetchTW(code){
   return null;
 }
 
-// 🌟 修改：確保擷取完整時間軸給圖表使用
 async function fetchYFHistory(code, mkt, tf='1d'){
   let t = code;
   if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
@@ -492,18 +458,26 @@ async function fetchYFHistory(code, mkt, tf='1d'){
       const res = j.chart.result[0];
       const quotes = res.indicators.quote[0];
       
-      // 轉換時間戳記 (為了 Plotly K線圖)
-      const dates = res.timestamp.map(ts => {
-         const date = new Date(ts * 1000);
-         return tf === '1d' ? date.toISOString().split('T')[0] : date.toISOString();
-      });
+      let date = [], open = [], high = [], low = [], close = [];
+      for(let i=0; i<res.timestamp.length; i++){
+          if(quotes.close[i] !== null && quotes.high[i] !== null && quotes.low[i] !== null && quotes.open[i] !== null){
+              const d = new Date(res.timestamp[i] * 1000);
+              let dStr = "";
+              if(tf === '1d'){
+                  dStr = d.toISOString().split('T')[0];
+              } else {
+                  dStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+              }
+              date.push(dStr);
+              open.push(quotes.open[i]);
+              high.push(quotes.high[i]);
+              low.push(quotes.low[i]);
+              close.push(quotes.close[i]);
+          }
+      }
 
       return {
-         date: dates,
-         open: quotes.open,
-         close: quotes.close,
-         high: quotes.high,
-         low: quotes.low,
+         date, open, high, low, close,
          px: res.meta.regularMarketPrice,
          prevClose: res.meta.chartPreviousClose,
          chg: res.meta.regularMarketPrice - res.meta.chartPreviousClose,
@@ -515,20 +489,23 @@ async function fetchYFHistory(code, mkt, tf='1d'){
   return null;
 }
 
-// 🌟 Google 新聞 RSS 引擎 (100% 繞過 CORS 阻擋)
+// 🌟 Google 新聞 RSS (8則 + 時間排序)
 async function fetchFreeNews(code, name, mkt){
   try {
     const q = encodeURIComponent(`${name} ${code} 股票`);
     const rssUrl = `https://news.google.com/rss/search?q=${q}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
     const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-    
     const r = await fetch(apiUrl);
     const j = await r.json();
     
     if(j.status === 'ok' && j.items && j.items.length > 0){
-       return j.items.slice(0, 5).map(item => {
+       // 依時間新到舊排序
+       let items = j.items.sort((a,b) => new Date(b.pubDate.replace(/-/g, '/')) - new Date(a.pubDate.replace(/-/g, '/')));
+       
+       // 取 8 筆資料
+       return items.slice(0, 8).map(item => {
          const dateObj = new Date(item.pubDate.replace(/-/g, '/'));
-         const dateStr = !isNaN(dateObj) ? `${dateObj.getMonth()+1}/${dateObj.getDate()}` : item.pubDate.split(' ')[0];
+         const dateStr = !isNaN(dateObj) ? `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}` : item.pubDate.split(' ')[0];
          return {
            title: item.title,
            link: item.link,
@@ -537,17 +514,14 @@ async function fetchFreeNews(code, name, mkt){
          };
        });
     }
-  } catch(e) {
-    console.error("新聞載入失敗:", e);
-  }
+  } catch(e) {}
   return [];
 }
 
-// 🌟 專業 SMC 圖表繪製引擎
+// 🌟 Plotly 專業 SMC 繪圖引擎
 window.drawSMCChart = function(hist, containerId) {
   if(!hist || !hist.close || hist.close.length < 2) return;
   
-  // 1. 基本的 K 線圖資料
   const trace1 = {
     x: hist.date,
     close: hist.close,
@@ -558,39 +532,35 @@ window.drawSMCChart = function(hist, containerId) {
     xaxis: 'x',
     yaxis: 'y',
     name: 'K線',
-    increasing: {line: {color: '#ef5350'}}, // 台股習慣：紅漲
-    decreasing: {line: {color: '#26a69a'}}  // 綠跌
+    increasing: {line: {color: '#E24B4A'}}, 
+    decreasing: {line: {color: '#639922'}}  
   };
 
   const shapes = [];
   const annotations = [];
 
-  // 2. 尋找 FVG (合理價值缺口) 並畫出藍色/橘色矩形
   let fvgCount = 0;
   for(let i = hist.close.length - 1; i >= 2; i--) {
-      if (fvgCount >= 3) break; // 只畫最近的 3 個缺口以免畫面太亂
+      if (fvgCount >= 3) break; 
       let h1 = hist.high[i-2], l1 = hist.low[i-2];
       let h3 = hist.high[i],   l3 = hist.low[i];
       
-      // 多頭缺口 Bullish FVG (藍色)
       if (l3 > h1) {
           shapes.push({
               type: 'rect',
               x0: hist.date[i-2], y0: h1,
               x1: hist.date[hist.date.length-1], y1: l3,
-              fillcolor: 'rgba(0, 150, 255, 0.2)', // 藍色透明
+              fillcolor: 'rgba(0, 150, 255, 0.2)', 
               line: {width: 0},
               layer: 'below'
           });
           fvgCount++;
-      } 
-      // 空頭缺口 Bearish FVG (橘紅色)
-      else if (h3 < l1) {
+      } else if (h3 < l1) {
           shapes.push({
               type: 'rect',
               x0: hist.date[i-2], y0: l1,
               x1: hist.date[hist.date.length-1], y1: h3,
-              fillcolor: 'rgba(255, 100, 0, 0.2)', // 橘紅色透明
+              fillcolor: 'rgba(255, 100, 0, 0.2)', 
               line: {width: 0},
               layer: 'below'
           });
@@ -598,7 +568,6 @@ window.drawSMCChart = function(hist, containerId) {
       }
   }
 
-  // 3. 尋找波段高低點，畫出結構線 (BOS / Liquidity)
   if(hist.high.length > 20) {
       let recentHighIdx = hist.high.length - 20 + hist.high.slice(-20).indexOf(Math.max(...hist.high.slice(-20)));
       let recentLowIdx = hist.low.length - 20 + hist.low.slice(-20).indexOf(Math.min(...hist.low.slice(-20)));
@@ -606,34 +575,32 @@ window.drawSMCChart = function(hist, containerId) {
       let highest = hist.high[recentHighIdx];
       let lowest = hist.low[recentLowIdx];
 
-      // 畫阻力線
       shapes.push({
           type: 'line',
           x0: hist.date[recentHighIdx], y0: highest,
           x1: hist.date[hist.date.length-1], y1: highest,
-          line: {color: 'red', width: 2, dash: 'dash'}
+          line: {color: 'rgba(226, 75, 74, 0.8)', width: 1, dash: 'dash'}
       });
       annotations.push({
           x: hist.date[hist.date.length-1], y: highest,
-          text: 'Buy Liquidity', showarrow: false, xanchor: 'left', font: {size: 10, color: 'red'}
+          text: 'BSL 流動性', showarrow: false, xanchor: 'left', font: {size: 10, color: 'rgba(226, 75, 74, 0.8)'}
       });
 
-      // 畫支撐線
       shapes.push({
           type: 'line',
           x0: hist.date[recentLowIdx], y0: lowest,
           x1: hist.date[hist.date.length-1], y1: lowest,
-          line: {color: 'green', width: 2, dash: 'dash'}
+          line: {color: 'rgba(99, 153, 34, 0.8)', width: 1, dash: 'dash'}
       });
       annotations.push({
           x: hist.date[hist.date.length-1], y: lowest,
-          text: 'Sell Liquidity', showarrow: false, xanchor: 'left', font: {size: 10, color: 'green'}
+          text: 'SSL 流動性', showarrow: false, xanchor: 'left', font: {size: 10, color: 'rgba(99, 153, 34, 0.8)'}
       });
   }
 
   const layout = {
     dragmode: 'pan',
-    margin: { l: 40, r: 40, t: 10, b: 20 },
+    margin: { l: 40, r: 40, t: 10, b: 30 },
     xaxis: { rangeslider: { visible: false }, type: 'category', showgrid: false },
     yaxis: { autorange: true, fixedrange: false, showgrid: true, gridcolor: 'rgba(0,0,0,0.05)' },
     plot_bgcolor: 'transparent',
@@ -647,7 +614,6 @@ window.drawSMCChart = function(hist, containerId) {
   Plotly.newPlot(containerId, [trace1], layout, config);
 };
 
-// 🌟 演算法分析：除了傳回訊號，也把歷史資料傳回，讓畫面可以呼叫 drawSMCChart
 function calculateTechIndicators(hist, tfLabel) {
   if(!hist || hist.close.length < 2) return null;
   const c = hist.close, h = hist.high, l = hist.low;
@@ -673,7 +639,6 @@ function calculateTechIndicators(hist, tfLabel) {
   if(curr > sma20) signals.push({color:'green', label:'中線均線', val:`站上20T線 (偏多)`});
   else signals.push({color:'red', label:'中線均線', val:`跌破20T線 (偏空)`});
 
-  // SMC: FVG 缺口偵測字串 (圖表交給 Plotly 畫)
   let smcSignals = [];
   for(let i = c.length - 3; i < c.length; i++) {
       if(i < 2) continue;
@@ -716,7 +681,7 @@ function calculateTechIndicators(hist, tfLabel) {
     levels: { r1: R1.toFixed(2), r2: R2.toFixed(2), s1: S1.toFixed(2), s2: S2.toFixed(2) },
     signals: signals,
     smcSignals: smcSignals,
-    histData: hist // 保存歷史資料給畫圖用
+    histData: hist 
   };
 }
 
@@ -1017,7 +982,6 @@ function renderDetailBody(code,name,mkt){
 
     const lv = p.tech.levels;
     
-    // 加入 SMC K線圖的容器
     techHtml = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; margin-bottom:8px;">
         <div class="sec" style="margin:0;">📈 SMC 聰明錢流動性圖表</div>
@@ -1091,13 +1055,12 @@ function renderDetailBody(code,name,mkt){
     </div>
   </div>`;
 
-  // 🌟 畫出 Plotly 專業 K 線圖 (延遲一小段時間確保 DOM 載入)
   if(currentTab === 'anl' && p.tech && p.tech.histData) {
       setTimeout(() => {
           if(document.getElementById('smc-chart-container')){
               window.drawSMCChart(p.tech.histData, 'smc-chart-container');
           }
-      }, 50);
+      }, 100);
   }
 }
 
@@ -1125,27 +1088,50 @@ window.switchTab = function(tab,code,name,mkt){
   renderDetailBody(code,name,mkt);
 };
 
-// ─── STARTUP ───
+// ─── STARTUP (絕對防卡死啟動機制) ───
 (async()=>{
   try {
     const mainBox = document.getElementById('main');
-    if(mainBox) mainBox.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>啟動系統與資料庫中…</div>';
+    if(mainBox) mainBox.innerHTML = `
+      <div style="padding:50px 20px;text-align:center;color:var(--t2);font-size:14px">
+        <div class="spin on" style="display:inline-block;margin-bottom:15px;width:24px;height:24px;border-width:3px"></div>
+        <div style="margin-bottom:15px;font-weight:500;">☁️ 正在載入雲端資料...</div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:20px;">跨裝置同步中，請耐心等候</div>
+        <button onclick="window.enterOfflineMode()" class="btn" style="border:1px solid var(--b2); background:var(--bg); color:var(--t2);">
+          ⚡ 先進入離線模式 (僅讀取本機資料)
+        </button>
+      </div>`;
     
+    // 等待 Firebase 或等使用者按離線模式
+    await new Promise(r => {
+       if(window._fb?.ready) r();
+       else document.addEventListener('fb-ready', r, {once:true});
+    });
+
+    if(window.isOfflineMode) return; // 如果使用者已經按了離線按鈕，就直接結束雲端載入
+
     await loadKey();
     loadTokTotal();
-    await loadS();
-    renderTabs();
-    window.renderGrid();
-  } catch (error) {
-    const mainBox = document.getElementById('main');
-    if(mainBox) {
-      mainBox.innerHTML = `
-        <div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px;line-height:1.6">
-          ⚠️ 系統開機失敗：${error.message}<br><br>
-          <button onclick="localStorage.clear();location.reload()" style="padding:8px 16px;background:#E24B4A;color:white;border:none;border-radius:6px;cursor:pointer;">點此重設所有設定 (修復卡死)</button>
-        </div>
-      `;
+    
+    const wl = await window._fb.get(FB_WL);
+    const px = await window._fb.get(FB_PX);
+    
+    if(!window.isOfflineMode) {
+        window.updateSyncUI(true);
+        if(wl?.cats && wl.cats.length) S.cats = wl.cats;
+        else try{ const d=JSON.parse(localStorage.getItem(SK)); if(d?.cats) S.cats=d.cats; }catch(e){}
+        
+        if(px?.data) P = px.data;
+        else try{ P=JSON.parse(localStorage.getItem(PK))||{}; }catch(e){}
+        
+        if(!S.cats || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
+        S.act=S.cats[0].id;
+        
+        renderTabs();
+        window.renderGrid();
     }
+  } catch (error) {
+    console.warn(error);
   }
 })();
 </script>
