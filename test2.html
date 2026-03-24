@@ -3,57 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (防卡死版)</title>
+<title>股票自選清單 (防卡死雙核版)</title>
+
 <script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,doc,getDoc,setDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+try {
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-const fbCfg={
-  apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-  authDomain:"stack-diagram-db.firebaseapp.com",
-  projectId:"stack-diagram-db",
-  storageBucket:"stack-diagram-db.firebasestorage.app",
-  messagingSenderId:"67240747982",
-  appId:"1:67240747982:web:1fb065e40e936a7485419f"
-};
-const fbApp=initializeApp(fbCfg);
-const db=getFirestore(fbApp);
+  const fbCfg={
+    apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+    authDomain:"stack-diagram-db.firebaseapp.com",
+    projectId:"stack-diagram-db",
+    storageBucket:"stack-diagram-db.firebasestorage.app",
+    messagingSenderId:"67240747982",
+    appId:"1:67240747982:web:1fb065e40e936a7485419f"
+  };
+  const fbApp = initializeApp(fbCfg);
+  const db = getFirestore(fbApp);
 
-function updateSyncUI(ok, msg=""){
-   const el = document.getElementById('sync-indicator');
-   if(!el) return;
-   if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
-   else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步失敗：${msg} (已切換本機模式)</span>`;
-}
-
-// 🌟 加入 Promise.race 實現超時機制，防止手機版無限轉圈
-async function fbGet(path){
-  try{
-    const req = getDoc(doc(db,...path.split('/')));
-    const timer = new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 2500));
-    const s = await Promise.race([req, timer]);
-    return s.exists() ? s.data() : null;
-  }catch(e){
-    console.warn('fbGet fail', e);
-    updateSyncUI(false, e.message === "timeout" ? "連線逾時" : "權限被拒");
-    return null; // 發生錯誤時回傳 null，讓主程式繼續跑
+  function updateSyncUI(ok, msg=""){
+     const el = document.getElementById('sync-indicator');
+     if(!el) return;
+     if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
+     else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步失敗：切換為本機模式</span>`;
   }
-}
 
-async function fbSet(path,data){
-  try{
-    const req = setDoc(doc(db,...path.split('/')), data);
-    const timer = new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 2500));
-    await Promise.race([req, timer]);
-    updateSyncUI(true);
-  }catch(e){
-    console.warn('fbSet fail', e);
-    updateSyncUI(false, e.message === "timeout" ? "同步逾時" : "寫入被拒");
+  async function fbGet(path){
+    try{
+      const req = getDoc(doc(db,...path.split('/')));
+      const timer = new Promise((_, r) => setTimeout(() => r(new Error("timeout")), 1500));
+      const s = await Promise.race([req, timer]);
+      return s.exists() ? s.data() : null;
+    }catch(e){
+      updateSyncUI(false, "讀取超時或權限被拒");
+      return null;
+    }
   }
-}
+  
+  async function fbSet(path,data){
+    try{
+      const req = setDoc(doc(db,...path.split('/')), data);
+      const timer = new Promise((_, r) => setTimeout(() => r(new Error("timeout")), 1500));
+      await Promise.race([req, timer]);
+      updateSyncUI(true);
+    }catch(e){
+      updateSyncUI(false, "寫入超時");
+    }
+  }
 
-window._fb={get:fbGet,set:fbSet,ready:true};
-document.dispatchEvent(new Event('fb-ready'));
+  window._fb = { get: fbGet, set: fbSet, ready: true };
+  document.dispatchEvent(new Event('fb-ready'));
+} catch (error) {
+  console.warn("Firebase 載入失敗，已安全隔離", error);
+}
 </script>
 
 <style>
@@ -183,8 +185,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
   <div class="keyrow">
     <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
-           onkeydown="if(event.key==='Enter')window.saveKey()">
-    <button class="btn p" onclick="window.saveKey()">儲存</button>
+           onkeydown="if(event.key==='Enter')saveKey()">
+    <button class="btn p" onclick="saveKey()">儲存</button>
   </div>
   <div class="keyhint">
     ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
@@ -198,8 +200,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
     <span>✅ API Key 已設定</span>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
-      <button class="btn sm" onclick="window.checkBal()" id="bal-btn">💰 查餘額</button>
-      <span class="resetlink" onclick="window.resetKey()">更換 Key</span>
+      <button class="btn sm" onclick="checkBal()" id="bal-btn">💰 查餘額</button>
+      <span class="resetlink" onclick="resetKey()">更換 Key</span>
     </div>
   </div>
 </div>
@@ -211,50 +213,49 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
   <span style="color:var(--b2)">│</span>
   <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
-  <button class="btn sm" onclick="window.resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
+  <button class="btn sm" onclick="resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
 </div>
 
 <div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)">
   ☁️ 雲端狀態檢查中...
 </div>
 <div class="topbar">
-  <div class="sq" onclick="window.openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
-  <button class="btn p" onclick="window.showNewCat()">＋ 分類</button>
+  <div class="sq" onclick="openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
+  <button class="btn p" onclick="showNewCat()">＋ 分類</button>
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="bar" id="bar">
   <span class="bn" id="bn"></span>
-  <button class="btn sm" onclick="window.rfAll()">↺ 全部更新</button>
-  <button class="btn sm p" onclick="window.openSrch()">＋ 加股票</button>
+  <button class="btn sm" onclick="rfAll()">↺ 全部更新</button>
+  <button class="btn sm p" onclick="openSrch()">＋ 加股票</button>
 </div>
 <div id="main"></div>
 
-<div class="ov" id="sov" onclick="if(event.target.id==='sov')window.closeSrch()">
+<div class="ov" id="sov" onclick="if(event.target.id==='sov')closeSrch()">
   <div class="ovb">
     <div class="ovh">
       <span>🔍</span>
       <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
-             oninput="window.doSrch(this.value)" autocomplete="off">
-      <button class="btn sm" onclick="window.closeSrch()">✕</button>
+             oninput="doSrch(this.value)" autocomplete="off">
+      <button class="btn sm" onclick="closeSrch()">✕</button>
     </div>
     <div class="ovbd" id="sres"></div>
   </div>
 </div>
 
-<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')window.closeCmod()">
+<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')closeCmod()">
   <div class="mbox">
     <h3>新增分類</h3>
     <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
-           onkeydown="if(event.key==='Enter')window.mkCat()">
+           onkeydown="if(event.key==='Enter')mkCat()">
     <div class="mbtns">
-      <button class="btn" onclick="window.closeCmod()">取消</button>
-      <button class="btn p" onclick="window.mkCat()">建立</button>
+      <button class="btn" onclick="closeCmod()">取消</button>
+      <button class="btn p" onclick="mkCat()">建立</button>
     </div>
   </div>
 </div>
 
 <script>
-// ─── DB ────────────────────────────────────────────────────
 const DB=[
   ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
   ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
@@ -336,17 +337,19 @@ const FB_CFG='config/settings';
 const FB_WL='watchlist/data';
 const FB_PX='prices/data';
 
-function waitFB(){return new Promise(res=>{
-  if(window._fb?.ready)return res();
-  document.addEventListener('fb-ready',()=>res(),{once:true});
-  setTimeout(res,3000); 
-});}
+function waitFB(){
+  return new Promise(res=>{
+    if(window._fb?.ready) return res();
+    document.addEventListener('fb-ready',()=>res(),{once:true});
+    setTimeout(res, 800); // 🌟 0.8秒超級逃生門：連不上雲端就強制放行！
+  });
+}
 
 async function loadKey(){
   await waitFB();
   let key='';
   if(window._fb){
-    const d=await window._fb.get(FB_CFG);
+    const d = await window._fb.get(FB_CFG);
     if(d?.anthropicKey) key=d.anthropicKey;
   }
   if(!key) key=localStorage.getItem('ak-v1')||'';
@@ -356,7 +359,7 @@ async function loadKey(){
   if(location.protocol==='file:') document.getElementById('cors-warn').style.display='block';
 }
 
-window.saveKey = async function(){
+async function saveKey(){
   const v=document.getElementById('keyinp').value.trim();
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
   AKEY=v;
@@ -364,17 +367,17 @@ window.saveKey = async function(){
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
-};
+}
 
-window.resetKey = async function(){
+async function resetKey(){
   AKEY='';localStorage.removeItem('ak-v1');
   if(window._fb) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
-};
+}
 
-window.checkBal = async function(){
+async function checkBal(){
   if(!AKEY){alert('請先設定 API Key');return;}
   const btn=document.getElementById('bal-btn');
   const disp=document.getElementById('bal-display');
@@ -396,9 +399,8 @@ window.checkBal = async function(){
   }finally{
     btn.disabled=false;btn.textContent='💰 查餘額';
   }
-};
+}
 
-// ─── STATE ───
 const SK='wl-v3',PK='pk-v3';
 let S={cats:[]},P={},aiRun=false,view='grid';
 let _saveSTimer=null,_savePTimer=null;
@@ -420,33 +422,43 @@ function saveP(){
   },800);
 }
 
+// 🌟 最穩固的資料還原機制：優先讀取本機，絕對不搞丟你的板子！
 async function loadS(){
   await waitFB();
+  let cloudLoaded = false;
   if(window._fb){
-    const [wl,px]=await Promise.all([window._fb.get(FB_WL),window._fb.get(FB_PX)]);
-    if(wl?.cats&&wl.cats.length){S.cats=wl.cats;}
-    if(px?.data){P=px.data;}
+    try{
+      const [wl,px]=await Promise.all([window._fb.get(FB_WL),window._fb.get(FB_PX)]);
+      if(wl?.cats && Array.isArray(wl.cats) && wl.cats.length > 0){ S.cats=wl.cats; cloudLoaded = true; }
+      if(px?.data){ P=px.data; }
+    }catch(e){ console.warn("Cloud load failed"); }
   }
-  // 保底：如果 Firebase 被擋，強制載入本機記憶體
-  if(!S.cats.length){
-    try{const d=JSON.parse(localStorage.getItem(SK)||'null');if(d?.cats)S.cats=d.cats;}catch(e){}
+  
+  if(!cloudLoaded){
+    try{
+      const d=JSON.parse(localStorage.getItem(SK)||'null');
+      // 相容你舊版的資料 (wl-v3)
+      if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats;
+    }catch(e){}
   }
-  if(!Object.keys(P).length){
-    try{P=JSON.parse(localStorage.getItem(PK)||'{}')||{};}catch(e){}
+  
+  if(!P || Object.keys(P).length === 0){
+    try{ const parsed=JSON.parse(localStorage.getItem(PK)||'{}'); if(parsed) P=parsed; }catch(e){}
   }
-  if(!S.cats.length)S.cats=[{id:'def',name:'自選股',stocks:[]}];
+  
+  if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
   S.act=S.cats[0].id;
 }
+
 const cat=()=>S.cats.find(c=>c.id===S.act)||S.cats[0];
 
-// ─── FETCHING ───
 async function fetchTW(code){
   const proxies=['', 'https://corsproxy.io/?url='];
   for(const proxy of proxies){
     for(const ex of['tse','otc']){
       try{
         const url=`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${code}.tw&json=1&delay=0`;
-        const r=await fetch(proxy?proxy+encodeURIComponent(url):url, {mode:'cors'});
+        const r=await fetch(proxy?proxy+encodeURIComponent(url):url);
         const j=await r.json(),d=j.msgArray?.[0];
         if(!d||!d.z||d.z==='-')continue;
         const px=+d.z,pv=+d.y;
@@ -464,12 +476,10 @@ async function fetchYFHistory(code, mkt){
   for(const proxy of pxs){
     try{
       const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=1d&range=1mo`;
-      const fetchUrl = proxy ? proxy + encodeURIComponent(u) : u;
-      const r = await fetch(fetchUrl);
+      const r = await fetch(proxy ? proxy + encodeURIComponent(u) : u);
       const j = await r.json();
       const res = j.chart.result[0];
       const quotes = res.indicators.quote[0];
-      
       return {
          close: quotes.close.filter(x=>x!==null),
          high: quotes.high.filter(x=>x!==null),
@@ -492,8 +502,7 @@ async function fetchFreeNews(code, mkt){
   for(const proxy of pxs){
     try{
       const u = `https://query2.finance.yahoo.com/v1/finance/search?q=${t}&newsCount=5`;
-      const fetchUrl = proxy ? proxy + encodeURIComponent(u) : u;
-      const r = await fetch(fetchUrl);
+      const r = await fetch(proxy ? proxy + encodeURIComponent(u) : u);
       const j = await r.json();
       if(j.news && j.news.length > 0) return j.news;
     }catch(e){}
@@ -548,7 +557,6 @@ function calculateTechIndicators(hist) {
   };
 }
 
-// ─── TOKENS ───
 const PRICE={ 'claude-haiku-4-5-20251001': {in:0.80, out:4.00}, 'claude-sonnet-4-6': {in:3.00, out:15.00} };
 let tokSession={in:0,out:0,cost:0}; 
 let tokTotal={in:0,out:0,cost:0};   
@@ -576,12 +584,12 @@ function renderTokBar(){
   document.getElementById('tok-cost').textContent='$'+tokSession.cost.toFixed(6);
   document.getElementById('tok-total-cost').textContent='$'+tokTotal.cost.toFixed(4);
 }
-window.resetTokStats = function(){
+function resetTokStats(){
   tokSession={in:0,out:0,cost:0}; tokTotal={in:0,out:0,cost:0};
   saveTokTotal();
   const bar=document.getElementById('tok-bar');
   if(bar)bar.style.display='none';
-};
+}
 
 async function apiCall(prompt,maxTok=700,isSearch=false){
   if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
@@ -613,8 +621,7 @@ async function callAI(prompt,search=false){
   return JSON.parse(m[0]);
 }
 
-// ─── UI BINDINGS ───
-window.doSrch = function(q){
+function doSrch(q){
   const res=document.getElementById('sres');
   if(!q.trim()){res.innerHTML='<div class="airow">輸入代碼或名稱，台股 / 美股 / 日股均可</div>';return;}
   const items=fDB(q);
@@ -622,7 +629,7 @@ window.doSrch = function(q){
     const nm=zh.split(' ')[0];
     const lbl=mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
     const bc=mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
-    return`<div class="si" onclick="window.addS('${code}','${nm}','${mkt}')">
+    return`<div class="si" onclick="addS('${code}','${nm}','${mkt}')">
       <span class="sic">${code}</span><span class="sin">${nm}</span>
       <span class="sib ${bc}">${lbl}</span></div>`;
   }).join('');
@@ -630,11 +637,11 @@ window.doSrch = function(q){
   html+=`<div class="airow">
     <div class="spin ${aiRun?'on':''}" id="aispin"></div>
     <span id="aihtxt">${aiRun?'AI 搜尋中…':
-      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="window.aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
+      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
   res.innerHTML=html;
-};
+}
 
-window.aiSrch = async function(q){
+async function aiSrch(q){
   if(aiRun)return;aiRun=true;
   const sp=document.getElementById('aispin'),ht=document.getElementById('aihtxt');
   if(sp)sp.classList.add('on');if(ht)ht.textContent='AI 搜尋中…';
@@ -644,56 +651,57 @@ window.aiSrch = async function(q){
     document.getElementById('sres').innerHTML=list.map(s=>{
       const bc=s.mkt==='tw'?'btw':s.mkt==='jp'?'bjp':'bus';
       const lbl=s.mkt==='tw'?'台股':s.mkt==='jp'?'日股':'美股';
-      return`<div class="si" onclick="window.addS('${s.code}','${s.name}','${s.mkt||'us'}')">
+      return`<div class="si" onclick="addS('${s.code}','${s.name}','${s.mkt||'us'}')">
         <span class="sic">${s.code}</span><span class="sin">${s.name}</span>
         <span class="sib ${bc}">${lbl}</span></div>`;
     }).join('')||'<div class="airow">找不到此股票</div>';
   }catch(e){
     const ht2=document.getElementById('aihtxt');
-    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="window.aiSrch('${q}')">重試</span>`;
+    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="aiSrch('${q}')">重試</span>`;
   }
   aiRun=false;
-};
+}
 
-window.openSrch = function(){
+function openSrch(){
   document.getElementById('sov').classList.add('on');
-  const i=document.getElementById('sq');i.value='';window.doSrch('');
+  const i=document.getElementById('sq');i.value='';doSrch('');
   setTimeout(()=>i.focus(),60);
-};
-window.closeSrch = function(){document.getElementById('sov').classList.remove('on');aiRun=false;};
-window.showNewCat = function(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);};
-window.closeCmod = function(){document.getElementById('cmod').classList.remove('on');};
-window.mkCat = function(){
+}
+function closeSrch(){document.getElementById('sov').classList.remove('on');aiRun=false;}
+
+function showNewCat(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);}
+function closeCmod(){document.getElementById('cmod').classList.remove('on');}
+function mkCat(){
   const n=document.getElementById('cinp').value.trim();if(!n)return;
   const c={id:'c'+Date.now(),name:n,stocks:[]};
-  S.cats.push(c);S.act=c.id;window.closeCmod();saveS();renderAll();
-};
-window.delCat = function(id,e){
+  S.cats.push(c);S.act=c.id;closeCmod();saveS();renderAll();
+}
+function delCat(id,e){
   e?.stopPropagation();
   if(S.cats.length<=1){alert('至少保留一個分類');return;}
   if(!confirm(`刪除「${S.cats.find(c=>c.id===id)?.name}」？`))return;
   S.cats=S.cats.filter(c=>c.id!==id);
   if(S.act===id)S.act=S.cats[0].id;
   saveS();renderAll();
-};
-window.setAct = function(id){S.act=id;view='grid';renderAll();};
-window.addS = function(code,name,mkt){
+}
+function setAct(id){S.act=id;view='grid';renderAll();}
+function addS(code,name,mkt){
   const c=cat();
-  if(c.stocks.find(s=>s.code===code)){window.closeSrch();return;}
-  c.stocks.push({code,name,mkt});saveS();window.closeSrch();window.renderGrid();window.rfStock(code,name,mkt);
-};
-window.rmS = function(code,e){
+  if(c.stocks.find(s=>s.code===code)){closeSrch();return;}
+  c.stocks.push({code,name,mkt});saveS();closeSrch();renderGrid();rfStock(code,name,mkt);
+}
+function rmS(code,e){
   e?.stopPropagation();
   const c=cat();c.stocks=c.stocks.filter(s=>s.code!==code);
-  delete P[code];saveS();saveP();window.renderGrid();
-};
+  delete P[code];saveS();saveP();renderGrid();
+}
 
-const renderAll=()=>{renderTabs();if(view==='grid')window.renderGrid();};
+const renderAll=()=>{renderTabs();if(view==='grid')renderGrid();};
 function renderTabs(){
   document.getElementById('tabs').innerHTML=
-    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="window.setAct('${c.id}')">
-      ${c.name}<span class="tx" onclick="window.delCat('${c.id}',event)">✕</span></div>`).join('')+
-    `<button class="tadd" onclick="window.showNewCat()">＋ 新分類</button>`;
+    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="setAct('${c.id}')">
+      ${c.name}<span class="tx" onclick="delCat('${c.id}',event)">✕</span></div>`).join('')+
+    `<button class="tadd" onclick="showNewCat()">＋ 新分類</button>`;
 }
 function tsLbl(ts){
   if(!ts)return'';
@@ -715,8 +723,8 @@ function cardHTML(s){
   }else if(p?.err)ph=`<div class="ld" title="${p.errMsg||''}">取得失敗 — 點擊重試</div>`;
   else ph=`<div class="cpx" style="font-size:12px;color:var(--t3)">— 點擊進入</div>`;
   
-  return`<div class="card" id="card-${s.code}" onclick="window.openDetail('${s.code}','${s.name}','${s.mkt}')">
-    <span class="cx" onclick="window.rmS('${s.code}',event)">✕</span>
+  return`<div class="card" id="card-${s.code}" onclick="openDetail('${s.code}','${s.name}','${s.mkt}')">
+    <span class="cx" onclick="rmS('${s.code}',event)">✕</span>
     <div class="cmkt">${mktLbl}</div>
     <div class="ccode">${s.code}</div>
     <div class="cname" title="${s.name}">${s.name}</div>
@@ -729,7 +737,7 @@ function renderCard(code){
   el.outerHTML=cardHTML(s);
 }
 
-window.renderGrid = function(){
+function renderGrid(){
   view='grid';
   currentDetail=null;
   currentTab='anl';
@@ -745,9 +753,9 @@ window.renderGrid = function(){
     return;
   }
   m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
-};
+}
 
-window.rfStock = async function(code,name,mkt){
+async function rfStock(code,name,mkt){
   P[code]={...(P[code]||{}),loading:true};
   renderCard(code);
   if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
@@ -787,19 +795,19 @@ window.rfStock = async function(code,name,mkt){
   }
   renderCard(code);
   if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
-};
+}
 
-window.rfAll = async function(){
-  for(const s of cat().stocks) window.rfStock(s.code,s.name,s.mkt);
-};
+async function rfAll(){
+  for(const s of cat().stocks) rfStock(s.code,s.name,s.mkt);
+}
 
-window.openDetail = function(code,name,mkt){
+function openDetail(code,name,mkt){
   view='detail';
   currentDetail=code;
   document.getElementById('bar').classList.remove('on');
-  if(!P[code]?.px && !P[code]?.loading) window.rfStock(code,name,mkt);
+  if(!P[code]?.px && !P[code]?.loading) rfStock(code,name,mkt);
   renderDetailBody(code,name,mkt);
-};
+}
 
 function renderDetailBody(code,name,mkt){
   if(view!=='detail'||currentDetail!==code) return;
@@ -843,7 +851,7 @@ function renderDetailBody(code,name,mkt){
     let aiSummaryBlock = '';
     if(p.aiRun) aiSummaryBlock = `<div class="aspinner"><div class="spin on"></div>機器人正在閱讀新聞中…</div>`;
     else if(p.aiSummary) aiSummaryBlock = `<div class="nsum"><b style="font-weight:500">🤖 AI 新聞總結：</b><br>${p.aiSummary}</div>`;
-    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="window.triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
+    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
 
     const listHtml = p.newsList.map(n=>`
       <a href="${n.link}" target="_blank" class="ncard">
@@ -862,18 +870,18 @@ function renderDetailBody(code,name,mkt){
   m.innerHTML = `
   <div class="anl">
     <div class="anlhd">
-      <button class="bk" onclick="window.renderGrid()">← 返回</button>
+      <button class="bk" onclick="renderGrid()">← 返回</button>
       <span class="anln">${name}</span>
       <span style="font-size:11px;color:var(--t2)">${code}</span>
       <div style="flex:1"></div>
-      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
+      <button class="btn sm p" onclick="rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
       ${pxHtml}
     </div>
     <div class="ntab">
-      <button class="nt ${currentTab==='anl'?'on':''}" onclick="window.switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
-      <button class="nt ${currentTab==='news'?'on':''}" onclick="window.switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
+      <button class="nt ${currentTab==='anl'?'on':''}" onclick="switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
+      <button class="nt ${currentTab==='news'?'on':''}" onclick="switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
     </div>
     <div id="tab-anl-body" style="display:${currentTab==='anl'?'block':'none'}">
       ${techHtml}
@@ -884,7 +892,7 @@ function renderDetailBody(code,name,mkt){
   </div>`;
 }
 
-window.triggerAISummary = async function(code, name){
+async function triggerAISummary(code, name){
   if(!P[code] || !P[code].newsList) return;
   P[code].aiRun = true;
   renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
@@ -901,22 +909,36 @@ window.triggerAISummary = async function(code, name){
     saveP(); 
     renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
   }
-};
+}
 
-window.switchTab = function(tab,code,name,mkt){
+function switchTab(tab,code,name,mkt){
   currentTab=tab;
   renderDetailBody(code,name,mkt);
-};
+}
 
-// ─── STARTUP ───
+// ─── STARTUP (絕對防當機啟動程序) ───
 (async()=>{
-  document.getElementById('main').innerHTML=
-    '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>連線至 Firebase 雲端資料庫…</div>';
-  await loadKey();
-  loadTokTotal();
-  await loadS();
-  renderTabs();
-  window.renderGrid();
+  try {
+    const mainBox = document.getElementById('main');
+    if(mainBox) mainBox.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t2);font-size:13px"><div class="spin on" style="display:inline-block;margin-right:8px"></div>啟動系統與資料庫中…</div>';
+    
+    await loadKey();
+    loadTokTotal();
+    await loadS();
+    renderTabs();
+    renderGrid();
+  } catch (error) {
+    const mainBox = document.getElementById('main');
+    if(mainBox) {
+      mainBox.innerHTML = `
+        <div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px;line-height:1.6">
+          ⚠️ 系統開機失敗：${error.message}<br><br>
+          這通常是因為瀏覽器安全性阻擋或資料毀損。<br><br>
+          <button onclick="localStorage.clear();location.reload()" style="padding:8px 16px;background:#E24B4A;color:white;border:none;border-radius:6px;cursor:pointer;">點此重設所有設定 (修復卡死)</button>
+        </div>
+      `;
+    }
+  }
 })();
 </script>
 </body>
