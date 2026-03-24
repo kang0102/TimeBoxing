@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.2 - 光影線路版)</title>
+    <title>工程疊構圖產生器 (Pro Ultimate - 完整特效版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -68,37 +68,29 @@
             button, select, input[type="text"], input[type="number"] { height: 44px; font-size: 15px; }
             .layer-check { width: 24px; height: 24px; } 
 
-            /* 1. 雲端總管滿版化 (Full Screen Modal) */
             .modal { 
                 width: 100%; height: 100%; max-width: 100%; max-height: 100%;
                 top: 0; left: 0; transform: none; border-radius: 0; 
                 padding: 15px; 
             }
-            
-            /* 2. 單一滾動軸，打破巢狀滾動陷阱 */
             .modal-body { 
                 flex-direction: column; 
-                overflow-y: auto; /* 手機版唯一可滾動層 */
+                overflow-y: auto; 
                 overflow-x: hidden; 
                 display: flex; 
-                -webkit-overflow-scrolling: touch; /* iOS 順滑滾動 */
+                -webkit-overflow-scrolling: touch; 
                 padding-bottom: 30px; 
             }
             .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
             .cloud-list { overflow: visible; flex-shrink: 0; }
-            
             .modal-right { 
                 width: 100%; margin-top: 15px; padding: 15px 0 0 0; 
                 background: transparent; border: none; border-top: 1px solid var(--border-subtle); 
-                overflow-y: visible; /* 關閉原本的獨立捲軸 */
+                overflow-y: visible; 
                 height: auto; 
                 flex-shrink: 0;
             }
-            
-            /* 3. 畫布自適應避免把畫面撐破 */
             #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
-            
-            /* 4. 解除所有原生 draggable 的觸控攔截 */
             .cloud-item { touch-action: pan-y; }
             .layer-item { touch-action: pan-y; }
             .tab { touch-action: pan-x; }
@@ -113,13 +105,17 @@
         
         label { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
         
-        /* 現代化輸入框 */
         input[type="text"], input[type="number"], select, textarea { 
             background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--text-primary); 
             padding: 8px 12px; border-radius: var(--radius-sm); width: 100%; font-size: 13px; transition: 0.2s; 
         }
         input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15); }
         textarea { resize: vertical; min-height: 60px; font-family: "Consolas", monospace; line-height: 1.4; color: var(--text-primary); }
+
+        /* 滑桿樣式 */
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 6px;}
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--accent-cyan); cursor: pointer; margin-top: -4px;}
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: var(--border-subtle); border-radius: 3px; }
 
         /* --- 按鈕系統 --- */
         button { 
@@ -136,10 +132,8 @@
         .btn-backup { background-color: var(--btn-gray); }
         .btn-restore { background-color: var(--btn-orange); }
         .btn-add { background-color: #2E7D32; }
-        
         .btn-unit-save { background-color: #7B1FA2; width: auto; padding: 6px 12px; }
         .btn-unit-add { background-color: #5E35B1; width: auto; padding: 6px 12px; }
-        
         .btn-img { background-color: var(--btn-blue); }
         .btn-ppt { background-color: var(--btn-orange); }
         .btn-excel { background-color: #2E7D32; }
@@ -194,31 +188,16 @@
         .modal-right { width: 340px; display: flex; flex-direction: column; align-items: center; padding: 15px; background: #121317; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-shrink: 0; overflow-y:auto; }
 
         /* 分頁系統樣式 (Tabs) */
-        .tabs-header {
-            display: flex; overflow-x: auto; overflow-y: hidden;
-            border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px;
-            scrollbar-width: none; /* 隱藏滾動條 */
-        }
+        .tabs-header { display: flex; overflow-x: auto; overflow-y: hidden; border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px; scrollbar-width: none; }
         .tabs-header::-webkit-scrollbar { display: none; }
-        .tab {
-            padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary);
-            border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px;
-            border: 1px solid transparent; border-bottom: none; transition: 0.2s;
-            display: flex; align-items: center; gap: 6px; user-select: none; position: relative;
-        }
+        .tab { padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary); border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px; border: 1px solid transparent; border-bottom: none; transition: 0.2s; display: flex; align-items: center; gap: 6px; user-select: none; position: relative; }
         .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .tab.active { color: var(--accent-cyan); font-weight: bold; background: rgba(0, 229, 255, 0.05); }
         .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); }
         .tab.drag-over { background: rgba(0, 229, 255, 0.1); border: 1px dashed var(--accent-cyan); }
 
-        /* 檔案清單專用樣式 (極致對比設計) */
         .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; padding-right: 5px;}
-        .cloud-item { 
-            display: flex; align-items: center; justify-content: space-between; 
-            background: var(--bg-card); padding: 12px 15px; margin-bottom: 8px; 
-            border-radius: var(--radius-md); border-left: 4px solid transparent; cursor: grab;
-            transition: 0.2s; border: 1px solid var(--border-subtle);
-        }
+        .cloud-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 12px 15px; margin-bottom: 8px; border-radius: var(--radius-md); border-left: 4px solid transparent; cursor: grab; transition: 0.2s; border: 1px solid var(--border-subtle); }
         .cloud-item:hover { background: #2D3039; transform: translateX(2px); border-color: #444;}
         .cloud-item:active { cursor: grabbing; }
         .cloud-item.dragging { opacity: 0.4; border: 2px dashed var(--accent-cyan); background: #111; }
@@ -313,7 +292,28 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.2)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro Ultimate)</span></h2>
+
+        <div class="control-group" style="border-color: var(--accent-cyan);">
+            <h3 style="color:var(--accent-cyan); border-bottom-color:var(--accent-cyan);">✨ 光影與結構特效 (Effects)</h3>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkGlossy" checked onchange="window.toggleGlossy(this)" style="accent-color:var(--accent-cyan);"> 啟用金屬高光</label>
+                <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkExplode" onchange="window.toggleExplode(this)" style="accent-color:#E67E22;"> 展開模式 (Exploded)</label>
+                <label style="margin:0; cursor:pointer; grid-column: span 2;"><input type="checkbox" id="chkHideSub" onchange="window.toggleHideSub(this)" style="accent-color:#D93D42;"> 隱藏絕緣基板 (僅保留線路)</label>
+            </div>
+            
+            <div style="display:flex; gap:12px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                <div style="flex:1;">
+                    <label style="margin-bottom:6px;">高光強度 <span id="valHl" style="color:white; float:right;">40</span></label>
+                    <input type="range" id="hlIntensity" min="0" max="100" value="40" oninput="window.updateEffects()">
+                </div>
+                <div style="flex:1;">
+                    <label style="margin-bottom:6px;">陰影深度 <span id="valSh" style="color:white; float:right;">30</span></label>
+                    <input type="range" id="shIntensity" min="0" max="100" value="30" oninput="window.updateEffects()">
+                </div>
+            </div>
+        </div>
 
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
@@ -433,17 +433,33 @@
         let currentStackLeftX = 0;
         window.currentPopIndex = -1;
 
-        window.autoResizeTextarea = function(el) {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
+        // --- 🌟 特效狀態變數 ---
+        window.enableGlossy = true;
+        window.isExploded = false;
+        window.hideSubstrate = false;
+        window.hlInt = 40;
+        window.shInt = 30;
+
+        window.toggleGlossy = (cb) => { window.enableGlossy = cb.checked; window.draw(); };
+        window.toggleExplode = (cb) => { window.isExploded = cb.checked; window.draw(); };
+        window.toggleHideSub = (cb) => { window.hideSubstrate = cb.checked; window.draw(); };
+        window.updateEffects = () => { 
+            window.hlInt = parseInt(document.getElementById('hlIntensity').value); 
+            window.shInt = parseInt(document.getElementById('shIntensity').value); 
+            document.getElementById('valHl').innerText = window.hlInt;
+            document.getElementById('valSh').innerText = window.shInt;
+            window.draw(); 
         };
+
+        // --- 備註輸入框自動調整高度 ---
+        window.autoResizeTextarea = function(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; };
 
         if (!firebaseConfig.apiKey.includes("你的API_KEY")) { try { const app = initializeApp(firebaseConfig); db = getFirestore(app); isFirebaseReady = true; } catch(e) {} }
 
         const canvas = document.getElementById('stackCanvas'); const ctx = canvas.getContext('2d'); const listEl = document.getElementById('layer-list');
         window.layers = []; window.dimensions = []; window.photos = []; let dragSrcEl = null;
 
-        // --- UI 改版：清單渲染 (加入更清楚的拖曳把手與版面) ---
+        // --- UI 改版：清單渲染 (加入線路厚度/數量) ---
         window.renderList = function() {
             listEl.innerHTML = ''; window.updateDimSelects();
             const allChecked = window.layers.every(l => l.checked !== false);
@@ -469,12 +485,14 @@
                         <div class="btn-icon btn-del" onclick="window.deleteLayer(${index})" title="刪除此層">✕</div>
                     </div>
                     <div class="layer-details">
+                        <div><label style="color:#E67E22;">線路數量</label><input type="number" value="${layer.traces || 0}" min="0" oninput="window.updateLayer(${index}, 'traces', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
+                        <div><label style="color:#E67E22;">線路厚度</label><input type="number" value="${layer.traceHeight || 15}" oninput="window.updateLayer(${index}, 'traceHeight', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
+                        <div><label style="color:#E67E22;">線路顏色</label><input type="color" value="${layer.traceColor||'#E67E22'}" oninput="window.updateLayer(${index}, 'traceColor', this.value)" style="width:100%; height:28px; border-color:#E67E22;"></div>
+                        <div><label>線路寬度(寬度)</label><input type="number" value="${layer.traceWidth || 10}" oninput="window.updateLayer(${index}, 'traceWidth', this.value)" style="height:28px; padding:0 5px;"></div>
+                        
                         <div><label>字體顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%; height:28px;"></div>
                         <div><label>字體大小</label><input type="number" value="${layer.fontSize || ''}" placeholder="預設" oninput="window.updateLayer(${index}, 'fontSize', this.value)" style="height:28px; padding:0 5px;"></div>
                         <div><label>文字粗細</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="height:28px; padding:0 5px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
-                        <div><label>線路數量</label><input type="number" value="${layer.traces || 0}" min="0" oninput="window.updateLayer(${index}, 'traces', this.value)" style="height:28px; padding:0 5px;"></div>
-                        <div><label>線寬(um)</label><input type="number" value="${layer.traceWidth || 10}" oninput="window.updateLayer(${index}, 'traceWidth', this.value)" style="height:28px; padding:0 5px;"></div>
-                        <div><label>線路顏色</label><input type="color" value="${layer.traceColor||'#E67E22'}" oninput="window.updateLayer(${index}, 'traceColor', this.value)" style="width:100%; height:28px;"></div>
                     </div>
                 `;
                 
@@ -495,44 +513,33 @@
             });
         };
 
+        // --- 核心邏輯層 ---
         window.moveLayer = (i, d) => { const n = i+d; if(n<0||n>=window.layers.length)return; const t=window.layers[i]; window.layers[i]=window.layers[n]; window.layers[n]=t; window.renderList(); window.draw(); };
         window.toggleLayerCheck = (i) => { window.layers[i].checked = !window.layers[i].checked; window.renderList(); };
         window.toggleAllLayers = (cb) => { window.layers.forEach(l => l.checked = cb.checked); window.renderList(); };
-        window.updateLayer = (i, k, v) => { if(k==='thickness'||k==='fontSize') v=parseFloat(v)||0; window.layers[i][k]=v; if(k==='color') window.renderList(); window.draw(); };
+        window.updateLayer = (i, k, v) => { if(k==='thickness'||k==='fontSize'||k==='traces'||k==='traceHeight'||k==='traceWidth') v=parseFloat(v)||0; window.layers[i][k]=v; if(k==='color') window.renderList(); window.draw(); };
         window.toggleDetails = (i) => { window.layers[i].showDetails = !window.layers[i].showDetails; window.renderList(); };
-        window.addLayer = () => { window.layers.unshift({ id: Date.now(), name: "New Layer", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true, traces: 0, traceWidth: 10, traceColor: '#E67E22' }); window.renderList(); window.draw(); };
+        window.addLayer = () => { window.layers.unshift({ id: Date.now(), name: "New Layer", thickness: 20, color: "#cccccc", fontSize: 0, fontStyle: 'bold', checked: true, traces: 0, traceHeight: 15, traceWidth: 10, traceColor: '#E67E22' }); window.renderList(); window.draw(); };
         window.deleteLayer = (i) => { window.layers.splice(i, 1); window.renderList(); window.draw(); };
+        
+        // --- 尺寸線邏輯 ---
         window.updateDimSelects = () => { const s1=document.getElementById('dimStart'), s2=document.getElementById('dimEnd'); const v1=s1.value, v2=s2.value; s1.innerHTML=''; s2.innerHTML=''; window.layers.forEach((l,i) => { const o = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML+=o; s2.innerHTML+=o; }); if(v1) s1.value=v1; if(v2) s2.value=v2; else if(window.layers.length>0) s2.value=window.layers.length-1; };
         window.addDimension = () => { const s=parseInt(document.getElementById('dimStart').value), e=parseInt(document.getElementById('dimEnd').value); window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: document.getElementById('dimLabel').value, offset: parseInt(document.getElementById('dimOffset').value)||50 }); renderDims(); window.draw(); };
         function renderDims() { const dimListEl = document.getElementById('dim-list'); dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name; dimListEl.innerHTML += `<div class="dim-item"><span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span><span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span></div>`; }); }
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
+        // --- 附圖邏輯 ---
         window.addPhoto = function() { const input = document.getElementById('photoInput'); const descInput = document.getElementById('photoDesc'); if(input.files && input.files[0]) { const file = input.files[0]; const reader = new FileReader(); showLoading(true, "壓縮處理中..."); reader.onload = function(e) { const img = new Image(); img.onload = function() { const maxW = 600; let w = img.width; let h = img.height; if (w > maxW) { h = Math.round(h * (maxW / w)); w = maxW; } const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h; const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); const compressedData = cvs.toDataURL('image/jpeg', 0.5); window.photos.push({ id: Date.now(), data: compressedData, desc: descInput.value || "圖說", w: w, h: h, imgElement: null }); descInput.value = ''; input.value = ''; window.renderPhotoList(); window.draw(); showLoading(false); }; img.src = e.target.result; }; reader.readAsDataURL(file); } else { alert("請先選擇圖片"); } };
         window.renderPhotoList = function() { const list = document.getElementById('photo-list'); list.innerHTML = ''; window.photos.forEach((p, i) => { const div = document.createElement('div'); div.className = 'photo-item'; div.innerHTML = `<img src="${p.data}" class="photo-thumb"><div class="photo-info"><input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;"><button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button></div>`; list.appendChild(div); }); };
         window.updatePhotoDesc = (i, v) => { window.photos[i].desc = v; window.draw(); };
         window.deletePhoto = (i) => { window.photos.splice(i, 1); window.renderPhotoList(); window.draw(); };
 
-        window.toggle3D = function() {
-            window.is3D = !window.is3D;
-            const btn = document.getElementById('btn3D');
-            btn.innerHTML = window.is3D ? "🧊 關閉 3D 視角" : "🧊 開啟 3D 視角";
-            btn.style.background = window.is3D ? "#3949AB" : "#5E35B1"; 
-            window.draw();
-        };
+        // --- 3D 模式與對比模式 ---
+        window.toggle3D = function() { window.is3D = !window.is3D; const btn = document.getElementById('btn3D'); btn.innerHTML = window.is3D ? "🧊 關閉 3D 視角" : "🧊 開啟 3D 視角"; btn.style.background = window.is3D ? "#3949AB" : "#5E35B1"; window.draw(); };
+        window.setCompareBaseline = function() { if(window.layers.length === 0) return alert("無疊構資料可作基準"); window.compareLayers = JSON.parse(JSON.stringify(window.layers)); document.getElementById('btnClearCompare').style.display = 'flex'; window.draw(); };
+        window.clearCompareBaseline = function() { window.compareLayers = null; document.getElementById('btnClearCompare').style.display = 'none'; window.draw(); };
 
-        window.setCompareBaseline = function() {
-            if(window.layers.length === 0) return alert("無疊構資料可作基準");
-            window.compareLayers = JSON.parse(JSON.stringify(window.layers));
-            document.getElementById('btnClearCompare').style.display = 'flex';
-            window.draw();
-        };
-
-        window.clearCompareBaseline = function() {
-            window.compareLayers = null;
-            document.getElementById('btnClearCompare').style.display = 'none';
-            window.draw();
-        };
-
+        // --- 畫布滑鼠事件 (拖曳與編輯) ---
         canvas.addEventListener('mousedown', e => {
             let rect = canvas.getBoundingClientRect(); let mx = e.clientX - rect.left, my = e.clientY - rect.top;
             
@@ -563,36 +570,22 @@
         canvas.addEventListener('mouseup', () => dragDimIdx = -1);
         canvas.addEventListener('mouseleave', () => dragDimIdx = -1);
 
-        window.movePopLayer = (d) => {
-            let i = window.currentPopIndex; let n = i + d;
-            if(n < 0 || n >= window.layers.length) return;
-            const t = window.layers[i]; window.layers[i] = window.layers[n]; window.layers[n] = t;
-            window.currentPopIndex = n; window.renderList(); window.draw();
-        };
+        window.movePopLayer = (d) => { let i = window.currentPopIndex; let n = i + d; if(n < 0 || n >= window.layers.length) return; const t = window.layers[i]; window.layers[i] = window.layers[n]; window.layers[n] = t; window.currentPopIndex = n; window.renderList(); window.draw(); };
 
+        // --- 分頁式雲端管理 ---
         window.openCloudManager = function() { if(!isFirebaseReady) { alert("尚未連線"); return; } document.getElementById('mgrModal').style.display = 'flex'; document.getElementById('mgrBackdrop').style.display = 'block'; window.refreshCloudList(); };
         window.closeCloudManager = function() { document.getElementById('mgrModal').style.display = 'none'; document.getElementById('mgrBackdrop').style.display = 'none'; };
         
         window.createNewFolder = function() { const newCat = prompt("請輸入新的分頁名稱："); if(newCat && newCat.trim() !== "") { const catName = newCat.trim(); if (!customFolders.includes(catName)) { customFolders.push(catName); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } activeCategory = catName; window.renderCloudList(); } };
         
         window.deleteCurrentFolder = function() {
-            if (activeCategory === "未分類") {
-                return alert("「未分類」為系統預設，無法刪除！");
-            }
-            
+            if (activeCategory === "未分類") { return alert("「未分類」為系統預設，無法刪除！"); }
             const count = cloudProjectsCache.filter(p => (p.category || '未分類') === activeCategory).length;
-            if (count > 0) {
-                return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`);
-            }
+            if (count > 0) { return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`); }
             
             if (confirm(`確定要刪除分頁「${activeCategory}」嗎？`)) {
                 const idx = customFolders.indexOf(activeCategory);
-                if (idx > -1) {
-                    customFolders.splice(idx, 1);
-                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
-                    activeCategory = "未分類"; 
-                    window.renderCloudList();
-                }
+                if (idx > -1) { customFolders.splice(idx, 1); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); activeCategory = "未分類"; window.renderCloudList(); }
             }
         };
 
@@ -660,11 +653,9 @@
             if(p) { 
                 window.applyConfig(p); 
                 document.getElementById('projName').value = p.id; 
-                
                 const noteEl = document.getElementById('projNote');
                 noteEl.value = p.note || ""; 
                 window.autoResizeTextarea(noteEl);
-                
                 window.closeCloudManager(); 
             } 
         };
@@ -700,7 +691,7 @@
         window.resizeCanvas = () => { window.draw(); }; 
 
         // ---------------------------------------------
-        // ★ 主畫布繪製邏輯 (分離畫布寬度與疊構寬度)
+        // ★ 核心 3D 繪製邏輯 (結合你的尺寸線與照片邏輯)
         // ---------------------------------------------
         window.draw = () => {
             const unit = document.getElementById('unitInput').value;
@@ -720,14 +711,19 @@
             let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
             const pad = { t:80, b:40, l: maxOff+80, r: window.is3D ? 160 : 120 }; 
             const gap = isComp ? (window.is3D ? 200 : 140) : 0; 
+            
+            // 處理展開模式的間距
+            const explodeGap = window.isExploded ? 60 : 0;
 
             canvas.width = pad.l + (isComp ? (dw * 2 + gap) : dw) + pad.r;
-
-            const stackH = Math.max(500, window.layers.length*40);
+            
+            // 高度必須加上爆開的間距
+            const stackH = Math.max(500, window.layers.length*40) + (window.layers.length * explodeGap);
             let photoTotalH = 0; window.photos.forEach(p => { photoTotalH += (((isComp?dw*2+gap:dw)) / p.w) * p.h + 40; });
             canvas.height = stackH + pad.t + pad.b + (photoTotalH > 0 ? photoTotalH + 50 : 0);
             
-            const scale = stackH / (maxThick||1);
+            // 這裡的 scale 不算入 explodeGap，維持厚度比例正確
+            const scale = (Math.max(500, window.layers.length*40)) / (maxThick||1);
             
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.textBaseline="middle";
             dimHitZones = []; layerHitZones = [];
@@ -737,98 +733,137 @@
                 lyrs.forEach((l, i) => {
                     const h = (parseFloat(l.thickness)||0)*scale;
                     yPos.push({t:cy, b:cy+h, h:h, l:l, i:i});
-                    cy += h;
+                    cy += h + explodeGap; // 展開模式每層多加距離
                 });
 
-                const depth = window.is3D ? 30 : 0;
+                const depth = window.is3D ? 40 : 0;
                 const tiltY = depth * 0.5;
 
                 for(let j = yPos.length - 1; j >= 0; j--) {
                     let p = yPos[j]; let l = p.l; let startY = p.t;
                     if(isMain) layerHitZones.push({i:p.i, x1:startX, x2:startX+dw, y1:startY, y2:p.b});
                     
-                    // --- 1. 材質光影漸層設定 ---
-                    let frontGrd = ctx.createLinearGradient(startX, 0, startX + dw, 0);
-                    frontGrd.addColorStop(0, shadeColor(l.color, -20)); // 左側暗部
-                    frontGrd.addColorStop(0.2, shadeColor(l.color, 40));  // 左側高光
-                    frontGrd.addColorStop(0.5, l.color);                  // 中間本色
-                    frontGrd.addColorStop(0.8, shadeColor(l.color, 20));  // 右側微光
-                    frontGrd.addColorStop(1, shadeColor(l.color, -40)); // 右側暗部
-
-                    if(depth > 0) {
-                        let sideGrd = ctx.createLinearGradient(startX + dw, startY, startX + dw + depth, startY - tiltY);
-                        sideGrd.addColorStop(0, shadeColor(l.color, -30));
-                        sideGrd.addColorStop(1, shadeColor(l.color, -60));
-
-                        ctx.fillStyle = sideGrd;
-                        ctx.beginPath(); ctx.moveTo(startX+dw, startY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, p.b-tiltY); ctx.lineTo(startX+dw, p.b); ctx.closePath();
-                        ctx.fill(); ctx.strokeStyle="#111"; ctx.lineWidth = 0.5; ctx.stroke();
+                    // --- 1. 繪製基板 (Substrate) 如果沒被隱藏 ---
+                    if (!window.hideSubstrate) {
+                        let frontFill = l.color;
+                        let sideFill = shadeColor(l.color, -30);
+                        let topFill = shadeColor(l.color, 30);
                         
-                        let topGrd = ctx.createLinearGradient(startX, startY, startX, startY - tiltY);
-                        topGrd.addColorStop(0, shadeColor(l.color, 50));
-                        topGrd.addColorStop(1, shadeColor(l.color, 10));
+                        if (window.enableGlossy) {
+                            let frontGrd = ctx.createLinearGradient(startX, 0, startX + dw, 0);
+                            frontGrd.addColorStop(0, shadeColor(l.color, -window.shInt)); 
+                            frontGrd.addColorStop(0.2, shadeColor(l.color, window.hlInt));  
+                            frontGrd.addColorStop(0.5, l.color);                  
+                            frontGrd.addColorStop(0.8, shadeColor(l.color, window.hlInt/2));  
+                            frontGrd.addColorStop(1, shadeColor(l.color, -window.shInt*1.5)); 
+                            frontFill = frontGrd;
 
-                        ctx.fillStyle = topGrd;
-                        ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(startX+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw, startY); ctx.closePath();
-                        ctx.fill(); ctx.strokeStyle="#111"; ctx.stroke();
+                            if(depth > 0) {
+                                let sideGrd = ctx.createLinearGradient(startX + dw, startY, startX + dw + depth, startY - tiltY);
+                                sideGrd.addColorStop(0, shadeColor(l.color, -window.shInt));
+                                sideGrd.addColorStop(1, shadeColor(l.color, -window.shInt*2));
+                                sideFill = sideGrd;
+
+                                let topGrd = ctx.createLinearGradient(startX, startY, startX, startY - tiltY);
+                                topGrd.addColorStop(0, shadeColor(l.color, window.hlInt));
+                                topGrd.addColorStop(1, shadeColor(l.color, 10));
+                                topFill = topGrd;
+                            }
+                        }
+
+                        if(depth > 0) {
+                            // 畫 3D 右側面
+                            ctx.fillStyle = sideFill;
+                            ctx.beginPath(); ctx.moveTo(startX+dw, startY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, p.b-tiltY); ctx.lineTo(startX+dw, p.b); ctx.closePath();
+                            ctx.fill(); ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.lineWidth = 0.5; ctx.stroke();
+                            
+                            // 畫 3D 頂面
+                            ctx.fillStyle = topFill;
+                            ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(startX+depth, startY-tiltY); ctx.lineTo(startX+dw+depth, startY-tiltY); ctx.lineTo(startX+dw, startY); ctx.closePath();
+                            ctx.fill(); ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.stroke();
+                        }
+                        
+                        // 畫正面
+                        ctx.fillStyle = frontFill; 
+                        ctx.fillRect(startX, startY, dw, p.h);
+                        ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.lineWidth = 1; ctx.strokeRect(startX, startY, dw, p.h);
+
+                        // 畫文字標籤
+                        const fs = l.fontSize||globalFS; 
+                        ctx.font = `${l.fontStyle==='bold'?'bold ':''}${fs}px Arial`;
+                        
+                        if(p.h > fs + 4) {
+                             ctx.fillStyle = isColorDark(l.color)?"white":"black"; if(l.textColor) ctx.fillStyle=l.textColor;
+                             ctx.textAlign="center"; ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw/2, startY+p.h/2);
+                        } else {
+                             ctx.fillStyle = "#888"; ctx.textAlign="left"; 
+                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw + depth + 15, startY+p.h/2 - tiltY/2);
+                             ctx.strokeStyle="#ccc"; ctx.beginPath(); ctx.moveTo(startX+dw, startY+p.h/2); ctx.lineTo(startX+dw+depth+10, startY+p.h/2 - tiltY/2); ctx.stroke();
+                        }
                     }
-                    
-                    // --- 2. 繪製主體正面 ---
-                    ctx.fillStyle = frontGrd; 
-                    ctx.fillRect(startX, startY, dw, p.h);
-                    ctx.strokeStyle="#111"; ctx.lineWidth = 1; ctx.strokeRect(startX, startY, dw, p.h);
-                    
-                    // --- 3. 繪製線路 (Traces) ---
+
+                    // --- 2. 獨立繪製 3D 立體金屬線路 (Traces) ---
                     let tracesCount = parseInt(l.traces) || 0;
                     if(tracesCount > 0) {
                         let tColor = l.traceColor || '#E67E22';
                         let tVisualWidth = Math.min((dw * 0.6) / tracesCount, 25); 
-                        let tVisualHeight = Math.max(p.h * 0.15, 4); 
+                        
+                        // **真正的線路高度** = 輸入的高度 * 比例尺 (確保在畫面上有感，最小給 4)
+                        let rawTh = parseFloat(l.traceHeight) || 15;
+                        let tVisualHeight = Math.max(rawTh * scale, 4); 
+                        
                         let spacing = (dw - (tracesCount * tVisualWidth)) / (tracesCount + 1);
 
                         for(let k = 0; k < tracesCount; k++) {
                             let tx = startX + spacing + k * (tVisualWidth + spacing);
-                            let ty = startY;
+                            let ty = startY; 
                             
-                            let traceGrd = ctx.createLinearGradient(tx, 0, tx + tVisualWidth, 0);
-                            traceGrd.addColorStop(0, shadeColor(tColor, -20));
-                            traceGrd.addColorStop(0.3, shadeColor(tColor, 60));
-                            traceGrd.addColorStop(1, shadeColor(tColor, -20));
+                            // 金屬光澤材質
+                            let traceFront = tColor;
+                            let traceTop = shadeColor(tColor, 20);
+                            let traceSide = shadeColor(tColor, -30);
+
+                            if(window.enableGlossy) {
+                                let traceGrd = ctx.createLinearGradient(tx, 0, tx + tVisualWidth, 0);
+                                traceGrd.addColorStop(0, shadeColor(tColor, -window.shInt));
+                                traceGrd.addColorStop(0.3, shadeColor(tColor, window.hlInt * 1.5)); // 金屬高光更亮
+                                traceGrd.addColorStop(1, shadeColor(tColor, -window.shInt));
+                                traceFront = traceGrd;
+                                traceTop = shadeColor(tColor, window.hlInt);
+                                traceSide = shadeColor(tColor, -window.shInt*1.5);
+                            }
 
                             if(depth > 0) {
-                                ctx.fillStyle = shadeColor(tColor, 40);
-                                ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx+depth, ty-tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty-tiltY); ctx.lineTo(tx+tVisualWidth, ty); ctx.closePath();
-                                ctx.fill(); ctx.stroke();
+                                // 畫線路的 3D 頂部
+                                ctx.fillStyle = traceTop;
+                                ctx.beginPath(); ctx.moveTo(tx, ty - tVisualHeight); ctx.lineTo(tx+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth, ty - tVisualHeight); ctx.closePath();
+                                ctx.fill(); ctx.strokeStyle="#111"; ctx.stroke();
                                 
-                                ctx.fillStyle = shadeColor(tColor, -40);
-                                ctx.beginPath(); ctx.moveTo(tx+tVisualWidth, ty); ctx.lineTo(tx+tVisualWidth+depth, ty-tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty-tiltY-tVisualHeight); ctx.lineTo(tx+tVisualWidth, ty-tVisualHeight); ctx.closePath();
+                                // 畫線路的 3D 右側
+                                ctx.fillStyle = traceSide;
+                                ctx.beginPath(); ctx.moveTo(tx+tVisualWidth, ty); ctx.lineTo(tx+tVisualWidth+depth, ty-tiltY); ctx.lineTo(tx+tVisualWidth+depth, ty - tVisualHeight - tiltY); ctx.lineTo(tx+tVisualWidth, ty - tVisualHeight); ctx.closePath();
                                 ctx.fill(); ctx.stroke();
                             }
 
-                            ctx.fillStyle = traceGrd;
+                            // 畫線路的 2D 正面
+                            ctx.fillStyle = traceFront;
                             ctx.fillRect(tx, ty - tVisualHeight, tVisualWidth, tVisualHeight);
                             ctx.strokeRect(tx, ty - tVisualHeight, tVisualWidth, tVisualHeight);
 
-                            if(k === 0 && isMain) {
+                            // 如果隱藏了基板，且是第一條線，就在旁邊補上原本的文字
+                            if (window.hideSubstrate && k === tracesCount-1) {
+                                 ctx.fillStyle = tColor; ctx.textAlign="left"; ctx.font = `bold ${globalFS}px Arial`;
+                                 ctx.fillText(`${l.name} (${l.thickness} / 線厚${rawTh})`, startX + dw + depth + 15, ty - tVisualHeight/2 - tiltY/2);
+                            }
+
+                            // 標示線寬文字
+                            if(k === 0 && isMain && !window.hideSubstrate) {
                                 ctx.fillStyle = "#FFF"; ctx.font = "10px Arial"; ctx.textAlign = "center";
                                 ctx.shadowColor="black"; ctx.shadowBlur=3;
                                 ctx.fillText(`${l.traceWidth||10} ${unit}`, tx + tVisualWidth/2, ty - tVisualHeight - 5);
                                 ctx.shadowBlur=0; 
                             }
                         }
-                    }
-
-                    // --- 4. 繪製文字標籤 ---
-                    const fs = l.fontSize||globalFS; 
-                    ctx.font = `${l.fontStyle==='bold'?'bold ':''}${fs}px Arial`;
-                    
-                    if(p.h > fs + 4) {
-                         ctx.fillStyle = isColorDark(l.color)?"white":"black"; if(l.textColor) ctx.fillStyle=l.textColor;
-                         ctx.textAlign="center"; ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw/2, startY+p.h/2);
-                    } else {
-                         ctx.fillStyle = "#888"; ctx.textAlign="left"; 
-                         ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX+dw + depth + 15, startY+p.h/2 - tiltY/2);
-                         ctx.strokeStyle="#ccc"; ctx.beginPath(); ctx.moveTo(startX+dw, startY+p.h/2); ctx.lineTo(startX+dw+depth+10, startY+p.h/2 - tiltY/2); ctx.stroke();
                     }
                 }
                 
@@ -841,6 +876,7 @@
             currentStackLeftX = isComp ? pad.l + dw + gap : pad.l;
             let yPos = drawStk(window.layers, currentStackLeftX, true);
 
+            // --- 繪製尺寸線 (恢復原功能並適應爆開模式) ---
             window.dimensions.forEach((d, i) => {
                 if(!yPos[d.start] || !yPos[d.end]) return;
                 const y1=yPos[d.start].t, y2=yPos[d.end].b, h=y2-y1, x=currentStackLeftX-d.offset;
@@ -854,6 +890,7 @@
                 ctx.textAlign="right"; ctx.fillText(txt, x-5, y1+h/2);
             });
 
+            // --- 繪製照片 (恢復原功能) ---
             if(window.photos.length > 0) {
                 let py = stackH + pad.t + 60; 
                 ctx.strokeStyle="#eee"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(20, py-30); ctx.lineTo(canvas.width-20, py-30); ctx.stroke();
@@ -872,7 +909,13 @@
         };
 
         if(isFirebaseReady) { window.refreshUnitList(); }
-        window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true, traces:0, traceWidth:10, traceColor:'#E67E22'}];
+        window.layers = [
+            {name:"Solder Mask", thickness:20, color:"#2E7D32", traces:0, traceHeight:15},
+            {name:"Top Layer", thickness:35, color:"#1E88E5", traces:3, traceHeight:35, traceWidth: 50, traceColor:"#F5B041"},
+            {name:"Dielectric 1", thickness:100, color:"#F5F5DC", traces:0},
+            {name:"Inner Layer 1", thickness:35, color:"#1E88E5", traces:2, traceHeight:35, traceWidth: 40, traceColor:"#F5B041"},
+            {name:"Core", thickness:200, color:"#F5F5DC", traces:0},
+        ];
         window.renderList(); window.resizeCanvas();
 
     </script>
