@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (混合動力完全體)</title>
+<title>股票自選清單 (SMC 聰明錢多時區版)</title>
 
 <script type="module">
 try {
@@ -175,6 +175,7 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 .ntitle{font-size:13px;font-weight:500;line-height:1.5;flex:1}
 .nbody{font-size:11px;color:var(--t3);line-height:1.6;margin-top:3px}
 .nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
+.tf-sel{padding:4px 8px;border-radius:6px;border:0.5px solid var(--b);background:var(--bg);color:var(--t);font-size:12px;outline:none;cursor:pointer}
 @media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
 </style>
 </head>
@@ -432,15 +433,18 @@ async function loadS(){
       if(px?.data){ P=px.data; }
     }catch(e){ console.warn("Cloud load failed"); }
   }
+  
   if(!cloudLoaded){
     try{
       const d=JSON.parse(localStorage.getItem(SK)||'null');
       if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats;
     }catch(e){}
   }
+  
   if(!P || Object.keys(P).length === 0){
     try{ const parsed=JSON.parse(localStorage.getItem(PK)||'{}'); if(parsed) P=parsed; }catch(e){}
   }
+  
   if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
   S.act=S.cats[0].id;
 }
@@ -464,13 +468,21 @@ async function fetchTW(code){
   return null;
 }
 
-async function fetchYFHistory(code, mkt){
+// 🌟 支援多時區的 Yahoo History API
+async function fetchYFHistory(code, mkt, tf='1d'){
   let t = code;
   if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
   const pxs = ['', 'https://corsproxy.io/?url=', 'https://api.allorigins.win/raw?url='];
+  
+  let interval = tf;
+  let range = '1mo';
+  if(tf === '1h') range = '1mo';
+  else if(tf === '15m') range = '5d';
+  else if(tf === '5m') range = '1d';
+
   for(const proxy of pxs){
     try{
-      const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=1d&range=1mo`;
+      const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=${interval}&range=${range}`;
       const r = await fetch(proxy ? proxy + encodeURIComponent(u) : u);
       const j = await r.json();
       const res = j.chart.result[0];
@@ -490,7 +502,7 @@ async function fetchYFHistory(code, mkt){
   return null;
 }
 
-// 🌟 Google 新聞 RSS 引擎 (保證抓得到、不吃 Token、無 CORS 阻擋)
+// 🌟 換成 Google News RSS 引擎 (100% 繞過 CORS)
 async function fetchFreeNews(code, name, mkt){
   try {
     const q = encodeURIComponent(`${name} ${code} 股票`);
@@ -518,10 +530,12 @@ async function fetchFreeNews(code, name, mkt){
   return [];
 }
 
-function calculateTechIndicators(hist) {
+// 🌟 加入 SMC 聰明錢與多時區計算
+function calculateTechIndicators(hist, tfLabel) {
   if(!hist || hist.close.length < 2) return null;
   const c = hist.close, h = hist.high, l = hist.low;
   
+  // Pivot Points
   const pC = c[c.length-2] || c[c.length-1];
   const pH = h[h.length-2] || h[h.length-1];
   const pL = l[l.length-2] || l[l.length-1];
@@ -537,11 +551,34 @@ function calculateTechIndicators(hist) {
   const sma20 = c.slice(-20).reduce((a,b)=>a+b,0) / Math.min(20, c.length);
 
   const signals = [];
-  if(curr > sma10) signals.push({color:'green', label:'短線', val:'站上10日均線 (偏多)'});
-  else signals.push({color:'amber', label:'短線', val:'跌破10日均線 (偏弱)'});
+  if(curr > sma10) signals.push({color:'green', label:'短線均線', val:`站上10T線 (偏多)`});
+  else signals.push({color:'amber', label:'短線均線', val:`跌破10T線 (偏弱)`});
 
-  if(curr > sma20) signals.push({color:'green', label:'中線', val:'多頭排列 (站上月線)'});
-  else signals.push({color:'red', label:'中線', val:'空頭排列 (月線之下)'});
+  if(curr > sma20) signals.push({color:'green', label:'中線均線', val:`站上20T線 (偏多)`});
+  else signals.push({color:'red', label:'中線均線', val:`跌破20T線 (偏空)`});
+
+  // SMC: FVG 缺口偵測 (檢查最後5根K線)
+  let smcSignals = [];
+  for(let i = c.length - 3; i < c.length; i++) {
+      if(i < 2) continue;
+      let h1 = h[i-2], l1 = l[i-2];
+      let h3 = h[i],   l3 = l[i];
+      if (l3 > h1) {
+          smcSignals.push({color:'green', label:'SMC 聰明錢', val:`FVG 缺口支撐: ${h1.toFixed(1)}-${l3.toFixed(1)}`});
+          break; // 只抓最近一個
+      } else if (h3 < l1) {
+          smcSignals.push({color:'red', label:'SMC 聰明錢', val:`FVG 缺口壓力: ${l3.toFixed(1)}-${h1.toFixed(1)}`});
+          break;
+      }
+  }
+
+  // SMC: BOS 結構突破/跌破偵測 (看過去15根K線的高低點)
+  if(h.length > 15) {
+      let recentHigh = Math.max(...h.slice(-15, -1));
+      let recentLow = Math.min(...l.slice(-15, -1));
+      if (curr > recentHigh) smcSignals.push({color:'green', label:'SMC 結構', val:`BOS 突破前高 ${recentHigh.toFixed(1)}`});
+      else if (curr < recentLow) smcSignals.push({color:'red', label:'SMC 結構', val:`BOS 跌破前低 ${recentLow.toFixed(1)}`});
+  }
 
   let gains = 0, losses = 0;
   const rsiPeriod = Math.min(14, c.length - 1);
@@ -555,13 +592,15 @@ function calculateTechIndicators(hist) {
   const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
   const rsi = 100 - (100 / (1 + rs));
 
-  if(rsi > 70) signals.push({color:'red', label:'RSI指標', val:`超買區 (${rsi.toFixed(1)}) - 注意回檔`});
-  else if(rsi < 30) signals.push({color:'green', label:'RSI指標', val:`超賣區 (${rsi.toFixed(1)}) - 具反彈契機`});
+  if(rsi > 70) signals.push({color:'red', label:'RSI指標', val:`超買區 (${rsi.toFixed(1)})`});
+  else if(rsi < 30) signals.push({color:'green', label:'RSI指標', val:`超賣區 (${rsi.toFixed(1)})`});
   else signals.push({color:'amber', label:'RSI指標', val:`中性區 (${rsi.toFixed(1)})`});
 
   return {
+    tfLabel: tfLabel,
     levels: { r1: R1.toFixed(2), r2: R2.toFixed(2), s1: S1.toFixed(2), s2: S2.toFixed(2) },
-    signals: signals
+    signals: signals,
+    smcSignals: smcSignals
   };
 }
 
@@ -629,7 +668,6 @@ async function callAI(prompt,search=false){
   return JSON.parse(m[0]);
 }
 
-// 🌟 最穩固的傳統搜尋演算法 (保證不當機)
 window.fDB = function(q){
   const n = q.toLowerCase().trim();
   if(!n) return [];
@@ -735,7 +773,7 @@ function tsLbl(ts){
 function cardHTML(s){
   const p=P[s.code];
   const cur=s.mkt==='jp'?'¥':s.mkt==='us'?'$':'';
-  const mktLbl=s.mkt==='tw'?'🇹🇼 台股':s.mkt==='us'?'🇺🇸 美股':'🇯🇵 日股';
+  const mktLbl=s.mkt==='tw'?'🇹🇼 台股':s.mkt==='us'?'🇺🇸 美股':'🇯播 日股';
   let ph='',ch='',ts='';
   if(p?.loading)ph=`<div class="ld">更新中…</div>`;
   else if(p?.px){
@@ -778,8 +816,15 @@ window.renderGrid = function(){
   m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
 };
 
+// 🌟 改變時區的觸發函數
+window.changeTimeframe = function(code, name, mkt, tf) {
+  if(P[code]) P[code].tf = tf;
+  window.rfStock(code, name, mkt);
+};
+
 window.rfStock = async function(code,name,mkt){
   P[code]={...(P[code]||{}),loading:true};
+  let tf = P[code].tf || '1d';
   renderCard(code);
   if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
 
@@ -788,7 +833,8 @@ window.rfStock = async function(code,name,mkt){
     let hist = null;
     if(mkt==='tw') p=await fetchTW(code);
     
-    hist = await fetchYFHistory(code, mkt);
+    // 傳入 tf 參數以獲取不同時區的 K 線
+    hist = await fetchYFHistory(code, mkt, tf);
     if(hist && !p) p = {px: hist.px, chg: hist.chg, pct: hist.pct, live:true};
 
     if(p){
@@ -796,10 +842,11 @@ window.rfStock = async function(code,name,mkt){
       delete P[code].err; delete P[code].errMsg;
       
       if(hist){
-         const techData = calculateTechIndicators(hist);
+         const tfLabels = {'1d':'日K', '1h':'60分K', '15m':'15分K', '5m':'5分K'};
+         const techData = calculateTechIndicators(hist, tfLabels[tf]);
          if(techData) P[code].tech = techData;
       }
-      // 🌟 這裡換成 Google 新聞引擎
+      
       const newsItems = await fetchFreeNews(code, name, mkt);
       if(newsItems.length > 0){
           P[code].newsList = newsItems;
@@ -849,10 +896,26 @@ function renderDetailBody(code,name,mkt){
     const shtml=(p.tech.signals||[]).map(s=>`<div class="sigr">
       <span class="sk2"><span class="d8" style="background:${DC[s.color]||'#888'}"></span>${s.label}</span>
       <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+    
+    // 🌟 渲染 SMC 訊號
+    const smchtml=(p.tech.smcSignals||[]).map(s=>`<div class="sigr">
+      <span class="sk2">💡 ${s.label}</span>
+      <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+
     const lv = p.tech.levels;
     techHtml = `
-      <div class="sec">💡 技術與均線訊號 (演算法分析)</div>${shtml}
-      <div class="sec">📉 樞軸點支撐/壓力位 (Pivot Points)</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <div class="sec" style="margin:0;">💡 趨勢與聰明錢訊號 (${p.tech.tfLabel})</div>
+        <select class="tf-sel" onchange="window.changeTimeframe('${code}', '${name}', '${mkt}', this.value)">
+          <option value="1d" ${p.tf==='1d'||!p.tf?'selected':''}>日K</option>
+          <option value="1h" ${p.tf==='1h'?'selected':''}>60分K</option>
+          <option value="15m" ${p.tf==='15m'?'selected':''}>15分K</option>
+          <option value="5m" ${p.tf==='5m'?'selected':''}>5分K</option>
+        </select>
+      </div>
+      ${shtml}
+      ${smchtml}
+      <div class="sec">📉 樞軸點支撐/壓力位 (基於 ${p.tech.tfLabel})</div>
       <div class="lvg">
         <div class="lvc" style="background:var(--bgd)"><div class="lvl" style="color:var(--td)">第二壓力 (R2)</div><div class="lvv" style="color:var(--td)">${lv.r2}</div></div>
         <div class="lvc" style="background:var(--bgs)"><div class="lvl" style="color:var(--ts)">第一壓力 (R1)</div><div class="lvv" style="color:var(--ts)">${lv.r1}</div></div>
@@ -893,7 +956,7 @@ function renderDetailBody(code,name,mkt){
       <span class="anln">${name}</span>
       <span style="font-size:11px;color:var(--t2)">${code}</span>
       <div style="flex:1"></div>
-      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度分析 (免費)</button>
+      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度更新 (免費)</button>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
       ${pxHtml}
