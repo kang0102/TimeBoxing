@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>股票自選清單 (離線防護 + SMC 版)</title>
+<title>股票自選清單 (雲端還原 + SMC 終極版)</title>
 
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
@@ -23,6 +23,7 @@ try {
   const fbApp = initializeApp(fbCfg);
   const db = getFirestore(fbApp);
 
+  // 🌟 耐心讀取，不再設定強制 Timeout
   async function fbGet(path){
     try{
       const req = await getDoc(doc(db,...path.split('/')));
@@ -33,6 +34,7 @@ try {
     }
   }
   
+  // 🌟 耐心寫入
   async function fbSet(path,data){
     if(window.isOfflineMode) return; // 🛡️ 離線模式絕對禁止寫入雲端
     try{
@@ -47,7 +49,9 @@ try {
   window._fb = { get: fbGet, set: fbSet, ready: true };
   document.dispatchEvent(new Event('fb-ready'));
 } catch (error) {
-  console.warn("Firebase 載入失敗", error);
+  console.warn("Firebase 載入失敗，已安全隔離", error);
+  window._fb = { ready: false, error: true };
+  document.dispatchEvent(new Event('fb-ready'));
 }
 </script>
 
@@ -156,11 +160,11 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 .lvl{font-size:10px;margin-bottom:3px;font-weight:500}
 .lvv{font-size:13px;font-weight:500}
 .lvs{font-size:11px;margin-top:2px}
-.aspinner{padding:20px;display:flex;flex-direction:column;align-items:center;gap:15px;font-size:13px;color:var(--t2);justify-content:center}
+.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
 .ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
 .nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
 .nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
-.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;text-decoration:none;display:block;color:inherit}
+.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;text-decoration:none;display:block;color:inherit;transition:border-color .15s;}
 .ncard:hover{border:0.5px solid var(--b2)}
 .nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
 .nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
@@ -189,6 +193,7 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
     還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
   </div>
 </div>
+<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code></div>
 <div id="key-ok" style="display:none;margin-bottom:8px">
   <div class="keyok">
     <span>✅ API Key 已設定</span>
@@ -210,9 +215,7 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
   <button class="btn sm" onclick="window.resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
 </div>
 
-<div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)">
-  ☁️ 雲端狀態檢查中...
-</div>
+<div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)"></div>
 <div class="topbar">
   <div class="sq" onclick="window.openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
   <button class="btn p" onclick="window.showNewCat()">＋ 分類</button>
@@ -250,7 +253,8 @@ body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;
 </div>
 
 <script>
-window.isOfflineMode = false; // 🛡️ 全域離線模式標記
+window.isOfflineMode = false;
+
 window.updateSyncUI = function(ok, msg=""){
    const el = document.getElementById('sync-indicator');
    if(!el) return;
@@ -259,13 +263,18 @@ window.updateSyncUI = function(ok, msg=""){
    else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步異常 (切換為本機模式)</span>`;
 }
 
-// ─── 進入離線模式 (使用者手動觸發) ───
-window.enterOfflineMode = function() {
+// 🌟 進入離線模式 (使用者手動觸發)
+window.enterOfflineMode = async function() {
    window.isOfflineMode = true;
    window.updateSyncUI(false, "使用者選擇離線模式");
-   document.getElementById('main').innerHTML = ''; // 清除載入畫面
    
-   // 讀取本機資料
+   AKEY = localStorage.getItem('ak-v1')||'';
+   document.getElementById('key-setup').style.display=AKEY?'none':'block';
+   document.getElementById('key-ok').style.display=AKEY?'block':'none';
+   loadTokTotal();
+
+   document.getElementById('main').innerHTML = ''; 
+   
    try{ const d=JSON.parse(localStorage.getItem('wl-v3')||'null'); if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats; }catch(e){}
    try{ const parsed=JSON.parse(localStorage.getItem('pk-v3')||'{}'); if(parsed) P=parsed; }catch(e){}
    if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
@@ -361,14 +370,14 @@ window.saveKey = async function(){
   if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
   AKEY=v;
   localStorage.setItem('ak-v1',v); 
-  if(window._fb && !window.isOfflineMode) await window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
+  if(window._fb && !window.isOfflineMode) window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
   document.getElementById('key-setup').style.display='none';
   document.getElementById('key-ok').style.display='block';
 };
 
 window.resetKey = async function(){
   AKEY='';localStorage.removeItem('ak-v1');
-  if(window._fb && !window.isOfflineMode) await window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
+  if(window._fb && !window.isOfflineMode) window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
   document.getElementById('keyinp').value='';
   document.getElementById('key-setup').style.display='block';
   document.getElementById('key-ok').style.display='none';
@@ -406,18 +415,18 @@ let currentTab = 'anl';
 
 function saveS(){
   try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}
-  if(window.isOfflineMode) return; // 🌟 離線模式禁止寫入雲端
+  if(window.isOfflineMode) return; 
   clearTimeout(_saveSTimer);
-  _saveSTimer=setTimeout(async()=>{
-    if(window._fb) await window._fb.set(FB_WL,{cats:S.cats,updatedAt:Date.now()});
+  _saveSTimer=setTimeout(()=>{
+    if(window._fb && typeof window._fb.set === 'function') window._fb.set(FB_WL,{cats:S.cats,updatedAt:Date.now()});
   },800);
 }
 function saveP(){
   try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}
-  if(window.isOfflineMode) return; // 🌟 離線模式禁止寫入雲端
+  if(window.isOfflineMode) return;
   clearTimeout(_savePTimer);
-  _savePTimer=setTimeout(async()=>{
-    if(window._fb) await window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
+  _savePTimer=setTimeout(()=>{
+    if(window._fb && typeof window._fb.set === 'function') window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
   },800);
 }
 
@@ -489,20 +498,21 @@ async function fetchYFHistory(code, mkt, tf='1d'){
   return null;
 }
 
-// 🌟 Google 新聞 RSS (8則 + 時間排序)
+// 🌟 Google 新聞 RSS (抓取 8 筆並依精確時間排序)
 async function fetchFreeNews(code, name, mkt){
   try {
     const q = encodeURIComponent(`${name} ${code} 股票`);
     const rssUrl = `https://news.google.com/rss/search?q=${q}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
     const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    
     const r = await fetch(apiUrl);
     const j = await r.json();
     
     if(j.status === 'ok' && j.items && j.items.length > 0){
-       // 依時間新到舊排序
+       // 依時間遞減排序 (新 -> 舊)
        let items = j.items.sort((a,b) => new Date(b.pubDate.replace(/-/g, '/')) - new Date(a.pubDate.replace(/-/g, '/')));
        
-       // 取 8 筆資料
+       // 取出前 8 筆
        return items.slice(0, 8).map(item => {
          const dateObj = new Date(item.pubDate.replace(/-/g, '/'));
          const dateStr = !isNaN(dateObj) ? `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}` : item.pubDate.split(' ')[0];
@@ -1088,36 +1098,42 @@ window.switchTab = function(tab,code,name,mkt){
   renderDetailBody(code,name,mkt);
 };
 
-// ─── STARTUP (絕對防卡死啟動機制) ───
+// ─── STARTUP ───
 (async()=>{
   try {
     const mainBox = document.getElementById('main');
     if(mainBox) mainBox.innerHTML = `
       <div style="padding:50px 20px;text-align:center;color:var(--t2);font-size:14px">
         <div class="spin on" style="display:inline-block;margin-bottom:15px;width:24px;height:24px;border-width:3px"></div>
-        <div style="margin-bottom:15px;font-weight:500;">☁️ 正在載入雲端資料...</div>
-        <div style="font-size:12px;color:var(--t3);margin-bottom:20px;">跨裝置同步中，請耐心等候</div>
+        <div style="margin-bottom:15px;font-weight:500;">☁️ 正在載入系統與雲端資料...</div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:20px;">請耐心等候連線</div>
         <button onclick="window.enterOfflineMode()" class="btn" style="border:1px solid var(--b2); background:var(--bg); color:var(--t2);">
-          ⚡ 先進入離線模式 (僅讀取本機資料)
+          ⚡ 先進入離線模式 (不寫入雲端)
         </button>
       </div>`;
     
-    // 等待 Firebase 或等使用者按離線模式
+    // 🌟 不再強制超時，給足系統時間載入
     await new Promise(r => {
-       if(window._fb?.ready) r();
-       else document.addEventListener('fb-ready', r, {once:true});
+       if(window._fb && window._fb.ready) { r(); return; }
+       document.addEventListener('fb-ready', r, {once:true});
     });
 
-    if(window.isOfflineMode) return; // 如果使用者已經按了離線按鈕，就直接結束雲端載入
+    if(window.isOfflineMode) return; 
 
     await loadKey();
     loadTokTotal();
     
-    const wl = await window._fb.get(FB_WL);
-    const px = await window._fb.get(FB_PX);
+    // 只要有網路，就盡全力抓取雲端資料
+    const wl = window._fb && typeof window._fb.get === 'function' ? await window._fb.get(FB_WL) : null;
+    const px = window._fb && typeof window._fb.get === 'function' ? await window._fb.get(FB_PX) : null;
     
     if(!window.isOfflineMode) {
-        window.updateSyncUI(true);
+        if(window._fb && window._fb.ready && !window._fb.error) {
+           window.updateSyncUI(true);
+        } else {
+           window.updateSyncUI(false, "雲端連線失敗");
+        }
+        
         if(wl?.cats && wl.cats.length) S.cats = wl.cats;
         else try{ const d=JSON.parse(localStorage.getItem(SK)); if(d?.cats) S.cats=d.cats; }catch(e){}
         
@@ -1132,6 +1148,15 @@ window.switchTab = function(tab,code,name,mkt){
     }
   } catch (error) {
     console.warn(error);
+    const mainBox = document.getElementById('main');
+    if(mainBox) {
+      mainBox.innerHTML = `
+        <div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px;line-height:1.6">
+          ⚠️ 系統開機失敗：${error.message}<br><br>
+          <button onclick="window.enterOfflineMode()" style="padding:8px 16px;background:#E24B4A;color:white;border:none;border-radius:6px;cursor:pointer;">強制進入離線模式</button>
+        </div>
+      `;
+    }
   }
 })();
 </script>
