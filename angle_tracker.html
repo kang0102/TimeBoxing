@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Neil's Toolbox - 專業製程監控 (自動補償治具版)</title>
+    <title>Neil's Toolbox - 專業製程監控 (視覺完全自訂版)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; margin: 20px; color: #333; overflow-x: hidden; }
@@ -17,8 +17,12 @@
         .flex-column { display: flex; flex-direction: column; gap: 10px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 13px; color: #64748b; font-weight: bold; }
-        input[type="number"], input[type="text"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; }
+        input[type="number"], input[type="text"], select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; box-sizing: border-box;}
         input.time-input { width: 160px; }
+        input[type="color"] { border: none; padding: 0; cursor: pointer; height: 38px; width: 38px;}
+        .vis-row { display: flex; align-items: center; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 5px; }
+        .vis-row label { font-size: 12px; color: #64748b; font-weight: bold; width: 130px; display: inline-block;}
+        .vis-row select { width: 90px; }
         
         button { padding: 9px 18px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         button:hover { background: #2980b9; }
@@ -43,13 +47,13 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border: 2px solid #94a3b8;
             border-radius: 8px;
             padding: 12px 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             backdrop-filter: blur(5px);
-            width: max-content;
+            width: 320px;
         }
         .draggable-settings summary {
             color: #2c3e50; font-weight: bold; list-style: none; user-select: none; display: flex; align-items: center; cursor: move;
@@ -69,18 +73,23 @@
         .status-ng { color: #e74c3c; font-weight: 900; }
         .jig-val { font-weight: bold; color: #16a085; background: #f0fdf4; }
         tr:nth-child(even) { background: #f8fafc; }
+        
+        /* 可編輯欄位樣式 */
+        td.editable-col { cursor: pointer; background: #fffde7; border: 1px dashed #fdd835;}
+        td.editable-col:hover { background: #fffac1; }
+        td.editable-col:focus { outline: 2px solid #fdd835; background: #fffac1;}
     </style>
 </head>
 <body>
 
 <details id="draggableSettings" class="draggable-settings">
-    <summary>⚙️ 製程與治具設定 (按住拖曳 / 點擊展開)</summary>
+    <summary>⚙️ 製程與視覺設定 (按住拖曳 / 點擊展開)</summary>
     <div class="flex-column" style="margin-top:10px;">
+        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">製程參數</span>
         <div class="input-group">
             <label style="color:#16a085;">原治具設計角度 (°)</label>
             <input type="number" id="specCurrentJig" step="0.01" value="48.67" onchange="saveSpecsAndUpdate()">
         </div>
-        <hr style="width:100%; border:0; border-top:1px dashed #cbd5e1; margin: 5px 0;">
         <div class="input-group">
             <label>目標切割角度 (Target)</label>
             <input type="number" id="specTarget" step="0.01" value="41.33" onchange="saveSpecsAndUpdate()">
@@ -93,6 +102,12 @@
             <label>控制下限 (LSL)</label>
             <input type="number" id="specLSL" step="0.01" value="40.33" onchange="saveSpecsAndUpdate()">
         </div>
+        
+        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px; margin-top:10px;">📊 圖表視覺設定</span>
+        
+        <div id="visualSettingsList">
+            </div>
+
     </div>
 </details>
 
@@ -103,18 +118,18 @@
     </h1>
 
     <details class="info-box">
-        <summary>💡 演算法與治具補償說明 (點擊展開)</summary>
+        <summary>💡 操作說明與自訂功能 (點擊展開)</summary>
         <p>
-            <b>1. 累積均線</b>：從第 1 片到當下所有樣品的總平均。判斷機台是否有長期偏移。<br>
-            <b>2. 震幅 (Delta)</b>：絕對值 | Angle R - Angle L |，評估治具左右對稱性。<br>
-            <b style="color:#16a085;">3. 建議治具角度 (自動補償)</b>：刀具 90° 垂直切割時，切割角與治具角互補。公式：<code>建議治具 = 原治具角度 + (累積平均切割角 - 目標切割角)</code>。藉由計算機台長期誤差 (Offset)，直接提供修正後的治具角度設計參考。<br>
-            <b>* 圖表操作</b>：在圖表任意處點擊左鍵，可快速擷取該點 Y 軸數值並呼叫輸入選單。<br>
-            <b>* 右上角面板</b>：可以按住標題列自由拖曳位置。
+            <b>1. 可拖曳面板</b>：右上角的設定面板可任意拖曳位置。點擊標題展開，可修改製程規格與圖表所有線條的顏色與點形狀。<br>
+            <b>2. 可編輯樣品名稱</b>：數據表格中的「Sample」欄位直接點擊即可修改。修改後按下 Enter 或點擊別處即可保存，圖表會同步更新。<br>
+            <b>3. 圖表快捷新增</b>：在圖表任意處點擊左鍵，可快速擷取 Y 軸數值並呼叫快捷輸入選單。時間與名稱會自動帶入。<br>
+            <b>4. 下載圖表</b>：可將自訂後的圖表下載為 PNG 圖片。<br>
+            <b>5. 自動存檔</b>：所有設定、數據與修改後的名稱都會自動存進瀏覽器快取。
         </p>
     </details>
 
     <div class="panel">
-        <span class="panel-title">📝 手動新增數據 (或直接在圖表中點擊滑鼠)</span>
+        <span class="panel-title">📝 手動新增數據 (或在圖表中點擊滑鼠)</span>
         <div class="flex-row">
             <div class="input-group">
                 <label>檢驗時間</label>
@@ -142,7 +157,7 @@
         <strong>📈 圖表顯示切換：</strong>
         <label><input type="checkbox" id="toggleRawLine" onchange="updateChartVisibility()"> L/R 原始連線 (淡色)</label>
         <label><input type="checkbox" id="toggleCumAvg" checked onchange="updateChartVisibility()"> 累積均線</label>
-        <label class="highlight-jig"><input type="checkbox" id="toggleRecJig" onchange="updateChartVisibility()"> 建議治具設計角度 (開啟右側副坐標軸)</label>
+        <label class="highlight-jig"><input type="checkbox" id="toggleRecJig" onchange="updateChartVisibility()"> 建議治具設計角度 (副坐標軸)</label>
     </div>
 
     <div id="chartWrapper">
@@ -152,17 +167,17 @@
     <table id="dataTable">
         <thead>
             <tr>
-                <th>Sample</th>
-                <th>時間</th>
-                <th>Angle L</th>
-                <th>Angle R</th>
-                <th>震幅(Δ)</th>
-                <th>累積均值_L</th>
-                <th>累積均值_R</th>
-                <th style="background:#1abc9c;">建議治具_L</th>
-                <th style="background:#16a085;">建議治具_R</th>
-                <th>結果</th>
-                <th>操作</th>
+                <th style="width:10%;">Sample</th>
+                <th style="width:18%;">時間</th>
+                <th style="width:7%;">L</th>
+                <th style="width:7%;">R</th>
+                <th style="width:7%;">Δ</th>
+                <th style="width:10%;">均值_L</th>
+                <th style="width:10%;">均值_R</th>
+                <th style="background:#1abc9c; width:10%;">治具_L</th>
+                <th style="background:#16a085; width:10%;">治具_R</th>
+                <th style="width:6%;">結果</th>
+                <th style="width:5%;">🗑️</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -202,7 +217,40 @@
 </div>
 
 <script>
-    // 預設資料
+    // 預設視覺配置
+    const defaultVisuals = {
+        rawDataL: { color: "#3498db", shape: "circle" },
+        rawDataR: { color: "#e67e22", shape: "rect" },
+        cumAvgL: { color: "#9b59b6", shape: "circle" },
+        cumAvgR: { color: "#e056fd", shape: "rect" },
+        recJigL: { color: "#1abc9c", shape: "triangle" },
+        recJigR: { color: "#16a085", shape: "triangle" }
+    };
+
+    // 形狀選項對照表
+    const pointShapes = [
+        { name: "圓形", value: "circle" },
+        { name: "正方形", value: "rect" },
+        { name: "正方形(轉)", value: "rectRot" },
+        { name: "三角形", value: "triangle" },
+        { name: "十字", value: "cross" },
+        { name: "十字(轉)", value: "crossRot" },
+        { name: "星形", value: "star" },
+        { name: "水平線", value: "line" },
+        { name: "虛線", value: "dash" }
+    ];
+
+    // 數據對照表
+    const seriesMap = {
+        'Angle L (原始點)': 'rawDataL',
+        'Angle R (原始點)': 'rawDataR',
+        'CumAvg L (累積均線)': 'cumAvgL',
+        'CumAvg R (累積均線)': 'cumAvgR',
+        '建議治具角度 L': 'recJigL',
+        '建議治具角度 R': 'recJigR'
+    };
+
+    // 預設資料 (包含時間)
     const defaultData = [
         { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50 },
         { name: "AG", time: "2026/4/8 下午 3:52:20", l: 41.27, r: 41.83 },
@@ -229,8 +277,9 @@
     let rawData = [];
     let myChart = null;
     let crosshairY = null; 
+    let visuals = {}; // 存儲實時視覺配置
 
-    // --- 拖曳面板功能 ---
+    // --- 拖曳面板與視覺設定介面 ---
     function makeDraggable() {
         const dragEl = document.getElementById('draggableSettings');
         const dragHandle = dragEl.querySelector('summary');
@@ -238,10 +287,8 @@
 
         dragHandle.addEventListener('mousedown', (e) => {
             isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            startLeft = dragEl.offsetLeft;
-            startTop = dragEl.offsetTop;
+            startX = e.clientX; startY = e.clientY;
+            startLeft = dragEl.offsetLeft; startTop = dragEl.offsetTop;
             document.body.style.userSelect = 'none'; 
         });
 
@@ -252,21 +299,55 @@
             dragEl.style.right = 'auto'; 
         });
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            document.body.style.userSelect = '';
-        });
+        document.addEventListener('mouseup', () => { isDragging = false; document.body.style.userSelect = ''; });
+    }
+
+    function generateVisualSettingsUI() {
+        const container = document.getElementById('visualSettingsList');
+        container.innerHTML = ''; // 清空
+
+        for (const [key, value] of Object.entries(seriesMap)) {
+            const seriesId = value;
+            const config = visuals[seriesId];
+            
+            // 創建一列設定
+            const row = document.createElement('div');
+            row.className = 'vis-row';
+            
+            // 標籤
+            const label = document.createElement('label');
+            label.innerText = key;
+            row.appendChild(label);
+            
+            // 顏色選擇器
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.id = 'visColor_' + seriesId;
+            colorPicker.value = config.color;
+            colorPicker.onchange = saveSpecsAndUpdate; // 變更時自動儲存並重繪
+            row.appendChild(colorPicker);
+            
+            // 形狀下拉選單
+            const shapeSelect = document.createElement('select');
+            shapeSelect.id = 'visShape_' + seriesId;
+            shapeSelect.onchange = saveSpecsAndUpdate;
+            
+            pointShapes.forEach(shape => {
+                const option = document.createElement('option');
+                option.value = shape.value;
+                option.innerText = shape.name;
+                if(shape.value === config.shape) option.selected = true;
+                shapeSelect.appendChild(option);
+            });
+            row.appendChild(shapeSelect);
+            
+            container.appendChild(row);
+        }
     }
 
     // --- 自動存檔功能 ---
     function loadSavedData() {
-        const savedData = localStorage.getItem('qcChartData');
-        if (savedData) {
-            rawData = JSON.parse(savedData);
-        } else {
-            rawData = [...defaultData];
-        }
-
+        // 讀取規格設定
         const savedSpecs = localStorage.getItem('qcChartSpecs');
         if (savedSpecs) {
             const specs = JSON.parse(savedSpecs);
@@ -274,6 +355,27 @@
             document.getElementById('specUSL').value = specs.usl || 42.33;
             document.getElementById('specLSL').value = specs.lsl || 40.33;
             if(specs.currentJig) document.getElementById('specCurrentJig').value = specs.currentJig;
+        }
+
+        // 讀取視覺設定
+        const savedVisuals = localStorage.getItem('qcChartVisuals');
+        if (savedVisuals) {
+            visuals = JSON.parse(savedVisuals);
+            // 防呆：如果保存的配置不完整，補上預設
+            Object.keys(defaultVisuals).forEach(key => {
+                if(!visuals[key]) visuals[key] = defaultVisuals[key];
+            });
+        } else {
+            visuals = defaultVisuals;
+        }
+        generateVisualSettingsUI(); // 生成視覺設定介面
+
+        // 讀取點位數據 (最後載入，因為需要視覺配置與樣品名稱)
+        const savedData = localStorage.getItem('qcChartData');
+        if (savedData) {
+            rawData = JSON.parse(savedData);
+        } else {
+            rawData = [...defaultData];
         }
     }
 
@@ -283,6 +385,7 @@
     }
 
     function saveSpecsAndUpdate() {
+        // 1. 儲存規格設定
         const specs = {
             target: document.getElementById('specTarget').value,
             usl: document.getElementById('specUSL').value,
@@ -290,13 +393,24 @@
             currentJig: document.getElementById('specCurrentJig').value
         };
         localStorage.setItem('qcChartSpecs', JSON.stringify(specs));
+
+        // 2. 儲存視覺設定
+        visuals = {}; // 重置並重新讀取 UI 值
+        Object.values(seriesMap).forEach(seriesId => {
+            visuals[seriesId] = {
+                color: document.getElementById('visColor_' + seriesId).value,
+                shape: document.getElementById('visShape_' + seriesId).value
+            };
+        });
+        localStorage.setItem('qcChartVisuals', JSON.stringify(visuals));
+
         showSaveToast();
         updateAll();
     }
 
     function showSaveToast() {
         const status = document.getElementById('saveStatus');
-        status.innerText = "✅ 已自動儲存";
+        status.innerText = "✅ 已自動儲存設定與數據";
         status.style.color = "#27ae60";
         setTimeout(() => {
             status.innerText = "💾 自動存檔已啟用";
@@ -309,16 +423,24 @@
         return now.toLocaleString('zh-TW', { hour12: false });
     }
 
+    // 將 Hex 顏色淡化的輔助函數 (用在原始軌跡連線與虛線)
+    function applyAlphaToHex(hex, alpha) {
+        if (!hex) return 'rgba(0,0,0,' + alpha + ')';
+        // 解析 hex (ex: #3498db)
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
     // --- Chart.js 外掛與圖表初始化 ---
     const customCanvasBackgroundColor = {
         id: 'customCanvasBackgroundColor',
         beforeDraw: (chart, args, options) => {
-            const {ctx} = chart;
-            ctx.save();
+            const {ctx} = chart; ctx.save();
             ctx.globalCompositeOperation = 'destination-over';
             ctx.fillStyle = options.color || '#ffffff';
-            ctx.fillRect(0, 0, chart.width, chart.height);
-            ctx.restore();
+            ctx.fillRect(0, 0, chart.width, chart.height); ctx.restore();
         }
     };
 
@@ -326,9 +448,7 @@
         id: 'customAnnotations',
         afterDatasetsDraw(chart) {
             const ctx = chart.ctx;
-            const metaL = chart.getDatasetMeta(0);
-            const metaR = chart.getDatasetMeta(1);
-            
+            const metaL = chart.getDatasetMeta(0); const metaR = chart.getDatasetMeta(1);
             if (!metaL.data.length || !chart.data.customData) return;
             
             ctx.save();
@@ -338,26 +458,23 @@
                 const ptL = metaL.data[index].getProps(['x', 'y']);
                 const ptR = metaR.data[index].getProps(['x', 'y']);
                 
+                // 虛線連線：使用 L 側顏色的淡化版作為連線顏色
                 ctx.beginPath();
-                ctx.moveTo(ptL.x, ptL.y);
-                ctx.lineTo(ptR.x, ptR.y);
-                ctx.strokeStyle = '#95a5a6';
+                ctx.moveTo(ptL.x, ptL.y); ctx.lineTo(ptR.x, ptR.y);
+                ctx.strokeStyle = applyAlphaToHex(visuals.rawDataL.color, 0.5); // 使用淡化顏色
                 ctx.lineWidth = 1;
-                ctx.setLineDash([3, 3]);
-                ctx.stroke();
+                ctx.setLineDash([3, 3]); ctx.stroke();
 
+                // Delta 字樣
                 const midY = (ptL.y + ptR.y) / 2;
-                ctx.fillStyle = '#34495e';
-                ctx.font = 'bold 11px Arial';
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#34495e'; ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
                 ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
 
+                // OK/NG 字樣
                 const topY = Math.min(ptL.y, ptR.y);
                 ctx.fillStyle = item.status === 'OK' ? '#27ae60' : '#e74c3c';
-                ctx.font = '900 13px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
+                ctx.font = '900 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
                 ctx.fillText(item.status, ptL.x, topY - 8);
             });
             ctx.restore();
@@ -371,22 +488,14 @@
                 const ctx = chart.ctx;
                 const yPixel = chart.scales.y.getPixelForValue(crosshairY);
                 const { left, right } = chart.chartArea;
+                ctx.save(); ctx.beginPath();
+                ctx.moveTo(left, yPixel); ctx.lineTo(right, yPixel);
+                ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(52, 152, 219, 0.8)';
+                ctx.setLineDash([3, 3]); ctx.stroke();
                 
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(left, yPixel);
-                ctx.lineTo(right, yPixel);
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = 'rgba(52, 152, 219, 0.8)';
-                ctx.setLineDash([3, 3]);
-                ctx.stroke();
-                
-                ctx.fillStyle = '#3498db';
-                ctx.fillRect(right, yPixel - 12, 45, 24);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#3498db'; ctx.fillRect(right, yPixel - 12, 45, 24);
+                ctx.fillStyle = 'white'; ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(crosshairY.toFixed(2), right + 22, yPixel);
                 ctx.restore();
             }
@@ -399,53 +508,41 @@
             type: 'line',
             plugins: [customAnnotationsPlugin, crosshairPlugin, customCanvasBackgroundColor],
             data: {
-                labels: [],
+                labels: [], 
                 customData: [],
                 datasets: [
-                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: 'rgba(52, 152, 219, 0.3)', backgroundColor: '#3498db', pointBackgroundColor: '#3498db', pointBorderColor: '#3498db', pointStyle: 'circle', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: 'rgba(230, 126, 34, 0.3)', backgroundColor: '#e67e22', pointBackgroundColor: '#e67e22', pointBorderColor: '#e67e22', pointStyle: 'rect', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: '#9b59b6', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2 },
-                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: '#e056fd', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2 },
-                    // 治具專用資料集，綁定 y1 軸
-                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: '#1abc9c', backgroundColor: '#1abc9c', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, pointStyle: 'triangle', radius: 5 },
-                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: '#16a085', backgroundColor: '#16a085', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, pointStyle: 'triangle', radius: 5 }
+                    // 數據集定義，使用 visuals 配置中的顏色與形狀
+                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(visuals.rawDataL.color, 0.3), backgroundColor: visuals.rawDataL.color, pointStyle: visuals.rawDataL.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(visuals.rawDataR.color, 0.3), backgroundColor: visuals.rawDataR.color, pointStyle: visuals.rawDataR.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: visuals.cumAvgL.color, pointStyle: visuals.cumAvgL.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: visuals.cumAvgR.color, pointStyle: visuals.cumAvgR.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: visuals.recJigL.color, backgroundColor: visuals.recJigL.color, pointStyle: visuals.recJigL.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 },
+                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: visuals.recJigR.color, backgroundColor: visuals.recJigR.color, pointStyle: visuals.recJigR.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 }
                 ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 layout: { padding: { top: 30, right: 10, bottom: 10 } },
                 scales: {
-                    x: {
-                        ticks: { font: { size: 10 }, color: '#555', maxRotation: 0, autoSkip: false }
-                    },
-                    y: { 
-                        type: 'linear', display: true, position: 'left',
-                        title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } 
-                    },
+                    x: { ticks: { font: { size: 10 }, color: '#555', maxRotation: 0, autoSkip: false } },
+                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } },
                     y1: {
-                        type: 'linear', display: false, position: 'right', // 預設隱藏，勾選才顯示
-                        title: { display: true, text: '治具角度 (Degree °)', color: '#16a085', font: {weight: 'bold'} },
-                        ticks: { color: '#16a085' },
-                        grid: { drawOnChartArea: false } // 避免兩種格線打架
+                        type: 'linear', display: false, position: 'right', 
+                        title: { display: true, text: '治具角度 (Degree °)', color: applyAlphaToHex(visuals.recJigR.color, 0.8), font: {weight: 'bold'} },
+                        ticks: { color: applyAlphaToHex(visuals.recJigR.color, 0.8) }, grid: { drawOnChartArea: false } 
                     }
                 },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: { mode: 'index', intersect: false }
-                }
+                plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
             }
         });
 
         myChart.canvas.addEventListener('mousemove', (e) => {
             const rect = myChart.canvas.getBoundingClientRect();
-            const y = e.clientY - rect.top;
-            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top; const x = e.clientX - rect.left;
             const chartArea = myChart.chartArea;
             if (chartArea && x >= chartArea.left && x <= chartArea.right && y >= chartArea.top && y <= chartArea.bottom) {
                 crosshairY = myChart.scales.y.getValueForPixel(y);
-                myChart.canvas.style.cursor = 'crosshair';
-                myChart.update('none'); 
+                myChart.canvas.style.cursor = 'crosshair'; myChart.update('none'); 
             } else {
                 if (crosshairY !== null) { crosshairY = null; myChart.canvas.style.cursor = 'default'; myChart.update('none'); }
             }
@@ -453,13 +550,10 @@
 
         myChart.canvas.addEventListener('click', (e) => {
             if (crosshairY !== null) {
-                const popup = document.getElementById('clickInputPopup');
-                popup.style.display = 'block';
-                let popX = e.pageX + 15;
-                let popY = e.pageY - 15;
+                const popup = document.getElementById('clickInputPopup'); popup.style.display = 'block';
+                let popX = e.pageX + 15; let popY = e.pageY - 15;
                 if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
-                popup.style.left = popX + 'px';
-                popup.style.top = popY + 'px';
+                popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
                 document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
                 document.getElementById('popupOtherVal').value = '';
                 document.getElementById('popupName').value = 'P' + (rawData.length + 1);
@@ -470,11 +564,11 @@
         });
     }
 
-    // --- 資料操作與渲染 ---
+    // --- 資料操作與編輯名稱 ---
 
     function downloadChart() {
         const link = document.createElement('a');
-        link.download = '製程監控與治具補償_' + getCurrentTime().replace(/[\/:]/g, '') + '.png';
+        link.download = '製程監控完全自訂版_' + getCurrentTime().replace(/[\/:]/g, '') + '.png';
         link.href = document.getElementById('qcChart').toDataURL('image/png', 1.0);
         link.click();
     }
@@ -503,7 +597,7 @@
         const time = document.getElementById('popupTime').value || getCurrentTime();
         const cursorVal = parseFloat(document.getElementById('popupCursorVal').value);
         const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
-        const side = document.querySelector('input[name="cursorSide"]:checked').value;
+        const side = document.querySelector('input[name="cursorSide"][value="L"]:checked') ? 'L' : 'R';
         
         if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
         let l = side === 'L' ? cursorVal : otherVal;
@@ -521,6 +615,59 @@
         }
     }
 
+    // --- 實作可編輯名稱邏輯 ---
+    function makeSampleNamesEditable() {
+        const table = document.getElementById('dataTable');
+        const tbody = table.querySelector('tbody');
+        
+        // 使用事件委託 (Event Delegation) 監聽 TBODY
+        tbody.addEventListener('blur', function(e) {
+            // 只有當 blur 事件發生在 editable-col 上時才觸發
+            if(e.target && e.target.classList.contains('editable-col')) {
+                const cell = e.target;
+                const newName = cell.innerText.trim();
+                const index = cell.getAttribute('data-index');
+                
+                if(index !== null && newName !== rawData[index].name) {
+                    if(newName === "") {
+                        alert("樣品名稱不能為空！");
+                        cell.innerText = rawData[index].name; // 恢復
+                        return;
+                    }
+                    console.log('修改名稱, 索引:', index, '新名稱:', newName);
+                    rawData[index].name = newName; // 更新本地數據
+                    saveToStorage(); // 存檔
+                    
+                    // 重繪圖表即可，不需要完全 re-render 表格 (會導致選取消失)
+                    // 為了更保險，只更新圖表 labels
+                    updateChartLabelsAndDELTA();
+                }
+            }
+        }, true); // 使用 capture 捕獲 blur 事件 (blur 不冒泡)
+
+        // 加入鍵盤 Enter 鍵保存
+        tbody.addEventListener('keydown', function(e) {
+            if(e.target && e.target.classList.contains('editable-col')) {
+                if(e.key === 'Enter') {
+                    e.preventDefault(); // 防止換行
+                    e.target.blur(); // 觸發 blur 保存
+                }
+            }
+        });
+    }
+    
+    // 只更新圖表標籤與 Delta 的輕量化更新函數 (用在編輯名稱後)
+    function updateChartLabelsAndDELTA() {
+        if(!myChart) return;
+        const labels = [];
+        rawData.forEach(item => {
+            labels.push([item.name, formatShortTime(item.time)]);
+        });
+        myChart.data.labels = labels;
+        // Delta 字樣中的名稱也需要更新，但 Delta 插件直接讀取數據集位置，不需要手動更名
+        myChart.update();
+    }
+
     function formatShortTime(timeStr) {
         if (!timeStr) return "";
         try {
@@ -533,6 +680,12 @@
     }
 
     function updateAll() {
+        // 如果圖表已存在，需要先銷毀並重新初始化以載入新的視覺配置
+        if (myChart) {
+            myChart.destroy();
+            initChart(); 
+        }
+
         const target = parseFloat(document.getElementById('specTarget').value);
         const usl = parseFloat(document.getElementById('specUSL').value);
         const lsl = parseFloat(document.getElementById('specLSL').value);
@@ -545,10 +698,8 @@
         let sumL = 0, sumR = 0;
         
         myChart.data.customData = [];
-        let minY = lsl - 0.5;
-        let maxY = usl + 0.5;
-        let minJigY = currentJig - 0.5;
-        let maxJigY = currentJig + 0.5;
+        let minY = lsl - 0.5; let maxY = usl + 0.5;
+        let minJigY = currentJig - 0.5; let maxJigY = currentJig + 0.5;
 
         rawData.forEach((item, index) => {
             const delta = Math.abs(item.r - item.l).toFixed(2);
@@ -556,22 +707,20 @@
             const status = isOk ? 'OK' : 'NG';
             
             sumL += item.l; sumR += item.r;
-            // 計算累積切割平均
             const curCumL = parseFloat((sumL / (index + 1)).toFixed(2));
             const curCumR = parseFloat((sumR / (index + 1)).toFixed(2));
-
-            // 自動補償治具邏輯：治具需調整的值 = 原治具 + (累積平均 - 目標)
             const recJigL = (currentJig + (curCumL - target)).toFixed(2);
             const recJigR = (currentJig + (curCumR - target)).toFixed(2);
 
+            // 渲染表格，加入 data-index 與 editable-col 類
             const row = tbody.insertRow();
-            row.innerHTML = `<td>${item.name}</td>
+            row.innerHTML = `<td class="editable-col" contenteditable="true" data-index="${index}">${item.name}</td>
                              <td class="time-col">${item.time || '-'}</td>
                              <td>${item.l}</td><td>${item.r}</td><td>${delta}</td>
                              <td>${curCumL}</td><td>${curCumR}</td>
                              <td class="jig-val">${recJigL}</td><td class="jig-val">${recJigR}</td>
                              <td class="${isOk ? 'status-ok' : 'status-ng'}">${status}</td>
-                             <td><button onclick="deleteData(${index})" class="btn-danger btn-small">🗑️</button></td>`;
+                             <td><button onclick="deleteData(${index})" class="btn-danger btn-small" style="background:#b92c29; font-size:9px;">🗑️</button></td>`;
 
             labels.push([item.name, formatShortTime(item.time)]);
             lData.push(item.l); rData.push(item.r);
@@ -594,12 +743,9 @@
         myChart.data.datasets[4].data = jigLData;
         myChart.data.datasets[5].data = jigRData;
 
-        // 更新左側 Y 軸縮放 (切割角度)
         myChart.options.scales.y.min = Math.floor(minY);
         myChart.options.scales.y.max = Math.ceil(maxY);
-
-        // 更新右側 Y1 軸縮放 (治具角度)
-        myChart.options.scales.y1.min = Math.floor(minJigY * 5) / 5; // 微調間距
+        myChart.options.scales.y1.min = Math.floor(minJigY * 5) / 5;
         myChart.options.scales.y1.max = Math.ceil(maxJigY * 5) / 5;
 
         updateChartVisibility();
@@ -608,6 +754,7 @@
     }
 
     function updateChartVisibility() {
+        if(!myChart) return;
         const showRaw = document.getElementById('toggleRawLine').checked;
         const showCum = document.getElementById('toggleCumAvg').checked;
         const showJig = document.getElementById('toggleRecJig').checked;
@@ -619,7 +766,6 @@
         myChart.setDatasetVisibility(4, showJig);
         myChart.setDatasetVisibility(5, showJig);
         
-        // 控制右側 Y 軸是否顯示
         myChart.options.scales.y1.display = showJig;
         myChart.update();
     }
@@ -631,41 +777,23 @@
         myChart.config.plugins.push({
             id: pluginId,
             beforeDraw(chart) {
-                const ctx = chart.ctx;
-                const { left, right } = chart.chartArea;
-                const yAxis = chart.scales.y; // 基準水平線綁定左側 y 軸
-                
+                const ctx = chart.ctx; const { left, right } = chart.chartArea;
+                const yAxis = chart.scales.y;
                 const drawLine = (yVal, color, dash, text) => {
                     const y = yAxis.getPixelForValue(yVal);
                     if (y < chart.chartArea.top || y > chart.chartArea.bottom) return;
-                    
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(left, y);
-                    ctx.lineTo(right, y);
-                    ctx.lineWidth = 1.5;
-                    ctx.strokeStyle = color;
-                    if(dash) ctx.setLineDash(dash);
-                    ctx.stroke();
-                    
-                    ctx.fillStyle = color;
-                    ctx.font = 'bold 12px Arial';
-                    ctx.textAlign = 'right';
-                    ctx.textBaseline = 'bottom';
-                    ctx.fillText(text, right - 5, y - 3);
-                    ctx.restore();
+                    ctx.save(); ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y);
+                    ctx.lineWidth = 1.5; ctx.strokeStyle = color;
+                    if(dash) ctx.setLineDash(dash); ctx.stroke();
+                    ctx.fillStyle = color; ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+                    ctx.fillText(text, right - 5, y - 3); ctx.restore();
                 };
-
                 const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(usl));
                 const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(lsl));
-                ctx.save();
-                ctx.fillStyle = 'rgba(46, 204, 113, 0.05)';
-                ctx.fillRect(left, yTop, right - left, yBot - yTop);
-                ctx.restore();
-
+                ctx.save(); ctx.fillStyle = 'rgba(46, 204, 113, 0.05)'; ctx.fillRect(left, yTop, right - left, yBot - yTop); ctx.restore();
                 drawLine(target, '#27ae60', null, 'Target ' + target);
-                drawLine(usl, '#e74c3c', [5,5], 'USL ' + usl);
-                drawLine(lsl, '#e74c3c', [5,5], 'LSL ' + lsl);
+                drawLine(usl, '#e74c3c', [5,5], 'USL ' + usl); drawLine(lsl, '#e74c3c', [5,5], 'LSL ' + lsl);
             }
         });
         myChart.update();
@@ -678,7 +806,11 @@
     }
 
     window.onload = () => {
-        makeDraggable(); loadSavedData(); initChart(); updateAll();
+        makeDraggable(); 
+        loadSavedData(); 
+        initChart(); 
+        updateAll();
+        makeSampleNamesEditable(); // 啟動表格編輯功能
     };
 </script>
 </body>
