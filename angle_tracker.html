@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Neil's Toolbox - 專業製程監控 (自動補償治具版)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; margin: 20px; color: #333; overflow-x: hidden; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-top: 0; display: flex; justify-content: space-between; align-items: flex-end; }
+        #saveStatus { font-size: 14px; color: #7f8c8d; font-weight: normal; }
+        
+        .panel { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
+        .panel-title { font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: block; font-size: 15px; }
+        
+        .flex-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .flex-column { display: flex; flex-direction: column; gap: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 13px; color: #64748b; font-weight: bold; }
+        input[type="number"], input[type="text"] { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; }
+        input.time-input { width: 160px; }
+        
+        button { padding: 9px 18px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #2980b9; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #219653; }
+        .btn-small { padding: 5px 10px; font-size: 12px; }
+
+        .checkbox-group { display: flex; gap: 15px; margin-bottom: 10px; align-items: center; }
+        .checkbox-group label { cursor: pointer; font-size: 14px; color: #34495e; display: flex; align-items: center; gap: 5px;}
+        .highlight-jig { color: #16a085 !important; font-weight: 900; }
+
+        details.info-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 20px; font-size: 13px; color: #475569; }
+        details.info-box summary { font-weight: bold; cursor: pointer; color: #2980b9; outline: none; }
+        details.info-box p { margin: 10px 0 0 0; line-height: 1.6; }
+
+        #chartWrapper { height: 500px; margin-bottom: 30px; position: relative; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 10px; }
+        
+        .draggable-settings {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            padding: 12px 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+            width: max-content;
+        }
+        .draggable-settings summary {
+            color: #2c3e50; font-weight: bold; list-style: none; user-select: none; display: flex; align-items: center; cursor: move;
+        }
+        .draggable-settings summary::-webkit-details-marker { display: none; }
+        .draggable-settings[open] summary { border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 5px; }
+
+        .popup-panel { box-shadow: 0 10px 25px rgba(0,0,0,0.25); border: 2px solid #3498db; background: white; padding: 15px; border-radius: 8px; width: 250px; }
+        .radio-group { display: flex; gap: 15px; align-items: center; background: #f1f5f9; padding: 8px; border-radius: 4px; }
+        .radio-group label { cursor: pointer; font-size: 14px; font-weight: bold; color: #333; display: flex; align-items: center; gap: 4px; margin: 0;}
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
+        th { background: #34495e; color: white; }
+        .time-col { font-size: 11px; color: #7f8c8d; }
+        .status-ok { color: #27ae60; font-weight: 900; }
+        .status-ng { color: #e74c3c; font-weight: 900; }
+        .jig-val { font-weight: bold; color: #16a085; background: #f0fdf4; }
+        tr:nth-child(even) { background: #f8fafc; }
+    </style>
+</head>
+<body>
+
+<details id="draggableSettings" class="draggable-settings">
+    <summary>⚙️ 製程與治具設定 (按住拖曳 / 點擊展開)</summary>
+    <div class="flex-column" style="margin-top:10px;">
+        <div class="input-group">
+            <label style="color:#16a085;">原治具設計角度 (°)</label>
+            <input type="number" id="specCurrentJig" step="0.01" value="48.67" onchange="saveSpecsAndUpdate()">
+        </div>
+        <hr style="width:100%; border:0; border-top:1px dashed #cbd5e1; margin: 5px 0;">
+        <div class="input-group">
+            <label>目標切割角度 (Target)</label>
+            <input type="number" id="specTarget" step="0.01" value="41.33" onchange="saveSpecsAndUpdate()">
+        </div>
+        <div class="input-group">
+            <label>控制上限 (USL)</label>
+            <input type="number" id="specUSL" step="0.01" value="42.33" onchange="saveSpecsAndUpdate()">
+        </div>
+        <div class="input-group">
+            <label>控制下限 (LSL)</label>
+            <input type="number" id="specLSL" step="0.01" value="40.33" onchange="saveSpecsAndUpdate()">
+        </div>
+    </div>
+</details>
+
+<div class="container">
+    <h1>
+        Neil's Toolbox - 角度檢驗即時追蹤 
+        <span id="saveStatus">💾 自動存檔已啟用</span>
+    </h1>
+
+    <details class="info-box">
+        <summary>💡 演算法與治具補償說明 (點擊展開)</summary>
+        <p>
+            <b>1. 累積均線</b>：從第 1 片到當下所有樣品的總平均。判斷機台是否有長期偏移。<br>
+            <b>2. 震幅 (Delta)</b>：絕對值 | Angle R - Angle L |，評估治具左右對稱性。<br>
+            <b style="color:#16a085;">3. 建議治具角度 (自動補償)</b>：刀具 90° 垂直切割時，切割角與治具角互補。公式：<code>建議治具 = 原治具角度 + (累積平均切割角 - 目標切割角)</code>。藉由計算機台長期誤差 (Offset)，直接提供修正後的治具角度設計參考。<br>
+            <b>* 圖表操作</b>：在圖表任意處點擊左鍵，可快速擷取該點 Y 軸數值並呼叫輸入選單。<br>
+            <b>* 右上角面板</b>：可以按住標題列自由拖曳位置。
+        </p>
+    </details>
+
+    <div class="panel">
+        <span class="panel-title">📝 手動新增數據 (或直接在圖表中點擊滑鼠)</span>
+        <div class="flex-row">
+            <div class="input-group">
+                <label>檢驗時間</label>
+                <input type="text" id="sampleTime" class="time-input" placeholder="自動帶入">
+            </div>
+            <div class="input-group">
+                <label>Sample 名稱</label>
+                <input type="text" id="sampleName" placeholder="例如: AF">
+            </div>
+            <div class="input-group">
+                <label>Angle L (°)</label>
+                <input type="number" id="angleL" step="0.01" placeholder="42.10">
+            </div>
+            <div class="input-group">
+                <label>Angle R (°)</label>
+                <input type="number" id="angleR" step="0.01" placeholder="41.50">
+            </div>
+            <button onclick="addData()">➕ 新增數據</button>
+            <button onclick="downloadChart()" class="btn-success">📥 下載圖表為圖片</button>
+            <button onclick="clearData()" class="btn-danger">🗑️ 清除全部數據</button>
+        </div>
+    </div>
+
+    <div class="checkbox-group">
+        <strong>📈 圖表顯示切換：</strong>
+        <label><input type="checkbox" id="toggleRawLine" onchange="updateChartVisibility()"> L/R 原始連線 (淡色)</label>
+        <label><input type="checkbox" id="toggleCumAvg" checked onchange="updateChartVisibility()"> 累積均線</label>
+        <label class="highlight-jig"><input type="checkbox" id="toggleRecJig" onchange="updateChartVisibility()"> 建議治具設計角度 (開啟右側副坐標軸)</label>
+    </div>
+
+    <div id="chartWrapper">
+        <canvas id="qcChart"></canvas>
+    </div>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Sample</th>
+                <th>時間</th>
+                <th>Angle L</th>
+                <th>Angle R</th>
+                <th>震幅(Δ)</th>
+                <th>累積均值_L</th>
+                <th>累積均值_R</th>
+                <th style="background:#1abc9c;">建議治具_L</th>
+                <th style="background:#16a085;">建議治具_R</th>
+                <th>結果</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div id="clickInputPopup" class="popup-panel" style="display:none; position:absolute; z-index:999;">
+    <span class="panel-title" style="color:#2980b9; margin-bottom: 12px;">📍 擷取游標數值新增</span>
+    <div class="flex-column">
+        <div class="input-group">
+            <label>游標 Y 軸數值 (°)</label>
+            <input type="number" id="popupCursorVal" readonly style="color:#e74c3c; font-weight:bold; background:#fff5f5; width:100%; box-sizing: border-box;">
+        </div>
+        
+        <div class="radio-group">
+            <span style="font-size: 13px; color: #64748b; font-weight: bold;">套用於：</span>
+            <label><input type="radio" name="cursorSide" value="L" checked> L</label>
+            <label><input type="radio" name="cursorSide" value="R"> R</label>
+        </div>
+
+        <div class="input-group">
+            <label>另一側角度 (°)</label>
+            <input type="number" id="popupOtherVal" placeholder="輸入數值..." style="width:100%; box-sizing: border-box;">
+        </div>
+        <div class="input-group">
+            <label>Sample 名稱</label>
+            <input type="text" id="popupName" style="width:100%; box-sizing: border-box;">
+        </div>
+        <div class="input-group">
+            <label>時間</label>
+            <input type="text" id="popupTime" style="width:100%; box-sizing: border-box; font-size:12px;">
+        </div>
+        
+        <button onclick="submitPopupData()" style="width:100%; margin-top:5px;">💾 確認新增</button>
+        <button onclick="closePopup()" class="btn-danger" style="width:100%; margin-top:2px; background: #95a5a6;">取消</button>
+    </div>
+</div>
+
+<script>
+    // 預設資料
+    const defaultData = [
+        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50 },
+        { name: "AG", time: "2026/4/8 下午 3:52:20", l: 41.27, r: 41.83 },
+        { name: "AH", time: "2026/4/13 下午 3:06:41", l: 42.03, r: 42.10 },
+        { name: "AI", time: "2026/4/13 下午 3:20:27", l: 42.10, r: 42.02 },
+        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26 },
+        { name: "Sample I", time: "2026/4/15 下午 2:47:59", l: 42.69, r: 43.31 },
+        { name: "AJ", time: "2026/4/17 下午 1:05:48", l: 42.84, r: 43.20 },
+        { name: "AK", time: "2026/4/17 下午 1:25:51", l: 42.30, r: 43.48 },
+        { name: "AL", time: "2026/4/20 下午 1:58:33", l: 40.74, r: 42.46 },
+        { name: "AM", time: "2026/4/20 下午 2:24:49", l: 43.05, r: 44.01 },
+        { name: "AM'", time: "2026/4/21 下午 3:07:25", l: 43.00, r: 42.70 },
+        { name: "AN", time: "2026/4/21 下午 3:26:16", l: 43.00, r: 43.27 },
+        { name: "AL'", time: "2026/4/21 下午 3:35:02", l: 43.20, r: 42.93 },
+        { name: "AO", time: "2026/4/21 下午 3:50:03", l: 43.12, r: 43.20 },
+        { name: "AP", time: "2026/4/22 下午 3:47:05", l: 42.55, r: 42.63 },
+        { name: "AQ", time: "2026/4/22 下午 3:53:07", l: 41.66, r: 42.49 },
+        { name: "AV", time: "2026/4/28 下午 1:59:28", l: 42.39, r: 42.01 },
+        { name: "AX", time: "2026/4/28 下午 2:21:15", l: 43.23, r: 43.24 },
+        { name: "AY", time: "2026/4/28 下午 3:02:27", l: 42.80, r: 42.39 },
+        { name: "AZ", time: "2026/4/28 下午 3:16:11", l: 41.70, r: 42.28 }
+    ];
+
+    let rawData = [];
+    let myChart = null;
+    let crosshairY = null; 
+
+    // --- 拖曳面板功能 ---
+    function makeDraggable() {
+        const dragEl = document.getElementById('draggableSettings');
+        const dragHandle = dragEl.querySelector('summary');
+        let isDragging = false, startX, startY, startLeft, startTop;
+
+        dragHandle.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = dragEl.offsetLeft;
+            startTop = dragEl.offsetTop;
+            document.body.style.userSelect = 'none'; 
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            dragEl.style.left = (startLeft + e.clientX - startX) + 'px';
+            dragEl.style.top = (startTop + e.clientY - startY) + 'px';
+            dragEl.style.right = 'auto'; 
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
+    }
+
+    // --- 自動存檔功能 ---
+    function loadSavedData() {
+        const savedData = localStorage.getItem('qcChartData');
+        if (savedData) {
+            rawData = JSON.parse(savedData);
+        } else {
+            rawData = [...defaultData];
+        }
+
+        const savedSpecs = localStorage.getItem('qcChartSpecs');
+        if (savedSpecs) {
+            const specs = JSON.parse(savedSpecs);
+            document.getElementById('specTarget').value = specs.target || 41.33;
+            document.getElementById('specUSL').value = specs.usl || 42.33;
+            document.getElementById('specLSL').value = specs.lsl || 40.33;
+            if(specs.currentJig) document.getElementById('specCurrentJig').value = specs.currentJig;
+        }
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('qcChartData', JSON.stringify(rawData));
+        showSaveToast();
+    }
+
+    function saveSpecsAndUpdate() {
+        const specs = {
+            target: document.getElementById('specTarget').value,
+            usl: document.getElementById('specUSL').value,
+            lsl: document.getElementById('specLSL').value,
+            currentJig: document.getElementById('specCurrentJig').value
+        };
+        localStorage.setItem('qcChartSpecs', JSON.stringify(specs));
+        showSaveToast();
+        updateAll();
+    }
+
+    function showSaveToast() {
+        const status = document.getElementById('saveStatus');
+        status.innerText = "✅ 已自動儲存";
+        status.style.color = "#27ae60";
+        setTimeout(() => {
+            status.innerText = "💾 自動存檔已啟用";
+            status.style.color = "#7f8c8d";
+        }, 1500);
+    }
+    
+    function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleString('zh-TW', { hour12: false });
+    }
+
+    // --- Chart.js 外掛與圖表初始化 ---
+    const customCanvasBackgroundColor = {
+        id: 'customCanvasBackgroundColor',
+        beforeDraw: (chart, args, options) => {
+            const {ctx} = chart;
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = options.color || '#ffffff';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
+    const customAnnotationsPlugin = {
+        id: 'customAnnotations',
+        afterDatasetsDraw(chart) {
+            const ctx = chart.ctx;
+            const metaL = chart.getDatasetMeta(0);
+            const metaR = chart.getDatasetMeta(1);
+            
+            if (!metaL.data.length || !chart.data.customData) return;
+            
+            ctx.save();
+            chart.data.customData.forEach((item, index) => {
+                if(!metaL.data[index] || !metaR.data[index]) return;
+                
+                const ptL = metaL.data[index].getProps(['x', 'y']);
+                const ptR = metaR.data[index].getProps(['x', 'y']);
+                
+                ctx.beginPath();
+                ctx.moveTo(ptL.x, ptL.y);
+                ctx.lineTo(ptR.x, ptR.y);
+                ctx.strokeStyle = '#95a5a6';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.stroke();
+
+                const midY = (ptL.y + ptR.y) / 2;
+                ctx.fillStyle = '#34495e';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
+
+                const topY = Math.min(ptL.y, ptR.y);
+                ctx.fillStyle = item.status === 'OK' ? '#27ae60' : '#e74c3c';
+                ctx.font = '900 13px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(item.status, ptL.x, topY - 8);
+            });
+            ctx.restore();
+        }
+    };
+
+    const crosshairPlugin = {
+        id: 'crosshair',
+        afterDraw(chart) {
+            if (crosshairY !== null && chart.chartArea) {
+                const ctx = chart.ctx;
+                const yPixel = chart.scales.y.getPixelForValue(crosshairY);
+                const { left, right } = chart.chartArea;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(left, yPixel);
+                ctx.lineTo(right, yPixel);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(52, 152, 219, 0.8)';
+                ctx.setLineDash([3, 3]);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#3498db';
+                ctx.fillRect(right, yPixel - 12, 45, 24);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(crosshairY.toFixed(2), right + 22, yPixel);
+                ctx.restore();
+            }
+        }
+    };
+
+    function initChart() {
+        const ctx = document.getElementById('qcChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            plugins: [customAnnotationsPlugin, crosshairPlugin, customCanvasBackgroundColor],
+            data: {
+                labels: [],
+                customData: [],
+                datasets: [
+                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: 'rgba(52, 152, 219, 0.3)', backgroundColor: '#3498db', pointBackgroundColor: '#3498db', pointBorderColor: '#3498db', pointStyle: 'circle', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: 'rgba(230, 126, 34, 0.3)', backgroundColor: '#e67e22', pointBackgroundColor: '#e67e22', pointBorderColor: '#e67e22', pointStyle: 'rect', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: '#9b59b6', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2 },
+                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: '#e056fd', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2 },
+                    // 治具專用資料集，綁定 y1 軸
+                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: '#1abc9c', backgroundColor: '#1abc9c', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, pointStyle: 'triangle', radius: 5 },
+                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: '#16a085', backgroundColor: '#16a085', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, pointStyle: 'triangle', radius: 5 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 30, right: 10, bottom: 10 } },
+                scales: {
+                    x: {
+                        ticks: { font: { size: 10 }, color: '#555', maxRotation: 0, autoSkip: false }
+                    },
+                    y: { 
+                        type: 'linear', display: true, position: 'left',
+                        title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } 
+                    },
+                    y1: {
+                        type: 'linear', display: false, position: 'right', // 預設隱藏，勾選才顯示
+                        title: { display: true, text: '治具角度 (Degree °)', color: '#16a085', font: {weight: 'bold'} },
+                        ticks: { color: '#16a085' },
+                        grid: { drawOnChartArea: false } // 避免兩種格線打架
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                }
+            }
+        });
+
+        myChart.canvas.addEventListener('mousemove', (e) => {
+            const rect = myChart.canvas.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const x = e.clientX - rect.left;
+            const chartArea = myChart.chartArea;
+            if (chartArea && x >= chartArea.left && x <= chartArea.right && y >= chartArea.top && y <= chartArea.bottom) {
+                crosshairY = myChart.scales.y.getValueForPixel(y);
+                myChart.canvas.style.cursor = 'crosshair';
+                myChart.update('none'); 
+            } else {
+                if (crosshairY !== null) { crosshairY = null; myChart.canvas.style.cursor = 'default'; myChart.update('none'); }
+            }
+        });
+
+        myChart.canvas.addEventListener('click', (e) => {
+            if (crosshairY !== null) {
+                const popup = document.getElementById('clickInputPopup');
+                popup.style.display = 'block';
+                let popX = e.pageX + 15;
+                let popY = e.pageY - 15;
+                if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
+                popup.style.left = popX + 'px';
+                popup.style.top = popY + 'px';
+                document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
+                document.getElementById('popupOtherVal').value = '';
+                document.getElementById('popupName').value = 'P' + (rawData.length + 1);
+                document.getElementById('popupTime').value = getCurrentTime();
+                document.querySelector('input[name="cursorSide"][value="L"]').checked = true;
+                setTimeout(() => document.getElementById('popupOtherVal').focus(), 50);
+            }
+        });
+    }
+
+    // --- 資料操作與渲染 ---
+
+    function downloadChart() {
+        const link = document.createElement('a');
+        link.download = '製程監控與治具補償_' + getCurrentTime().replace(/[\/:]/g, '') + '.png';
+        link.href = document.getElementById('qcChart').toDataURL('image/png', 1.0);
+        link.click();
+    }
+
+    function addData() {
+        const name = document.getElementById('sampleName').value;
+        const timeInput = document.getElementById('sampleTime').value || getCurrentTime();
+        const l = parseFloat(document.getElementById('angleL').value);
+        const r = parseFloat(document.getElementById('angleR').value);
+
+        if (!name || isNaN(l) || isNaN(r)) { alert("請輸入完整數據！"); return; }
+        
+        rawData.push({ name, time: timeInput, l, r });
+        saveToStorage(); 
+        
+        document.getElementById('sampleName').value = '';
+        document.getElementById('angleL').value = '';
+        document.getElementById('angleR').value = '';
+        document.getElementById('sampleTime').value = getCurrentTime();
+        document.getElementById('sampleName').focus(); 
+        updateAll();
+    }
+
+    function submitPopupData() {
+        const name = document.getElementById('popupName').value;
+        const time = document.getElementById('popupTime').value || getCurrentTime();
+        const cursorVal = parseFloat(document.getElementById('popupCursorVal').value);
+        const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
+        const side = document.querySelector('input[name="cursorSide"]:checked').value;
+        
+        if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
+        let l = side === 'L' ? cursorVal : otherVal;
+        let r = side === 'L' ? otherVal : cursorVal;
+        
+        rawData.push({ name, time, l, r });
+        saveToStorage(); updateAll(); closePopup();
+    }
+
+    function closePopup() { document.getElementById('clickInputPopup').style.display = 'none'; }
+
+    function deleteData(index) {
+        if(confirm(`確定要刪除 [ ${rawData[index].name} ] 嗎？`)) {
+            rawData.splice(index, 1); saveToStorage(); updateAll();
+        }
+    }
+
+    function formatShortTime(timeStr) {
+        if (!timeStr) return "";
+        try {
+            if(timeStr.includes('下午') || timeStr.includes('上午')) {
+                 let parts = timeStr.split(' ');
+                 return parts[0].split('/').slice(1).join('/'); 
+            }
+            return timeStr.split(' ')[0]; 
+        } catch(e) { return timeStr; }
+    }
+
+    function updateAll() {
+        const target = parseFloat(document.getElementById('specTarget').value);
+        const usl = parseFloat(document.getElementById('specUSL').value);
+        const lsl = parseFloat(document.getElementById('specLSL').value);
+        const currentJig = parseFloat(document.getElementById('specCurrentJig').value) || 48.67;
+
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+        
+        const labels = [], lData = [], rData = [], cumL = [], cumR = [], jigLData = [], jigRData = [];
+        let sumL = 0, sumR = 0;
+        
+        myChart.data.customData = [];
+        let minY = lsl - 0.5;
+        let maxY = usl + 0.5;
+        let minJigY = currentJig - 0.5;
+        let maxJigY = currentJig + 0.5;
+
+        rawData.forEach((item, index) => {
+            const delta = Math.abs(item.r - item.l).toFixed(2);
+            const isOk = (item.l <= usl && item.l >= lsl && item.r <= usl && item.r >= lsl);
+            const status = isOk ? 'OK' : 'NG';
+            
+            sumL += item.l; sumR += item.r;
+            // 計算累積切割平均
+            const curCumL = parseFloat((sumL / (index + 1)).toFixed(2));
+            const curCumR = parseFloat((sumR / (index + 1)).toFixed(2));
+
+            // 自動補償治具邏輯：治具需調整的值 = 原治具 + (累積平均 - 目標)
+            const recJigL = (currentJig + (curCumL - target)).toFixed(2);
+            const recJigR = (currentJig + (curCumR - target)).toFixed(2);
+
+            const row = tbody.insertRow();
+            row.innerHTML = `<td>${item.name}</td>
+                             <td class="time-col">${item.time || '-'}</td>
+                             <td>${item.l}</td><td>${item.r}</td><td>${delta}</td>
+                             <td>${curCumL}</td><td>${curCumR}</td>
+                             <td class="jig-val">${recJigL}</td><td class="jig-val">${recJigR}</td>
+                             <td class="${isOk ? 'status-ok' : 'status-ng'}">${status}</td>
+                             <td><button onclick="deleteData(${index})" class="btn-danger btn-small">🗑️</button></td>`;
+
+            labels.push([item.name, formatShortTime(item.time)]);
+            lData.push(item.l); rData.push(item.r);
+            cumL.push(curCumL); cumR.push(curCumR);
+            jigLData.push(recJigL); jigRData.push(recJigR);
+
+            myChart.data.customData.push({ delta, status });
+
+            minY = Math.min(minY, item.l - 0.5, item.r - 0.5);
+            maxY = Math.max(maxY, item.l + 0.5, item.r + 0.5);
+            minJigY = Math.min(minJigY, parseFloat(recJigL) - 0.2, parseFloat(recJigR) - 0.2);
+            maxJigY = Math.max(maxJigY, parseFloat(recJigL) + 0.2, parseFloat(recJigR) + 0.2);
+        });
+
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = lData;
+        myChart.data.datasets[1].data = rData;
+        myChart.data.datasets[2].data = cumL;
+        myChart.data.datasets[3].data = cumR;
+        myChart.data.datasets[4].data = jigLData;
+        myChart.data.datasets[5].data = jigRData;
+
+        // 更新左側 Y 軸縮放 (切割角度)
+        myChart.options.scales.y.min = Math.floor(minY);
+        myChart.options.scales.y.max = Math.ceil(maxY);
+
+        // 更新右側 Y1 軸縮放 (治具角度)
+        myChart.options.scales.y1.min = Math.floor(minJigY * 5) / 5; // 微調間距
+        myChart.options.scales.y1.max = Math.ceil(maxJigY * 5) / 5;
+
+        updateChartVisibility();
+        drawSpecLines(target, usl, lsl);
+        document.getElementById('sampleTime').value = getCurrentTime();
+    }
+
+    function updateChartVisibility() {
+        const showRaw = document.getElementById('toggleRawLine').checked;
+        const showCum = document.getElementById('toggleCumAvg').checked;
+        const showJig = document.getElementById('toggleRecJig').checked;
+
+        myChart.data.datasets[0].showLine = showRaw;
+        myChart.data.datasets[1].showLine = showRaw;
+        myChart.setDatasetVisibility(2, showCum);
+        myChart.setDatasetVisibility(3, showCum);
+        myChart.setDatasetVisibility(4, showJig);
+        myChart.setDatasetVisibility(5, showJig);
+        
+        // 控制右側 Y 軸是否顯示
+        myChart.options.scales.y1.display = showJig;
+        myChart.update();
+    }
+
+    function drawSpecLines(target, usl, lsl) {
+        const pluginId = 'specLinesPlugin';
+        myChart.config.plugins = myChart.config.plugins.filter(p => p.id !== pluginId);
+        
+        myChart.config.plugins.push({
+            id: pluginId,
+            beforeDraw(chart) {
+                const ctx = chart.ctx;
+                const { left, right } = chart.chartArea;
+                const yAxis = chart.scales.y; // 基準水平線綁定左側 y 軸
+                
+                const drawLine = (yVal, color, dash, text) => {
+                    const y = yAxis.getPixelForValue(yVal);
+                    if (y < chart.chartArea.top || y > chart.chartArea.bottom) return;
+                    
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(left, y);
+                    ctx.lineTo(right, y);
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeStyle = color;
+                    if(dash) ctx.setLineDash(dash);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = color;
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(text, right - 5, y - 3);
+                    ctx.restore();
+                };
+
+                const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(usl));
+                const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(lsl));
+                ctx.save();
+                ctx.fillStyle = 'rgba(46, 204, 113, 0.05)';
+                ctx.fillRect(left, yTop, right - left, yBot - yTop);
+                ctx.restore();
+
+                drawLine(target, '#27ae60', null, 'Target ' + target);
+                drawLine(usl, '#e74c3c', [5,5], 'USL ' + usl);
+                drawLine(lsl, '#e74c3c', [5,5], 'LSL ' + lsl);
+            }
+        });
+        myChart.update();
+    }
+
+    function clearData() {
+        if(confirm("確定要清除所有數據嗎？\n(注意：這會清空目前的自動存檔，重新載入網頁會恢復預設資料)")) {
+            rawData = []; localStorage.removeItem('qcChartData'); updateAll();
+        }
+    }
+
+    window.onload = () => {
+        makeDraggable(); loadSavedData(); initChart(); updateAll();
+    };
+</script>
+</body>
+</html>
