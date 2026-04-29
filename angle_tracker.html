@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Neil's Toolbox - 專業製程監控 (群組對比版)</title>
+    <title>Neil's Toolbox - 專業製程監控 (極簡分頁版)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: #f0f4f8; margin: 20px; color: #334155; overflow-x: hidden; }
@@ -34,6 +34,7 @@
         details.accordion-panel summary:hover { color: #2563eb; }
         details.accordion-panel summary::marker { display: none; } 
         details.accordion-panel summary::-webkit-details-marker { display: none; }
+        /* 特殊樣式：設定面板 */
         details.settings-panel summary { color: #475569; }
         details.settings-panel summary:hover { color: #1e293b; }
 
@@ -49,6 +50,7 @@
         textarea { width: 100%; resize: vertical; font-family: monospace; font-size: 13px; }
         input[type="color"] { border: 1px solid #cbd5e1; padding: 0; cursor: pointer; height: 32px; width: 40px; border-radius: 4px;}
         
+        /* 網格排版：讓設定面板更緊湊 */
         .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
         .visuals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
         .vis-row { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
@@ -64,34 +66,28 @@
         button.btn-outline { background: white; color: #475569; border: 1px solid #cbd5e1; }
         button.btn-outline:hover { background: #f8fafc; color: #1e293b; }
 
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .checkbox-group { display: flex; gap: 15px; margin: 15px 0; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; }
         .checkbox-group label { cursor: pointer; font-size: 13px; color: #475569; display: flex; align-items: center; gap: 5px; font-weight: bold;}
         .highlight-jig { color: #0d9488 !important; }
 
         #chartWrapper { height: 450px; margin-bottom: 30px; position: relative; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 10px; }
         
-        .draggable-settings { position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.98); border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(8px); width: 320px; transition: box-shadow 0.2s; }
-        .draggable-settings:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        .draggable-settings summary { color: #1e293b; font-weight: bold; list-style: none; user-select: none; display: flex; align-items: center; cursor: move; font-size: 14px;}
-        .draggable-settings summary::-webkit-details-marker { display: none; }
-        .draggable-settings[open] summary { border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px; }
-
+        /* 圖表內點擊彈窗 */
         .popup-panel { position: absolute; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 2px solid #3b82f6; background: white; padding: 15px; border-radius: 8px; width: 250px; }
         .radio-group { display: flex; gap: 15px; align-items: center; background: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
         .radio-group label { cursor: pointer; font-size: 13px; font-weight: bold; color: #475569; display: flex; align-items: center; gap: 4px; margin: 0;}
 
+        /* 數據表格 */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; border-radius: 6px; overflow: hidden; border-style: hidden; box-shadow: 0 0 0 1px #e2e8f0; }
         th, td { border: 1px solid #e2e8f0; padding: 10px 8px; text-align: center; }
         th { background: #f8fafc; color: #475569; font-weight: bold; }
         .time-col { font-size: 11px; color: #94a3b8; }
+        .status-ok { color: #10b981; font-weight: bold; }
+        .status-ng { color: #ef4444; font-weight: bold; }
         .jig-val { font-weight: bold; color: #0d9488; background: #f0fdf4; }
         tr:nth-child(even) { background: #fcfcfd; }
-        td.editable-col { cursor: pointer; background: #fefce8; border: 1px dashed #fde047; transition: 0.2s;}
+        td.editable-col { cursor: pointer; background: #fefce8; border: 1px dashed #fde047;}
         td.editable-col:hover, td.editable-col:focus { outline: 2px solid #facc15; background: #fef08a;}
-        
-        /* 動態產生的群組過濾器標籤 */
-        .group-filter-label { background: white; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 20px; transition: 0.2s;}
-        .group-filter-label:hover { background: #f1f5f9; border-color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -114,16 +110,28 @@
     <!-- 主要內容區 -->
     <div class="main-content">
         
-        <!-- 摺疊：設定面板 -->
+        <!-- 整合的參數與視覺設定面板 -->
         <details class="accordion-panel settings-panel" open>
-            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(所有設定皆綁定當前專案)</span></summary>
+            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(設定皆綁定當前治具)</span></summary>
             <div class="flex-column" style="margin-top: 15px;">
                 <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">📋 製程規格</span>
                 <div class="specs-grid">
-                    <div class="input-group"><label style="color:#0d9488;">原治具角度</label><input type="number" id="specCurrentJig" step="0.01" onchange="saveSpecsAndUpdate()"></div>
-                    <div class="input-group"><label>目標角度 (Target)</label><input type="number" id="specTarget" step="0.01" onchange="saveSpecsAndUpdate()"></div>
-                    <div class="input-group"><label>USL (控制上限)</label><input type="number" id="specUSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
-                    <div class="input-group"><label>LSL (控制下限)</label><input type="number" id="specLSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
+                    <div class="input-group">
+                        <label style="color:#0d9488;">原治具角度</label>
+                        <input type="number" id="specCurrentJig" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>目標角度 (Target)</label>
+                        <input type="number" id="specTarget" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>USL (控制上限)</label>
+                        <input type="number" id="specUSL" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>LSL (控制下限)</label>
+                        <input type="number" id="specLSL" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
                 </div>
                 
                 <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">🎨 圖表視覺自訂</span>
@@ -137,12 +145,12 @@
         <details class="accordion-panel" style="border-color:#bfdbfe;">
             <summary style="color:#2563eb;">📋 批次貼上匯入 (支援 Excel / Google Sheet)</summary>
             <div class="flex-column" style="margin-top: 10px;">
-                <label style="font-size: 12px; color: #64748b; line-height:1.5;">
-                    從試算表框選多行並複製，貼在下方。<br>自動讀取：<b>第1欄(名稱)</b>、<b>第2欄(Angle L)</b>、<b>第3欄(Angle R)</b>。<br>自動尋找：<b>日期時間格式</b> 與 <b>第5欄(群組/治具名稱)</b>。
+                <label style="font-size: 12px; color: #64748b;">
+                    從試算表框選多行並複製，貼在下方。<br>自動讀取：<b>第1欄(名稱)</b>、<b>第2欄(Angle L)</b>、<b>第3欄(Angle R)</b>，並自動尋找日期時間。
                 </label>
                 <textarea id="pasteArea" rows="3" placeholder="在此貼上資料..."></textarea>
                 <div>
-                    <button class="action-btn" onclick="parsePastedData()">🚀 解析並匯入</button>
+                    <button class="action-btn" onclick="parsePastedData()">🚀 解析並匯入至 <span class="current-jig-name"></span></button>
                 </div>
             </div>
         </details>
@@ -152,28 +160,20 @@
             <span class="panel-title">📝 單筆手動新增 (或直接在圖表上點擊取點)</span>
             <div class="flex-row" style="align-items: flex-end;">
                 <div class="input-group"><label>時間</label><input type="text" id="sampleTime" class="time-input"></div>
-                <div class="input-group"><label>Sample</label><input type="text" id="sampleName" style="width: 80px;"></div>
-                <div class="input-group"><label style="color:#8b5cf6;">治具/群組</label><input type="text" id="sampleGroup" style="width: 90px;" placeholder="例如: Jig 8"></div>
-                <div class="input-group"><label>Angle L</label><input type="number" id="angleL" step="0.01" style="width:80px;"></div>
-                <div class="input-group"><label>Angle R</label><input type="number" id="angleR" step="0.01" style="width:80px;"></div>
+                <div class="input-group"><label>Sample</label><input type="text" id="sampleName" style="width: 100px;"></div>
+                <div class="input-group"><label>Angle L</label><input type="number" id="angleL" step="0.01" style="width:90px;"></div>
+                <div class="input-group"><label>Angle R</label><input type="number" id="angleR" step="0.01" style="width:90px;"></div>
                 <button class="action-btn" onclick="addData()">➕ 新增</button>
                 <button class="action-btn btn-outline" style="margin-left:auto;" onclick="downloadChart()">📥 下載圖表</button>
                 <button class="action-btn btn-outline" style="color:#ef4444;" onclick="clearData()">🗑️ 清空數據</button>
             </div>
         </div>
 
-        <!-- 圖表開關與群組過濾器 -->
-        <div class="checkbox-group" id="displayToggles">
-            <strong style="margin-right:10px;">👁️ 顯示線條：</strong>
+        <div class="checkbox-group">
+            <strong>👁️ 顯示切換：</strong>
             <label><input type="checkbox" id="toggleRawLine" onchange="updateChartVisibility()"> L/R 原始連線</label>
             <label><input type="checkbox" id="toggleCumAvg" checked onchange="updateChartVisibility()"> 累積均線</label>
             <label class="highlight-jig"><input type="checkbox" id="toggleRecJig" onchange="updateChartVisibility()"> 建議治具角度 (右 Y 軸)</label>
-            
-            <!-- 分隔線 -->
-            <div style="width:1px; height:20px; background:#cbd5e1; margin:0 10px;"></div>
-            
-            <!-- 動態群組過濾器會產生在這裡 -->
-            <div id="groupFilters" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;"></div>
         </div>
 
         <div id="chartWrapper"><canvas id="qcChart"></canvas></div>
@@ -181,14 +181,12 @@
         <table id="dataTable">
             <thead>
                 <tr>
-                    <th style="width:9%;">Sample</th>
-                    <th style="width:10%;">群組(治具)</th>
-                    <th style="width:14%;">時間</th>
-                    <th style="width:7%;">L</th><th style="width:7%;">R</th><th style="width:6%;">Δ</th>
-                    <th style="width:9%;">均值_L</th><th style="width:9%;">均值_R</th>
-                    <th style="background:#ccfbf1; color:#0f766e; width:9%;">建議_L</th>
-                    <th style="background:#99f6e4; color:#0f766e; width:9%;">建議_R</th>
-                    <th style="width:6%;">結果</th><th style="width:5%;">🗑️</th>
+                    <th style="width:10%;">Sample</th><th style="width:16%;">時間</th>
+                    <th style="width:8%;">L</th><th style="width:8%;">R</th><th style="width:6%;">Δ</th>
+                    <th style="width:10%;">均值_L</th><th style="width:10%;">均值_R</th>
+                    <th style="background:#ccfbf1; color:#0f766e; width:10%;">治具_L</th>
+                    <th style="background:#99f6e4; color:#0f766e; width:10%;">治具_R</th>
+                    <th style="width:7%;">結果</th><th style="width:5%;">🗑️</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -207,7 +205,6 @@
         </div>
         <div class="input-group"><input type="number" id="popupOtherVal" placeholder="輸入另一側角度..." style="width:100%;"></div>
         <div class="input-group"><input type="text" id="popupName" placeholder="Sample 名稱" style="width:100%;"></div>
-        <div class="input-group"><input type="text" id="popupGroup" placeholder="治具/群組" style="width:100%;"></div>
         <div class="input-group"><input type="text" id="popupTime" style="width:100%; font-size:11px; color:#64748b;"></div>
         
         <button class="action-btn" onclick="submitPopupData()" style="width:100%;">💾 確認新增</button>
@@ -224,11 +221,9 @@
         cumAvgR: { color: "#ec4899", shape: "rect" },
         recJigL: { color: "#14b8a6", shape: "triangle" },
         recJigR: { color: "#0d9488", shape: "triangle" },
-        toleranceBand: { color: "#10b981", shape: "none" }, 
-        uslLine: { color: "#ef4444", shape: "none" },       
-        lslLine: { color: "#ef4444", shape: "none" },
-        okText: { color: "#10b981", shape: "none" },        // 新增：OK 文字顏色
-        ngText: { color: "#ef4444", shape: "none" }         // 新增：NG 文字顏色
+        toleranceBand: { color: "#10b981", shape: "none" }, // 新增：公差帶顏色 (注意這裡有逗號了)
+        uslLine: { color: "#ef4444", shape: "none" },       // 新增：USL 顏色
+        lslLine: { color: "#ef4444", shape: "none" }        // 新增：LSL 顏色
     };
 
     const pointShapes = [
@@ -243,23 +238,20 @@
         '治具 L (建議)': 'recJigL', '治具 R (建議)': 'recJigR',
         '公差帶背景 (OK)': 'toleranceBand',
         'USL 線 (上限)': 'uslLine',
-        'LSL 線 (下限)': 'lslLine',
-        'OK 字樣顏色': 'okText',
-        'NG 字樣顏色': 'ngText'
+        'LSL 線 (下限)': 'lslLine'
     };
 
     const defaultData = [
-        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50, group: "Jig 8" },
-        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26, group: "old" }
+        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50 },
+        { name: "AG", time: "2026/4/8 下午 3:52:20", l: 41.27, r: 41.83 }
     ];
 
     // --- 全域變數 ---
     let jigs = {}; 
-    let currentJigId = "專案 1";
+    let currentJigId = "Jig 8";
     let myChart = null;
     let crosshairY = null; 
     let chartEventsAttached = false; 
-    let hiddenGroups = new Set(); // 記錄目前被隱藏(取消勾選)的群組
 
     // --- 系統初始化 ---
     function initSystem() {
@@ -268,33 +260,26 @@
             jigs = JSON.parse(savedJigs);
             currentJigId = localStorage.getItem('qcCurrentJigId') || Object.keys(jigs)[0];
             
-            // 系統升級防呆：確保舊資料有新顏色屬性與群組
+            // 系統升級防呆：確保舊資料有新顏色屬性
             Object.keys(jigs).forEach(id => {
-                const v = jigs[id].visuals;
-                if (!v.toleranceBand) v.toleranceBand = { color: "#10b981", shape: "none" };
-                if (!v.uslLine) v.uslLine = { color: "#ef4444", shape: "none" };
-                if (!v.lslLine) v.lslLine = { color: "#ef4444", shape: "none" };
-                if (!v.okText) v.okText = { color: "#10b981", shape: "none" };
-                if (!v.ngText) v.ngText = { color: "#ef4444", shape: "none" };
-                
-                // 確保舊數據有 group 屬性
-                jigs[id].data.forEach(d => { if (!d.group) d.group = "預設"; });
+                if (!jigs[id].visuals.toleranceBand) jigs[id].visuals.toleranceBand = { color: "#10b981", shape: "none" };
+                if (!jigs[id].visuals.uslLine) jigs[id].visuals.uslLine = { color: "#ef4444", shape: "none" };
+                if (!jigs[id].visuals.lslLine) jigs[id].visuals.lslLine = { color: "#ef4444", shape: "none" };
             });
         } else {
             jigs = {
-                "專案 1": {
+                "Jig 8": {
                     data: [...defaultData],
                     specs: { target: 41.33, usl: 42.33, lsl: 40.33, currentJig: 48.67 },
                     visuals: JSON.parse(JSON.stringify(defaultVisuals))
                 }
             };
-            currentJigId = "專案 1";
         }
         
         initChart(); 
         updateJigTabs(); 
         loadCurrentJig(); 
-        makeTableEditable();
+        makeSampleNamesEditable();
     }
 
     // --- 標籤分頁 (Tabs) 管理 ---
@@ -315,19 +300,20 @@
         addBtn.innerText = '➕ 新增';
         addBtn.onclick = createNewJig;
         tabsList.appendChild(addBtn);
+
+        document.querySelectorAll('.current-jig-name').forEach(el => el.innerText = currentJigId);
     }
 
     function switchJig(id) {
         if(id === currentJigId) return;
         currentJigId = id;
         localStorage.setItem('qcCurrentJigId', currentJigId);
-        hiddenGroups.clear(); // 切換專案時，重置過濾器狀態
         updateJigTabs(); 
         loadCurrentJig(); 
     }
 
     function createNewJig() {
-        const name = prompt("請輸入新專案名稱 (例如: Project B):");
+        const name = prompt("請輸入新治具專案名稱 (例如: Jig 9):");
         if (!name) return;
         if (jigs[name]) { alert("此名稱已存在！"); return; }
         
@@ -337,19 +323,17 @@
             visuals: JSON.parse(JSON.stringify(defaultVisuals))
         };
         currentJigId = name;
-        hiddenGroups.clear();
         updateJigTabs();
         loadCurrentJig();
         saveSystemToStorage();
     }
 
     function deleteCurrentJig() {
-        if (Object.keys(jigs).length <= 1) { alert("系統至少需保留一個專案！"); return; }
+        if (Object.keys(jigs).length <= 1) { alert("系統至少需保留一個治具專案！"); return; }
         if (!confirm(`確定要刪除整個 [${currentJigId}] 專案嗎？此操作不可還原！`)) return;
         
         delete jigs[currentJigId];
         currentJigId = Object.keys(jigs)[0]; 
-        hiddenGroups.clear();
         updateJigTabs();
         loadCurrentJig();
         saveSystemToStorage();
@@ -363,10 +347,6 @@
         document.getElementById('specUSL').value = jig.specs.usl;
         document.getElementById('specLSL').value = jig.specs.lsl;
         document.getElementById('specCurrentJig').value = jig.specs.currentJig;
-        
-        // 預設群組欄位與專案名稱一致
-        document.getElementById('sampleGroup').value = currentJigId;
-        document.getElementById('popupGroup').value = currentJigId;
         
         generateVisualSettingsUI(jig.visuals);
         updateAll();
@@ -392,8 +372,8 @@
             colorPicker.onchange = saveSpecsAndUpdate; 
             row.appendChild(colorPicker);
             
-            // 隱藏不需形狀的選項
-            const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine', 'okText', 'ngText'];
+            // 公差帶與上下限不需要選擇形狀，因此隱藏下拉選單
+            const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine'];
             if (!noShapeItems.includes(seriesId)) {
                 const shapeSelect = document.createElement('select');
                 shapeSelect.id = 'visShape_' + seriesId;
@@ -408,6 +388,7 @@
                 });
                 row.appendChild(shapeSelect);
             }
+            
             container.appendChild(row);
         }
     }
@@ -421,7 +402,7 @@
             currentJig: parseFloat(document.getElementById('specCurrentJig').value)
         };
 
-        const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine', 'okText', 'ngText'];
+        const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine'];
         Object.values(seriesMap).forEach(seriesId => {
             jig.visuals[seriesId] = {
                 color: document.getElementById('visColor_' + seriesId).value,
@@ -442,7 +423,7 @@
     // --- 批次匯入功能 ---
     function parsePastedData() {
         const text = document.getElementById('pasteArea').value.trim();
-        if (!text) { alert("請先在文字框貼上資料！"); return; }
+        if (!text) { alert("請先在文字框貼上試算表資料！"); return; }
 
         const lines = text.split('\n');
         let importCount = 0;
@@ -457,22 +438,13 @@
 
                 if (name && !isNaN(l) && !isNaN(r)) {
                     let timeStr = "";
-                    let groupStr = document.getElementById('sampleGroup').value || currentJigId; // 預設使用輸入框的值
-                    
-                    // 尋找日期格式 (Time)
                     for(let i = 2; i < cols.length; i++) {
                         if (cols[i] && cols[i].match(/\d{4}\/\d{1,2}\/\d{1,2}/)) {
                             timeStr = cols[i].trim();
                             break;
                         }
                     }
-                    
-                    // 從第5欄提取治具名稱 (Group)
-                    if (cols.length >= 5 && cols[4].trim() !== '') {
-                        groupStr = cols[4].trim();
-                    }
-
-                    currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r, group: groupStr });
+                    currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r });
                     importCount++;
                 }
             }
@@ -480,10 +452,11 @@
 
         if (importCount > 0) {
             document.getElementById('pasteArea').value = ''; 
+            // 匯入後自動收起摺疊面板 (選取第二個 details，因為第一個是設定面板)
             document.querySelectorAll('.accordion-panel')[1].removeAttribute('open');
             saveSystemToStorage(); 
             updateAll();
-            alert(`✅ 成功匯入 ${importCount} 筆資料！`);
+            alert(`✅ 成功匯入 ${importCount} 筆資料至 [${currentJigId}]！`);
         } else {
             alert("❌ 無法解析資料。\n請確認貼上的資料格式：第一欄是名稱，第二、三欄是數字。");
         }
@@ -503,16 +476,6 @@
         if (!hex) return `rgba(0,0,0,${alpha})`;
         const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
         return `rgba(${r},${g},${b},${alpha})`;
-    }
-
-    // --- 群組過濾器開關 ---
-    function toggleGroup(groupName, isChecked) {
-        if (isChecked) {
-            hiddenGroups.delete(groupName);
-        } else {
-            hiddenGroups.add(groupName);
-        }
-        updateAll();
     }
 
     // --- Chart.js 外掛與初始化 ---
@@ -553,8 +516,8 @@
                 ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
 
                 const topY = Math.min(ptL.y, ptR.y);
-                // 使用自訂的 OK 與 NG 文字顏色
-                ctx.fillStyle = item.status === 'OK' ? vis.okText.color : vis.ngText.color; 
+                // NG 一律紅色，OK 套用自訂的公差帶顏色
+                ctx.fillStyle = item.status === 'OK' ? vis.toleranceBand.color : '#ef4444'; 
                 ctx.font = '900 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
                 ctx.fillText(item.status, ptL.x, topY - 8);
             });
@@ -633,13 +596,12 @@
                 if (crosshairY !== null) {
                     const popup = document.getElementById('clickInputPopup'); popup.style.display = 'block';
                     let popX = e.pageX + 15; let popY = e.pageY - 15;
+                    // 防止彈窗超出右側
                     if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
                     popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
-                    
                     document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
                     document.getElementById('popupOtherVal').value = '';
                     document.getElementById('popupName').value = 'P' + (jigs[currentJigId].data.length + 1);
-                    document.getElementById('popupGroup').value = document.getElementById('sampleGroup').value || currentJigId;
                     document.getElementById('popupTime').value = getCurrentTime();
                     document.querySelector('input[name="cursorSide"][value="L"]').checked = true;
                     setTimeout(() => document.getElementById('popupOtherVal').focus(), 50);
@@ -686,66 +648,40 @@
         myChart.options.scales.y1.title.color = applyAlphaToHex(vis.recJigR.color, 0.8);
         myChart.options.scales.y1.ticks.color = applyAlphaToHex(vis.recJigR.color, 0.8);
 
-        // -- 建立群組過濾器 UI --
-        const allGroups = [...new Set(jig.data.map(d => d.group || '預設'))];
-        const filterContainer = document.getElementById('groupFilters');
-        filterContainer.innerHTML = '<strong style="margin-right:10px;">🏷️ 群組過濾：</strong>';
-        
-        if (allGroups.length > 0) {
-            allGroups.forEach(g => {
-                const label = document.createElement('label');
-                label.className = 'group-filter-label';
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.checked = !hiddenGroups.has(g); // 如果沒有被隱藏，就打勾
-                cb.onchange = (e) => toggleGroup(g, e.target.checked);
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' ' + g));
-                filterContainer.appendChild(label);
-            });
-        }
-
-        // -- 處理數據表格與圖表數值 (加入過濾邏輯) --
+        // 處理數據表格
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
         
         const labels = [], lData = [], rData = [], cumL = [], cumR = [], jigLData = [], jigRData = [];
-        let sumL = 0, sumR = 0, validCount = 0;
+        let sumL = 0, sumR = 0;
         
         myChart.data.customData = [];
         let minY = lsl - 0.5; let maxY = usl + 0.5;
         let minJigY = currentJig - 0.5; let maxJigY = currentJig + 0.5;
 
-        jig.data.forEach((item, originalIndex) => {
-            const grp = item.group || '預設';
-            
-            // 如果此群組被隱藏，直接跳過不畫也不算進均值
-            if (hiddenGroups.has(grp)) return; 
-            
-            validCount++;
+        jig.data.forEach((item, index) => {
             const delta = Math.abs(item.r - item.l).toFixed(2);
             const isOk = (item.l <= usl && item.l >= lsl && item.r <= usl && item.r >= lsl);
             const status = isOk ? 'OK' : 'NG';
             
             sumL += item.l; sumR += item.r;
-            const curCumL = parseFloat((sumL / validCount).toFixed(2));
-            const curCumR = parseFloat((sumR / validCount).toFixed(2));
+            const curCumL = parseFloat((sumL / (index + 1)).toFixed(2));
+            const curCumR = parseFloat((sumR / (index + 1)).toFixed(2));
             const recJigL = (currentJig + (curCumL - target)).toFixed(2);
             const recJigR = (currentJig + (curCumR - target)).toFixed(2);
 
-            // 判斷結果顏色 (套用自訂的 OK/NG 文字顏色)
-            const statusColor = isOk ? vis.okText.color : vis.ngText.color;
+            // 判斷結果顏色
+            const statusClass = isOk ? 'status-ok' : 'status-ng';
+            const statusColorStyle = isOk ? `color: ${vis.toleranceBand.color};` : ''; 
 
             const row = tbody.insertRow();
-            // 注意：刪除按鈕必須綁定 originalIndex，才能在陣列中刪除對的位置
-            row.innerHTML = `<td class="editable-col" data-field="name" data-index="${originalIndex}" tabindex="0">${item.name}</td>
-                             <td class="editable-col" data-field="group" data-index="${originalIndex}" tabindex="0">${grp}</td>
+            row.innerHTML = `<td class="editable-col" contenteditable="true" data-index="${index}">${item.name}</td>
                              <td class="time-col">${item.time || '-'}</td>
                              <td>${item.l}</td><td>${item.r}</td><td>${delta}</td>
                              <td>${curCumL}</td><td>${curCumR}</td>
                              <td class="jig-val">${recJigL}</td><td class="jig-val">${recJigR}</td>
-                             <td style="font-weight:bold; color:${statusColor};">${status}</td>
-                             <td><button onclick="deleteData(${originalIndex})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
+                             <td class="${statusClass}" style="${statusColorStyle}">${status}</td>
+                             <td><button onclick="deleteData(${index})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
 
             labels.push([item.name, formatShortTime(item.time)]);
             lData.push(item.l); rData.push(item.r);
@@ -804,6 +740,7 @@
                 const yAxis = chart.scales.y;
                 const vis = jigs[currentJigId].visuals;
                 
+                // 取出動態顏色
                 const bandColor = vis.toleranceBand.color; 
                 const uslColor = vis.uslLine.color;
                 const lslColor = vis.lslLine.color;
@@ -819,7 +756,7 @@
                     ctx.fillText(text, right - 5, y - 3); ctx.restore();
                 };
                 
-                // 畫公差帶背景色
+                // 畫公差帶背景色 (自動套用 0.08 透明度)
                 const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(usl));
                 const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(lsl));
                 ctx.save(); 
@@ -827,6 +764,7 @@
                 ctx.fillRect(left, yTop, right - left, yBot - yTop); 
                 ctx.restore();
                 
+                // 畫線 (套入變數)
                 drawLine(target, bandColor, null, 'Target ' + target);
                 drawLine(usl, uslColor, [5,5], 'USL ' + usl); 
                 drawLine(lsl, lslColor, [5,5], 'LSL ' + lsl);
@@ -843,12 +781,11 @@
 
     function addData() {
         const name = document.getElementById('sampleName').value;
-        const group = document.getElementById('sampleGroup').value || currentJigId;
         const timeInput = document.getElementById('sampleTime').value || getCurrentTime();
         const l = parseFloat(document.getElementById('angleL').value); const r = parseFloat(document.getElementById('angleR').value);
         if (!name || isNaN(l) || isNaN(r)) { alert("請輸入完整數據！"); return; }
         
-        jigs[currentJigId].data.push({ name, time: timeInput, l, r, group: group });
+        jigs[currentJigId].data.push({ name, time: timeInput, l, r });
         saveSystemToStorage(); 
         document.getElementById('sampleName').value = ''; document.getElementById('angleL').value = ''; document.getElementById('angleR').value = '';
         document.getElementById('sampleTime').value = getCurrentTime(); document.getElementById('sampleName').focus(); 
@@ -857,7 +794,6 @@
 
     function submitPopupData() {
         const name = document.getElementById('popupName').value;
-        const group = document.getElementById('popupGroup').value || currentJigId;
         const time = document.getElementById('popupTime').value || getCurrentTime();
         const cursorVal = parseFloat(document.getElementById('popupCursorVal').value);
         const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
@@ -866,7 +802,7 @@
         if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
         let l = side === 'L' ? cursorVal : otherVal; let r = side === 'L' ? otherVal : cursorVal;
         
-        jigs[currentJigId].data.push({ name, time, l, r, group: group });
+        jigs[currentJigId].data.push({ name, time, l, r });
         saveSystemToStorage(); updateAll(); closePopup();
     }
 
@@ -874,62 +810,32 @@
     function deleteData(index) { if(confirm(`確定要刪除此筆資料嗎？`)) { jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll(); } }
     function clearData() { if(confirm(`確定要清除 [${currentJigId}] 的所有數據嗎？\n(注意：這會清空此治具目前的數據)`)) { jigs[currentJigId].data = []; saveSystemToStorage(); updateAll(); } }
 
-    // --- 實作表格雙向編輯邏輯 ---
-    function makeTableEditable() {
+    function makeSampleNamesEditable() {
         const tbody = document.querySelector('#dataTable tbody');
-        
-        // 點擊即修改模式 (利用 contenteditable)
-        tbody.addEventListener('focusin', function(e) {
-            if(e.target && e.target.classList.contains('editable-col')) {
-                // 進入編輯狀態時加上屬性
-                e.target.setAttribute('contenteditable', 'true');
-            }
-        });
-
         tbody.addEventListener('blur', function(e) {
             if(e.target && e.target.classList.contains('editable-col')) {
-                e.target.removeAttribute('contenteditable');
-                
-                const cell = e.target; 
-                const newText = cell.innerText.trim(); 
-                const index = cell.getAttribute('data-index');
-                const field = cell.getAttribute('data-field'); // name 或是 group
-                
+                const cell = e.target; const newName = cell.innerText.trim(); const index = cell.getAttribute('data-index');
                 const curData = jigs[currentJigId].data;
-                if(index !== null && newText !== curData[index][field]) {
-                    if(newText === "") { alert("欄位不能為空！"); cell.innerText = curData[index][field]; return; }
-                    
-                    curData[index][field] = newText; 
-                    saveSystemToStorage(); 
-                    
-                    // 如果改的是群組名稱，可能會影響過濾器，所以呼叫 updateAll
-                    if (field === 'group') {
-                        updateAll();
-                    } else {
-                        // 如果只是改 Sample 名稱，只更新 Chart Labels 提升效能
-                        if(myChart) {
-                            const labels = [];
-                            curData.forEach(item => {
-                                if (!hiddenGroups.has(item.group || '預設')) {
-                                    labels.push([item.name, formatShortTime(item.time)]);
-                                }
-                            });
-                            myChart.data.labels = labels; myChart.update();
-                        }
+                if(index !== null && newName !== curData[index].name) {
+                    if(newName === "") { alert("樣品名稱不能為空！"); cell.innerText = curData[index].name; return; }
+                    curData[index].name = newName; saveSystemToStorage(); 
+                    if(myChart) {
+                        const labels = [];
+                        curData.forEach(item => labels.push([item.name, formatShortTime(item.time)]));
+                        myChart.data.labels = labels; myChart.update();
                     }
                 }
             }
         }, true);
-
-        // 監聽 Enter 鍵直接保存
-        tbody.addEventListener('keydown', function(e) { 
-            if(e.target && e.target.classList.contains('editable-col')) { 
-                if(e.key === 'Enter') { 
-                    e.preventDefault(); 
-                    e.target.blur(); 
-                } 
-            } 
-        });
+        tbody.addEventListener('keydown', function(e) { if(e.target && e.target.classList.contains('editable-col')) { if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); } } });
+    }
+    
+    function formatShortTime(timeStr) {
+        if (!timeStr) return "";
+        try {
+            if(timeStr.includes('下午') || timeStr.includes('上午')) { return timeStr.split(' ')[0].split('/').slice(1).join('/'); }
+            return timeStr.split(' ')[0]; 
+        } catch(e) { return timeStr; }
     }
 
     window.onload = initSystem;
