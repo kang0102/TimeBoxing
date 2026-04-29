@@ -48,7 +48,7 @@
         input:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
         input.time-input { width: 160px; }
         textarea { width: 100%; resize: vertical; font-family: monospace; font-size: 13px; }
-        input[type="color"] { border: none; padding: 0; cursor: pointer; height: 32px; width: 40px; border-radius: 4px;}
+        input[type="color"] { border: 1px solid #cbd5e1; padding: 0; cursor: pointer; height: 32px; width: 40px; border-radius: 4px;}
         
         /* 網格排版：讓設定面板更緊湊 */
         .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
@@ -110,9 +110,9 @@
     <!-- 主要內容區 -->
     <div class="main-content">
         
-        <!-- 摺疊：設定面板 (取代原本的拖曳窗) -->
+        <!-- 整合的參數與視覺設定面板 -->
         <details class="accordion-panel settings-panel" open>
-            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(所有設定皆綁定當前治具)</span></summary>
+            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(設定皆綁定當前治具)</span></summary>
             <div class="flex-column" style="margin-top: 15px;">
                 <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">📋 製程規格</span>
                 <div class="specs-grid">
@@ -194,6 +194,7 @@
     </div>
 </div>
 
+<!-- 彈出輸入視窗 -->
 <div id="clickInputPopup" class="popup-panel" style="display:none;">
     <span class="panel-title" style="color:#2563eb; margin-bottom:10px;">📍 擷取數值新增</span>
     <div class="flex-column">
@@ -220,7 +221,9 @@
         cumAvgR: { color: "#ec4899", shape: "rect" },
         recJigL: { color: "#14b8a6", shape: "triangle" },
         recJigR: { color: "#0d9488", shape: "triangle" },
-        toleranceBand: { color: "#10b981", shape: "none" } // 新增：公差帶顏色
+        toleranceBand: { color: "#10b981", shape: "none" }, // 新增：公差帶顏色 (注意這裡有逗號了)
+        uslLine: { color: "#ef4444", shape: "none" },       // 新增：USL 顏色
+        lslLine: { color: "#ef4444", shape: "none" }        // 新增：LSL 顏色
     };
 
     const pointShapes = [
@@ -233,7 +236,9 @@
         'Angle L (原始)': 'rawDataL', 'Angle R (原始)': 'rawDataR',
         '均線 L (累積)': 'cumAvgL', '均線 R (累積)': 'cumAvgR',
         '治具 L (建議)': 'recJigL', '治具 R (建議)': 'recJigR',
-        '公差帶背景 (OK區間)': 'toleranceBand' // 新增 UI 選項
+        '公差帶背景 (OK)': 'toleranceBand',
+        'USL 線 (上限)': 'uslLine',
+        'LSL 線 (下限)': 'lslLine'
     };
 
     const defaultData = [
@@ -257,9 +262,9 @@
             
             // 系統升級防呆：確保舊資料有新顏色屬性
             Object.keys(jigs).forEach(id => {
-                if (!jigs[id].visuals.toleranceBand) {
-                    jigs[id].visuals.toleranceBand = { color: "#10b981", shape: "none" };
-                }
+                if (!jigs[id].visuals.toleranceBand) jigs[id].visuals.toleranceBand = { color: "#10b981", shape: "none" };
+                if (!jigs[id].visuals.uslLine) jigs[id].visuals.uslLine = { color: "#ef4444", shape: "none" };
+                if (!jigs[id].visuals.lslLine) jigs[id].visuals.lslLine = { color: "#ef4444", shape: "none" };
             });
         } else {
             jigs = {
@@ -367,8 +372,9 @@
             colorPicker.onchange = saveSpecsAndUpdate; 
             row.appendChild(colorPicker);
             
-            // 公差帶不需要選擇形狀
-            if (seriesId !== 'toleranceBand') {
+            // 公差帶與上下限不需要選擇形狀，因此隱藏下拉選單
+            const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine'];
+            if (!noShapeItems.includes(seriesId)) {
                 const shapeSelect = document.createElement('select');
                 shapeSelect.id = 'visShape_' + seriesId;
                 shapeSelect.onchange = saveSpecsAndUpdate;
@@ -396,10 +402,11 @@
             currentJig: parseFloat(document.getElementById('specCurrentJig').value)
         };
 
+        const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine'];
         Object.values(seriesMap).forEach(seriesId => {
             jig.visuals[seriesId] = {
                 color: document.getElementById('visColor_' + seriesId).value,
-                shape: seriesId === 'toleranceBand' ? 'none' : document.getElementById('visShape_' + seriesId).value
+                shape: noShapeItems.includes(seriesId) ? 'none' : document.getElementById('visShape_' + seriesId).value
             };
         });
 
@@ -445,7 +452,7 @@
 
         if (importCount > 0) {
             document.getElementById('pasteArea').value = ''; 
-            // 匯入後自動收起摺疊面板
+            // 匯入後自動收起摺疊面板 (選取第二個 details，因為第一個是設定面板)
             document.querySelectorAll('.accordion-panel')[1].removeAttribute('open');
             saveSystemToStorage(); 
             updateAll();
@@ -509,7 +516,8 @@
                 ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
 
                 const topY = Math.min(ptL.y, ptR.y);
-                ctx.fillStyle = item.status === 'OK' ? vis.toleranceBand.color : '#ef4444'; // OK字樣用區間色，NG紅
+                // NG 一律紅色，OK 套用自訂的公差帶顏色
+                ctx.fillStyle = item.status === 'OK' ? vis.toleranceBand.color : '#ef4444'; 
                 ctx.font = '900 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
                 ctx.fillText(item.status, ptL.x, topY - 8);
             });
@@ -664,7 +672,7 @@
 
             // 判斷結果顏色
             const statusClass = isOk ? 'status-ok' : 'status-ng';
-            const statusColorStyle = isOk ? `color: ${vis.toleranceBand.color};` : ''; // OK時套用自訂色
+            const statusColorStyle = isOk ? `color: ${vis.toleranceBand.color};` : ''; 
 
             const row = tbody.insertRow();
             row.innerHTML = `<td class="editable-col" contenteditable="true" data-index="${index}">${item.name}</td>
@@ -720,7 +728,7 @@
         myChart.update();
     }
 
-    // 負責畫公差背景與目標線
+    // 負責畫公差背景與目標線 (已串接動態顏色)
     function drawSpecLines(target, usl, lsl) {
         const pluginId = 'specLinesPlugin';
         myChart.config.plugins = myChart.config.plugins.filter(p => p.id !== pluginId);
@@ -731,7 +739,11 @@
                 const ctx = chart.ctx; const { left, right } = chart.chartArea;
                 const yAxis = chart.scales.y;
                 const vis = jigs[currentJigId].visuals;
-                const bandColor = vis.toleranceBand.color; // 取得自訂的公差帶顏色
+                
+                // 取出動態顏色
+                const bandColor = vis.toleranceBand.color; 
+                const uslColor = vis.uslLine.color;
+                const lslColor = vis.lslLine.color;
                 
                 const drawLine = (yVal, color, dash, text) => {
                     const y = yAxis.getPixelForValue(yVal);
@@ -752,10 +764,10 @@
                 ctx.fillRect(left, yTop, right - left, yBot - yTop); 
                 ctx.restore();
                 
-                // 畫線
+                // 畫線 (套入變數)
                 drawLine(target, bandColor, null, 'Target ' + target);
-                drawLine(usl, '#ef4444', [5,5], 'USL ' + usl); 
-                drawLine(lsl, '#ef4444', [5,5], 'LSL ' + lsl);
+                drawLine(usl, uslColor, [5,5], 'USL ' + usl); 
+                drawLine(lsl, lslColor, [5,5], 'LSL ' + lsl);
             }
         });
         myChart.update();
