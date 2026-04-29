@@ -2,13 +2,17 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Neil's Toolbox - 專業製程監控 (視覺完全自訂版)</title>
+    <title>Neil's Toolbox - 專業製程監控 (多治具與視覺自訂版)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; margin: 20px; color: #333; overflow-x: hidden; }
         .container { max-width: 1400px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-top: 0; display: flex; justify-content: space-between; align-items: flex-end; }
         #saveStatus { font-size: 14px; color: #7f8c8d; font-weight: normal; }
+        
+        /* 治具切換區樣式 */
+        .jig-manager { background: #f8fafc; border: 2px solid #3498db; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .jig-selector { padding: 8px 12px; font-size: 16px; font-weight: bold; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; min-width: 150px; }
         
         .panel { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
         .panel-title { font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: block; font-size: 15px; }
@@ -17,8 +21,9 @@
         .flex-column { display: flex; flex-direction: column; gap: 10px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 13px; color: #64748b; font-weight: bold; }
-        input[type="number"], input[type="text"], select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; box-sizing: border-box;}
+        input[type="number"], input[type="text"], select, textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; box-sizing: border-box;}
         input.time-input { width: 160px; }
+        textarea { width: 100%; resize: vertical; font-family: monospace; }
         input[type="color"] { border: none; padding: 0; cursor: pointer; height: 38px; width: 38px;}
         .vis-row { display: flex; align-items: center; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 5px; }
         .vis-row label { font-size: 12px; color: #64748b; font-weight: bold; width: 130px; display: inline-block;}
@@ -85,7 +90,7 @@
 <details id="draggableSettings" class="draggable-settings">
     <summary>⚙️ 製程與視覺設定 (按住拖曳 / 點擊展開)</summary>
     <div class="flex-column" style="margin-top:10px;">
-        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">製程參數</span>
+        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">製程參數 (綁定當前治具)</span>
         <div class="input-group">
             <label style="color:#16a085;">原治具設計角度 (°)</label>
             <input type="number" id="specCurrentJig" step="0.01" value="48.67" onchange="saveSpecsAndUpdate()">
@@ -103,33 +108,52 @@
             <input type="number" id="specLSL" step="0.01" value="40.33" onchange="saveSpecsAndUpdate()">
         </div>
         
-        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px; margin-top:10px;">📊 圖表視覺設定</span>
-        
-        <div id="visualSettingsList">
-            </div>
-
+        <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px; margin-top:10px;">📊 圖表視覺設定 (綁定當前治具)</span>
+        <div id="visualSettingsList"></div>
     </div>
 </details>
 
 <div class="container">
     <h1>
-        Neil's Toolbox - 角度檢驗即時追蹤 
+        Neil's Toolbox - 多治具製程監控
         <span id="saveStatus">💾 自動存檔已啟用</span>
     </h1>
+
+    <div class="jig-manager">
+        <strong>📂 切換治具專案：</strong>
+        <select id="jigSelector" class="jig-selector" onchange="switchJig()"></select>
+        <button onclick="createNewJig()" style="background:#8e44ad;">➕ 新增治具</button>
+        <button onclick="deleteCurrentJig()" class="btn-danger" style="padding: 8px 12px; font-size: 13px;">🗑️ 刪除此治具</button>
+    </div>
 
     <details class="info-box">
         <summary>💡 操作說明與自訂功能 (點擊展開)</summary>
         <p>
-            <b>1. 可拖曳面板</b>：右上角的設定面板可任意拖曳位置。點擊標題展開，可修改製程規格與圖表所有線條的顏色與點形狀。<br>
-            <b>2. 可編輯樣品名稱</b>：數據表格中的「Sample」欄位直接點擊即可修改。修改後按下 Enter 或點擊別處即可保存，圖表會同步更新。<br>
-            <b>3. 圖表快捷新增</b>：在圖表任意處點擊左鍵，可快速擷取 Y 軸數值並呼叫快捷輸入選單。時間與名稱會自動帶入。<br>
-            <b>4. 下載圖表</b>：可將自訂後的圖表下載為 PNG 圖片。<br>
-            <b>5. 自動存檔</b>：所有設定、數據與修改後的名稱都會自動存進瀏覽器快取。
+            <b>1. 多治具管理</b>：每個治具擁有獨立的數據、顏色設定與控制規格。可隨時切換或新增。<br>
+            <b>2. 批次匯入</b>：複製 Excel/Google Sheet 資料後直接貼入，可自動抓取名稱、L/R數值與時間。<br>
+            <b>3. 可拖曳面板</b>：右上角的設定面板可任意拖曳位置。點擊標題展開，可修改製程規格與圖表視覺。<br>
+            <b>4. 可編輯樣品名稱</b>：數據表格中的「Sample」欄位直接點擊即可修改。修改後按下 Enter 保存。<br>
+            <b>5. 圖表快捷新增</b>：在圖表任意處點擊左鍵，可快速擷取 Y 軸數值並呼叫快捷輸入選單。
         </p>
     </details>
 
+    <div class="panel" style="background: #eff6ff; border-color: #bfdbfe;">
+        <span class="panel-title" style="color: #1d4ed8;">📋 批次貼上匯入 (支援 Excel / Google Sheet)</span>
+        <div class="flex-column">
+            <label style="font-size: 13px; color: #3b82f6;">
+                請從試算表框選多行並複製 (Ctrl+C)，然後貼在下方。<br>
+                系統將抓取：<b>第1欄(名稱)</b>、<b>第2欄(Angle L)</b>、<b>第3欄(Angle R)</b>，並自動尋找<b>時間欄位</b>。<br>
+                <span style="color:#e74c3c; font-size: 12px;">* 若 L 或 R 欄位無數值，系統會自動跳過該列不匯入。</span>
+            </label>
+            <textarea id="pasteArea" rows="4" placeholder="在此貼上..."></textarea>
+            <div>
+                <button onclick="parsePastedData()" style="background: #2563eb;">🚀 解析並匯入至 <span class="current-jig-name"></span></button>
+            </div>
+        </div>
+    </div>
+
     <div class="panel">
-        <span class="panel-title">📝 手動新增數據 (或在圖表中點擊滑鼠)</span>
+        <span class="panel-title">📝 單筆手動新增 (或在圖表中點擊滑鼠)</span>
         <div class="flex-row">
             <div class="input-group">
                 <label>檢驗時間</label>
@@ -149,7 +173,7 @@
             </div>
             <button onclick="addData()">➕ 新增數據</button>
             <button onclick="downloadChart()" class="btn-success">📥 下載圖表為圖片</button>
-            <button onclick="clearData()" class="btn-danger">🗑️ 清除全部數據</button>
+            <button onclick="clearData()" class="btn-danger">🗑️ 清除此治具數據</button>
         </div>
     </div>
 
@@ -217,7 +241,7 @@
 </div>
 
 <script>
-    // 預設視覺配置
+    // --- 預設配置 ---
     const defaultVisuals = {
         rawDataL: { color: "#3498db", shape: "circle" },
         rawDataR: { color: "#e67e22", shape: "rect" },
@@ -227,67 +251,194 @@
         recJigR: { color: "#16a085", shape: "triangle" }
     };
 
-    // 形狀選項對照表
     const pointShapes = [
-        { name: "圓形", value: "circle" },
-        { name: "正方形", value: "rect" },
-        { name: "正方形(轉)", value: "rectRot" },
-        { name: "三角形", value: "triangle" },
-        { name: "十字", value: "cross" },
-        { name: "十字(轉)", value: "crossRot" },
-        { name: "星形", value: "star" },
-        { name: "水平線", value: "line" },
-        { name: "虛線", value: "dash" }
+        { name: "圓形", value: "circle" }, { name: "正方形", value: "rect" }, { name: "正方形(轉)", value: "rectRot" },
+        { name: "三角形", value: "triangle" }, { name: "十字", value: "cross" }, { name: "十字(轉)", value: "crossRot" },
+        { name: "星形", value: "star" }, { name: "水平線", value: "line" }, { name: "虛線", value: "dash" }
     ];
 
-    // 數據對照表
     const seriesMap = {
-        'Angle L (原始點)': 'rawDataL',
-        'Angle R (原始點)': 'rawDataR',
-        'CumAvg L (累積均線)': 'cumAvgL',
-        'CumAvg R (累積均線)': 'cumAvgR',
-        '建議治具角度 L': 'recJigL',
-        '建議治具角度 R': 'recJigR'
+        'Angle L (原始點)': 'rawDataL', 'Angle R (原始點)': 'rawDataR',
+        'CumAvg L (累積均線)': 'cumAvgL', 'CumAvg R (累積均線)': 'cumAvgR',
+        '建議治具角度 L': 'recJigL', '建議治具角度 R': 'recJigR'
     };
 
-    // 預設資料 (包含時間)
     const defaultData = [
         { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50 },
         { name: "AG", time: "2026/4/8 下午 3:52:20", l: 41.27, r: 41.83 },
-        { name: "AH", time: "2026/4/13 下午 3:06:41", l: 42.03, r: 42.10 },
-        { name: "AI", time: "2026/4/13 下午 3:20:27", l: 42.10, r: 42.02 },
-        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26 },
-        { name: "Sample I", time: "2026/4/15 下午 2:47:59", l: 42.69, r: 43.31 },
-        { name: "AJ", time: "2026/4/17 下午 1:05:48", l: 42.84, r: 43.20 },
-        { name: "AK", time: "2026/4/17 下午 1:25:51", l: 42.30, r: 43.48 },
-        { name: "AL", time: "2026/4/20 下午 1:58:33", l: 40.74, r: 42.46 },
-        { name: "AM", time: "2026/4/20 下午 2:24:49", l: 43.05, r: 44.01 },
-        { name: "AM'", time: "2026/4/21 下午 3:07:25", l: 43.00, r: 42.70 },
-        { name: "AN", time: "2026/4/21 下午 3:26:16", l: 43.00, r: 43.27 },
-        { name: "AL'", time: "2026/4/21 下午 3:35:02", l: 43.20, r: 42.93 },
-        { name: "AO", time: "2026/4/21 下午 3:50:03", l: 43.12, r: 43.20 },
-        { name: "AP", time: "2026/4/22 下午 3:47:05", l: 42.55, r: 42.63 },
-        { name: "AQ", time: "2026/4/22 下午 3:53:07", l: 41.66, r: 42.49 },
-        { name: "AV", time: "2026/4/28 下午 1:59:28", l: 42.39, r: 42.01 },
-        { name: "AX", time: "2026/4/28 下午 2:21:15", l: 43.23, r: 43.24 },
-        { name: "AY", time: "2026/4/28 下午 3:02:27", l: 42.80, r: 42.39 },
-        { name: "AZ", time: "2026/4/28 下午 3:16:11", l: 41.70, r: 42.28 }
+        { name: "AH", time: "2026/4/13 下午 3:06:41", l: 42.03, r: 42.10 }
     ];
 
-    let rawData = [];
+    // --- 全域變數 (改為支援多治具) ---
+    let jigs = {}; // 格式: { "Jig 8": { data: [], specs: {}, visuals: {} } }
+    let currentJigId = "Jig 8";
     let myChart = null;
     let crosshairY = null; 
-    let visuals = {}; // 存儲實時視覺配置
 
-    // --- 拖曳面板與視覺設定介面 ---
+    // --- 系統初始化與治具管理 ---
+    function initSystem() {
+        const savedJigs = localStorage.getItem('qcJigSystem');
+        if (savedJigs) {
+            jigs = JSON.parse(savedJigs);
+            currentJigId = localStorage.getItem('qcCurrentJigId') || Object.keys(jigs)[0];
+        } else {
+            // 首次使用，初始化預設的 Jig 8
+            jigs = {
+                "Jig 8": {
+                    data: [...defaultData],
+                    specs: { target: 41.33, usl: 42.33, lsl: 40.33, currentJig: 48.67 },
+                    visuals: JSON.parse(JSON.stringify(defaultVisuals))
+                }
+            };
+        }
+        updateJigSelector();
+        loadCurrentJig();
+        makeDraggable(); 
+        makeSampleNamesEditable();
+    }
+
+    function updateJigSelector() {
+        const selector = document.getElementById('jigSelector');
+        selector.innerHTML = '';
+        Object.keys(jigs).forEach(id => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.innerText = id;
+            if(id === currentJigId) opt.selected = true;
+            selector.appendChild(opt);
+        });
+        document.querySelectorAll('.current-jig-name').forEach(el => el.innerText = currentJigId);
+    }
+
+    function switchJig() {
+        currentJigId = document.getElementById('jigSelector').value;
+        localStorage.setItem('qcCurrentJigId', currentJigId);
+        document.querySelectorAll('.current-jig-name').forEach(el => el.innerText = currentJigId);
+        loadCurrentJig();
+    }
+
+    function createNewJig() {
+        const name = prompt("請輸入新治具專案名稱 (例如: Jig 9):");
+        if (!name) return;
+        if (jigs[name]) { alert("此名稱已存在！"); return; }
+        
+        jigs[name] = {
+            data: [],
+            specs: { target: 41.33, usl: 42.33, lsl: 40.33, currentJig: 48.67 },
+            visuals: JSON.parse(JSON.stringify(defaultVisuals)) // 繼承預設視覺
+        };
+        currentJigId = name;
+        updateJigSelector();
+        loadCurrentJig();
+        saveSystemToStorage();
+    }
+
+    function deleteCurrentJig() {
+        if (Object.keys(jigs).length <= 1) { alert("系統至少需保留一個治具專案！"); return; }
+        if (!confirm(`確定要刪除整個 [${currentJigId}] 專案嗎？此操作不可還原！`)) return;
+        
+        delete jigs[currentJigId];
+        currentJigId = Object.keys(jigs)[0]; // 切換回第一個
+        updateJigSelector();
+        loadCurrentJig();
+        saveSystemToStorage();
+    }
+
+    // --- 載入與儲存當前治具設定 ---
+    function loadCurrentJig() {
+        const jig = jigs[currentJigId];
+        
+        // 載入規格
+        document.getElementById('specTarget').value = jig.specs.target;
+        document.getElementById('specUSL').value = jig.specs.usl;
+        document.getElementById('specLSL').value = jig.specs.lsl;
+        document.getElementById('specCurrentJig').value = jig.specs.currentJig;
+        
+        // 載入視覺 UI
+        generateVisualSettingsUI(jig.visuals);
+        
+        updateAll();
+    }
+
+    function saveSpecsAndUpdate() {
+        const jig = jigs[currentJigId];
+        // 儲存規格設定
+        jig.specs = {
+            target: parseFloat(document.getElementById('specTarget').value),
+            usl: parseFloat(document.getElementById('specUSL').value),
+            lsl: parseFloat(document.getElementById('specLSL').value),
+            currentJig: parseFloat(document.getElementById('specCurrentJig').value)
+        };
+
+        // 儲存視覺設定
+        Object.values(seriesMap).forEach(seriesId => {
+            jig.visuals[seriesId] = {
+                color: document.getElementById('visColor_' + seriesId).value,
+                shape: document.getElementById('visShape_' + seriesId).value
+            };
+        });
+
+        saveSystemToStorage();
+        updateAll();
+    }
+
+    function saveSystemToStorage() {
+        localStorage.setItem('qcJigSystem', JSON.stringify(jigs));
+        localStorage.setItem('qcCurrentJigId', currentJigId);
+        showSaveToast();
+    }
+
+    // --- 批次匯入功能 ---
+    function parsePastedData() {
+        const text = document.getElementById('pasteArea').value.trim();
+        if (!text) { alert("請先在文字框貼上試算表資料！"); return; }
+
+        const lines = text.split('\n');
+        let importCount = 0;
+        const currentData = jigs[currentJigId].data;
+
+        lines.forEach(line => {
+            const cols = line.split('\t'); 
+            // 至少要有 名稱, L, R
+            if (cols.length >= 3) {
+                const name = cols[0].trim();
+                const l = parseFloat(cols[1]);
+                const r = parseFloat(cols[2]);
+
+                // 防呆：確保 L 和 R 都是數字，跳過空白或非數字列
+                if (name && !isNaN(l) && !isNaN(r)) {
+                    let timeStr = "";
+                    // 尋找格式包含日期的字串當作時間
+                    for(let i = 2; i < cols.length; i++) {
+                        if (cols[i] && cols[i].match(/\d{4}\/\d{1,2}\/\d{1,2}/)) {
+                            timeStr = cols[i].trim();
+                            break;
+                        }
+                    }
+                    currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r });
+                    importCount++;
+                }
+            }
+        });
+
+        if (importCount > 0) {
+            document.getElementById('pasteArea').value = ''; // 清空
+            saveSystemToStorage(); 
+            updateAll();
+            alert(`✅ 成功匯入 ${importCount} 筆資料至 [${currentJigId}]！`);
+        } else {
+            alert("❌ 無法解析資料。\n請確認貼上的資料格式：第一欄是名稱，第二、三欄是數字。");
+        }
+    }
+
+    // --- 其他 UI 與輔助功能 ---
     function makeDraggable() {
         const dragEl = document.getElementById('draggableSettings');
         const dragHandle = dragEl.querySelector('summary');
         let isDragging = false, startX, startY, startLeft, startTop;
 
         dragHandle.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX; startY = e.clientY;
+            isDragging = true; startX = e.clientX; startY = e.clientY;
             startLeft = dragEl.offsetLeft; startTop = dragEl.offsetTop;
             document.body.style.userSelect = 'none'; 
         });
@@ -302,32 +453,26 @@
         document.addEventListener('mouseup', () => { isDragging = false; document.body.style.userSelect = ''; });
     }
 
-    function generateVisualSettingsUI() {
+    function generateVisualSettingsUI(visConfig) {
         const container = document.getElementById('visualSettingsList');
-        container.innerHTML = ''; // 清空
+        container.innerHTML = ''; 
 
-        for (const [key, value] of Object.entries(seriesMap)) {
-            const seriesId = value;
-            const config = visuals[seriesId];
-            
-            // 創建一列設定
+        for (const [key, seriesId] of Object.entries(seriesMap)) {
+            const config = visConfig[seriesId] || defaultVisuals[seriesId]; // 防呆 fallback
             const row = document.createElement('div');
             row.className = 'vis-row';
             
-            // 標籤
             const label = document.createElement('label');
             label.innerText = key;
             row.appendChild(label);
             
-            // 顏色選擇器
             const colorPicker = document.createElement('input');
             colorPicker.type = 'color';
             colorPicker.id = 'visColor_' + seriesId;
             colorPicker.value = config.color;
-            colorPicker.onchange = saveSpecsAndUpdate; // 變更時自動儲存並重繪
+            colorPicker.onchange = saveSpecsAndUpdate; 
             row.appendChild(colorPicker);
             
-            // 形狀下拉選單
             const shapeSelect = document.createElement('select');
             shapeSelect.id = 'visShape_' + seriesId;
             shapeSelect.onchange = saveSpecsAndUpdate;
@@ -340,96 +485,22 @@
                 shapeSelect.appendChild(option);
             });
             row.appendChild(shapeSelect);
-            
             container.appendChild(row);
         }
     }
 
-    // --- 自動存檔功能 ---
-    function loadSavedData() {
-        // 讀取規格設定
-        const savedSpecs = localStorage.getItem('qcChartSpecs');
-        if (savedSpecs) {
-            const specs = JSON.parse(savedSpecs);
-            document.getElementById('specTarget').value = specs.target || 41.33;
-            document.getElementById('specUSL').value = specs.usl || 42.33;
-            document.getElementById('specLSL').value = specs.lsl || 40.33;
-            if(specs.currentJig) document.getElementById('specCurrentJig').value = specs.currentJig;
-        }
-
-        // 讀取視覺設定
-        const savedVisuals = localStorage.getItem('qcChartVisuals');
-        if (savedVisuals) {
-            visuals = JSON.parse(savedVisuals);
-            // 防呆：如果保存的配置不完整，補上預設
-            Object.keys(defaultVisuals).forEach(key => {
-                if(!visuals[key]) visuals[key] = defaultVisuals[key];
-            });
-        } else {
-            visuals = defaultVisuals;
-        }
-        generateVisualSettingsUI(); // 生成視覺設定介面
-
-        // 讀取點位數據 (最後載入，因為需要視覺配置與樣品名稱)
-        const savedData = localStorage.getItem('qcChartData');
-        if (savedData) {
-            rawData = JSON.parse(savedData);
-        } else {
-            rawData = [...defaultData];
-        }
-    }
-
-    function saveToStorage() {
-        localStorage.setItem('qcChartData', JSON.stringify(rawData));
-        showSaveToast();
-    }
-
-    function saveSpecsAndUpdate() {
-        // 1. 儲存規格設定
-        const specs = {
-            target: document.getElementById('specTarget').value,
-            usl: document.getElementById('specUSL').value,
-            lsl: document.getElementById('specLSL').value,
-            currentJig: document.getElementById('specCurrentJig').value
-        };
-        localStorage.setItem('qcChartSpecs', JSON.stringify(specs));
-
-        // 2. 儲存視覺設定
-        visuals = {}; // 重置並重新讀取 UI 值
-        Object.values(seriesMap).forEach(seriesId => {
-            visuals[seriesId] = {
-                color: document.getElementById('visColor_' + seriesId).value,
-                shape: document.getElementById('visShape_' + seriesId).value
-            };
-        });
-        localStorage.setItem('qcChartVisuals', JSON.stringify(visuals));
-
-        showSaveToast();
-        updateAll();
-    }
-
     function showSaveToast() {
         const status = document.getElementById('saveStatus');
-        status.innerText = "✅ 已自動儲存設定與數據";
+        status.innerText = "✅ 已自動儲存";
         status.style.color = "#27ae60";
-        setTimeout(() => {
-            status.innerText = "💾 自動存檔已啟用";
-            status.style.color = "#7f8c8d";
-        }, 1500);
+        setTimeout(() => { status.innerText = "💾 自動存檔已啟用"; status.style.color = "#7f8c8d"; }, 1500);
     }
     
-    function getCurrentTime() {
-        const now = new Date();
-        return now.toLocaleString('zh-TW', { hour12: false });
-    }
+    function getCurrentTime() { return new Date().toLocaleString('zh-TW', { hour12: false }); }
 
-    // 將 Hex 顏色淡化的輔助函數 (用在原始軌跡連線與虛線)
     function applyAlphaToHex(hex, alpha) {
         if (!hex) return 'rgba(0,0,0,' + alpha + ')';
-        // 解析 hex (ex: #3498db)
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
+        const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
         return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     }
 
@@ -451,6 +522,8 @@
             const metaL = chart.getDatasetMeta(0); const metaR = chart.getDatasetMeta(1);
             if (!metaL.data.length || !chart.data.customData) return;
             
+            const vis = jigs[currentJigId].visuals; // 取得當前治具視覺
+            
             ctx.save();
             chart.data.customData.forEach((item, index) => {
                 if(!metaL.data[index] || !metaR.data[index]) return;
@@ -458,20 +531,16 @@
                 const ptL = metaL.data[index].getProps(['x', 'y']);
                 const ptR = metaR.data[index].getProps(['x', 'y']);
                 
-                // 虛線連線：使用 L 側顏色的淡化版作為連線顏色
                 ctx.beginPath();
                 ctx.moveTo(ptL.x, ptL.y); ctx.lineTo(ptR.x, ptR.y);
-                ctx.strokeStyle = applyAlphaToHex(visuals.rawDataL.color, 0.5); // 使用淡化顏色
-                ctx.lineWidth = 1;
-                ctx.setLineDash([3, 3]); ctx.stroke();
+                ctx.strokeStyle = applyAlphaToHex(vis.rawDataL.color, 0.5); 
+                ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.stroke();
 
-                // Delta 字樣
                 const midY = (ptL.y + ptR.y) / 2;
                 ctx.fillStyle = '#34495e'; ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
                 ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
 
-                // OK/NG 字樣
                 const topY = Math.min(ptL.y, ptR.y);
                 ctx.fillStyle = item.status === 'OK' ? '#27ae60' : '#e74c3c';
                 ctx.font = '900 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
@@ -503,6 +572,8 @@
     };
 
     function initChart() {
+        const vis = jigs[currentJigId].visuals; // 使用當前治具的視覺配置
+        
         const ctx = document.getElementById('qcChart').getContext('2d');
         myChart = new Chart(ctx, {
             type: 'line',
@@ -511,13 +582,12 @@
                 labels: [], 
                 customData: [],
                 datasets: [
-                    // 數據集定義，使用 visuals 配置中的顏色與形狀
-                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(visuals.rawDataL.color, 0.3), backgroundColor: visuals.rawDataL.color, pointStyle: visuals.rawDataL.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(visuals.rawDataR.color, 0.3), backgroundColor: visuals.rawDataR.color, pointStyle: visuals.rawDataR.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: visuals.cumAvgL.color, pointStyle: visuals.cumAvgL.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
-                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: visuals.cumAvgR.color, pointStyle: visuals.cumAvgR.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
-                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: visuals.recJigL.color, backgroundColor: visuals.recJigL.color, pointStyle: visuals.recJigL.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 },
-                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: visuals.recJigR.color, backgroundColor: visuals.recJigR.color, pointStyle: visuals.recJigR.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 }
+                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(vis.rawDataL.color, 0.3), backgroundColor: vis.rawDataL.color, pointStyle: vis.rawDataL.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(vis.rawDataR.color, 0.3), backgroundColor: vis.rawDataR.color, pointStyle: vis.rawDataR.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: vis.cumAvgL.color, pointStyle: vis.cumAvgL.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: vis.cumAvgR.color, pointStyle: vis.cumAvgR.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: vis.recJigL.color, backgroundColor: vis.recJigL.color, pointStyle: vis.recJigL.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 },
+                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: vis.recJigR.color, backgroundColor: vis.recJigR.color, pointStyle: vis.recJigR.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 }
                 ]
             },
             options: {
@@ -528,8 +598,8 @@
                     y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } },
                     y1: {
                         type: 'linear', display: false, position: 'right', 
-                        title: { display: true, text: '治具角度 (Degree °)', color: applyAlphaToHex(visuals.recJigR.color, 0.8), font: {weight: 'bold'} },
-                        ticks: { color: applyAlphaToHex(visuals.recJigR.color, 0.8) }, grid: { drawOnChartArea: false } 
+                        title: { display: true, text: '治具角度 (Degree °)', color: applyAlphaToHex(vis.recJigR.color, 0.8), font: {weight: 'bold'} },
+                        ticks: { color: applyAlphaToHex(vis.recJigR.color, 0.8) }, grid: { drawOnChartArea: false } 
                     }
                 },
                 plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
@@ -556,7 +626,7 @@
                 popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
                 document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
                 document.getElementById('popupOtherVal').value = '';
-                document.getElementById('popupName').value = 'P' + (rawData.length + 1);
+                document.getElementById('popupName').value = 'P' + (jigs[currentJigId].data.length + 1);
                 document.getElementById('popupTime').value = getCurrentTime();
                 document.querySelector('input[name="cursorSide"][value="L"]').checked = true;
                 setTimeout(() => document.getElementById('popupOtherVal').focus(), 50);
@@ -564,11 +634,10 @@
         });
     }
 
-    // --- 資料操作與編輯名稱 ---
-
+    // --- 資料操作與渲染 ---
     function downloadChart() {
         const link = document.createElement('a');
-        link.download = '製程監控完全自訂版_' + getCurrentTime().replace(/[\/:]/g, '') + '.png';
+        link.download = `${currentJigId}_製程監控_${getCurrentTime().replace(/[\/:]/g, '')}.png`;
         link.href = document.getElementById('qcChart').toDataURL('image/png', 1.0);
         link.click();
     }
@@ -581,8 +650,8 @@
 
         if (!name || isNaN(l) || isNaN(r)) { alert("請輸入完整數據！"); return; }
         
-        rawData.push({ name, time: timeInput, l, r });
-        saveToStorage(); 
+        jigs[currentJigId].data.push({ name, time: timeInput, l, r });
+        saveSystemToStorage(); 
         
         document.getElementById('sampleName').value = '';
         document.getElementById('angleL').value = '';
@@ -603,68 +672,61 @@
         let l = side === 'L' ? cursorVal : otherVal;
         let r = side === 'L' ? otherVal : cursorVal;
         
-        rawData.push({ name, time, l, r });
-        saveToStorage(); updateAll(); closePopup();
+        jigs[currentJigId].data.push({ name, time, l, r });
+        saveSystemToStorage(); updateAll(); closePopup();
     }
 
     function closePopup() { document.getElementById('clickInputPopup').style.display = 'none'; }
 
     function deleteData(index) {
-        if(confirm(`確定要刪除 [ ${rawData[index].name} ] 嗎？`)) {
-            rawData.splice(index, 1); saveToStorage(); updateAll();
+        if(confirm(`確定要刪除此筆資料嗎？`)) {
+            jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll();
+        }
+    }
+    
+    function clearData() {
+        if(confirm(`確定要清除 [${currentJigId}] 的所有數據嗎？\n(注意：這會清空此治具目前的數據)`)) {
+            jigs[currentJigId].data = []; saveSystemToStorage(); updateAll();
         }
     }
 
     // --- 實作可編輯名稱邏輯 ---
     function makeSampleNamesEditable() {
-        const table = document.getElementById('dataTable');
-        const tbody = table.querySelector('tbody');
-        
-        // 使用事件委託 (Event Delegation) 監聽 TBODY
+        const tbody = document.querySelector('#dataTable tbody');
         tbody.addEventListener('blur', function(e) {
-            // 只有當 blur 事件發生在 editable-col 上時才觸發
             if(e.target && e.target.classList.contains('editable-col')) {
                 const cell = e.target;
                 const newName = cell.innerText.trim();
                 const index = cell.getAttribute('data-index');
                 
-                if(index !== null && newName !== rawData[index].name) {
+                const curData = jigs[currentJigId].data;
+                if(index !== null && newName !== curData[index].name) {
                     if(newName === "") {
                         alert("樣品名稱不能為空！");
-                        cell.innerText = rawData[index].name; // 恢復
+                        cell.innerText = curData[index].name; 
                         return;
                     }
-                    console.log('修改名稱, 索引:', index, '新名稱:', newName);
-                    rawData[index].name = newName; // 更新本地數據
-                    saveToStorage(); // 存檔
-                    
-                    // 重繪圖表即可，不需要完全 re-render 表格 (會導致選取消失)
-                    // 為了更保險，只更新圖表 labels
+                    curData[index].name = newName; 
+                    saveSystemToStorage(); 
                     updateChartLabelsAndDELTA();
                 }
             }
-        }, true); // 使用 capture 捕獲 blur 事件 (blur 不冒泡)
+        }, true);
 
-        // 加入鍵盤 Enter 鍵保存
         tbody.addEventListener('keydown', function(e) {
             if(e.target && e.target.classList.contains('editable-col')) {
-                if(e.key === 'Enter') {
-                    e.preventDefault(); // 防止換行
-                    e.target.blur(); // 觸發 blur 保存
-                }
+                if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
             }
         });
     }
     
-    // 只更新圖表標籤與 Delta 的輕量化更新函數 (用在編輯名稱後)
     function updateChartLabelsAndDELTA() {
         if(!myChart) return;
         const labels = [];
-        rawData.forEach(item => {
+        jigs[currentJigId].data.forEach(item => {
             labels.push([item.name, formatShortTime(item.time)]);
         });
         myChart.data.labels = labels;
-        // Delta 字樣中的名稱也需要更新，但 Delta 插件直接讀取數據集位置，不需要手動更名
         myChart.update();
     }
 
@@ -680,16 +742,16 @@
     }
 
     function updateAll() {
-        // 如果圖表已存在，需要先銷毀並重新初始化以載入新的視覺配置
         if (myChart) {
             myChart.destroy();
             initChart(); 
         }
 
-        const target = parseFloat(document.getElementById('specTarget').value);
-        const usl = parseFloat(document.getElementById('specUSL').value);
-        const lsl = parseFloat(document.getElementById('specLSL').value);
-        const currentJig = parseFloat(document.getElementById('specCurrentJig').value) || 48.67;
+        const jig = jigs[currentJigId];
+        const target = jig.specs.target;
+        const usl = jig.specs.usl;
+        const lsl = jig.specs.lsl;
+        const currentJig = jig.specs.currentJig;
 
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
@@ -701,7 +763,7 @@
         let minY = lsl - 0.5; let maxY = usl + 0.5;
         let minJigY = currentJig - 0.5; let maxJigY = currentJig + 0.5;
 
-        rawData.forEach((item, index) => {
+        jig.data.forEach((item, index) => {
             const delta = Math.abs(item.r - item.l).toFixed(2);
             const isOk = (item.l <= usl && item.l >= lsl && item.r <= usl && item.r >= lsl);
             const status = isOk ? 'OK' : 'NG';
@@ -712,7 +774,6 @@
             const recJigL = (currentJig + (curCumL - target)).toFixed(2);
             const recJigR = (currentJig + (curCumR - target)).toFixed(2);
 
-            // 渲染表格，加入 data-index 與 editable-col 類
             const row = tbody.insertRow();
             row.innerHTML = `<td class="editable-col" contenteditable="true" data-index="${index}">${item.name}</td>
                              <td class="time-col">${item.time || '-'}</td>
@@ -799,19 +860,7 @@
         myChart.update();
     }
 
-    function clearData() {
-        if(confirm("確定要清除所有數據嗎？\n(注意：這會清空目前的自動存檔，重新載入網頁會恢復預設資料)")) {
-            rawData = []; localStorage.removeItem('qcChartData'); updateAll();
-        }
-    }
-
-    window.onload = () => {
-        makeDraggable(); 
-        loadSavedData(); 
-        initChart(); 
-        updateAll();
-        makeSampleNamesEditable(); // 啟動表格編輯功能
-    };
+    window.onload = initSystem;
 </script>
 </body>
 </html>
