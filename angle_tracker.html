@@ -88,7 +88,7 @@
 <body>
 
 <details id="draggableSettings" class="draggable-settings">
-    <summary>⚙️ 製程與視覺設定 (按住拖曳 / 點擊展開)</summary>
+    <summary>⚙️ 製程與視覺設定 (拖曳 / 展開)</summary>
     <div class="flex-column" style="margin-top:10px;">
         <span class="panel-title" style="color:#64748b; font-size:13px; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">製程參數 (綁定當前治具)</span>
         <div class="input-group">
@@ -119,6 +119,7 @@
         <span id="saveStatus">💾 自動存檔已啟用</span>
     </h1>
 
+    <!-- 新增治具管理中心 -->
     <div class="jig-manager">
         <strong>📂 切換治具專案：</strong>
         <select id="jigSelector" class="jig-selector" onchange="switchJig()"></select>
@@ -130,13 +131,14 @@
         <summary>💡 操作說明與自訂功能 (點擊展開)</summary>
         <p>
             <b>1. 多治具管理</b>：每個治具擁有獨立的數據、顏色設定與控制規格。可隨時切換或新增。<br>
-            <b>2. 批次匯入</b>：複製 Excel/Google Sheet 資料後直接貼入，可自動抓取名稱、L/R數值與時間。<br>
-            <b>3. 可拖曳面板</b>：右上角的設定面板可任意拖曳位置。點擊標題展開，可修改製程規格與圖表視覺。<br>
+            <b>2. 批次匯入</b>：從 Excel/Google Sheet 複製資料後直接貼入，可自動抓取名稱、L/R數值與時間。<br>
+            <b>3. 可拖曳面板</b>：右上角的設定面板可任意拖曳位置。<br>
             <b>4. 可編輯樣品名稱</b>：數據表格中的「Sample」欄位直接點擊即可修改。修改後按下 Enter 保存。<br>
             <b>5. 圖表快捷新增</b>：在圖表任意處點擊左鍵，可快速擷取 Y 軸數值並呼叫快捷輸入選單。
         </p>
     </details>
 
+    <!-- 新增批次貼上匯入區塊 -->
     <div class="panel" style="background: #eff6ff; border-color: #bfdbfe;">
         <span class="panel-title" style="color: #1d4ed8;">📋 批次貼上匯入 (支援 Excel / Google Sheet)</span>
         <div class="flex-column">
@@ -269,11 +271,12 @@
         { name: "AH", time: "2026/4/13 下午 3:06:41", l: 42.03, r: 42.10 }
     ];
 
-    // --- 全域變數 (改為支援多治具) ---
+    // --- 全域變數 (支援多治具) ---
     let jigs = {}; // 格式: { "Jig 8": { data: [], specs: {}, visuals: {} } }
     let currentJigId = "Jig 8";
     let myChart = null;
     let crosshairY = null; 
+    let chartEventsAttached = false; // 防止重複綁定圖表事件
 
     // --- 系統初始化與治具管理 ---
     function initSystem() {
@@ -282,7 +285,6 @@
             jigs = JSON.parse(savedJigs);
             currentJigId = localStorage.getItem('qcCurrentJigId') || Object.keys(jigs)[0];
         } else {
-            // 首次使用，初始化預設的 Jig 8
             jigs = {
                 "Jig 8": {
                     data: [...defaultData],
@@ -291,7 +293,12 @@
                 }
             };
         }
+        
         updateJigSelector();
+        
+        // 確保圖表實體在最開始就被建立，後續 updateAll 才不會報錯
+        initChart();
+        
         loadCurrentJig();
         makeDraggable(); 
         makeSampleNamesEditable();
@@ -302,8 +309,7 @@
         selector.innerHTML = '';
         Object.keys(jigs).forEach(id => {
             const opt = document.createElement('option');
-            opt.value = id;
-            opt.innerText = id;
+            opt.value = id; opt.innerText = id;
             if(id === currentJigId) opt.selected = true;
             selector.appendChild(opt);
         });
@@ -325,7 +331,7 @@
         jigs[name] = {
             data: [],
             specs: { target: 41.33, usl: 42.33, lsl: 40.33, currentJig: 48.67 },
-            visuals: JSON.parse(JSON.stringify(defaultVisuals)) // 繼承預設視覺
+            visuals: JSON.parse(JSON.stringify(defaultVisuals))
         };
         currentJigId = name;
         updateJigSelector();
@@ -338,7 +344,7 @@
         if (!confirm(`確定要刪除整個 [${currentJigId}] 專案嗎？此操作不可還原！`)) return;
         
         delete jigs[currentJigId];
-        currentJigId = Object.keys(jigs)[0]; // 切換回第一個
+        currentJigId = Object.keys(jigs)[0]; 
         updateJigSelector();
         loadCurrentJig();
         saveSystemToStorage();
@@ -348,21 +354,17 @@
     function loadCurrentJig() {
         const jig = jigs[currentJigId];
         
-        // 載入規格
         document.getElementById('specTarget').value = jig.specs.target;
         document.getElementById('specUSL').value = jig.specs.usl;
         document.getElementById('specLSL').value = jig.specs.lsl;
         document.getElementById('specCurrentJig').value = jig.specs.currentJig;
         
-        // 載入視覺 UI
         generateVisualSettingsUI(jig.visuals);
-        
         updateAll();
     }
 
     function saveSpecsAndUpdate() {
         const jig = jigs[currentJigId];
-        // 儲存規格設定
         jig.specs = {
             target: parseFloat(document.getElementById('specTarget').value),
             usl: parseFloat(document.getElementById('specUSL').value),
@@ -370,7 +372,6 @@
             currentJig: parseFloat(document.getElementById('specCurrentJig').value)
         };
 
-        // 儲存視覺設定
         Object.values(seriesMap).forEach(seriesId => {
             jig.visuals[seriesId] = {
                 color: document.getElementById('visColor_' + seriesId).value,
@@ -399,16 +400,13 @@
 
         lines.forEach(line => {
             const cols = line.split('\t'); 
-            // 至少要有 名稱, L, R
             if (cols.length >= 3) {
                 const name = cols[0].trim();
                 const l = parseFloat(cols[1]);
                 const r = parseFloat(cols[2]);
 
-                // 防呆：確保 L 和 R 都是數字，跳過空白或非數字列
                 if (name && !isNaN(l) && !isNaN(r)) {
                     let timeStr = "";
-                    // 尋找格式包含日期的字串當作時間
                     for(let i = 2; i < cols.length; i++) {
                         if (cols[i] && cols[i].match(/\d{4}\/\d{1,2}\/\d{1,2}/)) {
                             timeStr = cols[i].trim();
@@ -422,7 +420,7 @@
         });
 
         if (importCount > 0) {
-            document.getElementById('pasteArea').value = ''; // 清空
+            document.getElementById('pasteArea').value = ''; 
             saveSystemToStorage(); 
             updateAll();
             alert(`✅ 成功匯入 ${importCount} 筆資料至 [${currentJigId}]！`);
@@ -458,7 +456,7 @@
         container.innerHTML = ''; 
 
         for (const [key, seriesId] of Object.entries(seriesMap)) {
-            const config = visConfig[seriesId] || defaultVisuals[seriesId]; // 防呆 fallback
+            const config = visConfig[seriesId] || defaultVisuals[seriesId]; 
             const row = document.createElement('div');
             row.className = 'vis-row';
             
@@ -522,7 +520,7 @@
             const metaL = chart.getDatasetMeta(0); const metaR = chart.getDatasetMeta(1);
             if (!metaL.data.length || !chart.data.customData) return;
             
-            const vis = jigs[currentJigId].visuals; // 取得當前治具視覺
+            const vis = jigs[currentJigId].visuals; 
             
             ctx.save();
             chart.data.customData.forEach((item, index) => {
@@ -572,9 +570,9 @@
     };
 
     function initChart() {
-        const vis = jigs[currentJigId].visuals; // 使用當前治具的視覺配置
-        
         const ctx = document.getElementById('qcChart').getContext('2d');
+        
+        // 建立空的圖表實體，視覺設定將在 updateAll() 動態注入
         myChart = new Chart(ctx, {
             type: 'line',
             plugins: [customAnnotationsPlugin, crosshairPlugin, customCanvasBackgroundColor],
@@ -582,12 +580,12 @@
                 labels: [], 
                 customData: [],
                 datasets: [
-                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(vis.rawDataL.color, 0.3), backgroundColor: vis.rawDataL.color, pointStyle: vis.rawDataL.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', borderColor: applyAlphaToHex(vis.rawDataR.color, 0.3), backgroundColor: vis.rawDataR.color, pointStyle: vis.rawDataR.shape, radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
-                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderColor: vis.cumAvgL.color, pointStyle: vis.cumAvgL.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
-                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderColor: vis.cumAvgR.color, pointStyle: vis.cumAvgR.shape, borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
-                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderColor: vis.recJigL.color, backgroundColor: vis.recJigL.color, pointStyle: vis.recJigL.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 },
-                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderColor: vis.recJigR.color, backgroundColor: vis.recJigR.color, pointStyle: vis.recJigR.shape, borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 }
+                    { label: 'Angle L (原始點)', data: [], yAxisID: 'y', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'Angle R (原始點)', data: [], yAxisID: 'y', radius: 6, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'CumAvg L (累積均線)', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'CumAvg R (累積均線)', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: '建議治具角度 L', data: [], yAxisID: 'y1', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 },
+                    { label: '建議治具角度 R', data: [], yAxisID: 'y1', borderDash: [4, 4], fill: false, tension: 0.1, borderWidth: 2.5, radius: 5 }
                 ]
             },
             options: {
@@ -598,161 +596,84 @@
                     y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } },
                     y1: {
                         type: 'linear', display: false, position: 'right', 
-                        title: { display: true, text: '治具角度 (Degree °)', color: applyAlphaToHex(vis.recJigR.color, 0.8), font: {weight: 'bold'} },
-                        ticks: { color: applyAlphaToHex(vis.recJigR.color, 0.8) }, grid: { drawOnChartArea: false } 
+                        title: { display: true, text: '治具角度 (Degree °)', font: {weight: 'bold'} },
+                        grid: { drawOnChartArea: false } 
                     }
                 },
                 plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
             }
         });
 
-        myChart.canvas.addEventListener('mousemove', (e) => {
-            const rect = myChart.canvas.getBoundingClientRect();
-            const y = e.clientY - rect.top; const x = e.clientX - rect.left;
-            const chartArea = myChart.chartArea;
-            if (chartArea && x >= chartArea.left && x <= chartArea.right && y >= chartArea.top && y <= chartArea.bottom) {
-                crosshairY = myChart.scales.y.getValueForPixel(y);
-                myChart.canvas.style.cursor = 'crosshair'; myChart.update('none'); 
-            } else {
-                if (crosshairY !== null) { crosshairY = null; myChart.canvas.style.cursor = 'default'; myChart.update('none'); }
-            }
-        });
+        // 避免重複綁定事件
+        if (!chartEventsAttached) {
+            myChart.canvas.addEventListener('mousemove', (e) => {
+                const rect = myChart.canvas.getBoundingClientRect();
+                const y = e.clientY - rect.top; const x = e.clientX - rect.left;
+                const chartArea = myChart.chartArea;
+                if (chartArea && x >= chartArea.left && x <= chartArea.right && y >= chartArea.top && y <= chartArea.bottom) {
+                    crosshairY = myChart.scales.y.getValueForPixel(y);
+                    myChart.canvas.style.cursor = 'crosshair'; myChart.update('none'); 
+                } else {
+                    if (crosshairY !== null) { crosshairY = null; myChart.canvas.style.cursor = 'default'; myChart.update('none'); }
+                }
+            });
 
-        myChart.canvas.addEventListener('click', (e) => {
-            if (crosshairY !== null) {
-                const popup = document.getElementById('clickInputPopup'); popup.style.display = 'block';
-                let popX = e.pageX + 15; let popY = e.pageY - 15;
-                if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
-                popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
-                document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
-                document.getElementById('popupOtherVal').value = '';
-                document.getElementById('popupName').value = 'P' + (jigs[currentJigId].data.length + 1);
-                document.getElementById('popupTime').value = getCurrentTime();
-                document.querySelector('input[name="cursorSide"][value="L"]').checked = true;
-                setTimeout(() => document.getElementById('popupOtherVal').focus(), 50);
-            }
-        });
+            myChart.canvas.addEventListener('click', (e) => {
+                if (crosshairY !== null) {
+                    const popup = document.getElementById('clickInputPopup'); popup.style.display = 'block';
+                    let popX = e.pageX + 15; let popY = e.pageY - 15;
+                    if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
+                    popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
+                    document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
+                    document.getElementById('popupOtherVal').value = '';
+                    document.getElementById('popupName').value = 'P' + (jigs[currentJigId].data.length + 1);
+                    document.getElementById('popupTime').value = getCurrentTime();
+                    document.querySelector('input[name="cursorSide"][value="L"]').checked = true;
+                    setTimeout(() => document.getElementById('popupOtherVal').focus(), 50);
+                }
+            });
+            chartEventsAttached = true;
+        }
     }
 
     // --- 資料操作與渲染 ---
-    function downloadChart() {
-        const link = document.createElement('a');
-        link.download = `${currentJigId}_製程監控_${getCurrentTime().replace(/[\/:]/g, '')}.png`;
-        link.href = document.getElementById('qcChart').toDataURL('image/png', 1.0);
-        link.click();
-    }
-
-    function addData() {
-        const name = document.getElementById('sampleName').value;
-        const timeInput = document.getElementById('sampleTime').value || getCurrentTime();
-        const l = parseFloat(document.getElementById('angleL').value);
-        const r = parseFloat(document.getElementById('angleR').value);
-
-        if (!name || isNaN(l) || isNaN(r)) { alert("請輸入完整數據！"); return; }
-        
-        jigs[currentJigId].data.push({ name, time: timeInput, l, r });
-        saveSystemToStorage(); 
-        
-        document.getElementById('sampleName').value = '';
-        document.getElementById('angleL').value = '';
-        document.getElementById('angleR').value = '';
-        document.getElementById('sampleTime').value = getCurrentTime();
-        document.getElementById('sampleName').focus(); 
-        updateAll();
-    }
-
-    function submitPopupData() {
-        const name = document.getElementById('popupName').value;
-        const time = document.getElementById('popupTime').value || getCurrentTime();
-        const cursorVal = parseFloat(document.getElementById('popupCursorVal').value);
-        const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
-        const side = document.querySelector('input[name="cursorSide"][value="L"]:checked') ? 'L' : 'R';
-        
-        if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
-        let l = side === 'L' ? cursorVal : otherVal;
-        let r = side === 'L' ? otherVal : cursorVal;
-        
-        jigs[currentJigId].data.push({ name, time, l, r });
-        saveSystemToStorage(); updateAll(); closePopup();
-    }
-
-    function closePopup() { document.getElementById('clickInputPopup').style.display = 'none'; }
-
-    function deleteData(index) {
-        if(confirm(`確定要刪除此筆資料嗎？`)) {
-            jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll();
-        }
-    }
-    
-    function clearData() {
-        if(confirm(`確定要清除 [${currentJigId}] 的所有數據嗎？\n(注意：這會清空此治具目前的數據)`)) {
-            jigs[currentJigId].data = []; saveSystemToStorage(); updateAll();
-        }
-    }
-
-    // --- 實作可編輯名稱邏輯 ---
-    function makeSampleNamesEditable() {
-        const tbody = document.querySelector('#dataTable tbody');
-        tbody.addEventListener('blur', function(e) {
-            if(e.target && e.target.classList.contains('editable-col')) {
-                const cell = e.target;
-                const newName = cell.innerText.trim();
-                const index = cell.getAttribute('data-index');
-                
-                const curData = jigs[currentJigId].data;
-                if(index !== null && newName !== curData[index].name) {
-                    if(newName === "") {
-                        alert("樣品名稱不能為空！");
-                        cell.innerText = curData[index].name; 
-                        return;
-                    }
-                    curData[index].name = newName; 
-                    saveSystemToStorage(); 
-                    updateChartLabelsAndDELTA();
-                }
-            }
-        }, true);
-
-        tbody.addEventListener('keydown', function(e) {
-            if(e.target && e.target.classList.contains('editable-col')) {
-                if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
-            }
-        });
-    }
-    
-    function updateChartLabelsAndDELTA() {
-        if(!myChart) return;
-        const labels = [];
-        jigs[currentJigId].data.forEach(item => {
-            labels.push([item.name, formatShortTime(item.time)]);
-        });
-        myChart.data.labels = labels;
-        myChart.update();
-    }
-
-    function formatShortTime(timeStr) {
-        if (!timeStr) return "";
-        try {
-            if(timeStr.includes('下午') || timeStr.includes('上午')) {
-                 let parts = timeStr.split(' ');
-                 return parts[0].split('/').slice(1).join('/'); 
-            }
-            return timeStr.split(' ')[0]; 
-        } catch(e) { return timeStr; }
-    }
-
     function updateAll() {
-        if (myChart) {
-            myChart.destroy();
-            initChart(); 
-        }
+        if (!myChart) { initChart(); }
 
         const jig = jigs[currentJigId];
         const target = jig.specs.target;
         const usl = jig.specs.usl;
         const lsl = jig.specs.lsl;
         const currentJig = jig.specs.currentJig;
+        const vis = jig.visuals;
 
+        // 1. 動態更新圖表視覺設定 (取代原本需要銷毀重蓋的做法)
+        myChart.data.datasets[0].borderColor = applyAlphaToHex(vis.rawDataL.color, 0.3);
+        myChart.data.datasets[0].backgroundColor = vis.rawDataL.color;
+        myChart.data.datasets[0].pointStyle = vis.rawDataL.shape;
+
+        myChart.data.datasets[1].borderColor = applyAlphaToHex(vis.rawDataR.color, 0.3);
+        myChart.data.datasets[1].backgroundColor = vis.rawDataR.color;
+        myChart.data.datasets[1].pointStyle = vis.rawDataR.shape;
+
+        myChart.data.datasets[2].borderColor = vis.cumAvgL.color;
+        myChart.data.datasets[2].pointStyle = vis.cumAvgL.shape;
+
+        myChart.data.datasets[3].borderColor = vis.cumAvgR.color;
+        myChart.data.datasets[3].pointStyle = vis.cumAvgR.shape;
+
+        myChart.data.datasets[4].borderColor = vis.recJigL.color;
+        myChart.data.datasets[4].backgroundColor = vis.recJigL.color;
+        myChart.data.datasets[4].pointStyle = vis.recJigL.shape;
+
+        myChart.data.datasets[5].borderColor = vis.recJigR.color;
+        myChart.data.datasets[5].backgroundColor = vis.recJigR.color;
+        myChart.data.datasets[5].pointStyle = vis.recJigR.shape;
+
+        myChart.options.scales.y1.title.color = applyAlphaToHex(vis.recJigR.color, 0.8);
+        myChart.options.scales.y1.ticks.color = applyAlphaToHex(vis.recJigR.color, 0.8);
+
+        // 2. 處理資料
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
         
@@ -812,6 +733,111 @@
         updateChartVisibility();
         drawSpecLines(target, usl, lsl);
         document.getElementById('sampleTime').value = getCurrentTime();
+    }
+
+    function downloadChart() {
+        const link = document.createElement('a');
+        link.download = `${currentJigId}_製程監控_${getCurrentTime().replace(/[\/:]/g, '')}.png`;
+        link.href = document.getElementById('qcChart').toDataURL('image/png', 1.0);
+        link.click();
+    }
+
+    function addData() {
+        const name = document.getElementById('sampleName').value;
+        const timeInput = document.getElementById('sampleTime').value || getCurrentTime();
+        const l = parseFloat(document.getElementById('angleL').value);
+        const r = parseFloat(document.getElementById('angleR').value);
+
+        if (!name || isNaN(l) || isNaN(r)) { alert("請輸入完整數據！"); return; }
+        
+        jigs[currentJigId].data.push({ name, time: timeInput, l, r });
+        saveSystemToStorage(); 
+        
+        document.getElementById('sampleName').value = '';
+        document.getElementById('angleL').value = '';
+        document.getElementById('angleR').value = '';
+        document.getElementById('sampleTime').value = getCurrentTime();
+        document.getElementById('sampleName').focus(); 
+        updateAll();
+    }
+
+    function submitPopupData() {
+        const name = document.getElementById('popupName').value;
+        const time = document.getElementById('popupTime').value || getCurrentTime();
+        const cursorVal = parseFloat(document.getElementById('popupCursorVal').value);
+        const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
+        const side = document.querySelector('input[name="cursorSide"][value="L"]:checked') ? 'L' : 'R';
+        
+        if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
+        let l = side === 'L' ? cursorVal : otherVal;
+        let r = side === 'L' ? otherVal : cursorVal;
+        
+        jigs[currentJigId].data.push({ name, time, l, r });
+        saveSystemToStorage(); updateAll(); closePopup();
+    }
+
+    function closePopup() { document.getElementById('clickInputPopup').style.display = 'none'; }
+
+    function deleteData(index) {
+        if(confirm(`確定要刪除此筆資料嗎？`)) {
+            jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll();
+        }
+    }
+    
+    function clearData() {
+        if(confirm(`確定要清除 [${currentJigId}] 的所有數據嗎？\n(注意：這會清空此治具目前的數據)`)) {
+            jigs[currentJigId].data = []; saveSystemToStorage(); updateAll();
+        }
+    }
+
+    function makeSampleNamesEditable() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.addEventListener('blur', function(e) {
+            if(e.target && e.target.classList.contains('editable-col')) {
+                const cell = e.target;
+                const newName = cell.innerText.trim();
+                const index = cell.getAttribute('data-index');
+                
+                const curData = jigs[currentJigId].data;
+                if(index !== null && newName !== curData[index].name) {
+                    if(newName === "") {
+                        alert("樣品名稱不能為空！");
+                        cell.innerText = curData[index].name; 
+                        return;
+                    }
+                    curData[index].name = newName; 
+                    saveSystemToStorage(); 
+                    updateChartLabelsAndDELTA();
+                }
+            }
+        }, true);
+
+        tbody.addEventListener('keydown', function(e) {
+            if(e.target && e.target.classList.contains('editable-col')) {
+                if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+            }
+        });
+    }
+    
+    function updateChartLabelsAndDELTA() {
+        if(!myChart) return;
+        const labels = [];
+        jigs[currentJigId].data.forEach(item => {
+            labels.push([item.name, formatShortTime(item.time)]);
+        });
+        myChart.data.labels = labels;
+        myChart.update();
+    }
+
+    function formatShortTime(timeStr) {
+        if (!timeStr) return "";
+        try {
+            if(timeStr.includes('下午') || timeStr.includes('上午')) {
+                 let parts = timeStr.split(' ');
+                 return parts[0].split('/').slice(1).join('/'); 
+            }
+            return timeStr.split(' ')[0]; 
+        } catch(e) { return timeStr; }
     }
 
     function updateChartVisibility() {
