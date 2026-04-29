@@ -27,13 +27,16 @@
         /* 主要內容區塊底板 */
         .main-content { background: white; padding: 25px; border-radius: 0 0 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; border-top: none; }
 
-        /* 摺疊面板共用 (批次匯入、說明) */
+        /* 摺疊面板共用 */
         details.accordion-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 15px; margin-bottom: 15px; transition: 0.2s; }
         details.accordion-panel[open] { box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-color: #cbd5e1; }
         details.accordion-panel summary { font-weight: bold; cursor: pointer; outline: none; user-select: none; color: #3b82f6; display: flex; align-items: center;}
         details.accordion-panel summary:hover { color: #2563eb; }
-        details.accordion-panel summary::marker { display: none; } /* 隱藏原生箭頭 */
+        details.accordion-panel summary::marker { display: none; } 
         details.accordion-panel summary::-webkit-details-marker { display: none; }
+        /* 特殊樣式：設定面板 */
+        details.settings-panel summary { color: #475569; }
+        details.settings-panel summary:hover { color: #1e293b; }
 
         .panel-title { font-weight: bold; color: #334155; margin-bottom: 12px; display: block; font-size: 14px; }
         
@@ -41,12 +44,19 @@
         .flex-column { display: flex; flex-direction: column; gap: 10px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 12px; color: #64748b; font-weight: bold; }
-        input[type="number"], input[type="text"], select, textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 130px; font-size: 14px; box-sizing: border-box; transition: 0.2s;}
+        input[type="number"], input[type="text"], select, textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; box-sizing: border-box; transition: 0.2s;}
         input:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
         input.time-input { width: 160px; }
         textarea { width: 100%; resize: vertical; font-family: monospace; font-size: 13px; }
-        input[type="color"] { border: none; padding: 0; cursor: pointer; height: 38px; width: 38px;}
+        input[type="color"] { border: none; padding: 0; cursor: pointer; height: 32px; width: 40px; border-radius: 4px;}
         
+        /* 網格排版：讓設定面板更緊湊 */
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .visuals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .vis-row { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .vis-row label { font-size: 12px; color: #475569; font-weight: bold; flex: 1; margin:0;}
+        .vis-row select { width: 85px; padding: 4px; font-size: 12px; }
+
         button.action-btn { padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
         button.action-btn:hover { background: #2563eb; }
         button.btn-danger { background: #ef4444; }
@@ -62,19 +72,8 @@
 
         #chartWrapper { height: 450px; margin-bottom: 30px; position: relative; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 10px; }
         
-        /* 視覺設定面板 (拖曳) */
-        .draggable-settings { position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.98); border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(8px); width: 320px; transition: box-shadow 0.2s; }
-        .draggable-settings:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        .draggable-settings summary { color: #1e293b; font-weight: bold; list-style: none; user-select: none; display: flex; align-items: center; cursor: move; font-size: 14px;}
-        .draggable-settings summary::-webkit-details-marker { display: none; }
-        .draggable-settings[open] summary { border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px; }
-
-        .vis-row { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 8px; margin-top: 5px; }
-        .vis-row label { font-size: 12px; color: #64748b; font-weight: bold; width: 130px; }
-        .vis-row select { width: 90px; padding: 4px; font-size: 12px; }
-
         /* 圖表內點擊彈窗 */
-        .popup-panel { box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 2px solid #3b82f6; background: white; padding: 15px; border-radius: 8px; width: 250px; }
+        .popup-panel { position: absolute; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 2px solid #3b82f6; background: white; padding: 15px; border-radius: 8px; width: 250px; }
         .radio-group { display: flex; gap: 15px; align-items: center; background: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
         .radio-group label { cursor: pointer; font-size: 13px; font-weight: bold; color: #475569; display: flex; align-items: center; gap: 4px; margin: 0;}
 
@@ -93,36 +92,6 @@
 </head>
 <body>
 
-<details id="draggableSettings" class="draggable-settings">
-    <summary>⚙️ 參數與視覺設定 (按住拖曳)</summary>
-    <div class="flex-column" style="margin-top:10px;">
-        <span style="color:#64748b; font-size:12px; font-weight:bold;">製程參數 (綁定當前治具)</span>
-        <div class="flex-row" style="gap:10px;">
-            <div class="input-group" style="width:48%;">
-                <label style="color:#0d9488;">原治具角度</label>
-                <input type="number" id="specCurrentJig" step="0.01" style="width:100%;" onchange="saveSpecsAndUpdate()">
-            </div>
-            <div class="input-group" style="width:48%;">
-                <label>目標角度</label>
-                <input type="number" id="specTarget" step="0.01" style="width:100%;" onchange="saveSpecsAndUpdate()">
-            </div>
-        </div>
-        <div class="flex-row" style="gap:10px;">
-            <div class="input-group" style="width:48%;">
-                <label>USL (上限)</label>
-                <input type="number" id="specUSL" step="0.01" style="width:100%;" onchange="saveSpecsAndUpdate()">
-            </div>
-            <div class="input-group" style="width:48%;">
-                <label>LSL (下限)</label>
-                <input type="number" id="specLSL" step="0.01" style="width:100%;" onchange="saveSpecsAndUpdate()">
-            </div>
-        </div>
-        
-        <span style="color:#64748b; font-size:12px; font-weight:bold; margin-top:15px; border-top: 1px solid #e2e8f0; padding-top:10px;">圖表視覺設定</span>
-        <div id="visualSettingsList"></div>
-    </div>
-</details>
-
 <div class="container">
     
     <div class="header-bar">
@@ -130,24 +99,49 @@
         <span id="saveStatus">💾 自動存檔啟用中</span>
     </div>
 
+    <!-- 標籤分頁區 -->
     <div class="tabs-header">
         <div id="jigTabs" class="tabs-list">
-            </div>
-        <button onclick="deleteCurrentJig()" class="del-jig-btn" title="刪除當前專案">🗑️ 刪除專案</button>
+            <!-- 標籤由 JS 動態生成 -->
+        </div>
+        <button onclick="deleteCurrentJig()" class="del-jig-btn" title="刪除當前專案">🗑️ 刪除此專案</button>
     </div>
 
+    <!-- 主要內容區 -->
     <div class="main-content">
         
-        <details class="accordion-panel" style="background:#f8fafc;">
-            <summary>💡 系統操作與演算法說明</summary>
-            <p style="font-size:13px; color:#475569;">
-                <b>1. 多專案分頁</b>：上方標籤可無縫切換不同治具，資料、規格、顏色皆獨立儲存。<br>
-                <b>2. 智慧治具補償</b>：勾選「建議治具角度」，系統會依據長期中心偏移量，自動提供修正參考。<br>
-                <b>3. 快速修改</b>：表格「Sample」欄位點擊即可修改名稱，修改後按 Enter 完成。<br>
-                <b>4. 圖表取點</b>：在圖表任意處點擊，可擷取游標數值快速新增點位。
-            </p>
+        <!-- 摺疊：設定面板 (取代原本的拖曳窗) -->
+        <details class="accordion-panel settings-panel" open>
+            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(所有設定皆綁定當前治具)</span></summary>
+            <div class="flex-column" style="margin-top: 15px;">
+                <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">📋 製程規格</span>
+                <div class="specs-grid">
+                    <div class="input-group">
+                        <label style="color:#0d9488;">原治具角度</label>
+                        <input type="number" id="specCurrentJig" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>目標角度 (Target)</label>
+                        <input type="number" id="specTarget" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>USL (控制上限)</label>
+                        <input type="number" id="specUSL" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                    <div class="input-group">
+                        <label>LSL (控制下限)</label>
+                        <input type="number" id="specLSL" step="0.01" onchange="saveSpecsAndUpdate()">
+                    </div>
+                </div>
+                
+                <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">🎨 圖表視覺自訂</span>
+                <div id="visualSettingsList" class="visuals-grid">
+                    <!-- 視覺選項由 JS 動態產生 -->
+                </div>
+            </div>
         </details>
 
+        <!-- 摺疊：批次匯入 -->
         <details class="accordion-panel" style="border-color:#bfdbfe;">
             <summary style="color:#2563eb;">📋 批次貼上匯入 (支援 Excel / Google Sheet)</summary>
             <div class="flex-column" style="margin-top: 10px;">
@@ -161,13 +155,14 @@
             </div>
         </details>
 
-        <div style="margin-bottom: 15px;">
-            <span class="panel-title">📝 單筆手動新增</span>
+        <!-- 手動新增區 -->
+        <div style="margin-bottom: 15px; margin-top: 25px;">
+            <span class="panel-title">📝 單筆手動新增 (或直接在圖表上點擊取點)</span>
             <div class="flex-row" style="align-items: flex-end;">
                 <div class="input-group"><label>時間</label><input type="text" id="sampleTime" class="time-input"></div>
-                <div class="input-group"><label>Sample</label><input type="text" id="sampleName"></div>
-                <div class="input-group"><label>Angle L</label><input type="number" id="angleL" step="0.01" style="width:100px;"></div>
-                <div class="input-group"><label>Angle R</label><input type="number" id="angleR" step="0.01" style="width:100px;"></div>
+                <div class="input-group"><label>Sample</label><input type="text" id="sampleName" style="width: 100px;"></div>
+                <div class="input-group"><label>Angle L</label><input type="number" id="angleL" step="0.01" style="width:90px;"></div>
+                <div class="input-group"><label>Angle R</label><input type="number" id="angleR" step="0.01" style="width:90px;"></div>
                 <button class="action-btn" onclick="addData()">➕ 新增</button>
                 <button class="action-btn btn-outline" style="margin-left:auto;" onclick="downloadChart()">📥 下載圖表</button>
                 <button class="action-btn btn-outline" style="color:#ef4444;" onclick="clearData()">🗑️ 清空數據</button>
@@ -199,7 +194,7 @@
     </div>
 </div>
 
-<div id="clickInputPopup" class="popup-panel" style="display:none; position:absolute; z-index:999;">
+<div id="clickInputPopup" class="popup-panel" style="display:none;">
     <span class="panel-title" style="color:#2563eb; margin-bottom:10px;">📍 擷取數值新增</span>
     <div class="flex-column">
         <input type="number" id="popupCursorVal" readonly style="color:#dc2626; font-weight:bold; background:#fef2f2; width:100%; border:none; padding:8px; border-radius:4px;">
@@ -224,7 +219,8 @@
         cumAvgL: { color: "#8b5cf6", shape: "circle" },
         cumAvgR: { color: "#ec4899", shape: "rect" },
         recJigL: { color: "#14b8a6", shape: "triangle" },
-        recJigR: { color: "#0d9488", shape: "triangle" }
+        recJigR: { color: "#0d9488", shape: "triangle" },
+        toleranceBand: { color: "#10b981", shape: "none" } // 新增：公差帶顏色
     };
 
     const pointShapes = [
@@ -236,7 +232,8 @@
     const seriesMap = {
         'Angle L (原始)': 'rawDataL', 'Angle R (原始)': 'rawDataR',
         '均線 L (累積)': 'cumAvgL', '均線 R (累積)': 'cumAvgR',
-        '治具 L (建議)': 'recJigL', '治具 R (建議)': 'recJigR'
+        '治具 L (建議)': 'recJigL', '治具 R (建議)': 'recJigR',
+        '公差帶背景 (OK區間)': 'toleranceBand' // 新增 UI 選項
     };
 
     const defaultData = [
@@ -251,12 +248,19 @@
     let crosshairY = null; 
     let chartEventsAttached = false; 
 
-    // --- 系統初始化與分頁管理 ---
+    // --- 系統初始化 ---
     function initSystem() {
         const savedJigs = localStorage.getItem('qcJigSystem');
         if (savedJigs) {
             jigs = JSON.parse(savedJigs);
             currentJigId = localStorage.getItem('qcCurrentJigId') || Object.keys(jigs)[0];
+            
+            // 系統升級防呆：確保舊資料有新顏色屬性
+            Object.keys(jigs).forEach(id => {
+                if (!jigs[id].visuals.toleranceBand) {
+                    jigs[id].visuals.toleranceBand = { color: "#10b981", shape: "none" };
+                }
+            });
         } else {
             jigs = {
                 "Jig 8": {
@@ -267,14 +271,13 @@
             };
         }
         
-        initChart(); // 建立圖表基底
-        updateJigTabs(); // 繪製分頁標籤
-        loadCurrentJig(); // 載入資料並更新圖表
-        makeDraggable(); 
+        initChart(); 
+        updateJigTabs(); 
+        loadCurrentJig(); 
         makeSampleNamesEditable();
     }
 
-    // 繪製分頁標籤 (Tabs)
+    // --- 標籤分頁 (Tabs) 管理 ---
     function updateJigTabs() {
         const tabsList = document.getElementById('jigTabs');
         tabsList.innerHTML = '';
@@ -287,7 +290,6 @@
             tabsList.appendChild(btn);
         });
 
-        // 加上新增按鈕
         const addBtn = document.createElement('button');
         addBtn.className = 'add-tab-btn';
         addBtn.innerText = '➕ 新增';
@@ -301,8 +303,8 @@
         if(id === currentJigId) return;
         currentJigId = id;
         localStorage.setItem('qcCurrentJigId', currentJigId);
-        updateJigTabs(); // 更新標籤 Active 狀態
-        loadCurrentJig(); // 重新載入數據
+        updateJigTabs(); 
+        loadCurrentJig(); 
     }
 
     function createNewJig() {
@@ -332,7 +334,7 @@
         saveSystemToStorage();
     }
 
-    // --- 載入與儲存 ---
+    // --- 載入與設定管理 ---
     function loadCurrentJig() {
         const jig = jigs[currentJigId];
         
@@ -343,6 +345,46 @@
         
         generateVisualSettingsUI(jig.visuals);
         updateAll();
+    }
+
+    function generateVisualSettingsUI(visConfig) {
+        const container = document.getElementById('visualSettingsList');
+        container.innerHTML = ''; 
+
+        for (const [key, seriesId] of Object.entries(seriesMap)) {
+            const config = visConfig[seriesId] || defaultVisuals[seriesId]; 
+            const row = document.createElement('div');
+            row.className = 'vis-row';
+            
+            const label = document.createElement('label');
+            label.innerText = key;
+            row.appendChild(label);
+            
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.id = 'visColor_' + seriesId;
+            colorPicker.value = config.color;
+            colorPicker.onchange = saveSpecsAndUpdate; 
+            row.appendChild(colorPicker);
+            
+            // 公差帶不需要選擇形狀
+            if (seriesId !== 'toleranceBand') {
+                const shapeSelect = document.createElement('select');
+                shapeSelect.id = 'visShape_' + seriesId;
+                shapeSelect.onchange = saveSpecsAndUpdate;
+                
+                pointShapes.forEach(shape => {
+                    const option = document.createElement('option');
+                    option.value = shape.value;
+                    option.innerText = shape.name;
+                    if(shape.value === config.shape) option.selected = true;
+                    shapeSelect.appendChild(option);
+                });
+                row.appendChild(shapeSelect);
+            }
+            
+            container.appendChild(row);
+        }
     }
 
     function saveSpecsAndUpdate() {
@@ -357,7 +399,7 @@
         Object.values(seriesMap).forEach(seriesId => {
             jig.visuals[seriesId] = {
                 color: document.getElementById('visColor_' + seriesId).value,
-                shape: document.getElementById('visShape_' + seriesId).value
+                shape: seriesId === 'toleranceBand' ? 'none' : document.getElementById('visShape_' + seriesId).value
             };
         });
 
@@ -403,8 +445,8 @@
 
         if (importCount > 0) {
             document.getElementById('pasteArea').value = ''; 
-            // 如果是在 details 裡，匯入後可以自動收起 (提升 UX)
-            document.querySelector('.accordion-panel:nth-of-type(2)').removeAttribute('open');
+            // 匯入後自動收起摺疊面板
+            document.querySelectorAll('.accordion-panel')[1].removeAttribute('open');
             saveSystemToStorage(); 
             updateAll();
             alert(`✅ 成功匯入 ${importCount} 筆資料至 [${currentJigId}]！`);
@@ -413,64 +455,7 @@
         }
     }
 
-    // --- 其他 UI 與輔助功能 ---
-    function makeDraggable() {
-        const dragEl = document.getElementById('draggableSettings');
-        const dragHandle = dragEl.querySelector('summary');
-        let isDragging = false, startX, startY, startLeft, startTop;
-
-        dragHandle.addEventListener('mousedown', (e) => {
-            isDragging = true; startX = e.clientX; startY = e.clientY;
-            startLeft = dragEl.offsetLeft; startTop = dragEl.offsetTop;
-            document.body.style.userSelect = 'none'; 
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            dragEl.style.left = (startLeft + e.clientX - startX) + 'px';
-            dragEl.style.top = (startTop + e.clientY - startY) + 'px';
-            dragEl.style.right = 'auto'; 
-        });
-
-        document.addEventListener('mouseup', () => { isDragging = false; document.body.style.userSelect = ''; });
-    }
-
-    function generateVisualSettingsUI(visConfig) {
-        const container = document.getElementById('visualSettingsList');
-        container.innerHTML = ''; 
-
-        for (const [key, seriesId] of Object.entries(seriesMap)) {
-            const config = visConfig[seriesId] || defaultVisuals[seriesId]; 
-            const row = document.createElement('div');
-            row.className = 'vis-row';
-            
-            const label = document.createElement('label');
-            label.innerText = key;
-            row.appendChild(label);
-            
-            const colorPicker = document.createElement('input');
-            colorPicker.type = 'color';
-            colorPicker.id = 'visColor_' + seriesId;
-            colorPicker.value = config.color;
-            colorPicker.onchange = saveSpecsAndUpdate; 
-            row.appendChild(colorPicker);
-            
-            const shapeSelect = document.createElement('select');
-            shapeSelect.id = 'visShape_' + seriesId;
-            shapeSelect.onchange = saveSpecsAndUpdate;
-            
-            pointShapes.forEach(shape => {
-                const option = document.createElement('option');
-                option.value = shape.value;
-                option.innerText = shape.name;
-                if(shape.value === config.shape) option.selected = true;
-                shapeSelect.appendChild(option);
-            });
-            row.appendChild(shapeSelect);
-            container.appendChild(row);
-        }
-    }
-
+    // --- 輔助功能 ---
     function showSaveToast() {
         const status = document.getElementById('saveStatus');
         status.innerText = "✅ 已自動儲存";
@@ -479,10 +464,11 @@
     }
     
     function getCurrentTime() { return new Date().toLocaleString('zh-TW', { hour12: false }); }
+    
     function applyAlphaToHex(hex, alpha) {
-        if (!hex) return 'rgba(0,0,0,' + alpha + ')';
+        if (!hex) return `rgba(0,0,0,${alpha})`;
         const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        return `rgba(${r},${g},${b},${alpha})`;
     }
 
     // --- Chart.js 外掛與初始化 ---
@@ -523,7 +509,7 @@
                 ctx.fillText('Δ ' + item.delta, ptL.x + 8, midY);
 
                 const topY = Math.min(ptL.y, ptR.y);
-                ctx.fillStyle = item.status === 'OK' ? '#10b981' : '#ef4444';
+                ctx.fillStyle = item.status === 'OK' ? vis.toleranceBand.color : '#ef4444'; // OK字樣用區間色，NG紅
                 ctx.font = '900 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
                 ctx.fillText(item.status, ptL.x, topY - 8);
             });
@@ -602,6 +588,7 @@
                 if (crosshairY !== null) {
                     const popup = document.getElementById('clickInputPopup'); popup.style.display = 'block';
                     let popX = e.pageX + 15; let popY = e.pageY - 15;
+                    // 防止彈窗超出右側
                     if(popX + 260 > window.innerWidth) popX = window.innerWidth - 280;
                     popup.style.left = popX + 'px'; popup.style.top = popY + 'px';
                     document.getElementById('popupCursorVal').value = crosshairY.toFixed(2);
@@ -631,23 +618,29 @@
         myChart.data.datasets[0].borderColor = applyAlphaToHex(vis.rawDataL.color, 0.3);
         myChart.data.datasets[0].backgroundColor = vis.rawDataL.color;
         myChart.data.datasets[0].pointStyle = vis.rawDataL.shape;
+
         myChart.data.datasets[1].borderColor = applyAlphaToHex(vis.rawDataR.color, 0.3);
         myChart.data.datasets[1].backgroundColor = vis.rawDataR.color;
         myChart.data.datasets[1].pointStyle = vis.rawDataR.shape;
+
         myChart.data.datasets[2].borderColor = vis.cumAvgL.color;
         myChart.data.datasets[2].pointStyle = vis.cumAvgL.shape;
+
         myChart.data.datasets[3].borderColor = vis.cumAvgR.color;
         myChart.data.datasets[3].pointStyle = vis.cumAvgR.shape;
+
         myChart.data.datasets[4].borderColor = vis.recJigL.color;
         myChart.data.datasets[4].backgroundColor = vis.recJigL.color;
         myChart.data.datasets[4].pointStyle = vis.recJigL.shape;
+
         myChart.data.datasets[5].borderColor = vis.recJigR.color;
         myChart.data.datasets[5].backgroundColor = vis.recJigR.color;
         myChart.data.datasets[5].pointStyle = vis.recJigR.shape;
+
         myChart.options.scales.y1.title.color = applyAlphaToHex(vis.recJigR.color, 0.8);
         myChart.options.scales.y1.ticks.color = applyAlphaToHex(vis.recJigR.color, 0.8);
 
-        // 處理數據
+        // 處理數據表格
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
         
@@ -669,19 +662,24 @@
             const recJigL = (currentJig + (curCumL - target)).toFixed(2);
             const recJigR = (currentJig + (curCumR - target)).toFixed(2);
 
+            // 判斷結果顏色
+            const statusClass = isOk ? 'status-ok' : 'status-ng';
+            const statusColorStyle = isOk ? `color: ${vis.toleranceBand.color};` : ''; // OK時套用自訂色
+
             const row = tbody.insertRow();
             row.innerHTML = `<td class="editable-col" contenteditable="true" data-index="${index}">${item.name}</td>
                              <td class="time-col">${item.time || '-'}</td>
                              <td>${item.l}</td><td>${item.r}</td><td>${delta}</td>
                              <td>${curCumL}</td><td>${curCumR}</td>
                              <td class="jig-val">${recJigL}</td><td class="jig-val">${recJigR}</td>
-                             <td class="${isOk ? 'status-ok' : 'status-ng'}">${status}</td>
+                             <td class="${statusClass}" style="${statusColorStyle}">${status}</td>
                              <td><button onclick="deleteData(${index})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
 
             labels.push([item.name, formatShortTime(item.time)]);
             lData.push(item.l); rData.push(item.r);
             cumL.push(curCumL); cumR.push(curCumR);
             jigLData.push(recJigL); jigRData.push(recJigR);
+
             myChart.data.customData.push({ delta, status });
 
             minY = Math.min(minY, item.l - 0.5, item.r - 0.5);
@@ -691,12 +689,17 @@
         });
 
         myChart.data.labels = labels;
-        myChart.data.datasets[0].data = lData; myChart.data.datasets[1].data = rData;
-        myChart.data.datasets[2].data = cumL; myChart.data.datasets[3].data = cumR;
-        myChart.data.datasets[4].data = jigLData; myChart.data.datasets[5].data = jigRData;
+        myChart.data.datasets[0].data = lData;
+        myChart.data.datasets[1].data = rData;
+        myChart.data.datasets[2].data = cumL;
+        myChart.data.datasets[3].data = cumR;
+        myChart.data.datasets[4].data = jigLData;
+        myChart.data.datasets[5].data = jigRData;
 
-        myChart.options.scales.y.min = Math.floor(minY); myChart.options.scales.y.max = Math.ceil(maxY);
-        myChart.options.scales.y1.min = Math.floor(minJigY * 5) / 5; myChart.options.scales.y1.max = Math.ceil(maxJigY * 5) / 5;
+        myChart.options.scales.y.min = Math.floor(minY);
+        myChart.options.scales.y.max = Math.ceil(maxY);
+        myChart.options.scales.y1.min = Math.floor(minJigY * 5) / 5;
+        myChart.options.scales.y1.max = Math.ceil(maxJigY * 5) / 5;
 
         updateChartVisibility();
         drawSpecLines(target, usl, lsl);
@@ -717,6 +720,7 @@
         myChart.update();
     }
 
+    // 負責畫公差背景與目標線
     function drawSpecLines(target, usl, lsl) {
         const pluginId = 'specLinesPlugin';
         myChart.config.plugins = myChart.config.plugins.filter(p => p.id !== pluginId);
@@ -726,6 +730,9 @@
             beforeDraw(chart) {
                 const ctx = chart.ctx; const { left, right } = chart.chartArea;
                 const yAxis = chart.scales.y;
+                const vis = jigs[currentJigId].visuals;
+                const bandColor = vis.toleranceBand.color; // 取得自訂的公差帶顏色
+                
                 const drawLine = (yVal, color, dash, text) => {
                     const y = yAxis.getPixelForValue(yVal);
                     if (y < chart.chartArea.top || y > chart.chartArea.bottom) return;
@@ -736,11 +743,19 @@
                     ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
                     ctx.fillText(text, right - 5, y - 3); ctx.restore();
                 };
+                
+                // 畫公差帶背景色 (自動套用 0.08 透明度)
                 const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(usl));
                 const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(lsl));
-                ctx.save(); ctx.fillStyle = 'rgba(16, 185, 129, 0.05)'; ctx.fillRect(left, yTop, right - left, yBot - yTop); ctx.restore();
-                drawLine(target, '#10b981', null, 'Target ' + target);
-                drawLine(usl, '#ef4444', [5,5], 'USL ' + usl); drawLine(lsl, '#ef4444', [5,5], 'LSL ' + lsl);
+                ctx.save(); 
+                ctx.fillStyle = applyAlphaToHex(bandColor, 0.08); 
+                ctx.fillRect(left, yTop, right - left, yBot - yTop); 
+                ctx.restore();
+                
+                // 畫線
+                drawLine(target, bandColor, null, 'Target ' + target);
+                drawLine(usl, '#ef4444', [5,5], 'USL ' + usl); 
+                drawLine(lsl, '#ef4444', [5,5], 'LSL ' + lsl);
             }
         });
         myChart.update();
