@@ -1,47 +1,1164 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的 AI 經濟指標自動追蹤器</title>
-    <style>
-        /* 網頁基本排版 */
-        body { 
-            font-family: sans-serif; 
-            padding: 20px; 
-            max-width: 2400px; 
-            margin: 0 auto; 
-            background-color: #f8f9fa;
-        }
-        h1, p {
-            text-align: center;
-            color: #333;
-        }
-        /* 幫 iframe 加上漂亮的邊框與高度設定 */
-        .iframe-container { 
-            width: 100%; 
-            height: 85vh; /* 高度佔螢幕的 85%，讓工具盡量大一點 */
-            border: 1px solid #ccc; 
-            border-radius: 10px; 
-            overflow: hidden; 
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 加一點陰影更有質感 */
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none; /* 隱藏原本醜醜的預設邊框 */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>股票自選清單 (雲端還原 + SMC 終極版)</title>
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<script type="module">
+try {
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const fbCfg={
+    apiKey:"AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+    authDomain:"stack-diagram-db.firebaseapp.com",
+    projectId:"stack-diagram-db",
+    storageBucket:"stack-diagram-db.firebasestorage.app",
+    messagingSenderId:"67240747982",
+    appId:"1:67240747982:web:1fb065e40e936a7485419f"
+  };
+  const fbApp = initializeApp(fbCfg);
+  const db = getFirestore(fbApp);
+
+  // 🌟 耐心讀取，不再設定強制 Timeout
+  async function fbGet(path){
+    try{
+      const req = await getDoc(doc(db,...path.split('/')));
+      return req.exists() ? req.data() : null;
+    }catch(e){
+      console.warn("FB 讀取失敗", e);
+      return null;
+    }
+  }
+  
+  // 🌟 耐心寫入
+  async function fbSet(path,data){
+    if(window.isOfflineMode) return; // 🛡️ 離線模式絕對禁止寫入雲端
+    try{
+      await setDoc(doc(db,...path.split('/')), data);
+      window.updateSyncUI(true);
+    }catch(e){
+      console.warn("FB 寫入失敗", e);
+      window.updateSyncUI(false, "寫入失敗");
+    }
+  }
+
+  window._fb = { get: fbGet, set: fbSet, ready: true };
+  document.dispatchEvent(new Event('fb-ready'));
+} catch (error) {
+  console.warn("Firebase 載入失敗，已安全隔離", error);
+  window._fb = { ready: false, error: true };
+  document.dispatchEvent(new Event('fb-ready'));
+}
+</script>
+
+<style>
+:root{
+  --bg:#fff;--bg2:#f1efe8;--bg3:#e8e6de;--bgi:#e6f1fb;--bgd:#fcebeb;--bgs:#eaf3de;--bgw:#faeeda;
+  --t:#2c2c2a;--t2:#5f5e5a;--t3:#888780;--ti:#185fa5;--td:#791f1f;--ts:#27500a;--tw:#633806;
+  --b:rgba(44,44,42,.15);--b2:rgba(44,44,42,.3);--r:8px;--rl:12px;
+  --f:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--bg2:#242420;--bg3:#2c2c2a;--bgi:#0c1e35;--bgd:#2a0d0d;--bgs:#0e1f04;--bgw:#281800;
+  --t:#e8e6de;--t2:#b4b2a9;--t3:#888780;--ti:#85b7eb;--td:#f09595;--ts:#97c459;--tw:#ef9f27;
+  --b:rgba(232,230,222,.15);--b2:rgba(232,230,222,.3)
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f);background:var(--bg3);color:var(--t);min-height:100vh;font-size:14px}
+.wrap{max-width:900px;margin:0 auto;padding:12px 10px}
+.keybanner{background:var(--bgw);border:0.5px solid var(--b2);border-radius:var(--rl);padding:14px;margin-bottom:10px}
+.keytitle{font-size:13px;font-weight:500;color:var(--tw);margin-bottom:8px}
+.keyrow{display:flex;gap:7px}
+.keyrow input{flex:1;font-size:13px;padding:7px 10px;border:0.5px solid var(--b2);border-radius:6px;background:var(--bg);color:var(--t);font-family:monospace;outline:none}
+.keyrow input:focus{border-color:var(--ti)}
+.keyhint{font-size:11px;color:var(--t2);margin-top:7px;line-height:1.7}
+.keyhint a{color:var(--ti)}
+.keyok{font-size:12px;color:var(--ts);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.resetlink{font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline}
+.resetlink:hover{color:var(--ti)}
+.topbar{display:flex;gap:7px;margin-bottom:8px;align-items:center}
+.sq{flex:1;display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:0.5px solid var(--b2);border-radius:var(--r);cursor:pointer;color:var(--t2);font-size:13px}
+.sq:hover{border-color:var(--ti);color:var(--t)}
+.btn{padding:6px 14px;border:0.5px solid var(--b2);border-radius:6px;cursor:pointer;background:transparent;color:var(--t2);font-size:12px;white-space:nowrap;transition:background .15s}
+.btn:hover{background:var(--bg2)}.btn.p{background:var(--ti);color:#fff;border-color:transparent}
+.btn.p:hover{background:#0C447C}.btn.sm{padding:4px 10px;font-size:11px}
+.tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--b);cursor:pointer;white-space:nowrap;font-size:12px;background:transparent;color:var(--t2);flex-shrink:0}
+.tab:hover{background:var(--bg2)}.tab.on{background:var(--bgi);color:var(--ti);border-color:transparent;font-weight:500}
+.tx{font-size:9px;opacity:.4;padding:1px 3px;border-radius:3px;line-height:1}
+.tx:hover{opacity:1;color:#E24B4A;background:rgba(226,75,74,.12)}
+.tadd{padding:5px 10px;border-radius:20px;border:0.5px dashed var(--b2);cursor:pointer;font-size:12px;color:var(--t2);background:transparent;flex-shrink:0}
+.tadd:hover{background:var(--bg2)}
+.bar{display:none;align-items:center;gap:7px;margin-bottom:10px}.bar.on{display:flex}
+.bn{font-size:14px;font-weight:500;flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.card{background:var(--bg);border:0.5px solid var(--b);border-radius:var(--rl);padding:10px 12px;position:relative;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--b2)}
+.cx{position:absolute;top:5px;right:6px;font-size:10px;cursor:pointer;opacity:0;padding:4px 6px;border-radius:3px;color:var(--t2);background:var(--bg);z-index:2}
+.card:hover .cx{opacity:.6}.cx:hover{opacity:1!important;color:#E24B4A!important;background:var(--bg2)}
+.cmkt{font-size:10px;color:var(--t3);margin-bottom:3px}
+.ccode{font-size:11px;font-weight:500;color:var(--t2)}
+.cname{font-size:13px;font-weight:500;margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cpx{font-size:18px;font-weight:500;margin-bottom:2px;min-height:24px}
+.cchg{font-size:11px;font-weight:500;min-height:15px}
+.cts{font-size:10px;color:var(--t3);margin-top:5px}
+.up{color:var(--ts)}.dn{color:var(--td)}.nc{color:var(--t2)}
+.ld{font-size:11px;color:var(--t3);animation:pu .9s infinite}
+@keyframes pu{0%,100%{opacity:.25}50%{opacity:1}}
+.empty{text-align:center;padding:50px 16px;color:var(--t2)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-start;justify-content:center;padding-top:48px}
+.ov.on{display:flex}
+.ovb{background:var(--bg);border-radius:var(--rl);width:min(480px,95vw);max-height:70vh;overflow:hidden;display:flex;flex-direction:column}
+.ovh{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:0.5px solid var(--b);flex-shrink:0}
+.ovh input{flex:1;font-size:14px;border:none;background:transparent;color:var(--t);outline:none}
+.ovbd{overflow-y:auto;flex:1}
+.si{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:0.5px solid var(--b);cursor:pointer}
+.si:hover{background:var(--bg2)}
+.sic{font-size:11px;font-weight:500;width:56px;flex-shrink:0;color:var(--t2)}
+.sin{flex:1;font-size:13px}
+.sib{font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.btw{background:var(--bgi);color:var(--ti)}.bus{background:var(--bgs);color:var(--ts)}.bjp{background:#FAECE7;color:#993C1D}
+.airow{padding:10px 14px;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.spin{width:13px;height:13px;border:2px solid var(--b);border-top-color:#7F77DD;border-radius:50%;animation:sp .8s linear infinite;display:none;flex-shrink:0}
+.spin.on{display:block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.atag{color:var(--ti);cursor:pointer;text-decoration:underline}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center}
+.modal.on{display:flex}
+.mbox{background:var(--bg);border-radius:var(--rl);padding:20px;width:min(300px,92vw)}
+.mbox h3{font-size:14px;font-weight:500;margin-bottom:10px}
+.mbox input{width:100%;margin-bottom:10px;font-size:13px;padding:7px 10px;border:0.5px solid var(--b2);border-radius:6px;background:var(--bg2);color:var(--t);outline:none}
+.mbtns{display:flex;gap:8px;justify-content:flex-end}
+.anl{padding-top:.25rem}
+.anlhd{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.bk{cursor:pointer;color:var(--t2);font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--b);background:transparent}
+.bk:hover{background:var(--bg2)}
+.anln{font-size:17px;font-weight:500;margin-right:auto}
+.anlpx{font-size:24px;font-weight:500}
+.sec{font-size:11px;font-weight:500;color:var(--t2);letter-spacing:.04em;margin:12px 0 7px}
+.irow{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.inm{width:60px;color:var(--t2);font-size:11px;flex-shrink:0}
+.ibg{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.ib{height:100%;border-radius:4px}.ibuy{background:#639922}.isell{background:#E24B4A}
+.iv{width:72px;text-align:right;font-weight:500;font-size:11px}
+.ibc{color:var(--ts)}.isc{color:var(--td)}
+.ibar{height:18px;border-radius:5px;background:var(--bg2);overflow:hidden;position:relative;margin:6px 0 3px}
+.ifill{height:100%;border-radius:5px}
+.ilbl{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:500;color:#fff;white-space:nowrap}
+.sigr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--b);font-size:12px}
+.sigr:last-child{border:none}
+.sk2{display:flex;align-items:center;gap:5px;color:var(--t2)}
+.d8{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wb{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:9px 11px;font-size:12px;margin-top:8px;line-height:1.6}
+.lvg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.lvc{border-radius:var(--r);padding:9px 11px}
+.lvl{font-size:10px;margin-bottom:3px;font-weight:500}
+.lvv{font-size:13px;font-weight:500}
+.lvs{font-size:11px;margin-top:2px}
+.aspinner{padding:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--t2);justify-content:center}
+.ntab{display:flex;gap:5px;margin-bottom:10px;border-bottom:0.5px solid var(--b);padding-bottom:8px}
+.nt{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;background:transparent;color:var(--t2)}
+.nt:hover{background:var(--bg2)}.nt.on{background:var(--bgi);color:var(--ti);font-weight:500}
+.ncard{background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;text-decoration:none;display:block;color:inherit;transition:border-color .15s;}
+.ncard:hover{border:0.5px solid var(--b2)}
+.nhead{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.nsent{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;font-weight:500;margin-top:1px}
+.npos{background:var(--bgs);color:var(--ts)}.nneg{background:var(--bgd);color:var(--td)}.nneu{background:var(--bg3);color:var(--t2)}
+.ntitle{font-size:13px;font-weight:500;line-height:1.5;flex:1}
+.nbody{font-size:11px;color:var(--t3);line-height:1.6;margin-top:3px}
+.nsum{background:var(--bgw);color:var(--tw);border-radius:var(--r);padding:10px 12px;font-size:12px;line-height:1.6;margin-bottom:10px}
+.tf-sel{padding:4px 8px;border-radius:6px;border:0.5px solid var(--b);background:var(--bg);color:var(--t);font-size:12px;outline:none;cursor:pointer}
+#smc-chart-container { width: 100%; height: 350px; background: var(--bg); border: 0.5px solid var(--b); border-radius: var(--r); margin-bottom: 12px; overflow: hidden; }
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.lvg{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+<div class="wrap">
 
-    <h1>Neil's 指標追蹤網站 🚀</h1>
-    <p> 股市數據分析工具。</p>
-
-    <div class="iframe-container">
-        <iframe src="https://neilkang-stocka.hf.space"></iframe>
+<div id="key-setup" class="keybanner">
+  <div class="keytitle">🔑 第一步：設定 Anthropic API Key</div>
+  <div class="keyrow">
+    <input type="password" id="keyinp" placeholder="貼上你的 Key：sk-ant-api03-…" autocomplete="off"
+           onkeydown="if(event.key==='Enter')window.saveKey()">
+    <button class="btn p" onclick="window.saveKey()">儲存</button>
+  </div>
+  <div class="keyhint">
+    ✅ 混合動力版：基礎股價、技術分析與新聞獲取完全 <b>免費 (0 Token)</b>。<br>
+    ✅ 只有當你手動按下「🤖 AI 總結新聞」時，才會消耗 Token，精準控管成本。<br>
+    還沒有 Key？→ <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+  </div>
+</div>
+<div id="cors-warn" style="display:none;background:var(--bgd);border:0.5px solid var(--b2);border-radius:var(--rl);padding:10px 14px;margin-bottom:8px;font-size:12px;color:var(--td);line-height:1.7"><b style="font-weight:500">⚠ 偵測到 file:// 環境（直接開 HTML）</b><br>Chrome 的安全政策會擋跨域請求，導致 API 無法連線。建議解法：<br>① 上傳到 <b>GitHub Pages</b>（免費）後用網址訪問 ← 推薦<br>② 本機用指令啟動小 server：<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">python3 -m http.server 8080</code> 再開 <code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace">http://localhost:8080</code></div>
+<div id="key-ok" style="display:none;margin-bottom:8px">
+  <div class="keyok">
+    <span>✅ API Key 已設定</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="bal-display" style="font-size:12px;color:var(--t2)"></span>
+      <button class="btn sm" onclick="window.checkBal()" id="bal-btn">💰 查餘額</button>
+      <span class="resetlink" onclick="window.resetKey()">更換 Key</span>
     </div>
+  </div>
+</div>
 
+<div id="tok-bar" style="display:none;background:var(--bg);border:0.5px solid var(--b);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px">
+  <span style="color:var(--t3)">本次使用</span>
+  <span style="color:var(--t2)">輸入 <b id="tok-in" style="color:var(--t);font-weight:500">0</b> tokens</span>
+  <span style="color:var(--t2)">輸出 <b id="tok-out" style="color:var(--t);font-weight:500">0</b> tokens</span>
+  <span style="color:var(--t2)">費用 <b id="tok-cost" style="color:var(--ts);font-weight:500">$0.000000</b></span>
+  <span style="color:var(--b2)">│</span>
+  <span style="color:var(--t2)">累計 <b id="tok-total-cost" style="color:var(--tw);font-weight:500">$0.000000</b></span>
+  <button class="btn sm" onclick="window.resetTokStats()" style="margin-left:auto;font-size:10px;padding:2px 7px">清零</button>
+</div>
+
+<div id="sync-indicator" style="text-align:right; font-size:11px; margin-bottom:8px; margin-top:-5px; color:var(--t3)"></div>
+<div class="topbar">
+  <div class="sq" onclick="window.openSrch()">🔍 搜尋股票：台積、Tesla、豐田、2408、NVDA…</div>
+  <button class="btn p" onclick="window.showNewCat()">＋ 分類</button>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="bar" id="bar">
+  <span class="bn" id="bn"></span>
+  <button class="btn sm" onclick="window.rfAll()">↺ 全部更新</button>
+  <button class="btn sm p" onclick="window.openSrch()">＋ 加股票</button>
+</div>
+<div id="main"></div>
+
+<div class="ov" id="sov" onclick="if(event.target.id==='sov')window.closeSrch()">
+  <div class="ovb">
+    <div class="ovh">
+      <span>🔍</span>
+      <input id="sq" placeholder="代碼或名稱，台股 / 美股 / 日股…"
+             oninput="window.doSrch(this.value)" autocomplete="off">
+      <button class="btn sm" onclick="window.closeSrch()">✕</button>
+    </div>
+    <div class="ovbd" id="sres"></div>
+  </div>
+</div>
+
+<div class="modal" id="cmod" onclick="if(event.target.id==='cmod')window.closeCmod()">
+  <div class="mbox">
+    <h3>新增分類</h3>
+    <input id="cinp" placeholder="如：半導體、美股AI、航運、日股…"
+           onkeydown="if(event.key==='Enter')window.mkCat()">
+    <div class="mbtns">
+      <button class="btn" onclick="window.closeCmod()">取消</button>
+      <button class="btn p" onclick="window.mkCat()">建立</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.isOfflineMode = false;
+
+window.updateSyncUI = function(ok, msg=""){
+   const el = document.getElementById('sync-indicator');
+   if(!el) return;
+   if(window.isOfflineMode) el.innerHTML = '<span style="color:var(--t2)">⚡ 離線模式運作中 (不寫入雲端)</span>';
+   else if(ok) el.innerHTML = '<span style="color:var(--ts)">☁️ 雲端同步：正常 (跨裝置連線中)</span>';
+   else el.innerHTML = `<span style="color:var(--td)" title="${msg}">⚠ 雲端同步異常 (切換為本機模式)</span>`;
+}
+
+// 🌟 進入離線模式 (使用者手動觸發)
+window.enterOfflineMode = async function() {
+   window.isOfflineMode = true;
+   window.updateSyncUI(false, "使用者選擇離線模式");
+   
+   AKEY = localStorage.getItem('ak-v1')||'';
+   document.getElementById('key-setup').style.display=AKEY?'none':'block';
+   document.getElementById('key-ok').style.display=AKEY?'block':'none';
+   loadTokTotal();
+
+   document.getElementById('main').innerHTML = ''; 
+   
+   try{ const d=JSON.parse(localStorage.getItem('wl-v3')||'null'); if(d?.cats && Array.isArray(d.cats) && d.cats.length > 0) S.cats=d.cats; }catch(e){}
+   try{ const parsed=JSON.parse(localStorage.getItem('pk-v3')||'{}'); if(parsed) P=parsed; }catch(e){}
+   if(!S.cats || !Array.isArray(S.cats) || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
+   S.act=S.cats[0].id;
+   
+   renderTabs();
+   window.renderGrid();
+};
+
+const DB=[
+  ['2330','台積電','tsmc semiconductor 積電 晶圓','tw'],['2303','聯電','umc 聯華電子 晶圓代工','tw'],
+  ['2454','聯發科','mediatek mtk 手機晶片 ai','tw'],['3034','聯詠','novatek 驅動ic','tw'],
+  ['2379','瑞昱','realtek 網路','tw'],['6415','矽力','silergy 電源','tw'],
+  ['2408','南亞科','nanya tech dram 記憶體','tw'],['3711','日月光','ase 封測','tw'],
+  ['2449','京元電子','kyec 測試','tw'],['3037','欣興','unimicron 載板 pcb','tw'],
+  ['2492','華新科','yageo mlcc','tw'],['2327','國巨','yageo resistor','tw'],
+  ['6770','力積電','psmc 晶圓','tw'],['5347','世界先進','vanguard','tw'],
+  ['3533','嘉澤','lotes connector ai server','tw'],['3443','創意','global unichip ip','tw'],
+  ['3481','群創','innolux 面板','tw'],['2409','友達','auo 面板 oled','tw'],
+  ['2317','鴻海','foxconn honhai 富士康 iphone','tw'],['2357','華碩','asus 電腦','tw'],
+  ['2353','宏碁','acer 電腦','tw'],['2382','廣達','quanta server ai','tw'],
+  ['2324','仁寶','compal 代工','tw'],['4938','和碩','pegatron apple','tw'],
+  ['2356','英業達','inventec server','tw'],['2395','研華','advantech iot','tw'],
+  ['2301','光寶科','liteon 電源','tw'],['2308','台達電','delta ev 充電','tw'],
+  ['6669','緯穎','wiwynn server ai','tw'],['2376','技嘉','gigabyte gpu server','tw'],
+  ['6409','旭隼','aspeed bmc','tw'],['3231','緯創','wistron server','tw'],
+  ['2345','智邦','accton 網通 switch','tw'],['4947','啟碁','wistron 5g 網通','tw'],
+  ['2412','中華電','cht chunghwa telecom 5g','tw'],['3045','台灣大','twm 5g momo','tw'],
+  ['4904','遠傳','far eastone 電信','tw'],['2882','國泰金','cathay 國泰 保險','tw'],
+  ['2881','富邦金','fubon 富邦','tw'],['2886','兆豐金','mega 兆豐銀','tw'],
+  ['2884','玉山金','esun 玉山','tw'],['2891','中信金','ctbc 中信','tw'],
+  ['2892','第一金','first financial','tw'],['2885','元大金','yuanta 元大','tw'],
+  ['2880','華南金','hua nan','tw'],['2887','台新金','taishin richart','tw'],
+  ['1301','台塑','formosa plastics 石化','tw'],['1303','南亞','nan ya 電子材料','tw'],
+  ['6505','台塑化','fpcc 汽油','tw'],['2002','中鋼','china steel 鋼鐵','tw'],
+  ['2603','長榮','evergreen 航運 海運','tw'],['2609','陽明','yang ming 航運','tw'],
+  ['2615','萬海','wan hai 航運','tw'],['2618','長榮航','eva air 航空','tw'],
+  ['2610','中華航','china airlines 航空','tw'],['3008','大立光','largan 鏡頭 lens','tw'],
+  ['2912','統一超','7-eleven 超商','tw'],['1216','統一','uni-president 食品','tw'],
+  ['2207','和泰車','hotai toyota 汽車','tw'],['2201','裕隆','yulon 汽車','tw'],
+  ['0050','元大台灣50','taiwan 50 etf 大盤','tw'],['0056','元大高股息','dividend etf','tw'],
+  ['00878','國泰永續高股息','esg dividend etf','tw'],['00929','復華科技優息','tech etf','tw'],
+  ['AAPL','Apple 蘋果','apple iphone mac ipad','us'],['MSFT','Microsoft 微軟','microsoft azure copilot','us'],
+  ['NVDA','NVIDIA 輝達','nvidia gpu ai h100 blackwell','us'],['GOOGL','Google 谷歌','google youtube gemini','us'],
+  ['AMZN','Amazon 亞馬遜','amazon aws prime','us'],['META','Meta 臉書','meta facebook instagram','us'],
+  ['TSLA','Tesla 特斯拉','tesla ev 電動車 robotaxi','us'],['AMD','AMD 超微','amd ryzen radeon gpu','us'],
+  ['INTC','Intel 英特爾','intel cpu foundry','us'],['QCOM','Qualcomm 高通','qualcomm snapdragon 5g','us'],
+  ['AVGO','Broadcom 博通','broadcom chip vmware','us'],['TSM','TSMC ADR','tsmc adr 台積','us'],
+  ['ARM','ARM Holdings','arm cpu architecture','us'],['AMAT','Applied Materials','applied materials 設備','us'],
+  ['LRCX','Lam Research','lam research etch','us'],['KLAC','KLA','kla inspection','us'],
+  ['ASML','ASML','asml euv 光刻機','us'],['MU','Micron 美光','micron dram hbm memory','us'],
+  ['MRVL','Marvell','marvell ai networking','us'],['PLTR','Palantir','palantir data ai','us'],
+  ['SMCI','Supermicro','supermicro server ai','us'],['DELL','Dell 戴爾','dell server','us'],
+  ['CRM','Salesforce','salesforce crm agentforce','us'],['NOW','ServiceNow','servicenow workflow ai','us'],
+  ['SNOW','Snowflake','snowflake data cloud','us'],['NET','Cloudflare','cloudflare cdn security','us'],
+  ['DDOG','Datadog','datadog monitoring','us'],['CRWD','CrowdStrike','crowdstrike cybersecurity','us'],
+  ['ORCL','Oracle 甲骨文','oracle database cloud','us'],['JPM','JPMorgan 摩根大通','jpmorgan chase 銀行','us'],
+  ['GS','Goldman Sachs 高盛','goldman sachs 投行','us'],['BAC','Bank of America','bank america','us'],
+  ['V','Visa','visa 信用卡','us'],['MA','Mastercard','mastercard','us'],
+  ['COIN','Coinbase','coinbase crypto bitcoin','us'],['BRK.B','Berkshire 波克夏','berkshire buffett 巴菲特','us'],
+  ['NFLX','Netflix','netflix streaming 串流','us'],['DIS','Disney 迪士尼','disney marvel pixar','us'],
+  ['SPOT','Spotify','spotify music','us'],['UBER','Uber','uber 叫車','us'],
+  ['BABA','Alibaba 阿里巴巴','alibaba 淘寶 阿里雲','us'],['PDD','Pinduoduo 拼多多','pinduoduo temu','us'],
+  ['JD','JD.com 京東','jd.com 電商','us'],['LLY','Eli Lilly 禮來','eli lilly ozempic glp-1 減重','us'],
+  ['MRNA','Moderna 莫德納','moderna mrna vaccine','us'],['PFE','Pfizer 輝瑞','pfizer pharma','us'],
+  ['ISRG','Intuitive Surgical','intuitive surgical robotic','us'],['RIVN','Rivian','rivian ev truck','us'],
+  ['NIO','NIO 蔚來','nio ev china','us'],['XPEV','XPeng 小鵬','xpeng ev','us'],
+  ['LI','Li Auto 理想','li auto ev','us'],['SPY','S&P500 ETF','sp500 index etf','us'],
+  ['QQQ','Nasdaq100 ETF','nasdaq 100 tech etf','us'],['GLD','Gold ETF 黃金','gold etf','us'],
+  ['TLT','長債 ETF','tlt treasury bond','us'],['SOXL','半導體3x ETF','soxl semiconductor 3x','us'],
+  ['7203','Toyota トヨタ 豐田','toyota 豐田 汽車 ev','jp'],['6758','Sony ソニー','sony playstation ps5','jp'],
+  ['9984','SoftBank 軟銀','softbank 孫正義 vision fund','jp'],['6861','Keyence キーエンス','keyence sensor fa','jp'],
+  ['7974','Nintendo 任天堂','nintendo switch mario','jp'],['8306','MUFG 三菱UFJ','mufg bank 銀行','jp'],
+  ['8035','Tokyo Electron 東京威力','tokyo electron tel equipment','jp'],['6920','Lasertec','lasertec euv inspection','jp'],
+  ['6954','Fanuc ファナック','fanuc robot cnc','jp'],['4063','Shin-Etsu 信越化學','shin-etsu silicon wafer','jp'],
+  ['6367','Daikin ダイキン','daikin hvac 空調','jp'],['4568','Daiichi Sankyo 第一三共','daiichi sankyo adc','jp'],
+  ['9432','NTT','ntt 電信 nippon telegraph','jp'],['9433','KDDI','kddi au 5g','jp'],
+  ['7267','Honda 本田','honda ev motorcycle','jp'],['6501','Hitachi 日立','hitachi infrastructure','jp'],
+  ['7751','Canon キヤノン','canon camera printer','jp'],['6752','Panasonic 松下','panasonic battery ev','jp'],
+  ['4519','Chugai 中外製藥','chugai pharma roche','jp'],['6594','Nidec 日本電產','nidec motor ev','jp'],
+  ['7011','MHI 三菱重工','mitsubishi heavy defense aerospace','jp'],['4502','Takeda 武田製藥','takeda pharma','jp'],
+  ['8001','Itochu 伊藤忠','itochu 商社 trading','jp'],['8058','Mitsubishi Corp 三菱商事','mitsubishi 商社','jp'],
+  ['9022','JR東海','jr shinkansen 新幹線','jp'],['6645','Omron オムロン','omron automation sensor','jp'],
+];
+
+let AKEY='';
+const FB_CFG='config/settings';  
+const FB_WL='watchlist/data';
+const FB_PX='prices/data';
+
+window.saveKey = async function(){
+  const v=document.getElementById('keyinp').value.trim();
+  if(!v.startsWith('sk-')){alert('請輸入正確的 Anthropic API Key（以 sk- 開頭）');return;}
+  AKEY=v;
+  localStorage.setItem('ak-v1',v); 
+  if(window._fb && !window.isOfflineMode) window._fb.set(FB_CFG,{anthropicKey:v,updatedAt:Date.now()});
+  document.getElementById('key-setup').style.display='none';
+  document.getElementById('key-ok').style.display='block';
+};
+
+window.resetKey = async function(){
+  AKEY='';localStorage.removeItem('ak-v1');
+  if(window._fb && !window.isOfflineMode) window._fb.set(FB_CFG,{anthropicKey:'',updatedAt:Date.now()});
+  document.getElementById('keyinp').value='';
+  document.getElementById('key-setup').style.display='block';
+  document.getElementById('key-ok').style.display='none';
+};
+
+window.checkBal = async function(){
+  if(!AKEY){alert('請先設定 API Key');return;}
+  const btn=document.getElementById('bal-btn');
+  const disp=document.getElementById('bal-display');
+  btn.disabled=true;btn.textContent='查詢中…';
+  disp.textContent='';
+  try{
+    const now=new Date();
+    const y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');
+    const r=await fetch(`https://api.anthropic.com/v1/usage?billing_period=${y}-${m}`,{
+      headers:{'x-api-key':AKEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}
+    });
+    if(r.status===401){disp.innerHTML='<span style="color:var(--td)">Key 無效，請重新設定</span>';return;}
+    if(!r.ok) throw new Error('no_usage_api');
+    const d=await r.json();
+    const used=((d.total_cost||0)).toFixed(4);
+    disp.innerHTML=`<span style="color:var(--ts)">本月已用 $${used}</span>`;
+  }catch(e){
+    disp.innerHTML='<span style="color:var(--td)">網路錯誤或無查詢權限</span>';
+  }finally{
+    btn.disabled=false;btn.textContent='💰 查餘額';
+  }
+};
+
+const SK='wl-v3',PK='pk-v3';
+let S={cats:[]},P={},aiRun=false,view='grid';
+let _saveSTimer=null,_savePTimer=null;
+let currentDetail = null;
+let currentTab = 'anl';
+
+function saveS(){
+  try{localStorage.setItem(SK,JSON.stringify({cats:S.cats}));}catch(e){}
+  if(window.isOfflineMode) return; 
+  clearTimeout(_saveSTimer);
+  _saveSTimer=setTimeout(()=>{
+    if(window._fb && typeof window._fb.set === 'function') window._fb.set(FB_WL,{cats:S.cats,updatedAt:Date.now()});
+  },800);
+}
+function saveP(){
+  try{localStorage.setItem(PK,JSON.stringify(P));}catch(e){}
+  if(window.isOfflineMode) return;
+  clearTimeout(_savePTimer);
+  _savePTimer=setTimeout(()=>{
+    if(window._fb && typeof window._fb.set === 'function') window._fb.set(FB_PX,{data:P,updatedAt:Date.now()});
+  },800);
+}
+
+// ─── FETCHING ───
+async function fetchTW(code){
+  const proxies=['', 'https://corsproxy.io/?url='];
+  for(const proxy of proxies){
+    for(const ex of['tse','otc']){
+      try{
+        const url=`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${code}.tw&json=1&delay=0`;
+        const r=await fetch(proxy?proxy+encodeURIComponent(url):url);
+        const j=await r.json(),d=j.msgArray?.[0];
+        if(!d||!d.z||d.z==='-')continue;
+        const px=+d.z,pv=+d.y;
+        return{px,chg:px-pv,pct:(px-pv)/pv*100,name:d.n,live:true};
+      }catch(e){}
+    }
+  }
+  return null;
+}
+
+async function fetchYFHistory(code, mkt, tf='1d'){
+  let t = code;
+  if(mkt==='tw') t+='.TW'; else if(mkt==='jp') t+='.T';
+  const pxs = ['', 'https://corsproxy.io/?url=', 'https://api.allorigins.win/raw?url='];
+  
+  let interval = tf;
+  let range = '1mo';
+  if(tf === '1h') range = '1mo';
+  else if(tf === '15m') range = '5d';
+  else if(tf === '5m') range = '1d';
+
+  for(const proxy of pxs){
+    try{
+      const u = `https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=${interval}&range=${range}`;
+      const r = await fetch(proxy ? proxy + encodeURIComponent(u) : u);
+      const j = await r.json();
+      const res = j.chart.result[0];
+      const quotes = res.indicators.quote[0];
+      
+      let date = [], open = [], high = [], low = [], close = [];
+      for(let i=0; i<res.timestamp.length; i++){
+          if(quotes.close[i] !== null && quotes.high[i] !== null && quotes.low[i] !== null && quotes.open[i] !== null){
+              const d = new Date(res.timestamp[i] * 1000);
+              let dStr = "";
+              if(tf === '1d'){
+                  dStr = d.toISOString().split('T')[0];
+              } else {
+                  dStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+              }
+              date.push(dStr);
+              open.push(quotes.open[i]);
+              high.push(quotes.high[i]);
+              low.push(quotes.low[i]);
+              close.push(quotes.close[i]);
+          }
+      }
+
+      return {
+         date, open, high, low, close,
+         px: res.meta.regularMarketPrice,
+         prevClose: res.meta.chartPreviousClose,
+         chg: res.meta.regularMarketPrice - res.meta.chartPreviousClose,
+         pct: ((res.meta.regularMarketPrice - res.meta.chartPreviousClose) / res.meta.chartPreviousClose) * 100,
+         live: true
+      };
+    }catch(e){}
+  }
+  return null;
+}
+
+// 🌟 Google 新聞 RSS (抓取 8 筆並依精確時間排序)
+async function fetchFreeNews(code, name, mkt){
+  try {
+    const q = encodeURIComponent(`${name} ${code} 股票`);
+    const rssUrl = `https://news.google.com/rss/search?q=${q}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    
+    const r = await fetch(apiUrl);
+    const j = await r.json();
+    
+    if(j.status === 'ok' && j.items && j.items.length > 0){
+       // 依時間遞減排序 (新 -> 舊)
+       let items = j.items.sort((a,b) => new Date(b.pubDate.replace(/-/g, '/')) - new Date(a.pubDate.replace(/-/g, '/')));
+       
+       // 取出前 8 筆
+       return items.slice(0, 8).map(item => {
+         const dateObj = new Date(item.pubDate.replace(/-/g, '/'));
+         const dateStr = !isNaN(dateObj) ? `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}` : item.pubDate.split(' ')[0];
+         return {
+           title: item.title,
+           link: item.link,
+           publisher: item.source || '新聞',
+           date: dateStr
+         };
+       });
+    }
+  } catch(e) {}
+  return [];
+}
+
+// 🌟 Plotly 專業 SMC 繪圖引擎
+window.drawSMCChart = function(hist, containerId) {
+  if(!hist || !hist.close || hist.close.length < 2) return;
+  
+  const trace1 = {
+    x: hist.date,
+    close: hist.close,
+    high: hist.high,
+    low: hist.low,
+    open: hist.open,
+    type: 'candlestick',
+    xaxis: 'x',
+    yaxis: 'y',
+    name: 'K線',
+    increasing: {line: {color: '#E24B4A'}}, 
+    decreasing: {line: {color: '#639922'}}  
+  };
+
+  const shapes = [];
+  const annotations = [];
+
+  let fvgCount = 0;
+  for(let i = hist.close.length - 1; i >= 2; i--) {
+      if (fvgCount >= 3) break; 
+      let h1 = hist.high[i-2], l1 = hist.low[i-2];
+      let h3 = hist.high[i],   l3 = hist.low[i];
+      
+      if (l3 > h1) {
+          shapes.push({
+              type: 'rect',
+              x0: hist.date[i-2], y0: h1,
+              x1: hist.date[hist.date.length-1], y1: l3,
+              fillcolor: 'rgba(0, 150, 255, 0.2)', 
+              line: {width: 0},
+              layer: 'below'
+          });
+          fvgCount++;
+      } else if (h3 < l1) {
+          shapes.push({
+              type: 'rect',
+              x0: hist.date[i-2], y0: l1,
+              x1: hist.date[hist.date.length-1], y1: h3,
+              fillcolor: 'rgba(255, 100, 0, 0.2)', 
+              line: {width: 0},
+              layer: 'below'
+          });
+          fvgCount++;
+      }
+  }
+
+  if(hist.high.length > 20) {
+      let recentHighIdx = hist.high.length - 20 + hist.high.slice(-20).indexOf(Math.max(...hist.high.slice(-20)));
+      let recentLowIdx = hist.low.length - 20 + hist.low.slice(-20).indexOf(Math.min(...hist.low.slice(-20)));
+      
+      let highest = hist.high[recentHighIdx];
+      let lowest = hist.low[recentLowIdx];
+
+      shapes.push({
+          type: 'line',
+          x0: hist.date[recentHighIdx], y0: highest,
+          x1: hist.date[hist.date.length-1], y1: highest,
+          line: {color: 'rgba(226, 75, 74, 0.8)', width: 1, dash: 'dash'}
+      });
+      annotations.push({
+          x: hist.date[hist.date.length-1], y: highest,
+          text: 'BSL 流動性', showarrow: false, xanchor: 'left', font: {size: 10, color: 'rgba(226, 75, 74, 0.8)'}
+      });
+
+      shapes.push({
+          type: 'line',
+          x0: hist.date[recentLowIdx], y0: lowest,
+          x1: hist.date[hist.date.length-1], y1: lowest,
+          line: {color: 'rgba(99, 153, 34, 0.8)', width: 1, dash: 'dash'}
+      });
+      annotations.push({
+          x: hist.date[hist.date.length-1], y: lowest,
+          text: 'SSL 流動性', showarrow: false, xanchor: 'left', font: {size: 10, color: 'rgba(99, 153, 34, 0.8)'}
+      });
+  }
+
+  const layout = {
+    dragmode: 'pan',
+    margin: { l: 40, r: 40, t: 10, b: 30 },
+    xaxis: { rangeslider: { visible: false }, type: 'category', showgrid: false },
+    yaxis: { autorange: true, fixedrange: false, showgrid: true, gridcolor: 'rgba(0,0,0,0.05)' },
+    plot_bgcolor: 'transparent',
+    paper_bgcolor: 'transparent',
+    shapes: shapes,
+    annotations: annotations,
+    showlegend: false
+  };
+
+  const config = { responsive: true, displayModeBar: false };
+  Plotly.newPlot(containerId, [trace1], layout, config);
+};
+
+function calculateTechIndicators(hist, tfLabel) {
+  if(!hist || hist.close.length < 2) return null;
+  const c = hist.close, h = hist.high, l = hist.low;
+  
+  const pC = c[c.length-2] || c[c.length-1];
+  const pH = h[h.length-2] || h[h.length-1];
+  const pL = l[l.length-2] || l[l.length-1];
+  
+  const P = (pH + pL + pC) / 3;
+  const R1 = (P * 2) - pL;
+  const R2 = P + (pH - pL);
+  const S1 = (P * 2) - pH;
+  const S2 = P - (pH - pL);
+
+  const curr = c[c.length-1];
+  const sma10 = c.slice(-10).reduce((a,b)=>a+b,0) / Math.min(10, c.length);
+  const sma20 = c.slice(-20).reduce((a,b)=>a+b,0) / Math.min(20, c.length);
+
+  const signals = [];
+  if(curr > sma10) signals.push({color:'green', label:'短線均線', val:`站上10T線 (偏多)`});
+  else signals.push({color:'amber', label:'短線均線', val:`跌破10T線 (偏弱)`});
+
+  if(curr > sma20) signals.push({color:'green', label:'中線均線', val:`站上20T線 (偏多)`});
+  else signals.push({color:'red', label:'中線均線', val:`跌破20T線 (偏空)`});
+
+  let smcSignals = [];
+  for(let i = c.length - 3; i < c.length; i++) {
+      if(i < 2) continue;
+      let h1 = h[i-2], l1 = l[i-2];
+      let h3 = h[i],   l3 = l[i];
+      if (l3 > h1) {
+          smcSignals.push({color:'green', label:'SMC 聰明錢', val:`發現多方 FVG 缺口支撐`});
+          break;
+      } else if (h3 < l1) {
+          smcSignals.push({color:'red', label:'SMC 聰明錢', val:`發現空方 FVG 缺口壓力`});
+          break;
+      }
+  }
+
+  if(h.length > 15) {
+      let recentHigh = Math.max(...h.slice(-15, -1));
+      let recentLow = Math.min(...l.slice(-15, -1));
+      if (curr > recentHigh) smcSignals.push({color:'green', label:'SMC 結構', val:`突破前高流動性`});
+      else if (curr < recentLow) smcSignals.push({color:'red', label:'SMC 結構', val:`跌破前低流動性`});
+  }
+
+  let gains = 0, losses = 0;
+  const rsiPeriod = Math.min(14, c.length - 1);
+  for(let i = c.length - rsiPeriod; i < c.length; i++){
+      const diff = c[i] - c[i-1];
+      if(diff > 0) gains += diff;
+      else losses -= diff;
+  }
+  const avgGain = gains / rsiPeriod;
+  const avgLoss = losses / rsiPeriod;
+  const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+  const rsi = 100 - (100 / (1 + rs));
+
+  if(rsi > 70) signals.push({color:'red', label:'RSI指標', val:`超買區 (${rsi.toFixed(1)})`});
+  else if(rsi < 30) signals.push({color:'green', label:'RSI指標', val:`超賣區 (${rsi.toFixed(1)})`});
+  else signals.push({color:'amber', label:'RSI指標', val:`中性區 (${rsi.toFixed(1)})`});
+
+  return {
+    tfLabel: tfLabel,
+    levels: { r1: R1.toFixed(2), r2: R2.toFixed(2), s1: S1.toFixed(2), s2: S2.toFixed(2) },
+    signals: signals,
+    smcSignals: smcSignals,
+    histData: hist 
+  };
+}
+
+const PRICE={ 'claude-haiku-4-5-20251001': {in:0.80, out:4.00}, 'claude-sonnet-4-6': {in:3.00, out:15.00} };
+let tokSession={in:0,out:0,cost:0}; 
+let tokTotal={in:0,out:0,cost:0};   
+
+function loadTokTotal(){
+  try{const d=JSON.parse(localStorage.getItem('tok-v1')||'null');if(d)tokTotal=d;}catch(e){}
+}
+function saveTokTotal(){
+  try{localStorage.setItem('tok-v1',JSON.stringify(tokTotal));}catch(e){}
+}
+function addUsage(model,inTok,outTok){
+  const p=PRICE[model]||{in:3,out:15};
+  const cost=(inTok*p.in+outTok*p.out)/1e6;
+  tokSession.in+=inTok; tokSession.out+=outTok; tokSession.cost+=cost;
+  tokTotal.in+=inTok;   tokTotal.out+=outTok;   tokTotal.cost+=cost;
+  saveTokTotal();
+  renderTokBar();
+}
+function renderTokBar(){
+  const bar=document.getElementById('tok-bar');
+  if(!bar)return;
+  bar.style.display='flex';
+  document.getElementById('tok-in').textContent=tokSession.in.toLocaleString();
+  document.getElementById('tok-out').textContent=tokSession.out.toLocaleString();
+  document.getElementById('tok-cost').textContent='$'+tokSession.cost.toFixed(6);
+  document.getElementById('tok-total-cost').textContent='$'+tokTotal.cost.toFixed(4);
+}
+window.resetTokStats = function(){
+  tokSession={in:0,out:0,cost:0}; tokTotal={in:0,out:0,cost:0};
+  saveTokTotal();
+  const bar=document.getElementById('tok-bar');
+  if(bar)bar.style.display='none';
+};
+
+async function apiCall(prompt,maxTok=700,isSearch=false){
+  if(!AKEY)throw new Error('請先在頁面頂端設定 API Key');
+  const model= isSearch ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001';
+  const body={model,max_tokens:maxTok,messages:[{role:'user',content:prompt}]};
+  
+  for(let attempt=0;attempt<3;attempt++){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':AKEY,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(body)
+    });
+    if(r.status===429){
+      await new Promise(res=>setTimeout(res,10000));
+      continue;
+    }
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`API ${r.status}: ${e.error?.message||r.statusText}`);}
+    const data=await r.json();
+    if(data.usage) addUsage(model, data.usage.input_tokens||0, data.usage.output_tokens||0);
+    return data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+  }
+  throw new Error('超過重試次數，請稍後再試');
+}
+async function callAI(prompt,search=false){
+  const txt=await apiCall(prompt,700,search);
+  const m=txt.replace(/```json|```/g,'').match(/[\[\{][\s\S]*[\]\}]/);
+  if(!m)throw new Error('回應格式錯誤');
+  return JSON.parse(m[0]);
+}
+
+window.fDB = function(q){
+  const n = q.toLowerCase().trim();
+  if(!n) return [];
+  return DB.filter(item => {
+    const code = item[0].toLowerCase();
+    const zh = item[1].toLowerCase();
+    const kw = item[2] ? item[2].toLowerCase() : '';
+    return code.includes(n) || zh.includes(n) || kw.includes(n);
+  }).slice(0, 12);
+};
+
+window.doSrch = function(q){
+  const res=document.getElementById('sres');
+  if(!q.trim()){res.innerHTML='<div class="airow">輸入代碼或名稱，台股 / 美股 / 日股均可</div>';return;}
+  const items = window.fDB(q);
+  
+  let html = items.map(item => {
+    const code = item[0];
+    const nm = item[1].split(' ')[0];
+    const mkt = item[3];
+    const lbl = mkt==='tw'?'台股':mkt==='us'?'美股':'日股';
+    const bc = mkt==='tw'?'btw':mkt==='us'?'bus':'bjp';
+    return `<div class="si" onclick="window.addS('${code}','${nm}','${mkt}')">
+      <span class="sic">${code}</span><span class="sin">${nm}</span>
+      <span class="sib ${bc}">${lbl}</span></div>`;
+  }).join('');
+  
+  const qSafe = q.replace(/'/g,"\\'");
+  html += `<div class="airow">
+    <div class="spin ${aiRun?'on':''}" id="aispin"></div>
+    <span id="aihtxt">${aiRun?'AI 搜尋中…':
+      (items.length?'找不到其他？':'找不到？')+`<span class="atag" onclick="window.aiSrch('${qSafe}')"> AI 搜尋全球股市 →</span>`}</span></div>`;
+  res.innerHTML = html;
+};
+
+window.aiSrch = async function(q){
+  if(aiRun)return;aiRun=true;
+  const sp=document.getElementById('aispin'),ht=document.getElementById('aihtxt');
+  if(sp)sp.classList.add('on');if(ht)ht.textContent='AI 搜尋中…';
+  try{
+    const arr=await callAI(`「${q}」的股票代碼，JSON:[{"code":"","name":"","mkt":"tw/us/jp"}]`, true);
+    const list=Array.isArray(arr)?arr:[arr];
+    document.getElementById('sres').innerHTML=list.map(s=>{
+      const bc=s.mkt==='tw'?'btw':s.mkt==='jp'?'bjp':'bus';
+      const lbl=s.mkt==='tw'?'台股':s.mkt==='jp'?'日股':'美股';
+      return`<div class="si" onclick="window.addS('${s.code}','${s.name}','${s.mkt||'us'}')">
+        <span class="sic">${s.code}</span><span class="sin">${s.name}</span>
+        <span class="sib ${bc}">${lbl}</span></div>`;
+    }).join('')||'<div class="airow">找不到此股票</div>';
+  }catch(e){
+    const ht2=document.getElementById('aihtxt');
+    if(ht2)ht2.innerHTML=`${e.message} <span class="atag" onclick="window.aiSrch('${q}')">重試</span>`;
+  }
+  aiRun=false;
+};
+
+window.openSrch = function(){
+  document.getElementById('sov').classList.add('on');
+  const i=document.getElementById('sq');i.value='';window.doSrch('');
+  setTimeout(()=>i.focus(),60);
+};
+window.closeSrch = function(){document.getElementById('sov').classList.remove('on');aiRun=false;};
+window.showNewCat = function(){document.getElementById('cinp').value='';document.getElementById('cmod').classList.add('on');setTimeout(()=>document.getElementById('cinp').focus(),50);};
+window.closeCmod = function(){document.getElementById('cmod').classList.remove('on');};
+window.mkCat = function(){
+  const n=document.getElementById('cinp').value.trim();if(!n)return;
+  const c={id:'c'+Date.now(),name:n,stocks:[]};
+  S.cats.push(c);S.act=c.id;window.closeCmod();saveS();renderAll();
+};
+window.delCat = function(id,e){
+  e?.stopPropagation();
+  if(S.cats.length<=1){alert('至少保留一個分類');return;}
+  if(!confirm(`刪除「${S.cats.find(c=>c.id===id)?.name}」？`))return;
+  S.cats=S.cats.filter(c=>c.id!==id);
+  if(S.act===id)S.act=S.cats[0].id;
+  saveS();renderAll();
+};
+window.setAct = function(id){S.act=id;view='grid';renderAll();};
+window.addS = function(code,name,mkt){
+  const c=cat();
+  if(c.stocks.find(s=>s.code===code)){window.closeSrch();return;}
+  c.stocks.push({code,name,mkt});saveS();window.closeSrch();window.renderGrid();window.rfStock(code,name,mkt);
+};
+window.rmS = function(code,e){
+  e?.stopPropagation();
+  const c=cat();c.stocks=c.stocks.filter(s=>s.code!==code);
+  delete P[code];saveS();saveP();window.renderGrid();
+};
+
+const renderAll=()=>{renderTabs();if(view==='grid')window.renderGrid();};
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=
+    S.cats.map(c=>`<div class="tab ${c.id===S.act?'on':''}" onclick="window.setAct('${c.id}')">
+      ${c.name}<span class="tx" onclick="window.delCat('${c.id}',event)">✕</span></div>`).join('')+
+    `<button class="tadd" onclick="window.showNewCat()">＋ 新分類</button>`;
+}
+function tsLbl(ts){
+  if(!ts)return'';
+  const d=new Date(ts);
+  return d.toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'})+' '+
+         d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+}
+function cardHTML(s){
+  const p=P[s.code];
+  const cur=s.mkt==='jp'?'¥':s.mkt==='us'?'$':'';
+  const mktLbl=s.mkt==='tw'?'🇹🇼 台股':s.mkt==='us'?'🇺🇸 美股':'🇯🇵 日股';
+  let ph='',ch='',ts='';
+  if(p?.loading)ph=`<div class="ld">更新中…</div>`;
+  else if(p?.px){
+    const sg=p.chg>=0?'▲':'▼',cl=p.chg>0?'up':p.chg<0?'dn':'nc';
+    ph=`<div class="cpx">${cur}${(+p.px).toLocaleString(undefined,{maximumFractionDigits:2})}</div>`;
+    ch=`<div class="cchg ${cl}">${sg}${Math.abs(p.pct).toFixed(2)}%</div>`;
+    if(p.ts)ts=`<div class="cts">${tsLbl(p.ts)}</div>`;
+  }else if(p?.err)ph=`<div class="ld" title="${p.errMsg||''}">取得失敗 — 點擊重試</div>`;
+  else ph=`<div class="cpx" style="font-size:12px;color:var(--t3)">— 點擊進入</div>`;
+  
+  return`<div class="card" id="card-${s.code}" onclick="window.openDetail('${s.code}','${s.name}','${s.mkt}')">
+    <span class="cx" onclick="window.rmS('${s.code}',event)">✕</span>
+    <div class="cmkt">${mktLbl}</div>
+    <div class="ccode">${s.code}</div>
+    <div class="cname" title="${s.name}">${s.name}</div>
+    ${ph}${ch}${ts}
+    </div>`;
+}
+function renderCard(code){
+  const el=document.getElementById('card-'+code);if(!el)return;
+  const s=cat().stocks.find(x=>x.code===code);if(!s)return;
+  el.outerHTML=cardHTML(s);
+}
+
+window.renderGrid = function(){
+  view='grid';
+  currentDetail=null;
+  currentTab='anl';
+  const c=cat();
+  document.getElementById('bn').textContent=c.name;
+  document.getElementById('bar').classList.add('on');
+  const m=document.getElementById('main');
+  if(!c.stocks.length){
+    m.innerHTML=`<div class="empty">
+      <div style="font-size:32px;margin-bottom:8px">📋</div>
+      <div style="font-weight:500;margin-bottom:6px">分類是空的</div>
+      <div style="font-size:12px;color:var(--t3)">按上方搜尋欄加入股票</div></div>`;
+    return;
+  }
+  m.innerHTML=`<div class="grid">${c.stocks.map(s=>cardHTML(s)).join('')}</div>`;
+};
+
+window.changeTimeframe = function(code, name, mkt, tf) {
+  if(P[code]) P[code].tf = tf;
+  window.rfStock(code, name, mkt);
+};
+
+window.rfStock = async function(code,name,mkt){
+  P[code]={...(P[code]||{}),loading:true};
+  let tf = P[code].tf || '1d';
+  renderCard(code);
+  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
+
+  try{
+    let p = null;
+    let hist = null;
+    if(mkt==='tw') p=await fetchTW(code);
+    
+    hist = await fetchYFHistory(code, mkt, tf);
+    if(hist && !p) p = {px: hist.px, chg: hist.chg, pct: hist.pct, live:true};
+
+    if(p){
+      P[code]={...P[code],...p,loading:false,ts:Date.now()};
+      delete P[code].err; delete P[code].errMsg;
+      
+      if(hist){
+         const tfLabels = {'1d':'日K', '1h':'60分K', '15m':'15分K', '5m':'5分K'};
+         const techData = calculateTechIndicators(hist, tfLabels[tf]);
+         if(techData) P[code].tech = techData;
+      }
+      
+      const newsItems = await fetchFreeNews(code, name, mkt);
+      if(newsItems.length > 0){
+          P[code].newsList = newsItems;
+      }
+    }else{
+      P[code]={...P[code],loading:false,err:true,errMsg:'無報價資料'};
+    }
+    saveP();
+  }catch(e){
+    P[code]={...(P[code]||{}),loading:false,err:true,errMsg:e.message};
+    saveP();
+  }
+  renderCard(code);
+  if(view==='detail'&&currentDetail===code) renderDetailBody(code,name,mkt);
+};
+
+window.rfAll = async function(){
+  for(const s of cat().stocks) window.rfStock(s.code,s.name,s.mkt);
+};
+
+window.openDetail = function(code,name,mkt){
+  view='detail';
+  currentDetail=code;
+  document.getElementById('bar').classList.remove('on');
+  if(!P[code]?.px && !P[code]?.loading) window.rfStock(code,name,mkt);
+  renderDetailBody(code,name,mkt);
+};
+
+function renderDetailBody(code,name,mkt){
+  if(view!=='detail'||currentDetail!==code) return;
+  const m = document.getElementById('main');
+  let p = P[code] || {};
+  
+  const cur = mkt==='jp'?'¥':mkt==='us'?'$':'';
+  const px = p.px, pct = p.pct||0;
+  const sg = pct>=0?'▲':'▼', cl = pct>0?'up':pct<0?'dn':'nc';
+
+  let pxHtml = p.loading ? `<div class="ld" style="font-size:14px;margin-top:5px">報價更新中…</div>` :
+               px ? `<span class="anlpx">${cur}${(+px).toLocaleString(undefined,{maximumFractionDigits:2})}</span>
+                     <span class="${cl}" style="font-size:14px;font-weight:500">${sg}${Math.abs(pct).toFixed(2)}%</span>
+                     <span style="font-size:11px;color:var(--t3)">${tsLbl(p.ts)}</span>` : 
+                    `<span style="font-size:12px;color:var(--t3);margin-top:5px">無報價資料</span>`;
+
+  let techHtml = '';
+  if(p.tech){
+    const DC={red:'#E24B4A',amber:'#EF9F27',green:'#639922'};
+    const shtml=(p.tech.signals||[]).map(s=>`<div class="sigr">
+      <span class="sk2"><span class="d8" style="background:${DC[s.color]||'#888'}"></span>${s.label}</span>
+      <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+    
+    const smchtml=(p.tech.smcSignals||[]).map(s=>`<div class="sigr">
+      <span class="sk2">💡 ${s.label}</span>
+      <span style="font-size:12px;font-weight:500;color:${DC[s.color]||'inherit'}">${s.val}</span></div>`).join('');
+
+    const lv = p.tech.levels;
+    
+    techHtml = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; margin-bottom:8px;">
+        <div class="sec" style="margin:0;">📈 SMC 聰明錢流動性圖表</div>
+        <select class="tf-sel" onchange="window.changeTimeframe('${code}', '${name}', '${mkt}', this.value)">
+          <option value="1d" ${p.tf==='1d'||!p.tf?'selected':''}>日K</option>
+          <option value="1h" ${p.tf==='1h'?'selected':''}>60分K</option>
+          <option value="15m" ${p.tf==='15m'?'selected':''}>15分K</option>
+          <option value="5m" ${p.tf==='5m'?'selected':''}>5分K</option>
+        </select>
+      </div>
+      
+      <div id="smc-chart-container"></div>
+      
+      ${smchtml}
+      ${shtml}
+      <div class="sec">📉 樞軸點支撐/壓力位 (基於 ${p.tech.tfLabel})</div>
+      <div class="lvg">
+        <div class="lvc" style="background:var(--bgd)"><div class="lvl" style="color:var(--td)">第二壓力 (R2)</div><div class="lvv" style="color:var(--td)">${lv.r2}</div></div>
+        <div class="lvc" style="background:var(--bgs)"><div class="lvl" style="color:var(--ts)">第一壓力 (R1)</div><div class="lvv" style="color:var(--ts)">${lv.r1}</div></div>
+        <div class="lvc" style="background:var(--bgw)"><div class="lvl" style="color:var(--tw)">第一支撐 (S1)</div><div class="lvv" style="color:var(--tw)">${lv.s1}</div></div>
+        <div class="lvc" style="background:var(--bgi)"><div class="lvl" style="color:var(--ti)">第二支撐 (S2)</div><div class="lvv" style="color:var(--ti)">${lv.s2}</div></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--t3)">※ 此為純數學模型計算，完全不消耗 Token。</div>
+    `;
+  } else {
+    techHtml = `<div class="empty">點擊右上角「⚡ 深度更新」載入最新指標。</div>`;
+  }
+
+  let newsHtml = '';
+  if(p.newsList && p.newsList.length > 0){
+    let aiSummaryBlock = '';
+    if(p.aiRun) aiSummaryBlock = `<div class="aspinner"><div class="spin on"></div>機器人正在閱讀新聞中…</div>`;
+    else if(p.aiSummary) aiSummaryBlock = `<div class="nsum"><b style="font-weight:500">🤖 AI 新聞總結：</b><br>${p.aiSummary}</div>`;
+    else aiSummaryBlock = `<button class="btn p" style="width:100%;margin-bottom:12px" onclick="window.triggerAISummary('${code}','${name}')">🤖 請 AI 總結新聞 (消耗 Token)</button>`;
+
+    const listHtml = p.newsList.map(n=>`
+      <a href="${n.link}" target="_blank" class="ncard" style="text-decoration:none;display:block;color:inherit;">
+        <div class="nhead">
+          <span class="nsent nneu">${n.publisher}</span>
+          <span class="ntitle">${n.title}</span>
+        </div>
+        <div class="nbody">${n.date}</div>
+      </a>`).join('');
+    
+    newsHtml = aiSummaryBlock + listHtml;
+  } else {
+    newsHtml = `<div class="empty">目前尚無最新新聞。</div>`;
+  }
+
+  m.innerHTML = `
+  <div class="anl">
+    <div class="anlhd">
+      <button class="bk" onclick="window.renderGrid()">← 返回</button>
+      <span class="anln">${name}</span>
+      <span style="font-size:11px;color:var(--t2)">${code}</span>
+      <div style="flex:1"></div>
+      <button class="btn sm p" onclick="window.rfStock('${code}','${name}','${mkt}')">⚡ 深度更新 (免費)</button>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+      ${pxHtml}
+    </div>
+    <div class="ntab">
+      <button class="nt ${currentTab==='anl'?'on':''}" onclick="window.switchTab('anl','${code}','${name}','${mkt}')">📊 價格分析</button>
+      <button class="nt ${currentTab==='news'?'on':''}" onclick="window.switchTab('news','${code}','${name}','${mkt}')">📰 相關新聞</button>
+    </div>
+    <div id="tab-anl-body" style="display:${currentTab==='anl'?'block':'none'}">
+      ${techHtml}
+    </div>
+    <div id="news-body" style="display:${currentTab==='news'?'block':'none'}">
+      ${newsHtml}
+    </div>
+  </div>`;
+
+  if(currentTab === 'anl' && p.tech && p.tech.histData) {
+      setTimeout(() => {
+          if(document.getElementById('smc-chart-container')){
+              window.drawSMCChart(p.tech.histData, 'smc-chart-container');
+          }
+      }, 100);
+  }
+}
+
+window.triggerAISummary = async function(code, name){
+  if(!P[code] || !P[code].newsList) return;
+  P[code].aiRun = true;
+  renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
+  
+  try{
+    const newsText = P[code].newsList.map(n => `- ${n.title}`).join('\n');
+    const prompt = `我是投資人，請根據以下關於「${name}(${code})」的最新新聞標題，用繁體中文給出一段約 50 字的專業投資總結，指出目前的市場情緒是偏多還是偏空：\n\n${newsText}`;
+    const summary = await apiCall(prompt, 300);
+    P[code].aiSummary = summary;
+  }catch(e){
+    alert('AI 分析失敗: ' + e.message);
+  }finally{
+    P[code].aiRun = false;
+    saveP(); 
+    renderDetailBody(code,name,cat().stocks.find(s=>s.code===code).mkt);
+  }
+};
+
+window.switchTab = function(tab,code,name,mkt){
+  currentTab=tab;
+  renderDetailBody(code,name,mkt);
+};
+
+// ─── STARTUP ───
+(async()=>{
+  try {
+    const mainBox = document.getElementById('main');
+    if(mainBox) mainBox.innerHTML = `
+      <div style="padding:50px 20px;text-align:center;color:var(--t2);font-size:14px">
+        <div class="spin on" style="display:inline-block;margin-bottom:15px;width:24px;height:24px;border-width:3px"></div>
+        <div style="margin-bottom:15px;font-weight:500;">☁️ 正在載入系統與雲端資料...</div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:20px;">請耐心等候連線</div>
+        <button onclick="window.enterOfflineMode()" class="btn" style="border:1px solid var(--b2); background:var(--bg); color:var(--t2);">
+          ⚡ 先進入離線模式 (不寫入雲端)
+        </button>
+      </div>`;
+    
+    // 🌟 不再強制超時，給足系統時間載入
+    await new Promise(r => {
+       if(window._fb && window._fb.ready) { r(); return; }
+       document.addEventListener('fb-ready', r, {once:true});
+    });
+
+    if(window.isOfflineMode) return; 
+
+    await loadKey();
+    loadTokTotal();
+    
+    // 只要有網路，就盡全力抓取雲端資料
+    const wl = window._fb && typeof window._fb.get === 'function' ? await window._fb.get(FB_WL) : null;
+    const px = window._fb && typeof window._fb.get === 'function' ? await window._fb.get(FB_PX) : null;
+    
+    if(!window.isOfflineMode) {
+        if(window._fb && window._fb.ready && !window._fb.error) {
+           window.updateSyncUI(true);
+        } else {
+           window.updateSyncUI(false, "雲端連線失敗");
+        }
+        
+        if(wl?.cats && wl.cats.length) S.cats = wl.cats;
+        else try{ const d=JSON.parse(localStorage.getItem(SK)); if(d?.cats) S.cats=d.cats; }catch(e){}
+        
+        if(px?.data) P = px.data;
+        else try{ P=JSON.parse(localStorage.getItem(PK))||{}; }catch(e){}
+        
+        if(!S.cats || S.cats.length===0) S.cats=[{id:'def',name:'自選股',stocks:[]}];
+        S.act=S.cats[0].id;
+        
+        renderTabs();
+        window.renderGrid();
+    }
+  } catch (error) {
+    console.warn(error);
+    const mainBox = document.getElementById('main');
+    if(mainBox) {
+      mainBox.innerHTML = `
+        <div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px;line-height:1.6">
+          ⚠️ 系統開機失敗：${error.message}<br><br>
+          <button onclick="window.enterOfflineMode()" style="padding:8px 16px;background:#E24B4A;color:white;border:none;border-radius:6px;cursor:pointer;">強制進入離線模式</button>
+        </div>
+      `;
+    }
+  }
+})();
+</script>
 </body>
 </html>
