@@ -2,1914 +2,1177 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro Ultimate - 專業鑲嵌與獨立展開版)</title>
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <title>Neil's Toolbox - 專業製程監控 (設備對比雲端版)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
-        /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
-        :root {
-            --bg-main: #121317;
-            --bg-panel: #1A1C23;
-            --bg-card: #252830;
-            --bg-input: #121317;
-            --border-subtle: #333842;
-            --text-primary: #E2E4E9;
-            --text-secondary: #949BA4;
-            --text-note: #68D391;
-
-            --accent-cyan: #00E5FF;
-            --btn-teal: #0DA69B;
-            --btn-blue: #276FBF;
-            --btn-red: #D93D42;
-            --btn-orange: #E67E22;
-            --btn-gray: #4B5563;
-
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-        }
-
-        /* --- 基礎設定 --- */
-        body { 
-            font-family: "Inter", "Microsoft JhengHei", Arial, sans-serif; 
-            background-color: var(--bg-main); 
-            color: var(--text-primary); 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none; 
-        }
-
-        /* --- 隱藏式精緻捲軸 --- */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #666; }
-
-        /* --- 側邊欄 (Sidebar) --- */
-        #sidebar { 
-            width: 380px; 
-            min-width: 320px; 
-            max-width: 800px; 
-            background-color: var(--bg-panel); 
-            padding: 20px 16px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 14px; 
-            z-index: 10; 
-            overflow-y: auto; 
-            flex-shrink: 0; 
-            border-right: 1px solid var(--border-subtle);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-        }
-
-        /* --- 主畫布區 --- */
-        #main-area { 
-            flex-grow: 1; 
-            background-color: var(--bg-main); 
-            display: flex; 
-            justify-content: center; 
-            align-items: start;
-            overflow: auto; 
-            padding: 20px; 
-            position: relative;
-            background-image: radial-gradient(#2a2d35 1px, transparent 0); 
-            background-size: 20px 20px;
-        }
-
-        /* --- 手機版終極適配 --- */
-        @media (max-width: 768px) {
-            body { flex-direction: column; height: auto; overflow-y: auto; }
-            #sidebar { width: 100% !important; max-width: 100%; height: auto; max-height: none; border-right: none; border-bottom: 2px solid var(--border-subtle); padding-top: 60px; }
-            #main-area { width: 100%; min-height: 500px; padding: 10px; display: block; text-align: center; }
-            .home-btn { top: 10px; left: 10px; padding: 8px 16px; font-size: 14px; }
-            button, select, input[type="text"], input[type="number"] { height: 44px; font-size: 15px; }
-            .layer-check { width: 24px; height: 24px; } 
-
-            .modal { width: 100%; height: 100%; max-width: 100%; max-height: 100%; top: 0; left: 0; transform: none; border-radius: 0; padding: 15px; }
-            .modal-body { flex-direction: column; overflow-y: auto; overflow-x: hidden; display: flex; -webkit-overflow-scrolling: touch; padding-bottom: 30px; }
-            .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
-            .cloud-list { overflow: visible; flex-shrink: 0; }
-            .modal-right { width: 100%; margin-top: 15px; padding: 15px 0 0 0; background: transparent; border: none; border-top: 1px solid var(--border-subtle); overflow-y: visible; height: auto; flex-shrink: 0;}
-            #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
-            .cloud-item, .layer-item { touch-action: pan-y; }
-            .tab { touch-action: pan-x; }
-        }
-
-        /* --- 排版與元件 --- */
-        h2 { margin: 0 0 5px 0; color: var(--accent-cyan); font-size: 18px; display: flex; align-items: center; gap: 8px; }
-        h3 { margin: 0 0 10px 0; color: var(--text-primary); font-size: 14px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; font-weight: 600;}
+        body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: #f0f4f8; margin: 20px; color: #334155; overflow-x: hidden; }
+        .container { max-width: 1600px; margin: auto; background: transparent; }
         
-        .control-group { 
-            background: var(--bg-card); 
-            padding: 14px; 
-            border-radius: var(--radius-lg); 
-            border: 1px solid var(--border-subtle); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-        }
-        .sub-group { 
-            background: rgba(0,0,0,0.15); 
-            padding: 10px; 
-            border-radius: var(--radius-md); 
-            border: 1px dashed var(--border-subtle); 
-            margin-bottom: 4px; 
-        }
+        .header-bar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+        h1 { color: #1e293b; margin: 0; font-size: 24px; }
+        #saveStatus { font-size: 13px; color: #64748b; background: #e2e8f0; padding: 6px 12px; border-radius: 20px; transition: 0.3s; font-weight: bold;}
         
-        label { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        /* 分頁系統 (Tabs) */
+        .tabs-header { display: flex; align-items: flex-end; border-bottom: 2px solid #cbd5e1; margin-bottom: 20px; gap: 2px; }
+        .tabs-list { display: flex; gap: 4px; overflow-x: auto; flex-wrap: nowrap; margin-bottom: -2px; }
+        .tab-btn { display: flex; align-items: center; justify-content: center; padding: 10px 22px; background: #f8fafc; border: 2px solid transparent; border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 15px; font-weight: bold; color: #64748b; transition: 0.2s; }
+        .tab-btn:hover:not(.active) { background: #e2e8f0; color: #334155; }
+        .tab-btn.active { background: white; color: #2563eb; border: 2px solid #cbd5e1; border-bottom: 2px solid white; cursor: default; }
         
-        input[type="text"], input[type="number"], select, textarea { 
-            background: var(--bg-input); 
-            border: 1px solid var(--border-subtle); 
-            color: var(--text-primary); 
-            padding: 8px 12px; 
-            border-radius: var(--radius-sm); 
-            width: 100%; 
-            font-size: 13px; 
-            transition: 0.2s; 
-        }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { 
-            border-color: var(--accent-cyan); 
-            box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15); 
-        }
-        textarea { resize: vertical; min-height: 60px; font-family: "Consolas", monospace; line-height: 1.4; color: var(--text-primary); }
-
-        /* 滑桿樣式 */
-        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 6px;}
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--accent-cyan); cursor: pointer; margin-top: -4px;}
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: var(--border-subtle); border-radius: 3px; }
-
-        /* --- 按鈕系統 --- */
-        button { 
-            padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; color: white; 
-            border: none; border-radius: var(--radius-sm); width: 100%; transition: all 0.2s; 
-            display: flex; justify-content: center; align-items: center; gap: 6px;
-        }
-        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        button:active { transform: translateY(0); filter: brightness(0.9); }
+        .editable-tab-name { outline: none; border-bottom: 1px dashed #93c5fd; padding: 0 4px; min-width: 20px; transition: 0.2s; }
+        .editable-tab-name:focus { border-bottom: 2px solid #3b82f6; background: #eff6ff; color: #1d4ed8; border-radius: 4px 4px 0 0;}
         
-        .btn-row { display: flex; gap: 8px; }
-        .btn-save { background-color: var(--btn-teal); }
-        .btn-cloud-mgr { background-color: var(--btn-blue); }
-        .btn-backup { background-color: var(--btn-gray); }
-        .btn-restore { background-color: var(--btn-orange); }
-        .btn-add { background-color: #2E7D32; }
-        .btn-unit-save { background-color: #7B1FA2; width: auto; padding: 6px 12px; }
-        .btn-unit-add { background-color: #5E35B1; width: auto; padding: 6px 12px; }
-        .btn-img { background-color: var(--btn-blue); }
-        .btn-ppt { background-color: var(--btn-orange); }
+        .add-tab-btn { padding: 10px 15px; background: transparent; border: none; cursor: pointer; color: #8b5cf6; font-weight: bold; font-size: 14px; margin-left: 5px; }
+        .add-tab-btn:hover { color: #7c3aed; background: #f3e8ff; border-radius: 6px 6px 0 0; }
+        .del-jig-btn { margin-left: auto; margin-bottom: 8px; background: transparent; color: #ef4444; border: 1px solid #fca5a5; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: 0.2s;}
+        .del-jig-btn:hover { background: #fee2e2; }
 
-        /* --- 層次列表 --- */
-        #layer-list { display: flex; flex-direction: column; gap: 8px; }
-        .layer-item { background: #1C1E22; border-radius: var(--radius-md); padding: 8px; border-left: 4px solid #666; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
-        .layer-item:hover { background: #23262B; }
-        .layer-item.dragging { opacity: 0.4; border: 2px dashed var(--accent-cyan); background: #111; }
-        .layer-main-row { display: flex; align-items: center; gap: 6px; }
-        .layer-inputs { flex-grow: 1; display: grid; grid-template-columns: 1fr 0.6fr; gap: 6px; }
+        .main-content { background: white; padding: 25px; border-radius: 0 0 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; border-top: none; }
+
+        details.accordion-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 15px; margin-bottom: 15px; transition: 0.2s; }
+        details.accordion-panel[open] { box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-color: #cbd5e1; }
+        details.accordion-panel summary { font-weight: bold; cursor: pointer; outline: none; user-select: none; color: #3b82f6; display: flex; align-items: center;}
+        details.accordion-panel summary:hover { color: #2563eb; }
+        details.accordion-panel summary::marker, details summary::-webkit-details-marker { display: none; } 
+        details.settings-panel summary { color: #475569; }
+        details.settings-panel summary:hover { color: #1e293b; }
+
+        .panel-title { font-weight: bold; color: #334155; margin-bottom: 12px; display: block; font-size: 14px; }
         
-        .layer-details { 
-            display: none; 
-            margin-top: 8px; 
-            padding-top: 8px; 
-            border-top: 1px dashed var(--border-subtle); 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 6px; 
-            align-items: end; 
-            background: rgba(0,0,0,0.2); 
-            padding: 10px; 
-            border-radius: var(--radius-sm);
-        }
-        .layer-item.open .layer-details { display: grid; }
+        .flex-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .flex-column { display: flex; flex-direction: column; gap: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 12px; color: #64748b; font-weight: bold; }
+        input[type="number"], input[type="text"], select, textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; box-sizing: border-box; transition: 0.2s;}
+        input:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
+        textarea { width: 100%; resize: vertical; font-family: monospace; font-size: 13px; }
+        input[type="color"] { border: 1px solid #cbd5e1; padding: 0; cursor: pointer; height: 32px; width: 40px; border-radius: 4px;}
         
-        .btn-toggle-details { cursor: pointer; color: var(--text-secondary); font-size: 14px; padding: 4px; border-radius: var(--radius-sm); background: var(--bg-card); text-align: center; width: 28px; display:flex; justify-content:center; align-items:center; border: 1px solid var(--border-subtle);}
-        .btn-toggle-details.active { background: var(--btn-blue); color: white; border-color: transparent;}
-        .btn-icon { cursor: pointer; color: var(--text-secondary); font-size: 16px; padding: 4px; display:flex; justify-content:center; align-items:center; width:28px;}
-        .btn-icon:hover { color: #ff5252; background: rgba(255,82,82,0.1); border-radius: var(--radius-sm);}
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .visuals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+        .vis-row { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .vis-row label { font-size: 12px; color: #475569; font-weight: bold; flex: 1; margin:0; line-height:1.2;}
+        .vis-row select { width: 85px; padding: 4px; font-size: 12px; }
+
+        button.action-btn { padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
+        button.action-btn:hover { background: #2563eb; }
+        button.btn-danger { background: #ef4444; }
+        button.btn-danger:hover { background: #dc2626; }
+        button.btn-success { background: #10b981; }
+        button.btn-success:hover { background: #059669; }
+        button.btn-outline { background: white; color: #475569; border: 1px solid #cbd5e1; }
+        button.btn-outline:hover { background: #f8fafc; color: #1e293b; }
+
+        /* 圖表開關面板 */
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .checkbox-group label { cursor: pointer; font-size: 13px; color: #475569; display: flex; align-items: center; gap: 5px; font-weight: bold;}
+
+        #chartWrapper { height: 480px; margin-bottom: 30px; position: relative; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 10px; }
         
-        input[type="color"] { border: 1px solid var(--border-subtle); width: 28px; height: 28px; cursor: pointer; background: none; padding: 0; border-radius: 4px; }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+        .popup-panel { position: absolute; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 2px solid #3b82f6; background: white; padding: 15px; border-radius: 8px; width: 250px; }
+        .radio-group { display: flex; gap: 15px; align-items: center; background: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;}
+        .radio-group label { cursor: pointer; font-size: 13px; font-weight: bold; color: #475569; display: flex; align-items: center; gap: 4px; margin: 0;}
+
+        /* 數據表格 */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 12px; border-radius: 6px; overflow: hidden; border-style: hidden; box-shadow: 0 0 0 1px #e2e8f0; white-space: nowrap; }
+        th, td { border: 1px solid #e2e8f0; padding: 8px 4px; text-align: center; }
+        th { background: #f8fafc; color: #475569; font-weight: bold; }
         
-        .layer-check { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-cyan); }
-        .btn-tiny { padding: 0; font-size: 10px; height: 14px; width: 20px; line-height: 12px; background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 3px; cursor: pointer; }
-        .btn-tiny:hover { background: #444; color: white; }
-        .dim-item { background: #1C1E22; border: 1px solid var(--border-subtle); padding: 6px 10px; margin-bottom: 4px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-primary); }
-
-        .photo-item { background: #1C1E22; border: 1px solid var(--border-subtle); padding: 8px; margin-top: 5px; border-radius: var(--radius-md); display: flex; gap: 10px; align-items: center; }
-        .photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid #000; flex-shrink: 0; }
-        .photo-info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-
-        .home-btn { position: absolute; top: 15px; left: 15px; text-decoration: none; background: rgba(37, 40, 48, 0.8); backdrop-filter: blur(5px); padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 13px; border: 1px solid var(--border-subtle); z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.2s;}
-        .home-btn:hover { background: var(--bg-card); border-color: var(--accent-cyan); }
-        canvas { box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; max-width: 100%; border-radius: 4px;}
-
-        /* --- ☁️ 雲端管理 / 預覽 Modal (精緻化) --- */
-        .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85); backdrop-filter: blur(3px); z-index:2000; display:none;}
-        .modal { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: var(--bg-panel); border: 1px solid #333; border-radius: var(--radius-lg); 
-            padding: 20px; z-index: 2001; display: none; width: 950px; max-width: 95%; height: 85vh; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-direction: column; 
-        }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; padding-bottom: 15px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 10px;}
-        .modal-body { display: flex; flex: 1; gap: 20px; overflow: hidden;}
-        .modal-left { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-right: 5px; }
-        .modal-right { width: 340px; display: flex; flex-direction: column; align-items: center; padding: 15px; background: #121317; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-shrink: 0; overflow-y:auto; }
-
-        /* 分頁系統樣式 (Tabs) */
-        .tabs-header { display: flex; overflow-x: auto; overflow-y: hidden; border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px; scrollbar-width: none; }
-        .tabs-header::-webkit-scrollbar { display: none; }
-        .tab { padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary); border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px; border: 1px solid transparent; border-bottom: none; transition: 0.2s; display: flex; align-items: center; gap: 6px; user-select: none; position: relative; }
-        .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tab.active { color: var(--accent-cyan); font-weight: bold; background: rgba(0, 229, 255, 0.05); }
-        .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); }
+        .time-col { font-size: 11px; color: #94a3b8; }
         
-        .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; padding-right: 5px;}
-        .cloud-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 12px 15px; margin-bottom: 8px; border-radius: var(--radius-md); border-left: 4px solid transparent; cursor: grab; transition: 0.2s; border: 1px solid var(--border-subtle); }
-        .cloud-item:hover { background: #2D3039; transform: translateX(2px); border-color: #444;}
-        .cloud-item.selected { border-left-color: var(--accent-cyan); background: #202E3A; border-color: #2A4356;}
+        /* 區分 Office 與 NCKU 顏色底色 */
+        .office-col { background: #ffffff; }
+        .ncku-col { background: #faf5ff; } 
+        tr:nth-child(even) .office-col { background: #fcfcfd; }
+        tr:nth-child(even) .ncku-col { background: #f3e8ff; }
         
-        .cloud-info { flex: 1; margin-left: 12px;}
-        .cloud-name { font-weight: bold; font-size: 15px; color: #fff; margin-bottom: 3px;}
-        .cloud-meta { font-size: 12px; color: var(--text-secondary); display:flex; justify-content: space-between; align-items:center;}
-        .cloud-note { font-size: 13px; color: var(--text-note); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; font-family: "Consolas", monospace;}
-        .batch-check { width: 18px; height: 18px; accent-color: var(--btn-blue); cursor: pointer; }
+        .th-office { background: #f0f9ff !important; border-bottom: 2px solid #3b82f6 !important; }
+        .th-ncku { background: #fdf4ff !important; border-bottom: 2px solid #d946ef !important; }
 
-        /* 🔥 畫布浮動編輯框 */
-        #layerPopup {
-            display: none; position: absolute; background: rgba(30, 32, 38, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-md); 
-            z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 220px;
-        }
-        #layerPopup input { margin-bottom: 8px; height: 34px; font-size: 14px;}
-        #layerPopup button { width: auto; height: 32px; padding: 0 12px; margin: 0; font-size: 13px;}
-
-        /* Loading */
-        #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
-        .spinner { border: 4px solid #333; border-top: 4px solid var(--accent-cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        td.editable-col { cursor: pointer; background: #fefce8; border: 1px dashed #fde047; transition: 0.2s;}
+        td.editable-col:hover, td.editable-col:focus { outline: 2px solid #facc15; background: #fef08a;}
+        
+        /* 被剔除數值的樣式 */
+        .excluded-val { text-decoration: line-through; color: #ef4444 !important; font-weight: bold !important; background: #fee2e2; border-radius: 4px; padding: 2px 4px; display: inline-block;}
+        
+        .group-filter-label { background: white; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 20px; transition: 0.2s;}
+        .group-filter-label:hover { background: #f1f5f9; border-color: #94a3b8; }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text" style="font-size: 16px; font-weight:600; letter-spacing:1px;">PROCESSING...</div>
+<div class="container">
+    <div class="header-bar">
+        <h1>Neil's Toolbox <span style="font-size:16px; font-weight:normal; color:#64748b;">| 雙設備製程監控</span></h1>
+        <span id="saveStatus">☁️ 連線至雲端中...</span>
     </div>
 
-    <div id="layerPopup">
-        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">編輯層次 (Edit Layer)</div>
-        <div style="display:flex; gap:6px; margin-bottom:8px;">
-            <input type="text" id="popName" oninput="window.updateLayer(window.currentPopIndex, 'name', this.value)" placeholder="名稱" style="flex:1;">
-            <input type="number" id="popThick" style="width:75px;" oninput="window.updateLayer(window.currentPopIndex, 'thickness', this.value)" placeholder="厚度">
-        </div>
-        <div style="display:flex; gap:6px;">
-            <button onclick="window.movePopLayer(-1)" style="flex:1; background:#374151; color:#fff;">▲</button>
-            <button onclick="window.movePopLayer(1)" style="flex:1; background:#374151; color:#fff;">▼</button>
-            <button onclick="document.getElementById('layerPopup').style.display='none'" style="flex:1; background:var(--btn-red);">✕</button>
-        </div>
+    <div class="tabs-header">
+        <div id="jigTabs" class="tabs-list"></div>
+        <button onclick="deleteCurrentJig()" class="del-jig-btn" title="刪除當前專案">🗑️ 刪除專案</button>
     </div>
 
-    <div class="modal-backdrop" id="mgrBackdrop" onclick="window.closeCloudManager()"></div>
-    <div class="modal" id="mgrModal">
-        <div class="modal-header">
-            <h3 style="margin:0; border:none; color:var(--accent-cyan); font-size: 1.3rem;">☁️ 雲端專案總管</h3>
-            <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:transparent; border:1px solid #555; color:#ccc;">關閉 ✕</button>
-        </div>
-        
-        <div style="margin-bottom: 15px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
-             <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 200px; height: 38px;">
-             <button onclick="window.createNewFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); height: 38px;">📁 新增分頁</button>
-             <button onclick="window.deleteCurrentFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--btn-red); color:var(--btn-red); height: 38px;">🗑️ 刪除分頁</button>
-             <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
-             <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
+    <div class="main-content">
+        <details class="accordion-panel settings-panel">
+            <summary>⚙️ 製程參數與圖表視覺設定 <span style="font-size: 12px; font-weight: normal; margin-left: 8px; color: #94a3b8;">(綁定當前專案)</span></summary>
+            <div class="flex-column" style="margin-top: 15px;">
+                <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">📋 製程規格</span>
+                <div class="specs-grid">
+                    <div class="input-group"><label>目標角度 (Target)</label><input type="number" id="specTarget" step="0.01" onchange="saveSpecsAndUpdate()"></div>
+                    <div class="input-group"><label>USL (控制上限)</label><input type="number" id="specUSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
+                    <div class="input-group"><label>LSL (控制下限)</label><input type="number" id="specLSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
+                </div>
+                
+                <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">🎨 圖表視覺自訂</span>
+                <div id="visualSettingsList" class="visuals-grid"></div>
+            </div>
+        </details>
+
+        <details class="accordion-panel" style="border-color:#bfdbfe;" open>
+            <summary style="color:#2563eb;">📋 批次貼上匯入 (支援 Office / NCKU 雙數據)</summary>
+            <div class="flex-column" style="margin-top: 10px;">
+                <label style="font-size: 12px; color: #64748b; line-height:1.5;">
+                    直接從 Excel 框選多行並貼上。<br>
+                    系統將自動過濾空白與非數值欄位，智慧抓取：<b>名稱</b>、<b>Office(L/R)</b>、<b>NCKU(L/R)</b>、<b>時間</b> 與 <b>群組</b>。<br>
+                    <span style="color:#ef4444;">*若該列只有名稱與時間，也會自動建檔留空。</span>
+                </label>
+                <textarea id="pasteArea" rows="4" placeholder="在此貼上資料..."></textarea>
+                <div>
+                    <button class="action-btn" onclick="parsePastedData()">🚀 智慧解析並匯入</button>
+                </div>
+            </div>
+        </details>
+
+        <div style="margin-bottom: 15px; margin-top: 20px;">
+            <span class="panel-title">📝 單筆手動新增</span>
+            <div class="flex-row" style="align-items: flex-end;">
+                <div class="input-group"><label>時間</label><input type="text" id="sampleTime" style="width:130px;"></div>
+                <div class="input-group"><label>Sample</label><input type="text" id="sampleName" style="width:70px;"></div>
+                <div class="input-group"><label style="color:#8b5cf6;">群組/治具</label><input type="text" id="sampleGroup" style="width:80px;"></div>
+                
+                <div style="width:1px; height:35px; background:#cbd5e1; margin:0 5px;"></div>
+                
+                <div class="input-group"><label style="color:#3b82f6;">Office L</label><input type="number" id="angleL" step="0.01" style="width:70px;"></div>
+                <div class="input-group"><label style="color:#f59e0b;">Office R</label><input type="number" id="angleR" step="0.01" style="width:70px;"></div>
+                
+                <div style="width:1px; height:35px; background:#cbd5e1; margin:0 5px;"></div>
+                
+                <div class="input-group"><label style="color:#6366f1;">NCKU L</label><input type="number" id="angleL2" step="0.01" style="width:70px;"></div>
+                <div class="input-group"><label style="color:#f43f5e;">NCKU R</label><input type="number" id="angleR2" step="0.01" style="width:70px;"></div>
+
+                <button class="action-btn" onclick="addData()">➕ 新增</button>
+                <button class="action-btn btn-outline" style="margin-left:auto;" onclick="downloadChart()">📥 下載圖表</button>
+                <button class="action-btn btn-outline" style="color:#ef4444;" onclick="clearData()">🗑️ 清空此專案數據</button>
+            </div>
         </div>
 
-        <div class="modal-body">
-            <div class="modal-left">
-                <div id="cloudTabsEl" class="tabs-header"></div>
-                <ul id="cloudListEl" class="cloud-list"></ul>
-            </div>
+        <div class="checkbox-group" id="displayToggles">
+            <strong style="margin-right:5px;">👁️ 原始量測：</strong>
+            <label style="color:#3b82f6;"><input type="checkbox" id="toggleOffice" checked onchange="updateChartVisibility()"> Office</label>
+            <label style="color:#6366f1;"><input type="checkbox" id="toggleNCKU" checked onchange="updateChartVisibility()"> NCKU</label>
             
-            <div class="modal-right">
-                <h4 style="color:#fff; margin:0 0 10px 0; align-self:flex-start;">視覺預覽</h4>
-                <canvas id="previewCanvas" style="max-width: 100%; max-height: 250px; border: 1px solid #000; background: white; margin-bottom: 15px; border-radius: 4px;"></canvas>
-                
-                <div id="preview-category-box" style="width:100%; display:none; margin-top:10px; padding:12px; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
-                    <label style="color:var(--text-secondary); margin-bottom:6px;">📁 將此專案移動至：</label>
-                    <div style="display:flex; gap:6px;">
-                        <select id="preview-category-select" style="flex:1; height:34px;"></select>
-                        <button onclick="window.changeCategoryFromPreview()" style="width:auto; margin:0; padding:0 12px; background:var(--btn-teal); height:34px;">套用</button>
-                    </div>
+            <div style="width:1px; height:20px; background:#cbd5e1; margin:0 5px;"></div>
+            
+            <strong style="margin-right:5px;">🔗 單點均值連線：</strong>
+            <label style="color:#0ea5e9;"><input type="checkbox" id="toggleSampleAvgOff" checked onchange="updateChartVisibility()"> Off均值線</label>
+            <label style="color:#8b5cf6;"><input type="checkbox" id="toggleSampleAvgNcku" checked onchange="updateChartVisibility()"> NK均值線</label>
+            <label><input type="checkbox" id="toggleLRLine" checked onchange="myChart.update()"> L-R連線</label>
+            
+            <div style="width:1px; height:20px; background:#cbd5e1; margin:0 5px;"></div>
+            
+            <details style="background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px;">
+                <summary style="cursor: pointer; font-size: 13px; font-weight: bold; color: #475569; outline: none; list-style: none;">
+                    📈 累積均線 (點擊展開)
+                </summary>
+                <div style="display: flex; gap: 10px; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                    <label><input type="checkbox" id="toggleCumAvgOff" onchange="updateChartVisibility()"> Office累積</label>
+                    <label><input type="checkbox" id="toggleCumAvgNcku" onchange="updateChartVisibility()"> NCKU累積</label>
                 </div>
+            </details>
+            
+            <div style="width:1px; height:20px; background:#cbd5e1; margin:0 5px;"></div>
+            <strong style="margin-right:5px;">💬 標註：</strong>
+            <label><input type="checkbox" id="toggleAnnotations" checked onchange="myChart.update()"> 顯示 OK/NG/Δ</label>
+            
+            <div style="width:100%; height:1px; background:#e2e8f0; margin:5px 0;"></div>
+            <div id="groupFilters" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;"></div>
+        </div>
 
-                <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:13px; padding:10px 0; margin-top:5px; line-height:1.6;">
-                    <div style="text-align:center; color:#666; margin-top:30px;">請從左側選擇專案以檢視詳細資訊</div>
-                </div>
-                
-                <div style="display:flex; gap:8px; width:100%; margin-top: auto; padding-top:15px; border-top:1px solid #333;">
-                    <button id="btn-load-preview" style="background:var(--btn-blue); display:none; flex:2; height:40px;" onclick="window.loadSelectedToWorkspace()">📂 載入至工作區</button>
-                    <button id="btn-del-preview" style="background:var(--btn-red); display:none; flex:1; height:40px;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
-                </div>
+        <div id="chartWrapper"><canvas id="qcChart"></canvas></div>
+
+        <details class="accordion-panel" style="background: #fefce8; border-color: #fde047; padding: 8px 12px; margin-bottom: 10px;">
+            <summary style="color: #ca8a04; font-size: 13px;">💡 表格操作與名詞說明 (點擊展開)</summary>
+            <div style="font-size: 12px; color: #854d0e; margin-top: 8px; line-height: 1.6;">
+                <b>【操作指南】</b><br>
+                • <b>手動修改數值</b>：針對量測角度「點擊滑鼠左鍵」即可直接輸入更改，系統會即時更新圖表與均值。<br>
+                • <b>排除異常數值</b>：在量測角度上點擊「<b>滑鼠右鍵</b>」，即可排除該數值（顯示紅色刪除線）。排除後將不計入平均值與圖表。再次右鍵即可恢復。<br><br>
+                <b>【名詞定義】</b><br>
+                • <b>O_Δ / NK_Δ (差值)</b>：單筆測量中，右側與左側的角度絕對差距 ( |R - L| )。<br>
+                • <b>Off均L / Off均R / NK均L / NK均R</b>：歷史累積平均值。將歷史至當前的「有效測量角度」加總求平均，觀察長期趨勢。<br>
+                • <b>T-Off_L / T-Off_R (目標差距)</b>：目標角度減去實際量測角度 ( Target - Measured )。
             </div>
+        </details>
+
+        <div class="table-wrapper">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th style="width:7%;" rowspan="2">Sample</th>
+                        <th style="width:7%;" rowspan="2">群組(治具)</th>
+                        <th style="width:8%;" rowspan="2">時間</th>
+                        
+                        <th colspan="8" class="th-office">Office 測量數據</th>
+                        
+                        <th colspan="8" class="th-ncku">NCKU 測量數據</th>
+                        
+                        <th style="width:3%;" rowspan="2">🗑️</th>
+                    </tr>
+                    <tr>
+                        <th class="th-office" style="color:#3b82f6;">Off_L</th>
+                        <th class="th-office" style="color:#f59e0b;">Off_R</th>
+                        <th class="th-office">O_Δ</th>
+                        <th class="th-office">Off均L</th>
+                        <th class="th-office">Off均R</th>
+                        <th class="th-office" style="color:#0369a1;">T-Off_L</th>
+                        <th class="th-office" style="color:#0369a1;">T-Off_R</th>
+                        <th class="th-office">O_結</th>
+                        
+                        <th class="th-ncku" style="color:#6366f1;">NK_L</th>
+                        <th class="th-ncku" style="color:#f43f5e;">NK_R</th>
+                        <th class="th-ncku">NK_Δ</th>
+                        <th class="th-ncku">NK均L</th>
+                        <th class="th-ncku">NK均R</th>
+                        <th class="th-ncku" style="color:#5b21b6;">T-NK_L</th>
+                        <th class="th-ncku" style="color:#5b21b6;">T-NK_R</th>
+                        <th class="th-ncku">NK_結</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr style="background: #e2e8f0; font-weight: bold; border-top: 2px solid #94a3b8;">
+                        <td colspan="3" style="text-align: right; padding-right: 10px; color: #1e293b;">📊 總體有效平均：</td>
+                        <td id="avgOffL" style="color:#3b82f6;">-</td>
+                        <td id="avgOffR" style="color:#f59e0b;">-</td>
+                        <td id="avgOffDelta">-</td>
+                        <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(歷史累積專用)</td>
+                        <td id="avgTOffL" style="color:#0369a1; background:#f0f9ff;">-</td>
+                        <td id="avgTOffR" style="color:#0369a1; background:#f0f9ff;">-</td>
+                        <td>-</td>
+                        
+                        <td id="avgNkL" class="ncku-col" style="color:#6366f1;">-</td>
+                        <td id="avgNkR" class="ncku-col" style="color:#f43f5e;">-</td>
+                        <td id="avgNkDelta" class="ncku-col">-</td>
+                        <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(歷史累積專用)</td>
+                        <td id="avgTNkL" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
+                        <td id="avgTNkR" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
+                        <td class="ncku-col">-</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
+</div>
 
-    <a href="index.html" class="home-btn">🏠 Home</a>
-
-    <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro Ultimate)</span></h2>
-
-        <div class="control-group">
-            <h3>☁️ 專案存取 (Project)</h3>
-            <input type="text" id="projName" placeholder="輸入專案名稱 / 料號...">
-            <textarea id="projNote" placeholder="在此輸入備註 (Edge cutting, Blade, RPM 等參數)..." oninput="window.autoResizeTextarea(this)"></textarea>
-            
-            <div class="btn-row">
-                <button class="btn-save" onclick="window.saveToCloud()">💾 儲存專案</button>
-                <button class="btn-cloud-mgr" onclick="window.openCloudManager()">☁️ 雲端總管</button>
-            </div>
-            
-            <div class="sub-group" style="display:flex; justify-content:space-between; align-items:center; background:transparent; border:none; padding:5px 0 0 0; margin-bottom:0;">
-                <label style="margin:0;"><span style="font-size:14px;">📦</span> 本地備份/還原</label>
-                <div class="btn-row" style="flex:1; justify-content:flex-end;">
-                    <button class="btn-backup" style="width:auto; padding:4px 10px; font-size:12px;" onclick="window.backupAllCloudData()">⬇️ 備份</button>
-                    <button class="btn-restore" style="width:auto; padding:4px 10px; font-size:12px;" onclick="document.getElementById('restoreInput').click()">⬆️ 還原</button>
-                    <input type="file" id="restoreInput" accept=".json" onchange="window.restoreAllCloudData(this)" style="display:none">
-                </div>
-            </div>
+<div id="clickInputPopup" class="popup-panel" style="display:none;">
+    <span class="panel-title" style="color:#2563eb; margin-bottom:10px;">📍 擷取數值新增 (Office)</span>
+    <div class="flex-column">
+        <input type="number" id="popupCursorVal" readonly style="color:#dc2626; font-weight:bold; background:#fef2f2; width:100%; border:none; padding:8px; border-radius:4px;">
+        <div class="radio-group">
+            <label><input type="radio" name="cursorSide" value="L" checked> 代入 Off_L</label>
+            <label><input type="radio" name="cursorSide" value="R"> 代入 Off_R</label>
         </div>
-
-        <div class="control-group">
-            <h3>👁️ 視角與比對 (View & Compare)</h3>
-            <div class="btn-row">
-                <button onclick="window.toggle3D()" style="background:#5E35B1;" id="btn3D">🧊 開啟 3D 視角</button>
-                <button onclick="window.setCompareBaseline()" style="background:#0277BD;">📌 設為比對基準</button>
-            </div>
-            <button id="btnClearCompare" onclick="window.clearCompareBaseline()" style="background:var(--btn-red); margin-top:5px; display:none;">❌ 取消比對模式</button>
-            
-            <div style="display:flex; gap:8px; margin-top:8px;">
-                <div style="flex:0.5;"><label>單位</label><input type="text" id="unitInput" value="um" oninput="window.draw()"></div>
-                <div style="flex:1;"><label>疊構寬度</label><input type="number" id="canvasWidth" value="250" oninput="window.resizeCanvas()"></div>
-                <div style="flex:0.5;"><label>字體大小</label><input type="number" id="globalFontSize" value="14" oninput="window.draw()"></div>
-            </div>
-
-            <button onclick="document.getElementById('effectsPanel').style.display = document.getElementById('effectsPanel').style.display === 'none' ? 'block' : 'none'" style="background: #333842; margin-top: 8px; border: 1px solid var(--border-subtle);">✨ 展開光影與特效設定</button>
-            
-            <div id="effectsPanel" style="display:none; margin-top: 8px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px dashed var(--accent-cyan);">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkGlossy" checked onchange="window.toggleGlossy(this)" style="accent-color:var(--accent-cyan);"> 啟用金屬高光</label>
-                    <label style="margin:0; cursor:pointer;"><input type="checkbox" id="chkHideSub" onchange="window.toggleHideSub(this)" style="accent-color:#D93D42;"> 隱藏絕緣基板</label>
-                </div>
-                <div style="display:flex; gap:12px;">
-                    <div style="flex:1;">
-                        <label style="margin-bottom:6px;">高光強度 <span id="valHl" style="color:white; float:right;">40</span></label>
-                        <input type="range" id="hlIntensity" min="0" max="100" value="40" oninput="window.updateEffects()">
-                    </div>
-                    <div style="flex:1;">
-                        <label style="margin-bottom:6px;">陰影深度 <span id="valSh" style="color:white; float:right;">30</span></label>
-                        <input type="range" id="shIntensity" min="0" max="100" value="30" oninput="window.updateEffects()">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <h3>
-                <span>1. 層次結構 (Layers)</span>
-                <label style="margin:0; cursor:pointer;"><input type="checkbox" id="selectAllBox" checked onchange="window.toggleAllLayers(this)" style="accent-color:var(--accent-cyan);"> 全選</label>
-            </h3>
-
-            <div class="sub-group">
-                <label>🧩 模組單元 (Unit Preset)</label>
-                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
-                    <input type="text" id="unitName" placeholder="自訂模組名稱..." style="flex:1">
-                    <button class="btn-unit-save" onclick="window.saveUnitToCloud()">儲存為模組</button>
-                </div>
-                <div style="display:flex; gap:6px;">
-                    <select id="savedUnits" style="flex:1"><option value="">-- 選擇已存模組 --</option></select>
-                    <button class="btn-unit-add" onclick="window.insertUnit()">➕ 插入</button>
-                    <button class="btn-tiny" onclick="window.deleteUnitFromCloud()" style="background:var(--btn-red); color:white; width:32px; height:32px; font-size:14px; border:none;">🗑️</button>
-                </div>
-            </div>
-
-            <button class="btn-add" onclick="window.addLayer()" style="margin: 5px 0 10px 0;">➕ 新增頂部層次 (Top Layer)</button>
-            <div id="layer-list"></div>
-        </div>
-
-        <div class="control-group">
-            <h3>2. 尺寸標註 (Dimension Lines)</h3>
-            <div style="display:flex; gap:6px; align-items:center;">
-                <select id="dimStart"></select> <span style="color:#666;">至</span> <select id="dimEnd"></select>
-            </div>
-            <div style="display:flex; gap:6px; margin-top:6px;">
-                <input type="text" id="dimLabel" placeholder="自訂文字(選填)">
-                <input type="number" id="dimOffset" value="50" placeholder="偏移量" style="width:70px;">
-                <button onclick="window.addDimension()" style="margin:0; width:44px; background:#4B5563;">➕</button>
-            </div>
-            <div id="dim-list" style="margin-top:8px;"></div>
-        </div>
-
-        <div class="control-group">
-            <h3>3. 附圖與說明 (SEM Photos)</h3>
-            <input type="file" id="photoInput" accept="image/*" style="margin-bottom:6px; background:transparent; padding:0; border:none; color:var(--text-secondary);">
-            <div style="display:flex; gap:6px;">
-                <input type="text" id="photoDesc" placeholder="輸入圖片說明..." style="flex:1;">
-                <button onclick="window.addPhoto()" style="background:#D97706; width:auto; padding:0 12px;">📷 加入</button>
-            </div>
-            <div id="photo-list" style="margin-top:8px;"></div>
-        </div>
-
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
-            <button class="btn-img" onclick="window.downloadImage()">💾 匯出 PNG 圖檔</button>
-            <button class="btn-ppt" onclick="window.downloadPPT()">📊 匯出 PPT 簡報</button>
-        </div>
+        <div class="input-group"><input type="number" id="popupOtherVal" placeholder="另一側角度(Office)..." style="width:100%;"></div>
+        <div class="input-group"><input type="text" id="popupName" placeholder="Sample 名稱" style="width:100%;"></div>
+        <div class="input-group"><input type="text" id="popupGroup" placeholder="群組/治具" style="width:100%;"></div>
+        <div class="input-group"><input type="text" id="popupTime" style="width:100%; font-size:11px; color:#64748b;"></div>
+        
+        <button class="action-btn" onclick="submitPopupData()" style="width:100%;">💾 確認新增</button>
+        <button class="action-btn btn-outline" onclick="closePopup()" style="width:100%;">取消</button>
     </div>
+</div>
 
-    <div id="resizer"></div>
-    <div id="main-area"><canvas id="stackCanvas"></canvas></div>
+<script>
+    // --- Firebase 初始化 ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
+        authDomain: "stack-diagram-db.firebaseapp.com",
+        projectId: "stack-diagram-db",
+        storageBucket: "stack-diagram-db.firebasestorage.app",
+        messagingSenderId: "67240747982",
+        appId: "1:67240747982:web:1fb065e40e936a7485419f",
+        measurementId: "G-QJNE60W8BB"
+    };
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch, updateDoc } 
-               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const DB_COLLECTION = 'QC_Angle_Tracking';
+    const DB_DOC = 'Main_Projects_Data';
 
-        // --- Firebase 設定 ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
-            authDomain: "stack-diagram-db.firebaseapp.com",
-            projectId: "stack-diagram-db",
-            storageBucket: "stack-diagram-db.firebasestorage.app",
-            messagingSenderId: "67240747982",
-            appId: "1:67240747982:web:1fb065e40e936a7485419f"
-        };
+    // --- 預設配置 ---
+    const defaultVisuals = {
+        rawDataL: { color: "#3b82f6", shape: "circle" },
+        rawDataR: { color: "#f59e0b", shape: "rect" },
+        nckuDataL: { color: "#6366f1", shape: "triangle" }, 
+        nckuDataR: { color: "#f43f5e", shape: "cross" },
+        sampleAvgOff: { color: "#0ea5e9", shape: "circle" },   
+        sampleAvgNcku: { color: "#8b5cf6", shape: "triangle" },
+        cumAvgL: { color: "#8b5cf6", shape: "circle" },
+        cumAvgR: { color: "#ec4899", shape: "rect" },
+        nckuCumAvgL: { color: "#a855f7", shape: "triangle" }, 
+        nckuCumAvgR: { color: "#fb7185", shape: "cross" },    
+        toleranceBand: { color: "#10b981", shape: "none" }, 
+        uslLine: { color: "#ef4444", shape: "none" },       
+        lslLine: { color: "#ef4444", shape: "none" },
+        okText: { color: "#10b981", shape: "none" },
+        ngText: { color: "#ef4444", shape: "none" }
+    };
 
-        let db = null; 
-        let isFirebaseReady = false; 
-        const COL_PROJ = "projects"; 
-        const COL_UNITS = "units";
-        
-        let cloudProjectsCache = []; 
-        let currentPreviewId = null; 
-        let draggedCloudId = null; 
-        let draggedTabCat = null;
-        let customFolders = ["未分類"]; 
-        let activeCategory = "未分類";
+    const pointShapes = [
+        { name: "圓形", value: "circle" }, { name: "正方形", value: "rect" }, { name: "正方形(轉)", value: "rectRot" },
+        { name: "三角形", value: "triangle" }, { name: "十字", value: "cross" }, { name: "十字(轉)", value: "crossRot" },
+        { name: "星形", value: "star" }, { name: "水平線", value: "line" }, { name: "虛線", value: "dash" }
+    ];
 
-        window.compareLayers = null;
-        window.is3D = false;
-        let dimHitZones = []; 
-        let layerHitZones = [];
-        let dragDimIdx = -1;
-        let currentStackLeftX = 0;
-        window.currentPopIndex = -1;
+    const seriesMap = {
+        'Angle L (Office)': 'rawDataL', 'Angle R (Office)': 'rawDataR',
+        'Angle L (NCKU)': 'nckuDataL', 'Angle R (NCKU)': 'nckuDataR',
+        '單點均值連線 (Office)': 'sampleAvgOff', '單點均值連線 (NCKU)': 'sampleAvgNcku',
+        '累積均線 L (Office)': 'cumAvgL', '累積均線 R (Office)': 'cumAvgR',
+        '累積均線 L (NCKU)': 'nckuCumAvgL', '累積均線 R (NCKU)': 'nckuCumAvgR',
+        '公差帶背景 (OK)': 'toleranceBand', 'USL 線 (上限)': 'uslLine', 'LSL 線 (下限)': 'lslLine',
+        'OK 字樣顏色': 'okText', 'NG 字樣顏色': 'ngText'
+    };
 
-        // --- 🌟 特效狀態變數 ---
-        window.enableGlossy = true;
-        window.hideSubstrate = false;
-        window.hlInt = 40;
-        window.shInt = 30;
+    const defaultData = [
+        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50, l2: null, r2: null, group: "Jig 8", exL: false, exR: false, exL2: false, exR2: false },
+        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26, l2: 42.5, r2: 43.0, group: "Jig old", exL: false, exR: false, exL2: false, exR2: false }
+    ];
 
-        window.toggleGlossy = function(cb) { 
-            window.enableGlossy = cb.checked; 
-            window.draw(); 
-        };
+    let jigs = {}; 
+    let currentJigId = "專案 1";
+    let myChart = null;
+    let crosshairY = null; 
+    let chartEventsAttached = false; 
+    let hiddenGroups = new Set(); 
 
-        window.toggleHideSub = function(cb) { 
-            window.hideSubstrate = cb.checked; 
-            window.draw(); 
-        };
-
-        window.updateEffects = function() { 
-            window.hlInt = parseInt(document.getElementById('hlIntensity').value); 
-            window.shInt = parseInt(document.getElementById('shIntensity').value); 
-            document.getElementById('valHl').innerText = window.hlInt;
-            document.getElementById('valSh').innerText = window.shInt;
-            window.draw(); 
-        };
-
-        window.autoResizeTextarea = function(el) { 
-            el.style.height = 'auto'; 
-            el.style.height = (el.scrollHeight) + 'px'; 
-        };
-
-        if (!firebaseConfig.apiKey.includes("你的API_KEY")) { 
-            try { 
-                const app = initializeApp(firebaseConfig); 
-                db = getFirestore(app); 
-                isFirebaseReady = true; 
-            } catch(e) {
-                console.error("Firebase initialization error:", e);
-            } 
-        }
-
-        const canvas = document.getElementById('stackCanvas'); 
-        const ctx = canvas.getContext('2d'); 
-        const listEl = document.getElementById('layer-list');
-        
-        window.layers = []; 
-        window.dimensions = []; 
-        window.photos = []; 
-        let dragSrcEl = null;
-
-        // --- UI 改版：清單渲染 (包含獨立間距與線路樣式) ---
-        window.renderList = function() {
-            listEl.innerHTML = ''; 
-            window.updateDimSelects();
-            
-            const allChecked = window.layers.every(l => l.checked !== false);
-            if(document.getElementById('selectAllBox')) {
-                document.getElementById('selectAllBox').checked = allChecked;
-            }
-
-            window.layers.forEach((layer, index) => {
-                const item = document.createElement('div');
-                item.className = 'layer-item'; 
-                item.setAttribute('draggable', 'true'); 
-                item.setAttribute('data-index', index);
-                if(layer.showDetails) item.classList.add('open'); 
-                item.style.borderLeftColor = layer.color;
-                
-                const isChecked = layer.checked !== false ? 'checked' : '';
-                
-                // 確保讀取到 traceStyle，預設給 embed-bot
-                const currentStyle = layer.traceStyle || 'embed-bot';
-
-                item.innerHTML = `
-                    <div class="layer-main-row">
-                        <div style="cursor:grab; color:#555; display:flex; align-items:center; justify-content:center; padding:0 2px;">⣿</div>
-                        <input type="checkbox" class="layer-check" ${isChecked} onchange="window.toggleLayerCheck(${index})">
-                        <div class="layer-inputs">
-                            <input type="text" value="${layer.name}" oninput="window.updateLayer(${index}, 'name', this.value)" placeholder="名稱">
-                            <input type="number" value="${layer.thickness}" oninput="window.updateLayer(${index}, 'thickness', this.value)" placeholder="厚度">
-                        </div>
-                        <input type="color" value="${layer.color}" oninput="window.updateLayer(${index}, 'color', this.value)" title="改變層次顏色">
-                        <div class="btn-toggle-details ${layer.showDetails?'active':''}" onclick="window.toggleDetails(${index})" title="進階設定">⚙️</div>
-                        <div class="btn-icon btn-del" onclick="window.deleteLayer(${index})" title="刪除此層">✕</div>
-                    </div>
-                    <div class="layer-details">
-                        <div style="grid-column: span 3; margin-bottom: 2px; border-bottom: 1px solid #444; padding-bottom: 4px; color: var(--accent-cyan); font-weight: bold;">⚡ 結構與線路設定</div>
-                        
-                        <div><label style="color:#E67E22;">線路數量</label><input type="number" value="${layer.traces || 0}" min="0" oninput="window.updateLayer(${index}, 'traces', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
-                        <div><label style="color:#E67E22;">線路厚度</label><input type="number" value="${layer.traceHeight || 15}" oninput="window.updateLayer(${index}, 'traceHeight', this.value)" style="height:28px; padding:0 5px; border-color:#E67E22;"></div>
-                        <div><label style="color:#E67E22;">線路顏色</label><input type="color" value="${layer.traceColor||'#E67E22'}" oninput="window.updateLayer(${index}, 'traceColor', this.value)" style="width:100%; height:28px; border-color:#E67E22;"></div>
-                        
-                        <div>
-                            <label>線路樣式</label>
-                            <select onchange="window.updateLayer(${index}, 'traceStyle', this.value)" style="height:28px; padding:0 5px;">
-                                <option value="embed-bot" ${currentStyle==='embed-bot'?'selected':''}>鑲嵌 (底部)</option>
-                                <option value="embed-top" ${currentStyle==='embed-top'?'selected':''}>鑲嵌 (頂部)</option>
-                                <option value="exposed" ${currentStyle==='exposed'?'selected':''}>凸出 (表面)</option>
-                            </select>
-                        </div>
-                        <div><label style="color:var(--accent-cyan);">⇧ 展開間距 (Explode)</label><input type="number" value="${layer.spacing || 0}" min="0" oninput="window.updateLayer(${index}, 'spacing', this.value)" style="height:28px; padding:0 5px; border-color:var(--accent-cyan);"></div>
-                        <div><label>線路寬度(視覺)</label><input type="number" value="${layer.traceWidth || 10}" oninput="window.updateLayer(${index}, 'traceWidth', this.value)" style="height:28px; padding:0 5px;"></div>
-                        
-                        <div style="grid-column: span 3; margin-bottom: 2px; margin-top: 4px; border-bottom: 1px solid #444; padding-bottom: 4px; color: var(--text-secondary); font-weight: bold;">📝 文字設定</div>
-                        <div><label>字體大小</label><input type="number" value="${layer.fontSize || ''}" placeholder="預設" oninput="window.updateLayer(${index}, 'fontSize', this.value)" style="height:28px; padding:0 5px;"></div>
-                        <div><label>字體顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%; height:28px;"></div>
-                        <div><label>文字粗細</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="height:28px; padding:0 5px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
-                    </div>
-                `;
-                
-                // 拖拉排序功能設定
-                item.addEventListener('dragstart', function(e) { 
-                    this.style.opacity = '0.4'; 
-                    dragSrcEl = this; 
-                    e.dataTransfer.effectAllowed = 'move'; 
-                    this.classList.add('dragging'); 
-                });
-                
-                item.addEventListener('dragover', function(e) { 
-                    if(e.preventDefault) e.preventDefault(); 
-                    e.dataTransfer.dropEffect = 'move'; 
-                    return false; 
-                });
-                
-                item.addEventListener('drop', function(e) { 
-                    if(e.stopPropagation) e.stopPropagation();
-                    if(dragSrcEl !== this) {
-                        const oldIdx = parseInt(dragSrcEl.getAttribute('data-index'));
-                        const newIdx = parseInt(this.getAttribute('data-index'));
-                        const moved = window.layers.splice(oldIdx, 1)[0];
-                        window.layers.splice(newIdx, 0, moved);
-                        window.renderList(); 
-                        window.draw();
-                    } 
-                    return false;
-                });
-                
-                item.addEventListener('dragend', function() { 
-                    this.style.opacity = '1'; 
-                    this.classList.remove('dragging'); 
-                });
-                
-                listEl.appendChild(item);
-            });
-        };
-
-        // --- 核心操作邏輯 ---
-        window.moveLayer = function(i, d) { 
-            const n = i + d; 
-            if(n < 0 || n >= window.layers.length) return; 
-            const t = window.layers[i]; 
-            window.layers[i] = window.layers[n]; 
-            window.layers[n] = t; 
-            window.renderList(); 
-            window.draw(); 
-        };
-
-        window.toggleLayerCheck = function(i) { 
-            window.layers[i].checked = !window.layers[i].checked; 
-            window.renderList(); 
-            window.draw();
-        };
-
-        window.toggleAllLayers = function(cb) { 
-            window.layers.forEach(l => l.checked = cb.checked); 
-            window.renderList(); 
-            window.draw();
-        };
-
-        window.updateLayer = function(i, k, v) { 
-            if(k === 'thickness' || k === 'fontSize' || k === 'traces' || k === 'traceHeight' || k === 'traceWidth' || k === 'spacing') {
-                v = parseFloat(v) || 0; 
-            }
-            window.layers[i][k] = v; 
-            if(k === 'color' || k === 'traceStyle') {
-                window.renderList(); 
-            }
-            window.draw(); 
-        };
-
-        window.toggleDetails = function(i) { 
-            window.layers[i].showDetails = !window.layers[i].showDetails; 
-            window.renderList(); 
-        };
-
-        window.addLayer = function() { 
-            window.layers.unshift({ 
-                id: Date.now(), 
-                name: "New Layer", 
-                thickness: 20, 
-                color: "#cccccc", 
-                fontSize: 0, 
-                fontStyle: 'bold', 
-                checked: true, 
-                traces: 0, 
-                traceHeight: 15, 
-                traceWidth: 10, 
-                traceColor: '#E67E22', 
-                traceStyle: 'embed-bot',
-                spacing: 0 
-            }); 
-            window.renderList(); 
-            window.draw(); 
-        };
-
-        window.deleteLayer = function(i) { 
-            window.layers.splice(i, 1); 
-            window.renderList(); 
-            window.draw(); 
-        };
-        
-        // --- 尺寸線邏輯 ---
-        window.updateDimSelects = function() { 
-            const s1 = document.getElementById('dimStart');
-            const s2 = document.getElementById('dimEnd');
-            const v1 = s1.value;
-            const v2 = s2.value; 
-            
-            s1.innerHTML = ''; 
-            s2.innerHTML = ''; 
-            
-            window.layers.forEach((l, i) => { 
-                const o = `<option value="${i}">${i+1}. ${l.name}</option>`; 
-                s1.innerHTML += o; 
-                s2.innerHTML += o; 
-            }); 
-            
-            if(v1) s1.value = v1; 
-            if(v2) s2.value = v2; 
-            else if(window.layers.length > 0) s2.value = window.layers.length - 1; 
-        };
-
-        window.addDimension = function() { 
-            const s = parseInt(document.getElementById('dimStart').value);
-            const e = parseInt(document.getElementById('dimEnd').value); 
-            window.dimensions.push({ 
-                start: Math.min(s, e), 
-                end: Math.max(s, e), 
-                label: document.getElementById('dimLabel').value, 
-                offset: parseInt(document.getElementById('dimOffset').value) || 50 
-            }); 
-            renderDims(); 
-            window.draw(); 
-        };
-
-        function renderDims() { 
-            const dimListEl = document.getElementById('dim-list'); 
-            dimListEl.innerHTML = ''; 
-            window.dimensions.forEach((d, i) => { 
-                const n1 = window.layers[d.start]?.name;
-                const n2 = window.layers[d.end]?.name; 
-                dimListEl.innerHTML += `
-                    <div class="dim-item">
-                        <span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span>
-                        <span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span>
-                    </div>
-                `; 
-            }); 
-        }
-
-        window.deleteDim = function(i) { 
-            window.dimensions.splice(i, 1); 
-            renderDims(); 
-            window.draw(); 
-        };
-
-        // --- 附圖邏輯 ---
-        window.addPhoto = function() { 
-            const input = document.getElementById('photoInput'); 
-            const descInput = document.getElementById('photoDesc'); 
-            
-            if(input.files && input.files[0]) { 
-                const file = input.files[0]; 
-                const reader = new FileReader(); 
-                showLoading(true, "壓縮處理中..."); 
-                
-                reader.onload = function(e) { 
-                    const img = new Image(); 
-                    img.onload = function() { 
-                        const maxW = 600; 
-                        let w = img.width; 
-                        let h = img.height; 
-                        
-                        if (w > maxW) { 
-                            h = Math.round(h * (maxW / w)); 
-                            w = maxW; 
-                        } 
-                        
-                        const cvs = document.createElement('canvas'); 
-                        cvs.width = w; 
-                        cvs.height = h; 
-                        const ctx = cvs.getContext('2d'); 
-                        ctx.drawImage(img, 0, 0, w, h); 
-                        
-                        const compressedData = cvs.toDataURL('image/jpeg', 0.5); 
-                        
-                        window.photos.push({ 
-                            id: Date.now(), 
-                            data: compressedData, 
-                            desc: descInput.value || "圖說", 
-                            w: w, 
-                            h: h, 
-                            imgElement: null 
-                        }); 
-                        
-                        descInput.value = ''; 
-                        input.value = ''; 
-                        window.renderPhotoList(); 
-                        window.draw(); 
-                        showLoading(false); 
-                    }; 
-                    img.src = e.target.result; 
-                }; 
-                reader.readAsDataURL(file); 
-            } else { 
-                alert("請先選擇圖片"); 
-            } 
-        };
-
-        window.renderPhotoList = function() { 
-            const list = document.getElementById('photo-list'); 
-            list.innerHTML = ''; 
-            window.photos.forEach((p, i) => { 
-                const div = document.createElement('div'); 
-                div.className = 'photo-item'; 
-                div.innerHTML = `
-                    <img src="${p.data}" class="photo-thumb">
-                    <div class="photo-info">
-                        <input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;">
-                        <button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button>
-                    </div>
-                `; 
-                list.appendChild(div); 
-            }); 
-        };
-
-        window.updatePhotoDesc = function(i, v) { 
-            window.photos[i].desc = v; 
-            window.draw(); 
-        };
-
-        window.deletePhoto = function(i) { 
-            window.photos.splice(i, 1); 
-            window.renderPhotoList(); 
-            window.draw(); 
-        };
-
-        // --- 3D 模式與對比模式 ---
-        window.toggle3D = function() { 
-            window.is3D = !window.is3D; 
-            const btn = document.getElementById('btn3D'); 
-            btn.innerHTML = window.is3D ? "🧊 關閉 3D 視角" : "🧊 開啟 3D 視角"; 
-            btn.style.background = window.is3D ? "#3949AB" : "#5E35B1"; 
-            window.draw(); 
-        };
-
-        window.setCompareBaseline = function() { 
-            if(window.layers.length === 0) return alert("無疊構資料可作基準"); 
-            window.compareLayers = JSON.parse(JSON.stringify(window.layers)); 
-            document.getElementById('btnClearCompare').style.display = 'flex'; 
-            window.draw(); 
-        };
-
-        window.clearCompareBaseline = function() { 
-            window.compareLayers = null; 
-            document.getElementById('btnClearCompare').style.display = 'none'; 
-            window.draw(); 
-        };
-
-        // --- 畫布滑鼠事件 (拖曳與編輯) ---
-        canvas.addEventListener('mousedown', function(e) {
-            let rect = canvas.getBoundingClientRect(); 
-            let mx = e.clientX - rect.left;
-            let my = e.clientY - rect.top;
-            
-            let dHit = dimHitZones.find(z => Math.abs(mx - z.x) < 20 && my >= z.y1 && my <= z.y2);
-            if(dHit) { 
-                dragDimIdx = dHit.i; 
-                document.getElementById('layerPopup').style.display = 'none'; 
-                return; 
-            }
-            
-            let lHit = layerHitZones.find(z => mx >= z.x1 && mx <= z.x2 && my >= z.y1 && my <= z.y2);
-            if(lHit) {
-                window.currentPopIndex = lHit.i;
-                let pop = document.getElementById('layerPopup'); 
-                pop.style.display = 'block'; 
-                pop.style.left = e.pageX + 15 + 'px'; 
-                pop.style.top = e.pageY + 'px';
-                document.getElementById('popName').value = window.layers[lHit.i].name;
-                document.getElementById('popThick').value = window.layers[lHit.i].thickness;
-            } else { 
-                document.getElementById('layerPopup').style.display = 'none'; 
-            }
-        });
-
-        canvas.addEventListener('mousemove', function(e) {
-            let rect = canvas.getBoundingClientRect(); 
-            let mx = e.clientX - rect.left;
-            let my = e.clientY - rect.top;
-            
-            if(dragDimIdx !== -1) {
-                window.dimensions[dragDimIdx].offset = Math.max(10, currentStackLeftX - mx);
-                window.draw(); 
-                return;
-            }
-            
-            let hoverDim = dimHitZones.some(z => Math.abs(mx - z.x) < 20 && my >= z.y1 && my <= z.y2);
-            let hoverLay = layerHitZones.some(z => mx >= z.x1 && mx <= z.x2 && my >= z.y1 && my <= z.y2);
-            canvas.style.cursor = hoverDim ? 'ew-resize' : (hoverLay ? 'pointer' : 'default');
-        });
-
-        canvas.addEventListener('mouseup', function() { 
-            dragDimIdx = -1; 
-        });
-
-        canvas.addEventListener('mouseleave', function() { 
-            dragDimIdx = -1; 
-        });
-
-        window.movePopLayer = function(d) { 
-            let i = window.currentPopIndex; 
-            let n = i + d; 
-            if(n < 0 || n >= window.layers.length) return; 
-            
-            const t = window.layers[i]; 
-            window.layers[i] = window.layers[n]; 
-            window.layers[n] = t; 
-            
-            window.currentPopIndex = n; 
-            window.renderList(); 
-            window.draw(); 
-        };
-
-        // --- 雲端管理邏輯 ---
-        window.openCloudManager = function() { 
-            if(!isFirebaseReady) { 
-                alert("尚未連線"); 
-                return; 
-            } 
-            document.getElementById('mgrModal').style.display = 'flex'; 
-            document.getElementById('mgrBackdrop').style.display = 'block'; 
-            window.refreshCloudList(); 
-        };
-
-        window.closeCloudManager = function() { 
-            document.getElementById('mgrModal').style.display = 'none'; 
-            document.getElementById('mgrBackdrop').style.display = 'none'; 
-        };
-
-        window.createNewFolder = function() { 
-            const newCat = prompt("請輸入新的分頁名稱："); 
-            if(newCat && newCat.trim() !== "") { 
-                const catName = newCat.trim(); 
-                if (!customFolders.includes(catName)) { 
-                    customFolders.push(catName); 
-                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                } 
-                activeCategory = catName; 
-                window.renderCloudList(); 
-            } 
-        };
-
-        window.deleteCurrentFolder = function() {
-            if (activeCategory === "未分類") { 
-                return alert("「未分類」為系統預設，無法刪除！"); 
-            }
-            
-            const count = cloudProjectsCache.filter(p => (p.category || '未分類') === activeCategory).length;
-            if (count > 0) { 
-                return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`); 
-            }
-            
-            if (confirm(`確定要刪除分頁「${activeCategory}」嗎？`)) {
-                const idx = customFolders.indexOf(activeCategory);
-                if (idx > -1) { 
-                    customFolders.splice(idx, 1); 
-                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                    activeCategory = "未分類"; 
-                    window.renderCloudList(); 
+    // --- 系統初始化 ---
+    async function initSystem() {
+        showSaveToast("🔄 正在從雲端載入資料...", "#0ea5e9");
+        try {
+            const docRef = await db.collection(DB_COLLECTION).doc(DB_DOC).get();
+            if (docRef.exists) {
+                const data = docRef.data();
+                if (data.jigsJson) {
+                    jigs = JSON.parse(data.jigsJson);
+                    currentJigId = data.currentJigId || Object.keys(jigs)[0];
+                    localStorage.setItem('qcJigSystem', data.jigsJson);
+                    localStorage.setItem('qcCurrentJigId', currentJigId);
+                    showSaveToast("✅ 成功載入雲端資料", "#10b981");
+                } else {
+                    loadFromLocalBase();
                 }
-            }
-        };
-
-        window.refreshCloudList = async function() { 
-            showLoading(true); 
-            try { 
-                const savedFolders = localStorage.getItem('myStackFolders'); 
-                if(savedFolders) { 
-                    customFolders = JSON.parse(savedFolders); 
-                } else { 
-                    customFolders = ["未分類"]; 
-                } 
-                
-                const q = await getDocs(collection(db, COL_PROJ)); 
-                cloudProjectsCache = []; 
-                
-                q.forEach(doc => { 
-                    const data = doc.data(); 
-                    if(!data.category) data.category = "未分類"; 
-                    if (!customFolders.includes(data.category)) { 
-                        customFolders.push(data.category); 
-                    } 
-                    cloudProjectsCache.push({ id: doc.id, ...data }); 
-                }); 
-                
-                cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp); 
-                localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                
-                if (!customFolders.includes(activeCategory)) {
-                    activeCategory = customFolders[0]; 
-                }
-                window.renderCloudList(); 
-            } catch(e) { 
-                console.error(e); 
-            } 
-            showLoading(false); 
-        };
-        
-        window.renderCloudList = function() { 
-            const tabsEl = document.getElementById('cloudTabsEl'); 
-            const listEl = document.getElementById('cloudListEl'); 
-            const search = document.getElementById('searchCloud').value.toLowerCase(); 
-            
-            if (!customFolders.includes(activeCategory)) {
-                activeCategory = customFolders[0] || "未分類"; 
-            }
-            tabsEl.innerHTML = ''; 
-            
-            customFolders.forEach(cat => { 
-                const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length; 
-                const tab = document.createElement('div'); 
-                tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; 
-                tab.innerHTML = `📂 ${cat} <span style="font-size:11px; opacity:0.6; margin-left:4px;">${count}</span>`; 
-                tab.draggable = true; 
-                
-                tab.onclick = () => { 
-                    activeCategory = cat; 
-                    window.renderCloudList(); 
-                }; 
-                
-                tab.ondblclick = () => { 
-                    if(cat === "未分類") return alert("預設分類無法更名"); 
-                    const newName = prompt("重新命名分頁：", cat); 
-                    if(newName && newName.trim() && !customFolders.includes(newName.trim())) { 
-                        const finalName = newName.trim(); 
-                        customFolders[customFolders.indexOf(cat)] = finalName; 
-                        
-                        cloudProjectsCache.forEach(p => { 
-                            if(p.category === cat) { 
-                                p.category = finalName; 
-                                updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); 
-                            } 
-                        }); 
-                        
-                        if(activeCategory === cat) activeCategory = finalName; 
-                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                        window.renderCloudList(); 
-                    } 
-                }; 
-                
-                tab.ondragstart = (e) => { 
-                    draggedTabCat = cat; 
-                    e.dataTransfer.effectAllowed = 'move'; 
-                }; 
-                
-                tab.ondragover = (e) => { 
-                    e.preventDefault(); 
-                    tab.classList.add('drag-over'); 
-                }; 
-                
-                tab.ondragleave = (e) => { 
-                    tab.classList.remove('drag-over'); 
-                }; 
-                
-                tab.ondrop = async (e) => { 
-                    e.preventDefault(); 
-                    tab.classList.remove('drag-over'); 
-                    e.stopPropagation(); 
-                    
-                    if (draggedCloudId) { 
-                        const p = cloudProjectsCache.find(x => x.id === draggedCloudId); 
-                        if (p && (p.category || '未分類') !== cat) { 
-                            p.category = cat; 
-                            window.renderCloudList(); 
-                            try { 
-                                await updateDoc(doc(db, COL_PROJ, p.id), { category: cat }); 
-                            } catch(err){} 
-                        } 
-                        draggedCloudId = null; 
-                    } else if (draggedTabCat && draggedTabCat !== cat) { 
-                        const fromIdx = customFolders.indexOf(draggedTabCat); 
-                        const toIdx = customFolders.indexOf(cat); 
-                        customFolders.splice(fromIdx, 1); 
-                        customFolders.splice(toIdx, 0, draggedTabCat); 
-                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                        window.renderCloudList(); 
-                        draggedTabCat = null; 
-                    } 
-                }; 
-                
-                tab.ondragend = () => { draggedTabCat = null; }; 
-                tabsEl.appendChild(tab); 
-            }); 
-            
-            listEl.innerHTML = ''; 
-            cloudProjectsCache.forEach(p => { 
-                let pCat = p.category || '未分類'; 
-                if (search) { 
-                    if (!p.id.toLowerCase().includes(search) && !(p.note||'').toLowerCase().includes(search)) return; 
-                } else { 
-                    if (pCat !== activeCategory) return; 
-                } 
-                
-                const note = p.note ? p.note : '無備註'; 
-                const date = new Date(p.timestamp || 0).toLocaleDateString(); 
-                const li = document.createElement('li'); 
-                li.className = `cloud-item ${p.id === currentPreviewId ? 'selected' : ''}`; 
-                li.setAttribute('draggable', 'true'); 
-                
-                li.ondragstart = (e) => { 
-                    draggedCloudId = p.id; 
-                    draggedTabCat = null; 
-                    e.currentTarget.classList.add('dragging'); 
-                    e.dataTransfer.effectAllowed = 'move'; 
-                }; 
-                
-                li.ondragend = (e) => { 
-                    e.currentTarget.classList.remove('dragging'); 
-                    draggedCloudId = null; 
-                }; 
-                
-                li.onclick = (e) => { 
-                    if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); 
-                }; 
-                
-                li.innerHTML = `
-                    <input type="checkbox" class="batch-check" value="${p.id}">
-                    <div class="cloud-info">
-                        <div class="cloud-name">${p.id}</div>
-                        <div class="cloud-meta">
-                            <span>${date}</span>
-                            <span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+pCat+']' : ''}</span>
-                        </div>
-                        <div class="cloud-note">${note}</div>
-                    </div>`; 
-                listEl.appendChild(li); 
-            }); 
-            updatePreviewCategorySelect(); 
-        };
-
-        function updatePreviewCategorySelect() { 
-            const sel = document.getElementById('preview-category-select'); 
-            sel.innerHTML = ''; 
-            customFolders.forEach(c => { 
-                sel.innerHTML += `<option value="${c}">${c}</option>`; 
-            }); 
-        }
-
-        window.changeCategoryFromPreview = async function() { 
-            if(!currentPreviewId) return; 
-            const targetCat = document.getElementById('preview-category-select').value; 
-            const p = cloudProjectsCache.find(x => x.id === currentPreviewId); 
-            if(p && p.category !== targetCat) { 
-                p.category = targetCat; 
-                window.renderCloudList(); 
-                showLoading(true); 
-                try { 
-                    await updateDoc(doc(db, COL_PROJ, p.id), { category: targetCat }); 
-                } catch(err) {} 
-                showLoading(false); 
-            } 
-        };
-        
-        window.selectCloudItem = function(id) { 
-            currentPreviewId = id; 
-            document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected')); 
-            
-            const inputs = document.querySelectorAll('.batch-check'); 
-            inputs.forEach(inp => { 
-                if(inp.value === id) inp.closest('.cloud-item').classList.add('selected'); 
-            }); 
-            
-            const p = cloudProjectsCache.find(x => x.id === id); 
-            const detailEl = document.getElementById('preview-details'); 
-            if(p) { 
-                detailEl.innerHTML = `
-                    <div style="background:#1C1E22; padding:12px; border-radius:8px; border:1px solid #333;">
-                        <div style="color:var(--accent-cyan); font-weight:bold; font-size:15px; margin-bottom:5px;">${p.id}</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px; color:#aaa;">
-                            <div>層數: <span style="color:#fff;">${p.layers?.length || 0}</span></div>
-                            <div>附圖: <span style="color:#fff;">${p.photos?.length || 0}</span></div>
-                        </div>
-                        <div style="font-size:11px; color:#666; margin-bottom:8px;">上次修改：${new Date(p.timestamp).toLocaleString()}</div>
-                        <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${p.note || '無備註'}</div>
-                    </div>
-                `; 
-                document.getElementById('preview-category-box').style.display = 'block'; 
-                document.getElementById('preview-category-select').value = p.category || '未分類'; 
-                window.drawPreviewCanvas(p.layers); 
-                document.getElementById('btn-load-preview').style.display = 'flex'; 
-                document.getElementById('btn-del-preview').style.display = 'flex'; 
-            } 
-        };
-
-        window.drawPreviewCanvas = function(layers) { 
-            const cvs = document.getElementById('previewCanvas'); 
-            const ctx = cvs.getContext('2d'); 
-            cvs.width = 300; 
-            cvs.height = 200; 
-            ctx.fillStyle = "#fff"; 
-            ctx.fillRect(0, 0, 300, 200); 
-            
-            if(!layers || layers.length === 0) return; 
-            
-            const totalThick = layers.reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0) || 1; 
-            const scale = 160 / totalThick; 
-            const cx = 150; 
-            const rw = 100; 
-            let cy = 20; 
-            
-            layers.forEach(l => { 
-                const h = (parseFloat(l.thickness) || 0) * scale; 
-                ctx.fillStyle = l.color || "#ccc"; 
-                ctx.fillRect(cx - rw/2, cy, rw, h); 
-                ctx.strokeStyle = "#333"; 
-                ctx.strokeRect(cx - rw/2, cy, rw, h); 
-                cy += h; 
-            }); 
-        };
-        
-        window.loadSelectedToWorkspace = function() { 
-            if(!currentPreviewId) return; 
-            const p = cloudProjectsCache.find(x => x.id === currentPreviewId); 
-            if(p) { 
-                window.applyConfig(p); 
-                document.getElementById('projName').value = p.id; 
-                const noteEl = document.getElementById('projNote');
-                noteEl.value = p.note || ""; 
-                window.autoResizeTextarea(noteEl);
-                window.closeCloudManager(); 
-            } 
-        };
-
-        window.deleteSelectedCloud = async function() { 
-            if(!currentPreviewId) return; 
-            if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return; 
-            showLoading(true); 
-            try { 
-                await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); 
-                await window.refreshCloudList(); 
-                currentPreviewId = null;
-            } catch(e) {} 
-            showLoading(false); 
-        };
-
-        window.batchExportExcel = function() { 
-            const checks = document.querySelectorAll('.batch-check:checked'); 
-            if(checks.length === 0) { 
-                alert("請先勾選左側的核取方塊"); 
-                return; 
-            } 
-            let csv = "\uFEFF"; 
-            checks.forEach(chk => { 
-                const id = chk.value; 
-                const p = cloudProjectsCache.find(x => x.id === id); 
-                if(p) { 
-                    csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; 
-                    const layers = p.layers || []; 
-                    layers.forEach((l,i) => { 
-                        if(l.checked === false) return; 
-                        csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; 
-                    }); 
-                    csv += `\n`; 
-                } 
-            }); 
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
-            const link = document.createElement("a"); 
-            link.href = URL.createObjectURL(blob); 
-            link.download = `Stackups_${Date.now()}.csv`; 
-            document.body.appendChild(link); 
-            link.click(); 
-            document.body.removeChild(link); 
-        };
-        
-        window.backupAllCloudData = async function() { 
-            if(!isFirebaseReady) { 
-                alert("未連線"); 
-                return; 
-            } 
-            showLoading(true, "資料打包中..."); 
-            try { 
-                const projSnap = await getDocs(collection(db, COL_PROJ)); 
-                const projects = {}; 
-                projSnap.forEach(d => projects[d.id] = d.data()); 
-                
-                const unitSnap = await getDocs(collection(db, COL_UNITS)); 
-                const units = {}; 
-                unitSnap.forEach(d => units[d.id] = d.data()); 
-                
-                const str = JSON.stringify({ version: "V5", timestamp: Date.now(), projects, units, customFolders }, null, 2); 
-                const blob = new Blob([str], {type: "application/json"}); 
-                const a = document.createElement('a'); 
-                a.href = URL.createObjectURL(blob); 
-                a.download = `Stackup_Backup_${new Date().toISOString().slice(0,10)}.json`; 
-                a.click(); 
-            } catch(e) { 
-                alert("備份失敗"); 
-            } 
-            showLoading(false); 
-        };
-
-        window.restoreAllCloudData = function(input) { 
-            const file = input.files[0]; 
-            if(!file) return; 
-            if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { 
-                input.value = ''; 
-                return; 
-            } 
-            const reader = new FileReader(); 
-            reader.onload = async function(e) { 
-                showLoading(true, "資料還原中..."); 
-                try { 
-                    const data = JSON.parse(e.target.result); 
-                    const batch = writeBatch(db); 
-                    let count = 0; 
-                    
-                    if(data.projects) {
-                        for(const [id,v] of Object.entries(data.projects)) { 
-                            batch.set(doc(db, COL_PROJ, id), v); 
-                            count++; 
-                        }
-                    } 
-                    if(data.units) {
-                        for(const [id,v] of Object.entries(data.units)) { 
-                            batch.set(doc(db, COL_UNITS, id), v); 
-                            count++; 
-                        } 
-                    }
-                    if(data.customFolders) { 
-                        customFolders = data.customFolders; 
-                        localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); 
-                    } 
-                    
-                    await batch.commit(); 
-                    alert(`成功還原 ${count} 筆資料。`); 
-                    window.refreshUnitList(); 
-                } catch(err) { 
-                    alert("還原失敗"); 
-                } 
-                showLoading(false); 
-                input.value = ''; 
-            }; 
-            reader.readAsText(file); 
-        };
-
-        function showLoading(show, text="處理中") { 
-            const ov = document.getElementById('loading-overlay'); 
-            if(show) { 
-                document.getElementById('loading-text').innerText = text; 
-                ov.style.display = 'flex'; 
             } else {
-                ov.style.display = 'none'; 
+                loadFromLocalBase();
+                saveSystemToStorage();
             }
-        }
-        
-        window.saveToCloud = async function() { 
-            if(!isFirebaseReady) return alert("未連線"); 
-            const name = document.getElementById('projName').value.trim(); 
-            if(!name) return alert("請輸入專案名稱"); 
-            
-            let existingCategory = "未分類"; 
-            const existingProj = cloudProjectsCache.find(x => x.id === name); 
-            if (existingProj && existingProj.category) { 
-                existingCategory = existingProj.category; 
-            } else if(activeCategory) { 
-                existingCategory = activeCategory; 
-            } 
-            
-            const data = { 
-                layers: window.layers, 
-                dimensions: window.dimensions, 
-                photos: window.photos, 
-                settings: { 
-                    unit: document.getElementById('unitInput').value, 
-                    width: document.getElementById('canvasWidth').value 
-                }, 
-                note: document.getElementById('projNote').value, 
-                timestamp: Date.now(), 
-                category: existingCategory 
-            }; 
-            
-            const size = new Blob([JSON.stringify(data)]).size; 
-            if(size > 950000) {
-                if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return; 
-            }
-            
-            showLoading(true); 
-            try { 
-                await setDoc(doc(db, COL_PROJ, name), data, { merge: true }); 
-                alert("儲存成功"); 
-            } catch(e) { 
-                alert("儲存失敗"); 
-            } 
-            showLoading(false); 
-        };
-
-        window.saveUnitToCloud = async function() { 
-            const name = document.getElementById('unitName').value.trim(); 
-            const sel = window.layers.filter(l => l.checked !== false); 
-            if(!name || sel.length === 0) return alert("請輸入名稱並勾選層次"); 
-            
-            showLoading(true); 
-            try { 
-                await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); 
-                alert("已存"); 
-                window.refreshUnitList(); 
-            } catch(e) {} 
-            showLoading(false); 
-        };
-
-        window.refreshUnitList = async function() { 
-            if(!isFirebaseReady) return; 
-            const s = document.getElementById('savedUnits'); 
-            try { 
-                const q = await getDocs(collection(db, COL_UNITS)); 
-                s.innerHTML = '<option value="">-- 選擇模組 --</option>'; 
-                q.forEach(d => { 
-                    const opt = document.createElement('option'); 
-                    opt.value = d.id; 
-                    opt.innerText = d.id; 
-                    s.appendChild(opt); 
-                }); 
-            } catch(e) {} 
-        };
-
-        window.insertUnit = async function() { 
-            const n = document.getElementById('savedUnits').value; 
-            if(!n) return; 
-            
-            showLoading(true); 
-            try { 
-                const d = await getDoc(doc(db, COL_UNITS, n)); 
-                if(d.exists()) { 
-                    const ul = d.data().layers.map(l => ({...l, id:Date.now() + Math.random(), checked:true})); 
-                    window.layers = [...ul, ...window.layers]; 
-                    window.renderList(); 
-                    window.draw(); 
-                } 
-            } catch(e) {} 
-            showLoading(false); 
-        };
-
-        window.deleteUnitFromCloud = async function() { 
-            const n = document.getElementById('savedUnits').value; 
-            if(n && confirm(`刪除模組 ${n}?`)) { 
-                await deleteDoc(doc(db, COL_UNITS, n)); 
-                window.refreshUnitList(); 
-            } 
-        };
-
-        window.exportCurrentToCSV = function() { 
-            const sel = window.layers.filter(l => l.checked !== false); 
-            if(sel.length === 0) return alert("無選取層"); 
-            
-            const name = document.getElementById('projName').value || "Stackup"; 
-            const unit = document.getElementById('unitInput').value; 
-            let csv = "\uFEFF層序,名稱,厚度,單位\n"; 
-            let t = 0; 
-            
-            sel.forEach((l,i) => { 
-                t += (parseFloat(l.thickness)||0); 
-                csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`; 
-            }); 
-            csv += `,,${t},${unit},總厚度\n`; 
-            
-            const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); 
-            const a = document.createElement("a"); 
-            a.href = URL.createObjectURL(blob); 
-            a.download = `${name}.csv`; 
-            document.body.appendChild(a); 
-            a.click(); 
-            document.body.removeChild(a); 
-        };
-
-        window.applyConfig = function(c) { 
-            window.layers = c.layers || []; 
-            window.dimensions = c.dimensions || []; 
-            window.photos = c.photos || []; 
-            if(c.settings) { 
-                document.getElementById('unitInput').value = c.settings.unit || "um"; 
-                document.getElementById('canvasWidth').value = c.settings.width || 250; 
-            } 
-            window.renderList(); 
-            window.renderPhotoList(); 
-            window.draw(); 
-        };
-        
-        window.downloadImage = function() { 
-            const a = document.createElement('a'); 
-            a.download = 'stack_3d_pro.png'; 
-            a.href = canvas.toDataURL(); 
-            a.click(); 
-        };
-
-        window.downloadPPT = function() { 
-            let pres = new PptxGenJS(); 
-            const unit = document.getElementById('unitInput').value; 
-            const totalThick = window.layers.reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0); 
-            
-            if(totalThick === 0 && window.layers.length === 0) return alert("無資料"); 
-            
-            let maxOff = 20; 
-            window.dimensions.forEach(d => { if(d.offset > maxOff) maxOff = d.offset; }); 
-            
-            const pl = maxOff + 150;
-            const pt = 50;
-            const sf = 100;
-            const cw = canvas.width - (maxOff + 40) - 20; 
-            
-            const ah = Math.max(500, window.layers.length * 40); 
-            const sc = ah / (totalThick || 1); 
-            
-            pres.defineLayout({ name: 'C', width: (pl + cw + 50) / sf, height: (ah + 100) / sf }); 
-            pres.layout = 'C'; 
-            let s = pres.addSlide(); 
-            let cy = pt; 
-            
-            window.layers.forEach(l => { 
-                const h = l.thickness * sc; 
-                const fc = l.color.replace('#', ''); 
-                const tc = isColorDark(l.color) ? 'FFFFFF' : '000000'; 
-                
-                s.addShape(pres.ShapeType.rect, { x: pl / sf, y: cy / sf, w: cw / sf, h: h / sf, fill: fc, line: '333333' }); 
-                s.addText(`${l.name} ${l.thickness}${unit}`, { x: pl / sf, y: cy / sf, w: cw / sf, h: h / sf, color: tc, fontSize: l.fontSize || 14, align: 'center', valign: 'middle' }); 
-                cy += h; 
-            }); 
-            
-            window.photos.forEach(p => { 
-                let ps = pres.addSlide(); 
-                ps.addText("附圖: " + p.desc, { x: 0.5, y: 0.5, fontSize: 16, color: '333333' }); 
-                ps.addImage({ data: p.data, x: 0.5, y: 1.5, w: 8, h: 4.5, sizing: { type: 'contain', w: 8, h: 4.5 } }); 
-            }); 
-            
-            pres.writeFile({ fileName: "Stack_Report.pptx" }); 
-        };
-        
-        function shadeColor(col, amt) {
-            let usePound = false; 
-            if (col[0] == "#") { 
-                col = col.slice(1); 
-                usePound = true; 
-            }
-            let num = parseInt(col, 16);
-            let r = (num >> 16) + amt; 
-            if (r > 255) r = 255; else if (r < 0) r = 0;
-            let b = ((num >> 8) & 0x00FF) + amt; 
-            if (b > 255) b = 255; else if (b < 0) b = 0;
-            let g = (num & 0x0000FF) + amt; 
-            if (g > 255) g = 255; else if (g < 0) g = 0;
-            return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
+        } catch (error) {
+            console.error("Firebase 載入失敗:", error);
+            loadFromLocalBase();
+            showSaveToast("⚠️ 網路錯誤，載入本機備份", "#f59e0b");
         }
 
-        function isColorDark(hex) { 
-            const r = parseInt(hex.substr(1, 2), 16);
-            const g = parseInt(hex.substr(3, 2), 16);
-            const b = parseInt(hex.substr(5, 2), 16); 
-            return ((r * 299 + g * 587 + b * 114) / 1000) < 128; 
+        checkAndUpgradeJigs();
+        initChart(); 
+        updateJigTabs(); 
+        loadCurrentJig(); 
+        makeTableEditable();
+    }
+
+    function loadFromLocalBase() {
+        const savedJigs = localStorage.getItem('qcJigSystem');
+        if (savedJigs) {
+            jigs = JSON.parse(savedJigs);
+            currentJigId = localStorage.getItem('qcCurrentJigId') || Object.keys(jigs)[0];
+        } else {
+            jigs = {
+                "專案 1": {
+                    data: JSON.parse(JSON.stringify(defaultData)),
+                    specs: { target: 41.33, usl: 42.33, lsl: 40.33 },
+                    visuals: JSON.parse(JSON.stringify(defaultVisuals))
+                }
+            };
+            currentJigId = "專案 1";
         }
-        
-        window.resizeCanvas = function() { 
-            window.draw(); 
-        }; 
+    }
 
-        // ---------------------------------------------
-        // ★ 核心 3D 繪製邏輯 (結合鑲嵌線路、照片與特效)
-        // ---------------------------------------------
-        window.draw = function() {
-            const unit = document.getElementById('unitInput').value;
-            const globalFS = parseInt(document.getElementById('globalFontSize').value) || 14;
+    // 防呆機制：確保舊數據也有「排除狀態(ex)」的新參數
+    function checkAndUpgradeJigs() {
+        if(!jigs || Object.keys(jigs).length === 0) return;
+        Object.keys(jigs).forEach(id => {
+            const v = jigs[id].visuals;
+            if (!v.toleranceBand) v.toleranceBand = { color: "#10b981", shape: "none" };
+            if (!v.uslLine) v.uslLine = { color: "#ef4444", shape: "none" };
+            if (!v.lslLine) v.lslLine = { color: "#ef4444", shape: "none" };
+            if (!v.okText) v.okText = { color: "#10b981", shape: "none" };
+            if (!v.ngText) v.ngText = { color: "#ef4444", shape: "none" };
+            if (!v.nckuDataL) v.nckuDataL = { color: "#6366f1", shape: "triangle" };
+            if (!v.nckuDataR) v.nckuDataR = { color: "#f43f5e", shape: "cross" };
+            if (!v.nckuCumAvgL) v.nckuCumAvgL = { color: "#a855f7", shape: "triangle" };
+            if (!v.nckuCumAvgR) v.nckuCumAvgR = { color: "#fb7185", shape: "cross" };
+            if (!v.sampleAvgOff) v.sampleAvgOff = { color: "#0ea5e9", shape: "circle" };
+            if (!v.sampleAvgNcku) v.sampleAvgNcku = { color: "#8b5cf6", shape: "triangle" };
             
-            let baseStackWidth = parseInt(document.getElementById('canvasWidth').value) || 250; 
-            const dw = baseStackWidth; 
-
-            const isComp = !!window.compareLayers;
-            let maxThick = window.layers.reduce((s, l) => s + (parseFloat(l.thickness) || 0), 0);
-            
-            if(isComp) { 
-                let cThick = window.compareLayers.reduce((s, l) => s + (parseFloat(l.thickness) || 0), 0); 
-                if(cThick > maxThick) maxThick = cThick; 
-            }
-            if(maxThick === 0 && window.layers.length === 0 && window.photos.length === 0) { 
-                ctx.clearRect(0, 0, canvas.width, canvas.height); 
-                return; 
-            }
-            
-            let maxOff = 20; 
-            window.dimensions.forEach(d => { if(d.offset > maxOff) maxOff = d.offset; });
-            const pad = { t: 80, b: 40, l: maxOff + 80, r: window.is3D ? 160 : 120 }; 
-            const gap = isComp ? (window.is3D ? 200 : 140) : 0; 
-            
-            // 計算各層展開間距總和
-            let totalSpacing = window.layers.reduce((sum, l) => sum + (parseFloat(l.spacing) || 0), 0);
-
-            canvas.width = pad.l + (isComp ? (dw * 2 + gap) : dw) + pad.r;
-            
-            const stackH = Math.max(500, window.layers.length * 40) + totalSpacing;
-            let photoTotalH = 0; 
-            window.photos.forEach(p => { 
-                photoTotalH += (((isComp ? dw * 2 + gap : dw)) / p.w) * p.h + 40; 
+            jigs[id].data.forEach(d => { 
+                if (!d.group) d.group = "預設"; 
+                if (d.l2 === undefined) d.l2 = null; 
+                if (d.r2 === undefined) d.r2 = null;
+                // 新增排除標記
+                if (d.exL === undefined) d.exL = false;
+                if (d.exR === undefined) d.exR = false;
+                if (d.exL2 === undefined) d.exL2 = false;
+                if (d.exR2 === undefined) d.exR2 = false;
             });
-            canvas.height = stackH + pad.t + pad.b + (photoTotalH > 0 ? photoTotalH + 50 : 0);
-            
-            const scale = (Math.max(500, window.layers.length * 40)) / (maxThick || 1);
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            ctx.textBaseline = "middle";
-            dimHitZones = []; 
-            layerHitZones = [];
+        });
+    }
 
-            let drawStk = function(lyrs, startX, isMain) {
-                let cy = pad.t; 
-                let yPos = [];
-                
-                lyrs.forEach((l, i) => {
-                    cy += parseFloat(l.spacing) || 0; // 每一層加上專屬的展開間距
-                    const h = (parseFloat(l.thickness) || 0) * scale;
-                    yPos.push({ t: cy, b: cy + h, h: h, l: l, i: i });
-                    cy += h;
+    // --- 儲存系統 ---
+    async function saveSystemToStorage() {
+        const jigsStr = JSON.stringify(jigs);
+        localStorage.setItem('qcJigSystem', jigsStr);
+        localStorage.setItem('qcCurrentJigId', currentJigId);
+        
+        showSaveToast("🔄 雲端同步中...", "#f59e0b");
+        try {
+            await db.collection(DB_COLLECTION).doc(DB_DOC).set({
+                jigsJson: jigsStr,
+                currentJigId: currentJigId,
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            showSaveToast("✅ 已同步至雲端", "#10b981");
+        } catch (error) {
+            console.error("Firebase 同步錯誤:", error);
+            showSaveToast("⚠️ 僅本機儲存 (網路異常)", "#ef4444");
+        }
+    }
+
+    // --- 標籤分頁管理 ---
+    function updateJigTabs() {
+        const tabsList = document.getElementById('jigTabs');
+        tabsList.innerHTML = '';
+        
+        Object.keys(jigs).forEach(id => {
+            const btn = document.createElement('div');
+            btn.className = `tab-btn ${id === currentJigId ? 'active' : ''}`;
+            
+            const span = document.createElement('span');
+            span.innerText = id;
+            
+            if (id === currentJigId) {
+                span.className = 'editable-tab-name';
+                span.contentEditable = "true";
+                span.title = "直接點擊修改名稱";
+                span.onblur = (e) => renameJig(id, e.target.innerText.trim());
+                span.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); span.blur(); } };
+                btn.onclick = (e) => { if (e.target !== span) switchJig(id); };
+            } else {
+                btn.onclick = () => switchJig(id);
+                span.title = "點擊切換專案";
+            }
+            btn.appendChild(span);
+            tabsList.appendChild(btn);
+        });
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-tab-btn';
+        addBtn.innerText = '➕ 新增';
+        addBtn.onclick = createNewJig;
+        tabsList.appendChild(addBtn);
+    }
+
+    function switchJig(id) {
+        if(id === currentJigId) return;
+        currentJigId = id;
+        saveSystemToStorage(); 
+        hiddenGroups.clear(); 
+        updateJigTabs(); 
+        loadCurrentJig(); 
+    }
+
+    function createNewJig() {
+        let baseName = "新專案";
+        let counter = 1;
+        let newName = baseName + " " + counter;
+        while (jigs[newName]) { counter++; newName = baseName + " " + counter; }
+        
+        jigs[newName] = {
+            data: [], specs: { target: 41.33, usl: 42.33, lsl: 40.33 },
+            visuals: JSON.parse(JSON.stringify(defaultVisuals))
+        };
+        currentJigId = newName;
+        hiddenGroups.clear();
+        saveSystemToStorage(); updateJigTabs(); loadCurrentJig();
+        
+        setTimeout(() => {
+            const activeSpan = document.querySelector('.editable-tab-name');
+            if (activeSpan) { activeSpan.focus(); window.getSelection().selectAllChildren(activeSpan); }
+        }, 50);
+    }
+
+    function renameJig(oldId, newId) {
+        if (newId === oldId) return;
+        if (!newId) { alert("專案名稱不可為空！"); updateJigTabs(); return; }
+        if (jigs[newId]) { alert("已存在相同名稱的專案！"); updateJigTabs(); return; }
+        
+        jigs[newId] = jigs[oldId]; delete jigs[oldId];
+        jigs[newId].data.forEach(item => { if (item.group === oldId) item.group = newId; });
+        if (hiddenGroups.has(oldId)) { hiddenGroups.delete(oldId); hiddenGroups.add(newId); }
+
+        currentJigId = newId;
+        saveSystemToStorage(); updateJigTabs(); loadCurrentJig();
+    }
+
+    function deleteCurrentJig() {
+        if (Object.keys(jigs).length <= 1) { alert("系統至少需保留一個專案！"); return; }
+        if (!confirm(`確定要刪除整個 [${currentJigId}] 專案嗎？此操作不可還原！`)) return;
+        delete jigs[currentJigId]; currentJigId = Object.keys(jigs)[0]; 
+        hiddenGroups.clear(); updateJigTabs(); loadCurrentJig(); saveSystemToStorage();
+    }
+
+    // --- 載入與設定管理 ---
+    function loadCurrentJig() {
+        const jig = jigs[currentJigId];
+        document.getElementById('specTarget').value = jig.specs.target;
+        document.getElementById('specUSL').value = jig.specs.usl;
+        document.getElementById('specLSL').value = jig.specs.lsl;
+        
+        document.getElementById('sampleGroup').value = currentJigId;
+        document.getElementById('popupGroup').value = currentJigId;
+        
+        generateVisualSettingsUI(jig.visuals);
+        updateAll();
+    }
+
+    function generateVisualSettingsUI(visConfig) {
+        const container = document.getElementById('visualSettingsList');
+        container.innerHTML = ''; 
+        for (const [key, seriesId] of Object.entries(seriesMap)) {
+            const config = visConfig[seriesId] || defaultVisuals[seriesId]; 
+            const row = document.createElement('div'); row.className = 'vis-row';
+            const label = document.createElement('label'); label.innerText = key; row.appendChild(label);
+            
+            const colorPicker = document.createElement('input'); colorPicker.type = 'color';
+            colorPicker.id = 'visColor_' + seriesId; colorPicker.value = config.color;
+            colorPicker.onchange = saveSpecsAndUpdate; row.appendChild(colorPicker);
+            
+            const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine', 'okText', 'ngText'];
+            if (!noShapeItems.includes(seriesId)) {
+                const shapeSelect = document.createElement('select');
+                shapeSelect.id = 'visShape_' + seriesId; shapeSelect.onchange = saveSpecsAndUpdate;
+                pointShapes.forEach(shape => {
+                    const option = document.createElement('option'); option.value = shape.value; option.innerText = shape.name;
+                    if(shape.value === config.shape) option.selected = true; shapeSelect.appendChild(option);
                 });
+                row.appendChild(shapeSelect);
+            }
+            container.appendChild(row);
+        }
+    }
 
-                const depth = window.is3D ? 40 : 0;
-                const tiltY = depth * 0.5;
+    function saveSpecsAndUpdate() {
+        const jig = jigs[currentJigId];
+        jig.specs = {
+            target: parseFloat(document.getElementById('specTarget').value), usl: parseFloat(document.getElementById('specUSL').value),
+            lsl: parseFloat(document.getElementById('specLSL').value)
+        };
+        const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine', 'okText', 'ngText'];
+        Object.values(seriesMap).forEach(seriesId => {
+            jig.visuals[seriesId] = {
+                color: document.getElementById('visColor_' + seriesId).value,
+                shape: noShapeItems.includes(seriesId) ? 'none' : document.getElementById('visShape_' + seriesId).value
+            };
+        });
+        saveSystemToStorage(); updateAll();
+    }
 
-                for(let j = yPos.length - 1; j >= 0; j--) {
-                    let p = yPos[j]; 
-                    let l = p.l; 
-                    let startY = p.t;
-                    
-                    if(isMain) layerHitZones.push({ i: p.i, x1: startX, x2: startX + dw, y1: startY, y2: p.b });
-                    
-                    // --- 1. 繪製基板 (如果沒被隱藏) ---
-                    if (!window.hideSubstrate) {
-                        let frontFill = l.color;
-                        let sideFill = shadeColor(l.color, -30);
-                        let topFill = shadeColor(l.color, 30);
-                        
-                        if (window.enableGlossy) {
-                            let frontGrd = ctx.createLinearGradient(startX, 0, startX + dw, 0);
-                            frontGrd.addColorStop(0, shadeColor(l.color, -window.shInt)); 
-                            frontGrd.addColorStop(0.2, shadeColor(l.color, window.hlInt));  
-                            frontGrd.addColorStop(0.5, l.color);                  
-                            frontGrd.addColorStop(0.8, shadeColor(l.color, window.hlInt/2));  
-                            frontGrd.addColorStop(1, shadeColor(l.color, -window.shInt*1.5)); 
-                            frontFill = frontGrd;
+    // --- 智慧批次匯入功能 ---
+    function parsePastedData() {
+        const text = document.getElementById('pasteArea').value.trim();
+        if (!text) { alert("請先在文字框貼上資料！"); return; }
+        const lines = text.split('\n'); let importCount = 0; const currentData = jigs[currentJigId].data;
 
-                            if(depth > 0) {
-                                let sideGrd = ctx.createLinearGradient(startX + dw, startY, startX + dw + depth, startY - tiltY);
-                                sideGrd.addColorStop(0, shadeColor(l.color, -window.shInt));
-                                sideGrd.addColorStop(1, shadeColor(l.color, -window.shInt*2));
-                                sideFill = sideGrd;
+        lines.forEach(line => {
+            const cols = line.split('\t'); 
+            if (cols.length >= 1) { 
+                const name = cols[0].trim(); if(!name) return; 
 
-                                let topGrd = ctx.createLinearGradient(startX, startY, startX, startY - tiltY);
-                                topGrd.addColorStop(0, shadeColor(l.color, window.hlInt));
-                                topGrd.addColorStop(1, shadeColor(l.color, 10));
-                                topFill = topGrd;
-                            }
-                        }
+                let angles = [];
+                for (let i = 1; i < cols.length; i++) {
+                    if (cols[i] && cols[i].match(/\d{4}\/\d{1,2}\/\d{1,2}/)) break;
+                    if (/[a-zA-Z]/.test(cols[i])) continue;
+                    let val = parseFloat(cols[i]);
+                    if (!isNaN(val) && Math.abs(val) > 10) angles.push(val);
+                }
 
-                        if(depth > 0) {
-                            // 畫 3D 右側面
-                            ctx.fillStyle = sideFill;
-                            ctx.beginPath(); 
-                            ctx.moveTo(startX + dw, startY); 
-                            ctx.lineTo(startX + dw + depth, startY - tiltY); 
-                            ctx.lineTo(startX + dw + depth, p.b - tiltY); 
-                            ctx.lineTo(startX + dw, p.b); 
-                            ctx.closePath();
-                            ctx.fill(); 
-                            ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
-                            ctx.lineWidth = 0.5; 
-                            ctx.stroke();
-                            
-                            // 畫 3D 頂面
-                            ctx.fillStyle = topFill;
-                            ctx.beginPath(); 
-                            ctx.moveTo(startX, startY); 
-                            ctx.lineTo(startX + depth, startY - tiltY); 
-                            ctx.lineTo(startX + dw + depth, startY - tiltY); 
-                            ctx.lineTo(startX + dw, startY); 
-                            ctx.closePath();
-                            ctx.fill(); 
-                            ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
-                            ctx.stroke();
-                        }
-                        
-                        // 畫正面
-                        ctx.fillStyle = frontFill; 
-                        ctx.fillRect(startX, startY, dw, p.h);
-                        ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
-                        ctx.lineWidth = 1; 
-                        ctx.strokeRect(startX, startY, dw, p.h);
+                let l = angles.length > 0 ? angles[0] : null; let r = angles.length > 1 ? angles[1] : null;
+                let l2 = angles.length > 2 ? angles[2] : null; let r2 = angles.length > 3 ? angles[3] : null; 
 
-                        // 畫文字標籤
-                        const fs = l.fontSize || globalFS; 
-                        ctx.font = `${l.fontStyle === 'bold' ? 'bold ' : ''}${fs}px Arial`;
-                        
-                        if(p.h > fs + 4) {
-                             ctx.fillStyle = isColorDark(l.color) ? "white" : "black"; 
-                             if(l.textColor) ctx.fillStyle = l.textColor;
-                             ctx.textAlign = "center"; 
-                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX + dw / 2, startY + p.h / 2);
-                        } else {
-                             ctx.fillStyle = "#888"; 
-                             ctx.textAlign = "left"; 
-                             ctx.fillText(`${l.name} ${l.thickness}${unit}`, startX + dw + depth + 15, startY + p.h / 2 - tiltY / 2);
-                             ctx.strokeStyle = "#ccc"; 
-                             ctx.beginPath(); 
-                             ctx.moveTo(startX + dw, startY + p.h / 2); 
-                             ctx.lineTo(startX + dw + depth + 10, startY + p.h / 2 - tiltY / 2); 
-                             ctx.stroke();
-                        }
-                    }
-
-                    // --- 2. 獨立繪製金屬線路 (Traces) ---
-                    let tracesCount = parseInt(l.traces) || 0;
-                    if(tracesCount > 0) {
-                        let tColor = l.traceColor || '#E67E22';
-                        let tVisualWidth = Math.min((dw * 0.6) / tracesCount, 25); 
-                        
-                        let rawTh = parseFloat(l.traceHeight) || 15;
-                        let tVisualHeight = Math.max(rawTh * scale, 4); 
-                        
-                        let spacing = (dw - (tracesCount * tVisualWidth)) / (tracesCount + 1);
-                        
-                        let style = l.traceStyle || 'embed-bot';
-
-                        for(let k = 0; k < tracesCount; k++) {
-                            let tx = startX + spacing + k * (tVisualWidth + spacing);
-                            let ty = p.b; // 預設使用底部位移基準
-                            
-                            // 金屬光澤材質
-                            let traceFront = tColor;
-                            let traceTopColor = shadeColor(tColor, 20);
-                            let traceSideColor = shadeColor(tColor, -30);
-
-                            if(window.enableGlossy) {
-                                let traceGrd = ctx.createLinearGradient(tx, 0, tx + tVisualWidth, 0);
-                                traceGrd.addColorStop(0, shadeColor(tColor, -window.shInt));
-                                traceGrd.addColorStop(0.3, shadeColor(tColor, window.hlInt * 1.5));
-                                traceGrd.addColorStop(1, shadeColor(tColor, -window.shInt));
-                                traceFront = traceGrd;
-                                traceTopColor = shadeColor(tColor, window.hlInt);
-                                traceSideColor = shadeColor(tColor, -window.shInt*1.5);
-                            }
-
-                            // 依照不同的 style 計算線路的頂部與底部 Y 座標
-                            let traceTopY, traceBottomY;
-                            
-                            if (style === 'embed-bot') {
-                                traceTopY = p.b - tVisualHeight;
-                                traceBottomY = p.b;
-                            } else if (style === 'embed-top') {
-                                traceTopY = p.t;
-                                traceBottomY = p.t + tVisualHeight;
-                            } else { // exposed
-                                traceTopY = p.t - tVisualHeight;
-                                traceBottomY = p.t;
-                            }
-
-                            // 決定是否畫 3D 的頂部或側邊
-                            let drawTop = false;
-                            let drawSide = false;
-
-                            if (window.hideSubstrate) {
-                                drawTop = true;
-                                drawSide = true;
-                            } else {
-                                if (style === 'exposed') {
-                                    drawTop = true;
-                                    drawSide = true;
-                                } else if (style === 'embed-top') {
-                                    drawTop = true;  // 和基板頂部齊平，需要畫頂部面積
-                                    drawSide = false;
-                                } else if (style === 'embed-bot') {
-                                    drawTop = false;
-                                    drawSide = false;
-                                }
-                            }
-
-                            if(depth > 0) {
-                                // 畫線路的 3D 頂部
-                                if (drawTop) {
-                                    ctx.fillStyle = traceTopColor;
-                                    ctx.beginPath(); 
-                                    ctx.moveTo(tx, traceTopY); 
-                                    ctx.lineTo(tx + depth, traceTopY - tiltY); 
-                                    ctx.lineTo(tx + tVisualWidth + depth, traceTopY - tiltY); 
-                                    ctx.lineTo(tx + tVisualWidth, traceTopY); 
-                                    ctx.closePath();
-                                    ctx.fill(); 
-                                    ctx.strokeStyle = "#111"; 
-                                    ctx.stroke();
-                                }
-                                
-                                // 畫線路的 3D 右側
-                                if (drawSide) {
-                                    ctx.fillStyle = traceSideColor;
-                                    ctx.beginPath(); 
-                                    ctx.moveTo(tx + tVisualWidth, traceBottomY); 
-                                    ctx.lineTo(tx + tVisualWidth + depth, traceBottomY - tiltY); 
-                                    ctx.lineTo(tx + tVisualWidth + depth, traceTopY - tiltY); 
-                                    ctx.lineTo(tx + tVisualWidth, traceTopY); 
-                                    ctx.closePath();
-                                    ctx.fill(); 
-                                    ctx.stroke();
-                                }
-                            }
-
-                            // 畫線路的 2D 正面
-                            ctx.fillStyle = traceFront;
-                            ctx.fillRect(tx, traceTopY, tVisualWidth, traceBottomY - traceTopY);
-                            ctx.strokeRect(tx, traceTopY, tVisualWidth, traceBottomY - traceTopY);
-
-                            // 如果隱藏了基板，且是該層最後一條線，就在旁邊補上原本的層次文字說明
-                            if (window.hideSubstrate && k === tracesCount - 1) {
-                                 ctx.fillStyle = tColor; 
-                                 ctx.textAlign = "left"; 
-                                 ctx.font = `bold ${globalFS}px Arial`;
-                                 ctx.fillText(`${l.name} (${l.thickness} / 線厚${rawTh})`, startX + dw + depth + 15, traceTopY + (traceBottomY - traceTopY) / 2 - tiltY / 2);
-                            }
-
-                            // 標示線寬文字 (僅第一條線)
-                            if(k === 0 && isMain && !window.hideSubstrate) {
-                                ctx.fillStyle = "#FFF"; 
-                                ctx.font = "10px Arial"; 
-                                ctx.textAlign = "center";
-                                ctx.shadowColor = "black"; 
-                                ctx.shadowBlur = 3;
-                                ctx.fillText(`${l.traceWidth||10} ${unit}`, tx + tVisualWidth / 2, traceTopY - 5);
-                                ctx.shadowBlur = 0; 
-                            }
-                        }
+                let timeStr = ""; let groupStr = document.getElementById('sampleGroup').value || currentJigId; 
+                for(let i = 1; i < cols.length; i++) {
+                    if (cols[i] && cols[i].match(/\d{4}\/\d{1,2}\/\d{1,2}/)) {
+                        timeStr = cols[i].trim();
+                        if (i + 1 < cols.length && cols[i+1].trim() !== '') { groupStr = cols[i+1].trim(); }
+                        break;
                     }
                 }
+                currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r, l2: l2, r2: r2, group: groupStr, exL: false, exR: false, exL2: false, exR2: false });
+                importCount++;
+            }
+        });
+        if (importCount > 0) {
+            document.getElementById('pasteArea').value = ''; document.querySelectorAll('.accordion-panel')[1].removeAttribute('open');
+            saveSystemToStorage(); updateAll(); alert(`✅ 成功智慧匯入 ${importCount} 筆資料！`);
+        } else { alert("❌ 解析失敗。請確認貼上的資料。"); }
+    }
+
+    function showSaveToast(msg, color) {
+        const status = document.getElementById('saveStatus'); 
+        status.innerText = msg; status.style.color = color; status.style.background = "#f8fafc";
+        if(msg.includes("已同步") || msg.includes("僅本機")) {
+            setTimeout(() => { status.innerText = "☁️ 雲端同步啟用中"; status.style.color = "#64748b"; status.style.background = "#e2e8f0"; }, 3000);
+        }
+    }
+    
+    function getCurrentTime() { return new Date().toLocaleString('zh-TW', { hour12: false }); }
+    function applyAlphaToHex(hex, alpha) {
+        if (!hex) return `rgba(0,0,0,${alpha})`;
+        const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+    function toggleGroup(groupName, isChecked) {
+        if (isChecked) { hiddenGroups.delete(groupName); } else { hiddenGroups.add(groupName); }
+        updateAll();
+    }
+
+    // --- 剔除數據 右鍵事件 ---
+    window.toggleExclude = function(e, index, field) {
+        e.preventDefault();
+        const curData = jigs[currentJigId].data;
+        curData[index][field] = !curData[index][field];
+        saveSystemToStorage();
+        updateAll();
+    };
+
+    // 格式化角度顯示 (被排除會加上特殊樣式)
+    function formatAngle(val, isExcluded) {
+        if (val === null || val === undefined || val === '') return '';
+        if (isExcluded) return `<span class="excluded-val" title="已排除計算，右鍵點擊恢復">${val}</span>`;
+        return val;
+    }
+
+    // --- Chart.js 外掛與初始化 ---
+    const customCanvasBackgroundColor = {
+        id: 'bg', beforeDraw: (chart, args, options) => {
+            const {ctx} = chart; ctx.save(); ctx.fillStyle = options.color || '#ffffff'; ctx.fillRect(0, 0, chart.width, chart.height); ctx.restore();
+        }
+    };
+
+    const specLinesPlugin = {
+        id: 'specLinesPlugin',
+        beforeDraw(chart) {
+            const jig = jigs[currentJigId];
+            if (!jig) return;
+            const ctx = chart.ctx; const { left, right } = chart.chartArea;
+            const yAxis = chart.scales.y; const vis = jig.visuals; const specs = jig.specs;
+            
+            const drawLine = (yVal, color, dash, text) => {
+                if(isNaN(yVal)) return;
+                const y = yAxis.getPixelForValue(yVal);
+                if (y < chart.chartArea.top || y > chart.chartArea.bottom) return;
+                ctx.save(); ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y);
+                ctx.lineWidth = 1.5; ctx.strokeStyle = color; if(dash) ctx.setLineDash(dash); ctx.stroke();
                 
-                ctx.fillStyle = "#00E5FF"; 
-                ctx.textAlign = "center"; 
-                ctx.font = "bold 16px Arial";
-                ctx.fillText(isMain ? "Active Project" : "Reference Baseline", startX + dw / 2, pad.t - 30);
-                return yPos;
+                ctx.font = 'bold 12px Arial'; const textWidth = ctx.measureText(text).width;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; 
+                ctx.fillRect(right - textWidth - 8, y - 9, textWidth + 6, 18);
+                ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+                ctx.fillStyle = color; ctx.fillText(text, right - 5, y); ctx.restore();
+            };
+            
+            if(!isNaN(specs.usl) && !isNaN(specs.lsl)) {
+                const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(specs.usl));
+                const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(specs.lsl));
+                ctx.save(); ctx.fillStyle = applyAlphaToHex(vis.toleranceBand.color, 0.08); ctx.fillRect(left, yTop, right - left, yBot - yTop); ctx.restore();
+            }
+            drawLine(specs.target, vis.toleranceBand.color, null, 'Target ' + specs.target);
+            drawLine(specs.usl, vis.uslLine.color, [5,5], 'USL ' + specs.usl); 
+            drawLine(specs.lsl, vis.lslLine.color, [5,5], 'LSL ' + specs.lsl);
+        }
+    };
+
+    // 處理 OK/NG/Δ 文字 (完美版下移Delta)
+    const customAnnotationsPlugin = {
+        id: 'annotations',
+        afterDraw(chart) {
+            const ctx = chart.ctx;
+            const metaOffL = chart.getDatasetMeta(0); const metaOffR = chart.getDatasetMeta(1);
+            const metaNckuL = chart.getDatasetMeta(2); const metaNckuR = chart.getDatasetMeta(3);
+            
+            const vis = jigs[currentJigId].visuals; 
+            const showOffice = document.getElementById('toggleOffice').checked;
+            const showNcku = document.getElementById('toggleNCKU').checked;
+            const showAnno = document.getElementById('toggleAnnotations').checked; 
+            const showLRLine = document.getElementById('toggleLRLine').checked; 
+
+            const drawTextWithBgBox = (text, x, y, align, color, font) => {
+                ctx.font = font; const textWidth = ctx.measureText(text).width;
+                const paddingX = 4; const height = 16;
+                let bgX = x;
+                if (align === 'center') bgX = x - textWidth / 2;
+                else if (align === 'right') bgX = x - textWidth;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'; 
+                ctx.fillRect(bgX - paddingX, y - height/2, textWidth + paddingX*2, height);
+                ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillStyle = color; ctx.fillText(text, x, y);
             };
 
-            if(isComp) drawStk(window.compareLayers, pad.l, false);
-            currentStackLeftX = isComp ? pad.l + dw + gap : pad.l;
-            let yPos = drawStk(window.layers, currentStackLeftX, true);
+            ctx.save();
+            chart.data.customData.forEach((item, index) => {
+                // 安全讀取位置，過濾掉已排除的 null 點
+                let pOffL = (!item.exL && metaOffL.data[index]) ? metaOffL.data[index].getProps(['x', 'y', 'skip']) : null;
+                let pOffR = (!item.exR && metaOffR.data[index]) ? metaOffR.data[index].getProps(['x', 'y', 'skip']) : null;
+                let pNkL = (!item.exL2 && metaNckuL.data[index]) ? metaNckuL.data[index].getProps(['x', 'y', 'skip']) : null;
+                let pNkR = (!item.exR2 && metaNckuR.data[index]) ? metaNckuR.data[index].getProps(['x', 'y', 'skip']) : null;
+                
+                if (pOffL && pOffL.skip) pOffL = null; if (pOffR && pOffR.skip) pOffR = null;
+                if (pNkL && pNkL.skip) pNkL = null; if (pNkR && pNkR.skip) pNkR = null;
 
-            // --- 繪製尺寸線 ---
-            window.dimensions.forEach((d, i) => {
-                if(!yPos[d.start] || !yPos[d.end]) return;
-                const y1 = yPos[d.start].t;
-                const y2 = yPos[d.end].b;
-                const h = y2 - y1;
-                const x = currentStackLeftX - d.offset;
+                // 畫 L-R 連線
+                if (showOffice && showLRLine && pOffL && pOffR) {
+                    ctx.beginPath(); ctx.moveTo(pOffL.x, pOffL.y); ctx.lineTo(pOffR.x, pOffR.y);
+                    ctx.strokeStyle = applyAlphaToHex(vis.rawDataL.color, 0.4); ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.stroke();
+                }
+                if (showNcku && showLRLine && pNkL && pNkR) {
+                    ctx.beginPath(); ctx.moveTo(pNkL.x, pNkL.y); ctx.lineTo(pNkR.x, pNkR.y);
+                    ctx.strokeStyle = applyAlphaToHex(vis.nckuDataL.color, 0.5); ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]); ctx.stroke();
+                }
+                if (showLRLine && pOffL && pNkL) { 
+                    ctx.beginPath(); ctx.moveTo(pOffL.x, pOffL.y); ctx.lineTo(pNkL.x, pNkL.y);
+                    ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]); ctx.stroke();
+                }
+                if (showLRLine && pOffR && pNkR) { 
+                    ctx.beginPath(); ctx.moveTo(pOffR.x, pOffR.y); ctx.lineTo(pNkR.x, pNkR.y);
+                    ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]); ctx.stroke();
+                }
+
+                // 準備計算 OK/NG 與 Delta 的位置
+                let absTopY = null, absBotYOff = null, absBotYNk = null;
+                let xPos = (pOffL && pOffL.x) || (pOffR && pOffR.x) || (pNkL && pNkL.x) || (pNkR && pNkR.x);
+
+                if (xPos && showAnno) {
+                    let topYs = [];
+                    if (showOffice) {
+                        let offYs = [];
+                        if (pOffL) { topYs.push(pOffL.y); offYs.push(pOffL.y); }
+                        if (pOffR) { topYs.push(pOffR.y); offYs.push(pOffR.y); }
+                        if (offYs.length > 0) absBotYOff = Math.max(...offYs);
+                    }
+                    if (showNcku) {
+                        let nkYs = [];
+                        if (pNkL) { topYs.push(pNkL.y); nkYs.push(pNkL.y); }
+                        if (pNkR) { topYs.push(pNkR.y); nkYs.push(pNkR.y); }
+                        if (nkYs.length > 0) absBotYNk = Math.max(...nkYs);
+                    }
+                    if (topYs.length > 0) absTopY = Math.min(...topYs);
+
+                    // 繪製 Delta (在點的下方，為了不重疊稍微左右偏移)
+                    if (showOffice && pOffL && pOffR && item.offDelta !== '-') {
+                        drawTextWithBgBox('Δ ' + item.offDelta, xPos + 12, absBotYOff + 16, 'left', vis.rawDataL.color, 'bold 11px Arial');
+                    }
+                    if (showNcku && pNkL && pNkR && item.nckuDelta !== '-') {
+                        drawTextWithBgBox('Δ ' + item.nckuDelta, xPos - 12, absBotYNk + 16, 'right', vis.nckuDataL.color, 'bold 11px Arial');
+                    }
+
+                    // 繪製 OK/NG (統一在點的上方)
+                    if (absTopY !== null) {
+                        let textOffset = 12;
+                        if (showNcku && (pNkL || pNkR) && item.nckuStatus !== '-') {
+                            const color = item.nckuStatus === 'OK' ? vis.okText.color : vis.ngText.color;
+                            drawTextWithBgBox(item.nckuStatus, xPos, absTopY - textOffset, 'center', color, '900 13px Arial');
+                            textOffset += 16;
+                        }
+                        if (showOffice && (pOffL || pOffR) && item.status !== '-') {
+                            const color = item.status === 'OK' ? vis.okText.color : vis.ngText.color;
+                            drawTextWithBgBox(item.status, xPos, absTopY - textOffset, 'center', color, '900 13px Arial');
+                        }
+                    }
+                }
+            });
+            ctx.restore();
+        }
+    };
+
+    const crosshairPlugin = {
+        id: 'crosshair',
+        afterDraw(chart) {
+            if (crosshairY !== null && chart.chartArea) {
+                const ctx = chart.ctx; const yPixel = chart.scales.y.getPixelForValue(crosshairY); const { left, right } = chart.chartArea;
+                ctx.save(); ctx.beginPath(); ctx.moveTo(left, yPixel); ctx.lineTo(right, yPixel);
+                ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(59, 130, 246, 0.8)'; ctx.setLineDash([3, 3]); ctx.stroke();
+                ctx.fillStyle = '#3b82f6'; ctx.fillRect(right, yPixel - 12, 45, 24);
+                ctx.fillStyle = 'white'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(crosshairY.toFixed(2), right + 22, yPixel); ctx.restore();
+            }
+        }
+    };
+
+    const customXAxisPlugin = {
+        id: 'customXAxis',
+        afterDraw(chart) {
+            const ctx = chart.ctx; const xAxis = chart.scales.x; const yPos = xAxis.top + 10; 
+            ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+            xAxis.ticks.forEach((tick, index) => {
+                const xPos = xAxis.getPixelForTick(index); const labelArray = chart.data.labels[index]; 
+                if (Array.isArray(labelArray) && labelArray.length >= 2) {
+                    ctx.font = 'bold 11px Arial'; ctx.fillStyle = '#2563eb'; ctx.fillText(labelArray[0], xPos, yPos);
+                    ctx.font = '10px Arial'; ctx.fillStyle = '#94a3b8'; ctx.fillText(labelArray[1], xPos, yPos + 16); 
+                } else {
+                    ctx.font = '10px Arial'; ctx.fillStyle = '#64748b'; ctx.fillText(labelArray, xPos, yPos);
+                }
+            });
+            ctx.restore();
+        }
+    };
+
+    function initChart() {
+        const ctx = document.getElementById('qcChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            plugins: [customAnnotationsPlugin, crosshairPlugin, customCanvasBackgroundColor, specLinesPlugin, customXAxisPlugin],
+            data: {
+                labels: [], customData: [],
+                datasets: [
+                    { label: 'Off_L', data: [], yAxisID: 'y', radius: 5, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'Off_R', data: [], yAxisID: 'y', radius: 5, borderWidth: 1.5, showLine: false, z: 10 },
+                    { label: 'NCKU_L', data: [], yAxisID: 'y', radius: 7, borderWidth: 2.5, showLine: false, z: 15 },
+                    { label: 'NCKU_R', data: [], yAxisID: 'y', radius: 7, borderWidth: 2.5, showLine: false, z: 15 },
+                    { label: 'Off均值 L', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'Off均值 R', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'NK均值 L', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'NK均值 R', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
+                    { label: 'Off_L/R均值', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 2, radius: 3, z: 12 },
+                    { label: 'NCKU_L/R均值', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 2, radius: 4, z: 16 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, 
+                layout: { padding: { top: 30, right: 10, bottom: 45 } }, 
+                scales: {
+                    x: { ticks: { display: false } }, 
+                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } }
+                },
+                plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
+            }
+        });
+
+        if (!chartEventsAttached) {
+            myChart.canvas.addEventListener('mousemove', (e) => {
+                const rect = myChart.canvas.getBoundingClientRect();
+                const y = e.clientY - rect.top; const x = e.clientX - rect.left;
+                if (myChart.chartArea && x >= myChart.chartArea.left && x <= myChart.chartArea.right && y >= myChart.chartArea.top && y <= myChart.chartArea.bottom) {
+                    crosshairY = myChart.scales.y.getValueForPixel(y); myChart.canvas.style.cursor = 'crosshair'; myChart.update('none'); 
+                } else { if (crosshairY !== null) { crosshairY = null; myChart.canvas.style.cursor = 'default'; myChart.update('none'); } }
+            });
+            chartEventsAttached = true;
+        }
+    }
+
+    // --- 資料操作與渲染 ---
+    function updateAll() {
+        if (!myChart) { initChart(); }
+
+        const jig = jigs[currentJigId];
+        const target = isNaN(jig.specs.target) ? 41.33 : jig.specs.target;
+        const usl = isNaN(jig.specs.usl) ? 42.33 : jig.specs.usl;
+        const lsl = isNaN(jig.specs.lsl) ? 40.33 : jig.specs.lsl;
+        const vis = jig.visuals;
+
+        myChart.data.datasets[0].borderColor = applyAlphaToHex(vis.rawDataL.color, 0.4); myChart.data.datasets[0].backgroundColor = vis.rawDataL.color; myChart.data.datasets[0].pointStyle = vis.rawDataL.shape;
+        myChart.data.datasets[1].borderColor = applyAlphaToHex(vis.rawDataR.color, 0.4); myChart.data.datasets[1].backgroundColor = vis.rawDataR.color; myChart.data.datasets[1].pointStyle = vis.rawDataR.shape;
+        myChart.data.datasets[2].borderColor = applyAlphaToHex(vis.nckuDataL.color, 0.4); myChart.data.datasets[2].backgroundColor = vis.nckuDataL.color; myChart.data.datasets[2].pointStyle = vis.nckuDataL.shape;
+        myChart.data.datasets[3].borderColor = applyAlphaToHex(vis.nckuDataR.color, 0.4); myChart.data.datasets[3].backgroundColor = vis.nckuDataR.color; myChart.data.datasets[3].pointStyle = vis.nckuDataR.shape;
+        
+        myChart.data.datasets[4].borderColor = vis.cumAvgL.color; myChart.data.datasets[4].pointStyle = vis.cumAvgL.shape;
+        myChart.data.datasets[5].borderColor = vis.cumAvgR.color; myChart.data.datasets[5].pointStyle = vis.cumAvgR.shape;
+        
+        myChart.data.datasets[6].borderColor = vis.nckuCumAvgL.color; myChart.data.datasets[6].pointStyle = vis.nckuCumAvgL.shape;
+        myChart.data.datasets[7].borderColor = vis.nckuCumAvgR.color; myChart.data.datasets[7].pointStyle = vis.nckuCumAvgR.shape;
+        
+        myChart.data.datasets[8].borderColor = vis.sampleAvgOff.color; myChart.data.datasets[8].backgroundColor = vis.sampleAvgOff.color; myChart.data.datasets[8].pointStyle = vis.sampleAvgOff.shape;
+        myChart.data.datasets[9].borderColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].backgroundColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].pointStyle = vis.sampleAvgNcku.shape;
+
+        const allGroups = [...new Set(jig.data.map(d => d.group || '預設'))];
+        const filterContainer = document.getElementById('groupFilters');
+        filterContainer.innerHTML = '';
+        if (allGroups.length > 0) {
+            allGroups.forEach(g => {
+                const label = document.createElement('label'); label.className = 'group-filter-label';
+                const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !hiddenGroups.has(g);
+                cb.onchange = (e) => toggleGroup(g, e.target.checked);
+                label.appendChild(cb); label.appendChild(document.createTextNode(' ' + g)); filterContainer.appendChild(label);
+            });
+        }
+
+        const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
+        const labels = [], offLData = [], offRData = [], nckuLData = [], nckuRData = [];
+        const cumL = [], cumR = [], cumNckuL = [], cumNckuR = [];
+        const offSampleAvgData = [], nckuSampleAvgData = [];
+        
+        let sumL = 0, countL = 0, sumR = 0, countR = 0;
+        let sumNckuL = 0, countNckuL = 0, sumNckuR = 0, countNckuR = 0;
+        let sumDeltaOff = 0, countDeltaOff = 0, sumTOffL = 0, sumTOffR = 0;
+        let sumDeltaNcku = 0, countDeltaNcku = 0, sumTNckuL = 0, sumTNckuR = 0;
+        
+        myChart.data.customData = [];
+        let minY = isNaN(lsl) ? 40 : lsl - 0.5; let maxY = isNaN(usl) ? 43 : usl + 0.5; 
+
+        jig.data.forEach((item, originalIndex) => {
+            const grp = item.group || '預設';
+            if (hiddenGroups.has(grp)) return; 
+            
+            const hasOff = item.l !== null || item.r !== null;
+            const hasNcku = item.l2 !== null || item.r2 !== null;
+            
+            let curCumL = '-', curCumR = '-', curCumNckuL = '-', curCumNckuR = '-';
+            let tOffL = '-', tOffR = '-', tNckuL = '-', tNckuR = '-';
+            let deltaOff = '-', deltaNcku = '-', status = '-', nkStatus = '-';
+            let statusColorStyle = '', nkStatusColorStyle = '';
+            let sampleOffAvg = null, sampleNckuAvg = null;
+
+            // Office 計算
+            if (hasOff) {
+                let vL = item.l !== null && !item.exL;
+                let vR = item.r !== null && !item.exR;
                 
-                dimHitZones.push({ i: i, x: x, y1: y1, y2: y2 }); 
+                if (vL) { sumL += item.l; countL++; }
+                if (vR) { sumR += item.r; countR++; }
                 
-                ctx.strokeStyle = "#D93D42"; 
-                ctx.fillStyle = "#D93D42"; 
-                ctx.lineWidth = 2; 
-                ctx.font = "bold 14px Arial";
+                curCumL = countL > 0 ? parseFloat((sumL / countL).toFixed(2)) : '-';
+                curCumR = countR > 0 ? parseFloat((sumR / countR).toFixed(2)) : '-';
                 
-                ctx.beginPath(); 
-                ctx.moveTo(x, y1); 
-                ctx.lineTo(x, y1 + h); 
-                ctx.stroke();
+                tOffL = vL ? (target - item.l).toFixed(2) : '-';
+                tOffR = vR ? (target - item.r).toFixed(2) : '-';
                 
-                ctx.strokeStyle = "#ccc"; 
-                ctx.lineWidth = 1; 
-                ctx.beginPath(); 
-                ctx.moveTo(x, y1); 
-                ctx.lineTo(x + 10, y1); 
-                ctx.moveTo(x, y1 + h); 
-                ctx.lineTo(x + 10, y1 + h); 
-                ctx.stroke();
+                if (vL) sumTOffL += parseFloat(tOffL);
+                if (vR) sumTOffR += parseFloat(tOffR);
+
+                if (vL && vR) {
+                    deltaOff = Math.abs(item.r - item.l).toFixed(2);
+                    sumDeltaOff += parseFloat(deltaOff); countDeltaOff++;
+                    sampleOffAvg = parseFloat(((item.l + item.r) / 2).toFixed(2));
+                }
+
+                if (!vL && !vR) {
+                    status = '-'; statusColorStyle = 'color: #94a3b8;';
+                } else {
+                    let okL = vL ? (item.l <= usl && item.l >= lsl) : true;
+                    let okR = vR ? (item.r <= usl && item.r >= lsl) : true;
+                    let isOk = (okL && okR);
+                    status = isOk ? 'OK' : 'NG';
+                    statusColorStyle = isOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
+                }
+            }
+            
+            // NCKU 計算
+            if (hasNcku) {
+                let vL2 = item.l2 !== null && !item.exL2;
+                let vR2 = item.r2 !== null && !item.exR2;
                 
-                const txt = d.label || `${window.layers.slice(d.start, d.end + 1).reduce((s,l) => s + (parseFloat(l.thickness) || 0), 0)}${unit}`;
-                ctx.textAlign = "right"; 
-                ctx.fillText(txt, x - 5, y1 + h / 2);
+                if (vL2) { sumNckuL += item.l2; countNckuL++; }
+                if (vR2) { sumNckuR += item.r2; countNckuR++; }
+                
+                curCumNckuL = countNckuL > 0 ? parseFloat((sumNckuL / countNckuL).toFixed(2)) : '-';
+                curCumNckuR = countNckuR > 0 ? parseFloat((sumNckuR / countNckuR).toFixed(2)) : '-';
+                
+                tNckuL = vL2 ? (target - item.l2).toFixed(2) : '-';
+                tNckuR = vR2 ? (target - item.r2).toFixed(2) : '-';
+
+                if (vL2) sumTNckuL += parseFloat(tNckuL);
+                if (vR2) sumTNckuR += parseFloat(tNckuR);
+
+                if (vL2 && vR2) {
+                    deltaNcku = Math.abs(item.r2 - item.l2).toFixed(2);
+                    sumDeltaNcku += parseFloat(deltaNcku); countDeltaNcku++;
+                    sampleNckuAvg = parseFloat(((item.l2 + item.r2) / 2).toFixed(2));
+                }
+
+                if (!vL2 && !vR2) {
+                    nkStatus = '-'; nkStatusColorStyle = 'color: #94a3b8;';
+                } else {
+                    let okL2 = vL2 ? (item.l2 <= usl && item.l2 >= lsl) : true;
+                    let okR2 = vR2 ? (item.r2 <= usl && item.r2 >= lsl) : true;
+                    let isNkOk = (okL2 && okR2);
+                    nkStatus = isNkOk ? 'OK' : 'NG';
+                    nkStatusColorStyle = isNkOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
+                }
+            }
+
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td class="editable-col office-col" data-field="name" data-index="${originalIndex}" tabindex="0">${item.name}</td>
+                <td class="editable-col office-col" data-field="group" data-index="${originalIndex}" tabindex="0">${grp}</td>
+                <td class="time-col office-col">${item.time || '-'}</td>
+                
+                <td class="editable-col office-col" data-field="l" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l, item.exL)}</td>
+                <td class="editable-col office-col" data-field="r" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r, item.exR)}</td>
+                <td class="office-col">${deltaOff}</td>
+                <td class="office-col">${curCumL}</td>
+                <td class="office-col">${curCumR}</td>
+                <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffL}</td>
+                <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffR}</td>
+                <td class="office-col" style="font-weight:bold; ${statusColorStyle}">${status}</td>
+                
+                <td class="editable-col ncku-col" data-field="l2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l2, item.exL2)}</td>
+                <td class="editable-col ncku-col" data-field="r2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r2, item.exR2)}</td>
+                <td class="ncku-col">${deltaNcku}</td>
+                <td class="ncku-col">${curCumNckuL}</td>
+                <td class="ncku-col">${curCumNckuR}</td>
+                <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuL}</td>
+                <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuR}</td>
+                <td class="ncku-col" style="font-weight:bold; ${nkStatusColorStyle}">${nkStatus}</td>
+                
+                <td class="office-col"><button onclick="deleteData(${originalIndex})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
+
+            labels.push([item.name, formatShortTime(item.time)]);
+            // 圖表數據：若被排除則傳入 null 不渲染
+            offLData.push(!item.exL ? item.l : null); 
+            offRData.push(!item.exR ? item.r : null); 
+            nckuLData.push(!item.exL2 ? item.l2 : null); 
+            nckuRData.push(!item.exR2 ? item.r2 : null);
+            
+            cumL.push(curCumL !== '-' ? curCumL : null); cumR.push(curCumR !== '-' ? curCumR : null);
+            cumNckuL.push(curCumNckuL !== '-' ? curCumNckuL : null); cumNckuR.push(curCumNckuR !== '-' ? curCumNckuR : null);
+            offSampleAvgData.push(sampleOffAvg); nckuSampleAvgData.push(sampleNckuAvg);
+            
+            myChart.data.customData.push({ 
+                offDelta: deltaOff, nckuDelta: deltaNcku, 
+                status: status, nckuStatus: nkStatus, 
+                hasOffice: hasOff, hasNcku: hasNcku,
+                exL: item.exL, exR: item.exR, exL2: item.exL2, exR2: item.exR2
             });
 
-            // --- 繪製照片 ---
-            if(window.photos.length > 0) {
-                let py = stackH + pad.t + 60; 
-                ctx.strokeStyle = "#eee"; 
-                ctx.lineWidth = 1; 
-                ctx.beginPath(); 
-                ctx.moveTo(20, py - 30); 
-                ctx.lineTo(canvas.width - 20, py - 30); 
-                ctx.stroke();
+            if(!item.exL && item.l !== null) { minY = Math.min(minY, item.l - 0.5); maxY = Math.max(maxY, item.l + 0.5); }
+            if(!item.exR && item.r !== null) { minY = Math.min(minY, item.r - 0.5); maxY = Math.max(maxY, item.r + 0.5); }
+            if(!item.exL2 && item.l2 !== null) { minY = Math.min(minY, item.l2 - 0.5); maxY = Math.max(maxY, item.l2 + 0.5); }
+            if(!item.exR2 && item.r2 !== null) { minY = Math.min(minY, item.r2 - 0.5); maxY = Math.max(maxY, item.r2 + 0.5); }
+        });
+
+        // 渲染總體平均值
+        document.getElementById('avgOffL').innerText = countL > 0 ? (sumL / countL).toFixed(2) : '-';
+        document.getElementById('avgOffR').innerText = countR > 0 ? (sumR / countR).toFixed(2) : '-';
+        document.getElementById('avgOffDelta').innerText = countDeltaOff > 0 ? (sumDeltaOff / countDeltaOff).toFixed(2) : '-';
+        document.getElementById('avgTOffL').innerText = countL > 0 ? (sumTOffL / countL).toFixed(2) : '-';
+        document.getElementById('avgTOffR').innerText = countR > 0 ? (sumTOffR / countR).toFixed(2) : '-';
+
+        document.getElementById('avgNkL').innerText = countNckuL > 0 ? (sumNckuL / countNckuL).toFixed(2) : '-';
+        document.getElementById('avgNkR').innerText = countNckuR > 0 ? (sumNckuR / countNckuR).toFixed(2) : '-';
+        document.getElementById('avgNkDelta').innerText = countDeltaNcku > 0 ? (sumDeltaNcku / countDeltaNcku).toFixed(2) : '-';
+        document.getElementById('avgTNkL').innerText = countNckuL > 0 ? (sumTNckuL / countNckuL).toFixed(2) : '-';
+        document.getElementById('avgTNkR').innerText = countNckuR > 0 ? (sumTNckuR / countNckuR).toFixed(2) : '-';
+
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = offLData; myChart.data.datasets[1].data = offRData;
+        myChart.data.datasets[2].data = nckuLData; myChart.data.datasets[3].data = nckuRData;
+        myChart.data.datasets[4].data = cumL; myChart.data.datasets[5].data = cumR;
+        myChart.data.datasets[6].data = cumNckuL; myChart.data.datasets[7].data = cumNckuR;
+        myChart.data.datasets[8].data = offSampleAvgData; myChart.data.datasets[9].data = nckuSampleAvgData;
+        myChart.options.scales.y.min = Math.floor(minY); myChart.options.scales.y.max = Math.ceil(maxY);
+
+        updateChartVisibility(); 
+        document.getElementById('sampleTime').value = getCurrentTime();
+    }
+
+    function updateChartVisibility() {
+        if(!myChart) return;
+        const showOffice = document.getElementById('toggleOffice').checked;
+        const showNcku = document.getElementById('toggleNCKU').checked;
+        const showCumOff = document.getElementById('toggleCumAvgOff').checked;
+        const showCumNcku = document.getElementById('toggleCumAvgNcku').checked;
+        const showSampleAvgOff = document.getElementById('toggleSampleAvgOff').checked;
+        const showSampleAvgNcku = document.getElementById('toggleSampleAvgNcku').checked;
+
+        myChart.setDatasetVisibility(0, showOffice); myChart.setDatasetVisibility(1, showOffice);
+        myChart.setDatasetVisibility(2, showNcku); myChart.setDatasetVisibility(3, showNcku);
+        myChart.setDatasetVisibility(4, showCumOff); myChart.setDatasetVisibility(5, showCumOff);
+        myChart.setDatasetVisibility(6, showCumNcku); myChart.setDatasetVisibility(7, showCumNcku);
+        myChart.setDatasetVisibility(8, showSampleAvgOff); myChart.setDatasetVisibility(9, showSampleAvgNcku);
+        myChart.update();
+    }
+
+    function addData() {
+        const name = document.getElementById('sampleName').value;
+        const group = document.getElementById('sampleGroup').value || currentJigId;
+        const l = parseFloat(document.getElementById('angleL').value); const r = parseFloat(document.getElementById('angleR').value);
+        const l2 = parseFloat(document.getElementById('angleL2').value); const r2 = parseFloat(document.getElementById('angleR2').value);
+        if (!name || (isNaN(l) && isNaN(l2))) { alert("請輸入名稱與至少一組數據！"); return; }
+        
+        jigs[currentJigId].data.push({ name, time: document.getElementById('sampleTime').value || getCurrentTime(), l: isNaN(l)?null:l, r: isNaN(r)?null:r, l2: isNaN(l2)?null:l2, r2: isNaN(r2)?null:r2, group, exL:false, exR:false, exL2:false, exR2:false });
+        saveSystemToStorage(); 
+        document.getElementById('sampleName').value=''; document.getElementById('angleL').value=''; document.getElementById('angleR').value=''; document.getElementById('angleL2').value=''; document.getElementById('angleR2').value='';
+        document.getElementById('sampleTime').value = getCurrentTime(); document.getElementById('sampleName').focus(); updateAll();
+    }
+
+    function deleteData(index) { if(confirm(`確定要刪除此筆資料嗎？`)) { jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll(); } }
+    function clearData() { if(confirm(`確定要清除此專案所有數據嗎？`)) { jigs[currentJigId].data = []; saveSystemToStorage(); updateAll(); } }
+
+    function makeTableEditable() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.addEventListener('focusin', function(e) { if(e.target && e.target.classList.contains('editable-col')) e.target.setAttribute('contenteditable', 'true'); });
+        tbody.addEventListener('blur', function(e) {
+            if(e.target && e.target.classList.contains('editable-col')) {
+                e.target.removeAttribute('contenteditable');
+                const cell = e.target; 
+                const newText = cell.innerText.trim(); 
+                const index = cell.getAttribute('data-index'); 
+                const field = cell.getAttribute('data-field');
+                const curData = jigs[currentJigId].data;
+                const oldVal = curData[index][field];
                 
-                window.photos.forEach(p => {
-                     if (!p.imgElement) { 
-                         p.imgElement = new Image(); 
-                         p.imgElement.onload = () => window.draw(); 
-                         p.imgElement.src = p.data; 
-                     }
-                     const photoDw = isComp ? dw * 2 + gap : dw;
-                     const displayH = (photoDw / p.w) * p.h;
-                     
-                     if (p.imgElement.complete) {
-                         ctx.drawImage(p.imgElement, pad.l, py, photoDw, displayH);
-                         ctx.strokeStyle = "#eee"; 
-                         ctx.lineWidth = 1; 
-                         ctx.strokeRect(pad.l, py, photoDw, displayH);
-                         ctx.fillStyle = "#000"; 
-                         ctx.textAlign = "left"; 
-                         ctx.font = "14px Arial"; 
-                         ctx.fillText("▲ " + p.desc, pad.l, py + displayH + 20);
-                     }
-                     py += displayH + 50;
-                });
+                let newVal = newText;
+                if (['l', 'r', 'l2', 'r2'].includes(field)) {
+                    newVal = newText === "" ? null : parseFloat(newText);
+                    if (isNaN(newVal)) newVal = oldVal;
+                }
+
+                if(index !== null && newVal !== oldVal) {
+                    if(newVal === "" && !['l', 'r', 'l2', 'r2'].includes(field)) { alert("文字欄位不能為空！"); cell.innerText = oldVal; return; }
+                    
+                    curData[index][field] = newVal;
+                    
+                    // 當數值被手動修改時，自動解除「排除計算」的狀態
+                    if (field === 'l') curData[index].exL = false;
+                    if (field === 'r') curData[index].exR = false;
+                    if (field === 'l2') curData[index].exL2 = false;
+                    if (field === 'r2') curData[index].exR2 = false;
+
+                    saveSystemToStorage(); updateAll();
+                }
             }
-        };
+        }, true);
+        tbody.addEventListener('keydown', function(e) { if(e.target && e.target.classList.contains('editable-col')) { if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); } } });
+    }
+    
+    function formatShortTime(timeStr) {
+        if (!timeStr) return "";
+        try { if(timeStr.includes('下午') || timeStr.includes('上午')) { return timeStr.split(' ')[0].split('/').slice(1).join('/'); } return timeStr.split(' ')[0]; } catch(e) { return timeStr; }
+    }
 
-        // --- 啟動與預設資料載入 ---
-        if(isFirebaseReady) { 
-            window.refreshUnitList(); 
-        }
-        
-        window.layers = [
-            {name:"Solder Mask", thickness:20, color:"#2E7D32", traces:0, traceHeight:15, spacing: 0},
-            {name:"Top Layer", thickness:35, color:"#1E88E5", traces:3, traceHeight:35, traceWidth: 50, traceColor:"#F5B041", traceStyle: "embed-bot", spacing: 0},
-            {name:"Dielectric 1", thickness:100, color:"#F5F5DC", traces:0, spacing: 0},
-            {name:"Inner Layer 1", thickness:35, color:"#1E88E5", traces:2, traceHeight:35, traceWidth: 40, traceColor:"#F5B041", traceStyle: "embed-bot", spacing: 0},
-            {name:"Core", thickness:200, color:"#F5F5DC", traces:0, spacing: 0},
-        ];
-        
-        window.renderList(); 
-        window.resizeCanvas();
-
-    </script>
+    window.onload = initSystem;
+</script>
 </body>
 </html>
