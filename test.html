@@ -96,8 +96,8 @@
         td.editable-col { cursor: pointer; background: #fefce8; border: 1px dashed #fde047; transition: 0.2s;}
         td.editable-col:hover, td.editable-col:focus { outline: 2px solid #facc15; background: #fef08a;}
         
-        /* 被剔除數值的樣式 */
-        .excluded-val { text-decoration: line-through; color: #ef4444 !important; font-weight: bold !important; background: #fee2e2; border-radius: 4px; padding: 2px 4px; display: inline-block;}
+        /* 被剔除數值的樣式與 Hover 效果 */
+        .excluded-val { text-decoration: line-through; color: #ef4444 !important; font-weight: bold !important; background: #fee2e2; border-radius: 4px; padding: 2px 4px; display: inline-block; cursor: help;}
         
         .group-filter-label { background: white; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 20px; transition: 0.2s;}
         .group-filter-label:hover { background: #f1f5f9; border-color: #94a3b8; }
@@ -209,11 +209,12 @@
             <div style="font-size: 12px; color: #854d0e; margin-top: 8px; line-height: 1.6;">
                 <b>【操作指南】</b><br>
                 • <b>手動修改數值</b>：針對量測角度「點擊滑鼠左鍵」即可直接輸入更改，系統會即時更新圖表與均值。<br>
-                • <b>排除異常數值</b>：在量測角度上點擊「<b>滑鼠右鍵</b>」，即可排除該數值（顯示紅色刪除線）。排除後將不計入平均值與圖表。再次右鍵即可恢復。<br><br>
+                • <b>排除異常與備註</b>：在量測角度上點擊「<b>滑鼠右鍵</b>」，可選擇排除該數值並輸入【排除原因/備註】。排除後將不計入圖表與計算。滑鼠游標「懸停」於被排除的數字上，即可顯示備註內容。<br><br>
                 <b>【名詞定義】</b><br>
                 • <b>O_Δ / NK_Δ (差值)</b>：單筆測量中，右側與左側的角度絕對差距 ( |R - L| )。<br>
                 • <b>Off均L / Off均R / NK均L / NK均R</b>：歷史累積平均值。將歷史至當前的「有效測量角度」加總求平均，觀察長期趨勢。<br>
-                • <b>T-Off_L / T-Off_R (目標差距)</b>：目標角度減去實際量測角度 ( Target - Measured )。
+                • <b>T-Off_L / T-Off_R (目標差距)</b>：目標角度減去實際量測角度 ( Target - Measured )。<br>
+                • <b>標準差 (Standard Deviation)</b>：位於表尾，提供「樣本(n-1)」與「母體(n)」兩種算法切換，反映整體製程數據的離散程度(穩定度)。
             </div>
         </details>
 
@@ -258,7 +259,7 @@
                         <td id="avgOffL" style="color:#3b82f6;">-</td>
                         <td id="avgOffR" style="color:#f59e0b;">-</td>
                         <td id="avgOffDelta">-</td>
-                        <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(歷史累積專用)</td>
+                        <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(不顯示)</td>
                         <td id="avgTOffL" style="color:#0369a1; background:#f0f9ff;">-</td>
                         <td id="avgTOffR" style="color:#0369a1; background:#f0f9ff;">-</td>
                         <td>-</td>
@@ -266,9 +267,32 @@
                         <td id="avgNkL" class="ncku-col" style="color:#6366f1;">-</td>
                         <td id="avgNkR" class="ncku-col" style="color:#f43f5e;">-</td>
                         <td id="avgNkDelta" class="ncku-col">-</td>
-                        <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(歷史累積專用)</td>
+                        <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(不顯示)</td>
                         <td id="avgTNkL" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
                         <td id="avgTNkR" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
+                        <td class="ncku-col">-</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background: #f8fafc; font-weight: bold; border-top: 1px solid #cbd5e1;">
+                        <td colspan="3" style="text-align: right; padding-right: 10px; color: #475569;">
+                            📈 總體標準差
+                            <select id="sdTypeSelect" onchange="updateAll()" style="margin-left:5px; padding:1px 4px; font-size:11px; font-weight:normal; border-radius:4px; border:1px solid #cbd5e1; outline:none; cursor:pointer;">
+                                <option value="sample">樣本 (n-1)</option>
+                                <option value="population">母體 (n)</option>
+                            </select>：
+                        </td>
+                        <td id="sdOffL" style="color:#3b82f6;">-</td>
+                        <td id="sdOffR" style="color:#f59e0b;">-</td>
+                        <td id="sdOffDelta">-</td>
+                        <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(不計算)</td>
+                        <td colspan="2" style="background:#f0f9ff; font-size:10px; color:#0369a1; font-weight:normal;">(同量測值)</td>
+                        <td>-</td>
+                        
+                        <td id="sdNkL" class="ncku-col" style="color:#6366f1;">-</td>
+                        <td id="sdNkR" class="ncku-col" style="color:#f43f5e;">-</td>
+                        <td id="sdNkDelta" class="ncku-col">-</td>
+                        <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(不計算)</td>
+                        <td colspan="2" class="ncku-col" style="background:#f5f3ff; font-size:10px; color:#5b21b6; font-weight:normal;">(同量測值)</td>
                         <td class="ncku-col">-</td>
                         <td></td>
                     </tr>
@@ -351,8 +375,8 @@
     };
 
     const defaultData = [
-        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50, l2: null, r2: null, group: "Jig 8", exL: false, exR: false, exL2: false, exR2: false },
-        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26, l2: 42.5, r2: 43.0, group: "Jig old", exL: false, exR: false, exL2: false, exR2: false }
+        { name: "AF", time: "2026/4/8 下午 3:44:06", l: 42.10, r: 41.50, l2: null, r2: null, group: "Jig 8", exL: false, exR: false, exL2: false, exR2: false, noteL: "", noteR: "", noteL2: "", noteR2: "" },
+        { name: "Sample II", time: "2026/4/15 下午 2:23:20", l: 42.06, r: 43.26, l2: 42.5, r2: 43.0, group: "Jig old", exL: false, exR: false, exL2: false, exR2: false, noteL: "", noteR: "", noteL2: "", noteR2: "" }
     ];
 
     let jigs = {}; 
@@ -412,7 +436,7 @@
         }
     }
 
-    // 防呆機制：確保舊數據也有「排除狀態(ex)」的新參數
+    // 防呆機制：確保舊數據也有「排除狀態(ex)」與「備註(note)」的新參數
     function checkAndUpgradeJigs() {
         if(!jigs || Object.keys(jigs).length === 0) return;
         Object.keys(jigs).forEach(id => {
@@ -433,11 +457,14 @@
                 if (!d.group) d.group = "預設"; 
                 if (d.l2 === undefined) d.l2 = null; 
                 if (d.r2 === undefined) d.r2 = null;
-                // 新增排除標記
                 if (d.exL === undefined) d.exL = false;
                 if (d.exR === undefined) d.exR = false;
                 if (d.exL2 === undefined) d.exL2 = false;
                 if (d.exR2 === undefined) d.exR2 = false;
+                if (d.noteL === undefined) d.noteL = "";
+                if (d.noteR === undefined) d.noteR = "";
+                if (d.noteL2 === undefined) d.noteL2 = "";
+                if (d.noteR2 === undefined) d.noteR2 = "";
             });
         });
     }
@@ -631,7 +658,7 @@
                         break;
                     }
                 }
-                currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r, l2: l2, r2: r2, group: groupStr, exL: false, exR: false, exL2: false, exR2: false });
+                currentData.push({ name: name, time: timeStr || getCurrentTime(), l: l, r: r, l2: l2, r2: r2, group: groupStr, exL: false, exR: false, exL2: false, exR2: false, noteL: "", noteR: "", noteL2: "", noteR2: "" });
                 importCount++;
             }
         });
@@ -660,20 +687,41 @@
         updateAll();
     }
 
-    // --- 剔除數據 右鍵事件 ---
-    window.toggleExclude = function(e, index, field) {
+    // --- 剔除數據與備註 右鍵事件 ---
+    window.toggleExclude = function(e, index, field, noteField) {
         e.preventDefault();
         const curData = jigs[currentJigId].data;
-        curData[index][field] = !curData[index][field];
+        const isCurrentlyExcluded = curData[index][field];
+
+        if (!isCurrentlyExcluded) {
+            let note = prompt("請輸入排除此數據的原因 / 備註 (可直接按確定留空)：", "");
+            if (note === null) return; // 點擊取消，不執行排除
+            curData[index][field] = true;
+            curData[index][noteField] = note;
+        } else {
+            curData[index][field] = false;
+            curData[index][noteField] = "";
+        }
         saveSystemToStorage();
         updateAll();
     };
 
-    // 格式化角度顯示 (被排除會加上特殊樣式)
-    function formatAngle(val, isExcluded) {
+    function formatAngle(val, isExcluded, note) {
         if (val === null || val === undefined || val === '') return '';
-        if (isExcluded) return `<span class="excluded-val" title="已排除計算，右鍵點擊恢復">${val}</span>`;
+        if (isExcluded) {
+            let hoverText = note ? `已排除計算\n📝 備註：${note}\n(右鍵點擊恢復)` : `已排除計算 (右鍵點擊恢復)`;
+            let noteIcon = note ? `<span style="font-size:11px; margin-left:3px; text-decoration:none;">💬</span>` : '';
+            return `<span class="excluded-val" title="${hoverText}">${val}${noteIcon}</span>`;
+        }
         return val;
+    }
+
+    // --- 標準差計算核心邏輯 ---
+    function calcStandardDeviation(arr, isSample) {
+        if (!arr || arr.length < (isSample ? 2 : 1)) return '-';
+        const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (arr.length - (isSample ? 1 : 0));
+        return Math.sqrt(variance).toFixed(2);
     }
 
     // --- Chart.js 外掛與初始化 ---
@@ -716,7 +764,6 @@
         }
     };
 
-    // 處理 OK/NG/Δ 文字 (完美版下移Delta)
     const customAnnotationsPlugin = {
         id: 'annotations',
         afterDraw(chart) {
@@ -743,7 +790,6 @@
 
             ctx.save();
             chart.data.customData.forEach((item, index) => {
-                // 安全讀取位置，過濾掉已排除的 null 點
                 let pOffL = (!item.exL && metaOffL.data[index]) ? metaOffL.data[index].getProps(['x', 'y', 'skip']) : null;
                 let pOffR = (!item.exR && metaOffR.data[index]) ? metaOffR.data[index].getProps(['x', 'y', 'skip']) : null;
                 let pNkL = (!item.exL2 && metaNckuL.data[index]) ? metaNckuL.data[index].getProps(['x', 'y', 'skip']) : null;
@@ -752,7 +798,6 @@
                 if (pOffL && pOffL.skip) pOffL = null; if (pOffR && pOffR.skip) pOffR = null;
                 if (pNkL && pNkL.skip) pNkL = null; if (pNkR && pNkR.skip) pNkR = null;
 
-                // 畫 L-R 連線
                 if (showOffice && showLRLine && pOffL && pOffR) {
                     ctx.beginPath(); ctx.moveTo(pOffL.x, pOffL.y); ctx.lineTo(pOffR.x, pOffR.y);
                     ctx.strokeStyle = applyAlphaToHex(vis.rawDataL.color, 0.4); ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.stroke();
@@ -770,7 +815,6 @@
                     ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]); ctx.stroke();
                 }
 
-                // 準備計算 OK/NG 與 Delta 的位置
                 let absTopY = null, absBotYOff = null, absBotYNk = null;
                 let xPos = (pOffL && pOffL.x) || (pOffR && pOffR.x) || (pNkL && pNkL.x) || (pNkR && pNkR.x);
 
@@ -790,7 +834,6 @@
                     }
                     if (topYs.length > 0) absTopY = Math.min(...topYs);
 
-                    // 繪製 Delta (在點的下方，為了不重疊稍微左右偏移)
                     if (showOffice && pOffL && pOffR && item.offDelta !== '-') {
                         drawTextWithBgBox('Δ ' + item.offDelta, xPos + 12, absBotYOff + 16, 'left', vis.rawDataL.color, 'bold 11px Arial');
                     }
@@ -798,7 +841,6 @@
                         drawTextWithBgBox('Δ ' + item.nckuDelta, xPos - 12, absBotYNk + 16, 'right', vis.nckuDataL.color, 'bold 11px Arial');
                     }
 
-                    // 繪製 OK/NG (統一在點的上方)
                     if (absTopY !== null) {
                         let textOffset = 12;
                         if (showNcku && (pNkL || pNkR) && item.nckuStatus !== '-') {
@@ -938,6 +980,9 @@
         let sumDeltaOff = 0, countDeltaOff = 0, sumTOffL = 0, sumTOffR = 0;
         let sumDeltaNcku = 0, countDeltaNcku = 0, sumTNckuL = 0, sumTNckuR = 0;
         
+        let arrOffL = [], arrOffR = [], arrOffDelta = [];
+        let arrNkL = [], arrNkR = [], arrNkDelta = [];
+
         myChart.data.customData = [];
         let minY = isNaN(lsl) ? 40 : lsl - 0.5; let maxY = isNaN(usl) ? 43 : usl + 0.5; 
 
@@ -954,13 +999,12 @@
             let statusColorStyle = '', nkStatusColorStyle = '';
             let sampleOffAvg = null, sampleNckuAvg = null;
 
-            // Office 計算
             if (hasOff) {
                 let vL = item.l !== null && !item.exL;
                 let vR = item.r !== null && !item.exR;
                 
-                if (vL) { sumL += item.l; countL++; }
-                if (vR) { sumR += item.r; countR++; }
+                if (vL) { sumL += item.l; countL++; arrOffL.push(item.l); }
+                if (vR) { sumR += item.r; countR++; arrOffR.push(item.r); }
                 
                 curCumL = countL > 0 ? parseFloat((sumL / countL).toFixed(2)) : '-';
                 curCumR = countR > 0 ? parseFloat((sumR / countR).toFixed(2)) : '-';
@@ -974,6 +1018,7 @@
                 if (vL && vR) {
                     deltaOff = Math.abs(item.r - item.l).toFixed(2);
                     sumDeltaOff += parseFloat(deltaOff); countDeltaOff++;
+                    arrOffDelta.push(parseFloat(deltaOff));
                     sampleOffAvg = parseFloat(((item.l + item.r) / 2).toFixed(2));
                 }
 
@@ -988,13 +1033,12 @@
                 }
             }
             
-            // NCKU 計算
             if (hasNcku) {
                 let vL2 = item.l2 !== null && !item.exL2;
                 let vR2 = item.r2 !== null && !item.exR2;
                 
-                if (vL2) { sumNckuL += item.l2; countNckuL++; }
-                if (vR2) { sumNckuR += item.r2; countNckuR++; }
+                if (vL2) { sumNckuL += item.l2; countNckuL++; arrNkL.push(item.l2); }
+                if (vR2) { sumNckuR += item.r2; countNckuR++; arrNkR.push(item.r2); }
                 
                 curCumNckuL = countNckuL > 0 ? parseFloat((sumNckuL / countNckuL).toFixed(2)) : '-';
                 curCumNckuR = countNckuR > 0 ? parseFloat((sumNckuR / countNckuR).toFixed(2)) : '-';
@@ -1008,6 +1052,7 @@
                 if (vL2 && vR2) {
                     deltaNcku = Math.abs(item.r2 - item.l2).toFixed(2);
                     sumDeltaNcku += parseFloat(deltaNcku); countDeltaNcku++;
+                    arrNkDelta.push(parseFloat(deltaNcku));
                     sampleNckuAvg = parseFloat(((item.l2 + item.r2) / 2).toFixed(2));
                 }
 
@@ -1028,8 +1073,8 @@
                 <td class="editable-col office-col" data-field="group" data-index="${originalIndex}" tabindex="0">${grp}</td>
                 <td class="time-col office-col">${item.time || '-'}</td>
                 
-                <td class="editable-col office-col" data-field="l" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l, item.exL)}</td>
-                <td class="editable-col office-col" data-field="r" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r, item.exR)}</td>
+                <td class="editable-col office-col" data-field="l" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL', 'noteL')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l, item.exL, item.noteL)}</td>
+                <td class="editable-col office-col" data-field="r" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR', 'noteR')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r, item.exR, item.noteR)}</td>
                 <td class="office-col">${deltaOff}</td>
                 <td class="office-col">${curCumL}</td>
                 <td class="office-col">${curCumR}</td>
@@ -1037,8 +1082,8 @@
                 <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffR}</td>
                 <td class="office-col" style="font-weight:bold; ${statusColorStyle}">${status}</td>
                 
-                <td class="editable-col ncku-col" data-field="l2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l2, item.exL2)}</td>
-                <td class="editable-col ncku-col" data-field="r2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r2, item.exR2)}</td>
+                <td class="editable-col ncku-col" data-field="l2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL2', 'noteL2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l2, item.exL2, item.noteL2)}</td>
+                <td class="editable-col ncku-col" data-field="r2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR2', 'noteR2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r2, item.exR2, item.noteR2)}</td>
                 <td class="ncku-col">${deltaNcku}</td>
                 <td class="ncku-col">${curCumNckuL}</td>
                 <td class="ncku-col">${curCumNckuR}</td>
@@ -1049,7 +1094,6 @@
                 <td class="office-col"><button onclick="deleteData(${originalIndex})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
 
             labels.push([item.name, formatShortTime(item.time)]);
-            // 圖表數據：若被排除則傳入 null 不渲染
             offLData.push(!item.exL ? item.l : null); 
             offRData.push(!item.exR ? item.r : null); 
             nckuLData.push(!item.exL2 ? item.l2 : null); 
@@ -1072,7 +1116,6 @@
             if(!item.exR2 && item.r2 !== null) { minY = Math.min(minY, item.r2 - 0.5); maxY = Math.max(maxY, item.r2 + 0.5); }
         });
 
-        // 渲染總體平均值
         document.getElementById('avgOffL').innerText = countL > 0 ? (sumL / countL).toFixed(2) : '-';
         document.getElementById('avgOffR').innerText = countR > 0 ? (sumR / countR).toFixed(2) : '-';
         document.getElementById('avgOffDelta').innerText = countDeltaOff > 0 ? (sumDeltaOff / countDeltaOff).toFixed(2) : '-';
@@ -1084,6 +1127,14 @@
         document.getElementById('avgNkDelta').innerText = countDeltaNcku > 0 ? (sumDeltaNcku / countDeltaNcku).toFixed(2) : '-';
         document.getElementById('avgTNkL').innerText = countNckuL > 0 ? (sumTNckuL / countNckuL).toFixed(2) : '-';
         document.getElementById('avgTNkR').innerText = countNckuR > 0 ? (sumTNckuR / countNckuR).toFixed(2) : '-';
+
+        const isSampleSD = document.getElementById('sdTypeSelect').value === 'sample';
+        document.getElementById('sdOffL').innerText = calcStandardDeviation(arrOffL, isSampleSD);
+        document.getElementById('sdOffR').innerText = calcStandardDeviation(arrOffR, isSampleSD);
+        document.getElementById('sdOffDelta').innerText = calcStandardDeviation(arrOffDelta, isSampleSD);
+        document.getElementById('sdNkL').innerText = calcStandardDeviation(arrNkL, isSampleSD);
+        document.getElementById('sdNkR').innerText = calcStandardDeviation(arrNkR, isSampleSD);
+        document.getElementById('sdNkDelta').innerText = calcStandardDeviation(arrNkDelta, isSampleSD);
 
         myChart.data.labels = labels;
         myChart.data.datasets[0].data = offLData; myChart.data.datasets[1].data = offRData;
@@ -1121,12 +1172,24 @@
         const l2 = parseFloat(document.getElementById('angleL2').value); const r2 = parseFloat(document.getElementById('angleR2').value);
         if (!name || (isNaN(l) && isNaN(l2))) { alert("請輸入名稱與至少一組數據！"); return; }
         
-        jigs[currentJigId].data.push({ name, time: document.getElementById('sampleTime').value || getCurrentTime(), l: isNaN(l)?null:l, r: isNaN(r)?null:r, l2: isNaN(l2)?null:l2, r2: isNaN(r2)?null:r2, group, exL:false, exR:false, exL2:false, exR2:false });
+        jigs[currentJigId].data.push({ name, time: document.getElementById('sampleTime').value || getCurrentTime(), l: isNaN(l)?null:l, r: isNaN(r)?null:r, l2: isNaN(l2)?null:l2, r2: isNaN(r2)?null:r2, group, exL:false, exR:false, exL2:false, exR2:false, noteL:"", noteR:"", noteL2:"", noteR2:"" });
         saveSystemToStorage(); 
         document.getElementById('sampleName').value=''; document.getElementById('angleL').value=''; document.getElementById('angleR').value=''; document.getElementById('angleL2').value=''; document.getElementById('angleR2').value='';
         document.getElementById('sampleTime').value = getCurrentTime(); document.getElementById('sampleName').focus(); updateAll();
     }
 
+    function submitPopupData() {
+        const name = document.getElementById('popupName').value; const group = document.getElementById('popupGroup').value || currentJigId;
+        const cursorVal = parseFloat(document.getElementById('popupCursorVal').value); const otherVal = parseFloat(document.getElementById('popupOtherVal').value);
+        const side = document.querySelector('input[name="cursorSide"][value="L"]:checked') ? 'L' : 'R';
+        if (!name || isNaN(cursorVal) || isNaN(otherVal)) { alert('請輸入完整數值！'); return; }
+        let l = side === 'L' ? cursorVal : otherVal; let r = side === 'L' ? otherVal : cursorVal;
+        
+        jigs[currentJigId].data.push({ name, time: document.getElementById('popupTime').value || getCurrentTime(), l, r, l2:null, r2:null, group, exL:false, exR:false, exL2:false, exR2:false, noteL:"", noteR:"", noteL2:"", noteR2:"" });
+        saveSystemToStorage(); updateAll(); closePopup();
+    }
+
+    function closePopup() { document.getElementById('clickInputPopup').style.display = 'none'; }
     function deleteData(index) { if(confirm(`確定要刪除此筆資料嗎？`)) { jigs[currentJigId].data.splice(index, 1); saveSystemToStorage(); updateAll(); } }
     function clearData() { if(confirm(`確定要清除此專案所有數據嗎？`)) { jigs[currentJigId].data = []; saveSystemToStorage(); updateAll(); } }
 
@@ -1137,7 +1200,7 @@
             if(e.target && e.target.classList.contains('editable-col')) {
                 e.target.removeAttribute('contenteditable');
                 const cell = e.target; 
-                const newText = cell.innerText.trim(); 
+                const newText = cell.innerText.trim().replace(/💬/g, ''); // 移除可能的圖示再解析
                 const index = cell.getAttribute('data-index'); 
                 const field = cell.getAttribute('data-field');
                 const curData = jigs[currentJigId].data;
@@ -1154,11 +1217,10 @@
                     
                     curData[index][field] = newVal;
                     
-                    // 當數值被手動修改時，自動解除「排除計算」的狀態
-                    if (field === 'l') curData[index].exL = false;
-                    if (field === 'r') curData[index].exR = false;
-                    if (field === 'l2') curData[index].exL2 = false;
-                    if (field === 'r2') curData[index].exR2 = false;
+                    if (field === 'l') { curData[index].exL = false; curData[index].noteL = ""; }
+                    if (field === 'r') { curData[index].exR = false; curData[index].noteR = ""; }
+                    if (field === 'l2') { curData[index].exL2 = false; curData[index].noteL2 = ""; }
+                    if (field === 'r2') { curData[index].exR2 = false; curData[index].noteR2 = ""; }
 
                     saveSystemToStorage(); updateAll();
                 }
