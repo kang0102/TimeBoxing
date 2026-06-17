@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
         body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: #f0f4f8; margin: 20px; color: #334155; overflow-x: hidden; }
@@ -165,8 +166,9 @@
                 <div class="input-group"><label style="color:#f43f5e;">NCKU R</label><input type="number" id="angleR2" step="0.01" style="width:70px;"></div>
 
                 <button class="action-btn" onclick="addData()">➕ 新增</button>
-                <button class="action-btn btn-outline" style="margin-left:auto;" onclick="downloadChart()">📥 下載圖表</button>
-                <button class="action-btn btn-outline" style="color:#ef4444;" onclick="clearData()">🗑️ 清空此專案數據</button>
+                <button class="action-btn btn-success" style="margin-left:auto; background-color: #10b981;" onclick="exportToExcel()">📊 匯出 Excel (含公式)</button>
+                <button class="action-btn btn-outline" onclick="downloadChart()">📥 下載圖表</button>
+                <button class="action-btn btn-outline" style="color:#ef4444;" onclick="clearData()">🗑️ 清空數據</button>
             </div>
         </div>
 
@@ -209,7 +211,8 @@
             <div style="font-size: 12px; color: #854d0e; margin-top: 8px; line-height: 1.6;">
                 <b>【操作指南】</b><br>
                 • <b>手動修改數值</b>：針對量測角度「點擊滑鼠左鍵」即可直接輸入更改，系統會即時更新圖表與均值。<br>
-                • <b>排除異常與備註</b>：在量測角度上點擊「<b>滑鼠右鍵</b>」，可選擇排除該數值並輸入【排除原因/備註】。排除後將不計入圖表與計算。滑鼠游標「懸停」於被排除的數字上，即可顯示備註內容。<br><br>
+                • <b>排除異常與備註</b>：在量測角度上點擊「<b>滑鼠右鍵</b>」，可選擇排除該數值並輸入【排除原因/備註】。排除後將不計入圖表與計算。滑鼠游標「懸停」於被排除的數字上，即可顯示備註內容。<br>
+                • <b>匯出連動 Excel</b>：點擊上方的綠色按鈕，匯出的 Excel 會自帶 `AVERAGE`、`ABS`、`IF` 等原生函式，可以直接在 Excel 內修改數值進行連動運算。<br><br>
                 <b>【名詞定義】</b><br>
                 • <b>O_Δ / NK_Δ (差值)</b>：單筆測量中，右側與左側的角度絕對差距 ( |R - L| )。<br>
                 • <b>Off均L / Off均R / NK均L / NK均R</b>：歷史累積平均值。將歷史至當前的「有效測量角度」加總求平均，觀察長期趨勢。<br>
@@ -695,7 +698,7 @@
 
         if (!isCurrentlyExcluded) {
             let note = prompt("請輸入排除此數據的原因 / 備註 (可直接按確定留空)：", "");
-            if (note === null) return; // 點擊取消，不執行排除
+            if (note === null) return; 
             curData[index][field] = true;
             curData[index][noteField] = note;
         } else {
@@ -723,6 +726,114 @@
         const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (arr.length - (isSample ? 1 : 0));
         return Math.sqrt(variance).toFixed(2);
     }
+
+    // --- 📊 Excel 匯出 (內嵌原生公式 + 底端平均與標準差) ---
+    window.exportToExcel = function() {
+        if (typeof XLSX === 'undefined') {
+            alert('Excel 匯出模組載入中，請稍後再試。');
+            return;
+        }
+        
+        const jig = jigs[currentJigId];
+        const target = isNaN(jig.specs.target) ? 41.33 : jig.specs.target;
+        const usl = isNaN(jig.specs.usl) ? 42.33 : jig.specs.usl;
+        const lsl = isNaN(jig.specs.lsl) ? 40.33 : jig.specs.lsl;
+
+        let ws_data = [
+            ["Sample", "群組(治具)", "時間", "Off_L", "Off_R", "O_Δ", "Off均L", "Off均R", "T-Off_L", "T-Off_R", "O_結", "NK_L", "NK_R", "NK_Δ", "NK均L", "NK均R", "T-NK_L", "T-NK_R", "NK_結"]
+        ];
+
+        jig.data.forEach((item, index) => {
+            const r = index + 2; 
+            
+            // 被排除的資料設為空白，讓 Excel 公式自動略過
+            let vL = item.exL ? "" : (item.l !== null ? item.l : "");
+            let vR = item.exR ? "" : (item.r !== null ? item.r : "");
+            let vL2 = item.exL2 ? "" : (item.l2 !== null ? item.l2 : "");
+            let vR2 = item.exR2 ? "" : (item.r2 !== null ? item.r2 : "");
+
+            let row = [
+                item.name || "",
+                item.group || "預設",
+                item.time || "",
+                vL,
+                vR,
+                { f: `IF(COUNT(D${r}:E${r})=2, ABS(E${r}-D${r}), "")` },                     
+                { f: `IF(ISNUMBER(D${r}), AVERAGE(D$2:D${r}), "")` },                       
+                { f: `IF(ISNUMBER(E${r}), AVERAGE(E$2:E${r}), "")` },                       
+                { f: `IF(ISNUMBER(D${r}), ROUND(${target}-D${r}, 2), "")` },                
+                { f: `IF(ISNUMBER(E${r}), ROUND(${target}-E${r}, 2), "")` },                
+                { f: `IF(COUNT(D${r}:E${r})=2, IF(AND(D${r}<=${usl}, D${r}>=${lsl}, E${r}<=${usl}, E${r}>=${lsl}), "OK", "NG"), "-")` }, 
+                vL2,
+                vR2,
+                { f: `IF(COUNT(L${r}:M${r})=2, ABS(M${r}-L${r}), "")` },                     
+                { f: `IF(ISNUMBER(L${r}), AVERAGE(L$2:L${r}), "")` },                       
+                { f: `IF(ISNUMBER(M${r}), AVERAGE(M$2:M${r}), "")` },                       
+                { f: `IF(ISNUMBER(L${r}), ROUND(${target}-L${r}, 2), "")` },                
+                { f: `IF(ISNUMBER(M${r}), ROUND(${target}-M${r}, 2), "")` },                
+                { f: `IF(COUNT(L${r}:M${r})=2, IF(AND(L${r}<=${usl}, L${r}>=${lsl}, M${r}<=${usl}, M${r}>=${lsl}), "OK", "NG"), "-")` }  
+            ];
+            ws_data.push(row);
+        });
+
+        // 插入底部統計列
+        let lastRow = Math.max(2, jig.data.length + 1);
+
+        // 1. 總體有效平均
+        let avgRow = [
+            "", "", "📊 總體有效平均：",
+            { f: `IFERROR(ROUND(AVERAGE(D2:D${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(E2:E${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(F2:F${lastRow}),2), "-")` }, 
+            "(不顯示)", "(不顯示)", 
+            { f: `IFERROR(ROUND(AVERAGE(I2:I${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(J2:J${lastRow}),2), "-")` }, 
+            "-", 
+            { f: `IFERROR(ROUND(AVERAGE(L2:L${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(M2:M${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(N2:N${lastRow}),2), "-")` }, 
+            "(不顯示)", "(不顯示)", 
+            { f: `IFERROR(ROUND(AVERAGE(Q2:Q${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(R2:R${lastRow}),2), "-")` }, 
+            "-"  
+        ];
+
+        // 2. 總體標準差
+        const isSampleSD = document.getElementById('sdTypeSelect').value === 'sample';
+        const sdFunc = isSampleSD ? "STDEV.S" : "STDEV.P";
+        const sdLabel = isSampleSD ? "📈 總體標準差 (樣本 n-1)：" : "📈 總體標準差 (母體 n)：";
+
+        let sdRow = [
+            "", "", sdLabel,
+            { f: `IFERROR(ROUND(${sdFunc}(D2:D${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(${sdFunc}(E2:E${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(${sdFunc}(F2:F${lastRow}),2), "-")` }, 
+            "(不計算)", "(不計算)", 
+            "(同量測值)", "(同量測值)", 
+            "-", 
+            { f: `IFERROR(ROUND(${sdFunc}(L2:L${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(${sdFunc}(M2:M${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(${sdFunc}(N2:N${lastRow}),2), "-")` }, 
+            "(不計算)", "(不計算)", 
+            "(同量測值)", "(同量測值)", 
+            "-" 
+        ];
+
+        ws_data.push(avgRow);
+        ws_data.push(sdRow);
+
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        
+        ws['!cols'] = [
+            { wch: 15 }, { wch: 12 }, { wch: 20 },
+            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 },
+            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 }
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "監控數據");
+        XLSX.writeFile(wb, `${currentJigId}_公式版匯出_${getCurrentTime().replace(/[\/:]/g,'')}.xlsx`);
+    };
 
     // --- Chart.js 外掛與初始化 ---
     const customCanvasBackgroundColor = {
@@ -1163,6 +1274,14 @@
         myChart.setDatasetVisibility(6, showCumNcku); myChart.setDatasetVisibility(7, showCumNcku);
         myChart.setDatasetVisibility(8, showSampleAvgOff); myChart.setDatasetVisibility(9, showSampleAvgNcku);
         myChart.update();
+    }
+
+    // --- 圖表下載與繪製更新 ---
+    function downloadChart() { 
+        const a = document.createElement('a'); 
+        a.download=`${currentJigId}_監控_${getCurrentTime().replace(/[\/:]/g,'')}.png`; 
+        a.href=document.getElementById('qcChart').toDataURL('image/png',1.0); 
+        a.click(); 
     }
 
     function addData() {
