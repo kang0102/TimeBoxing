@@ -79,11 +79,11 @@
 
         /* 數據表格 */
         .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 12px; border-radius: 6px; overflow: hidden; border-style: hidden; box-shadow: 0 0 0 1px #e2e8f0; white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 12px; border-radius: 6px; overflow: hidden; border-style: hidden; box-shadow: 0 0 0 1px #e2e8f0; white-space: nowrap; transition: font-size 0.2s; }
         th, td { border: 1px solid #e2e8f0; padding: 8px 4px; text-align: center; }
         th { background: #f8fafc; color: #475569; font-weight: bold; }
         
-        .time-col { font-size: 11px; color: #94a3b8; }
+        .time-col { color: #94a3b8; }
         
         /* 區分 Office 與 NCKU 顏色底色 */
         .office-col { background: #ffffff; }
@@ -109,7 +109,7 @@
 <div class="container">
     <div class="header-bar">
         <h1>Neil's Toolbox <span style="font-size:16px; font-weight:normal; color:#64748b;">| 雙設備製程監控</span></h1>
-        <span id="saveStatus">☁️ 連線至雲端中...</span>
+        <span id="saveStatus">☁️ 系統載入中...</span>
     </div>
 
     <div class="tabs-header">
@@ -126,6 +126,12 @@
                     <div class="input-group"><label>目標角度 (Target)</label><input type="number" id="specTarget" step="0.01" onchange="saveSpecsAndUpdate()"></div>
                     <div class="input-group"><label>USL (控制上限)</label><input type="number" id="specUSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
                     <div class="input-group"><label>LSL (控制下限)</label><input type="number" id="specLSL" step="0.01" onchange="saveSpecsAndUpdate()"></div>
+                </div>
+
+                <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">🔠 字體大小設定</span>
+                <div class="specs-grid">
+                    <div class="input-group"><label>表格字體大小 (px)</label><input type="number" id="settingTableFontSize" step="1" onchange="saveSpecsAndUpdate()"></div>
+                    <div class="input-group"><label>圖表標籤大小 (px)</label><input type="number" id="settingChartFontSize" step="1" onchange="saveSpecsAndUpdate()"></div>
                 </div>
                 
                 <span style="color:#475569; font-size:13px; font-weight:bold; border-bottom: 1px solid #e2e8f0; padding-bottom:5px;">🎨 圖表視覺自訂</span>
@@ -191,8 +197,10 @@
                     📈 累積均線 (點擊展開)
                 </summary>
                 <div style="display: flex; gap: 10px; margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
-                    <label><input type="checkbox" id="toggleCumAvgOff" onchange="updateChartVisibility()"> Office累積</label>
-                    <label><input type="checkbox" id="toggleCumAvgNcku" onchange="updateChartVisibility()"> NCKU累積</label>
+                    <label><input type="checkbox" id="toggleCumAvgOff" onchange="updateChartVisibility()"> Office(單側)累積</label>
+                    <label><input type="checkbox" id="toggleCumAvgNcku" onchange="updateChartVisibility()"> NCKU(單側)累積</label>
+                    <div style="width:1px; height:15px; background:#cbd5e1; margin:0 5px;"></div>
+                    <label style="color:#1d4ed8;"><input type="checkbox" id="toggleCumAvgLR" onchange="updateChartVisibility()"> 左右總均累積線</label>
                 </div>
             </details>
             
@@ -215,7 +223,8 @@
                 • <b>匯出連動 Excel</b>：點擊上方的綠色按鈕，匯出的 Excel 會自帶 `AVERAGE`、`ABS`、`IF` 等原生函式，可以直接在 Excel 內修改數值進行連動運算。<br><br>
                 <b>【名詞定義】</b><br>
                 • <b>O_Δ / NK_Δ (差值)</b>：單筆測量中，右側與左側的角度絕對差距 ( |R - L| )。<br>
-                • <b>Off均L / Off均R / NK均L / NK均R</b>：歷史累積平均值。將歷史至當前的「有效測量角度」加總求平均，觀察長期趨勢。<br>
+                • <b>Off均L / Off均R</b>：單側的歷史累積平均值。<br>
+                • <b>Off總均 / NK總均</b>：單筆測量的左右平均 `(L+R)/2` 的歷史累積線。反映機台整體的綜合趨勢。<br>
                 • <b>T-Off_L / T-Off_R (目標差距)</b>：目標角度減去實際量測角度 ( Target - Measured )。<br>
                 • <b>標準差 (Standard Deviation)</b>：位於表尾，提供「樣本(n-1)」與「母體(n)」兩種算法切換，反映整體製程數據的離散程度(穩定度)。
             </div>
@@ -229,9 +238,9 @@
                         <th style="width:7%;" rowspan="2">群組(治具)</th>
                         <th style="width:8%;" rowspan="2">時間</th>
                         
-                        <th colspan="8" class="th-office">Office 測量數據</th>
+                        <th colspan="9" class="th-office">Office 測量數據</th>
                         
-                        <th colspan="8" class="th-ncku">NCKU 測量數據</th>
+                        <th colspan="9" class="th-ncku">NCKU 測量數據</th>
                         
                         <th style="width:3%;" rowspan="2">🗑️</th>
                     </tr>
@@ -241,6 +250,7 @@
                         <th class="th-office">O_Δ</th>
                         <th class="th-office">Off均L</th>
                         <th class="th-office">Off均R</th>
+                        <th class="th-office" style="color:#1d4ed8;">Off總均</th>
                         <th class="th-office" style="color:#0369a1;">T-Off_L</th>
                         <th class="th-office" style="color:#0369a1;">T-Off_R</th>
                         <th class="th-office">O_結</th>
@@ -250,6 +260,7 @@
                         <th class="th-ncku">NK_Δ</th>
                         <th class="th-ncku">NK均L</th>
                         <th class="th-ncku">NK均R</th>
+                        <th class="th-ncku" style="color:#6d28d9;">NK總均</th>
                         <th class="th-ncku" style="color:#5b21b6;">T-NK_L</th>
                         <th class="th-ncku" style="color:#5b21b6;">T-NK_R</th>
                         <th class="th-ncku">NK_結</th>
@@ -263,6 +274,7 @@
                         <td id="avgOffR" style="color:#f59e0b;">-</td>
                         <td id="avgOffDelta">-</td>
                         <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(不顯示)</td>
+                        <td id="avgOffLR" style="color:#1d4ed8; background:#eff6ff;">-</td>
                         <td id="avgTOffL" style="color:#0369a1; background:#f0f9ff;">-</td>
                         <td id="avgTOffR" style="color:#0369a1; background:#f0f9ff;">-</td>
                         <td>-</td>
@@ -271,6 +283,7 @@
                         <td id="avgNkR" class="ncku-col" style="color:#f43f5e;">-</td>
                         <td id="avgNkDelta" class="ncku-col">-</td>
                         <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(不顯示)</td>
+                        <td id="avgNkLR" class="ncku-col" style="color:#6d28d9; background:#faf5ff;">-</td>
                         <td id="avgTNkL" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
                         <td id="avgTNkR" class="ncku-col" style="color:#5b21b6; background:#f5f3ff;">-</td>
                         <td class="ncku-col">-</td>
@@ -288,6 +301,7 @@
                         <td id="sdOffR" style="color:#f59e0b;">-</td>
                         <td id="sdOffDelta">-</td>
                         <td colspan="2" style="background:#cbd5e1; font-size:10px; color:#64748b; font-weight:normal;">(不計算)</td>
+                        <td id="sdOffLR" style="color:#1d4ed8; background:#eff6ff;">-</td>
                         <td colspan="2" style="background:#f0f9ff; font-size:10px; color:#0369a1; font-weight:normal;">(同量測值)</td>
                         <td>-</td>
                         
@@ -295,6 +309,7 @@
                         <td id="sdNkR" class="ncku-col" style="color:#f43f5e;">-</td>
                         <td id="sdNkDelta" class="ncku-col">-</td>
                         <td colspan="2" class="ncku-col" style="background:#e9d5ff; font-size:10px; color:#7e22ce; font-weight:normal;">(不計算)</td>
+                        <td id="sdNkLR" class="ncku-col" style="color:#6d28d9; background:#faf5ff;">-</td>
                         <td colspan="2" class="ncku-col" style="background:#f5f3ff; font-size:10px; color:#5b21b6; font-weight:normal;">(同量測值)</td>
                         <td class="ncku-col">-</td>
                         <td></td>
@@ -324,7 +339,7 @@
 </div>
 
 <script>
-    // --- Firebase 初始化 ---
+    // --- Firebase 初始化 (加強防呆，阻擋CDN時仍能離線運作) ---
     const firebaseConfig = {
         apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
         authDomain: "stack-diagram-db.firebaseapp.com",
@@ -335,10 +350,20 @@
         measurementId: "G-QJNE60W8BB"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    let db = null;
+    try {
+        if (typeof firebase !== 'undefined' && firebase.apps) {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } else {
+            console.warn("Firebase SDK 未載入，將強制使用本機模式。");
+        }
+    } catch (e) {
+        console.error("Firebase 初始化失敗，進入純本機模式:", e);
     }
-    const db = firebase.firestore();
+
     const DB_COLLECTION = 'QC_Angle_Tracking';
     const DB_DOC = 'Main_Projects_Data';
 
@@ -354,6 +379,8 @@
         cumAvgR: { color: "#ec4899", shape: "rect" },
         nckuCumAvgL: { color: "#a855f7", shape: "triangle" }, 
         nckuCumAvgR: { color: "#fb7185", shape: "cross" },    
+        cumAvgOffLR: { color: "#1d4ed8", shape: "star" }, 
+        cumAvgNckuLR: { color: "#6d28d9", shape: "star" }, 
         toleranceBand: { color: "#10b981", shape: "none" }, 
         uslLine: { color: "#ef4444", shape: "none" },       
         lslLine: { color: "#ef4444", shape: "none" },
@@ -373,6 +400,7 @@
         '單點均值連線 (Office)': 'sampleAvgOff', '單點均值連線 (NCKU)': 'sampleAvgNcku',
         '累積均線 L (Office)': 'cumAvgL', '累積均線 R (Office)': 'cumAvgR',
         '累積均線 L (NCKU)': 'nckuCumAvgL', '累積均線 R (NCKU)': 'nckuCumAvgR',
+        '累積 L/R 總均線 (Office)': 'cumAvgOffLR', '累積 L/R 總均線 (NCKU)': 'cumAvgNckuLR',
         '公差帶背景 (OK)': 'toleranceBand', 'USL 線 (上限)': 'uslLine', 'LSL 線 (下限)': 'lslLine',
         'OK 字樣顏色': 'okText', 'NG 字樣顏色': 'ngText'
     };
@@ -391,28 +419,33 @@
 
     // --- 系統初始化 ---
     async function initSystem() {
-        showSaveToast("🔄 正在從雲端載入資料...", "#0ea5e9");
-        try {
-            const docRef = await db.collection(DB_COLLECTION).doc(DB_DOC).get();
-            if (docRef.exists) {
-                const data = docRef.data();
-                if (data.jigsJson) {
-                    jigs = JSON.parse(data.jigsJson);
-                    currentJigId = data.currentJigId || Object.keys(jigs)[0];
-                    localStorage.setItem('qcJigSystem', data.jigsJson);
-                    localStorage.setItem('qcCurrentJigId', currentJigId);
-                    showSaveToast("✅ 成功載入雲端資料", "#10b981");
+        if (db) {
+            showSaveToast("🔄 正在從雲端載入資料...", "#0ea5e9");
+            try {
+                const docRef = await db.collection(DB_COLLECTION).doc(DB_DOC).get();
+                if (docRef.exists) {
+                    const data = docRef.data();
+                    if (data.jigsJson) {
+                        jigs = JSON.parse(data.jigsJson);
+                        currentJigId = data.currentJigId || Object.keys(jigs)[0];
+                        localStorage.setItem('qcJigSystem', data.jigsJson);
+                        localStorage.setItem('qcCurrentJigId', currentJigId);
+                        showSaveToast("✅ 成功載入雲端資料", "#10b981");
+                    } else {
+                        loadFromLocalBase();
+                    }
                 } else {
                     loadFromLocalBase();
+                    saveSystemToStorage();
                 }
-            } else {
+            } catch (error) {
+                console.error("Firebase 載入失敗:", error);
                 loadFromLocalBase();
-                saveSystemToStorage();
+                showSaveToast("⚠️ 網路阻擋，載入本機備份", "#f59e0b");
             }
-        } catch (error) {
-            console.error("Firebase 載入失敗:", error);
+        } else {
             loadFromLocalBase();
-            showSaveToast("⚠️ 網路錯誤，載入本機備份", "#f59e0b");
+            showSaveToast("⚠️ 離線/本機模式", "#f59e0b");
         }
 
         checkAndUpgradeJigs();
@@ -432,32 +465,38 @@
                 "專案 1": {
                     data: JSON.parse(JSON.stringify(defaultData)),
                     specs: { target: 41.33, usl: 42.33, lsl: 40.33 },
-                    visuals: JSON.parse(JSON.stringify(defaultVisuals))
+                    visuals: JSON.parse(JSON.stringify(defaultVisuals)),
+                    settings: { tableFontSize: 12, chartFontSize: 11 }
                 }
             };
             currentJigId = "專案 1";
         }
     }
 
-    // 防呆機制：確保舊數據也有「排除狀態(ex)」與「備註(note)」的新參數
+    // ★ 終極防呆機制：確保所有舊數據與物件屬性完整存在，避免 undefined 當機
     function checkAndUpgradeJigs() {
-        if(!jigs || Object.keys(jigs).length === 0) return;
+        if(!jigs || typeof jigs !== 'object' || Object.keys(jigs).length === 0) {
+            jigs = { "專案 1": { data: [], specs: { target: 41.33, usl: 42.33, lsl: 40.33 }, visuals: JSON.parse(JSON.stringify(defaultVisuals)), settings: { tableFontSize: 12, chartFontSize: 11 } } };
+            currentJigId = "專案 1";
+        }
         Object.keys(jigs).forEach(id => {
-            const v = jigs[id].visuals;
-            if (!v.toleranceBand) v.toleranceBand = { color: "#10b981", shape: "none" };
-            if (!v.uslLine) v.uslLine = { color: "#ef4444", shape: "none" };
-            if (!v.lslLine) v.lslLine = { color: "#ef4444", shape: "none" };
-            if (!v.okText) v.okText = { color: "#10b981", shape: "none" };
-            if (!v.ngText) v.ngText = { color: "#ef4444", shape: "none" };
-            if (!v.nckuDataL) v.nckuDataL = { color: "#6366f1", shape: "triangle" };
-            if (!v.nckuDataR) v.nckuDataR = { color: "#f43f5e", shape: "cross" };
-            if (!v.nckuCumAvgL) v.nckuCumAvgL = { color: "#a855f7", shape: "triangle" };
-            if (!v.nckuCumAvgR) v.nckuCumAvgR = { color: "#fb7185", shape: "cross" };
-            if (!v.sampleAvgOff) v.sampleAvgOff = { color: "#0ea5e9", shape: "circle" };
-            if (!v.sampleAvgNcku) v.sampleAvgNcku = { color: "#8b5cf6", shape: "triangle" };
+            if (!jigs[id]) jigs[id] = {};
+            if (!jigs[id].data) jigs[id].data = [];
+            if (!jigs[id].specs) jigs[id].specs = { target: 41.33, usl: 42.33, lsl: 40.33 };
+            if (!jigs[id].settings) jigs[id].settings = { tableFontSize: 12, chartFontSize: 11 };
+            if (!jigs[id].settings.tableFontSize) jigs[id].settings.tableFontSize = 12;
+            if (!jigs[id].settings.chartFontSize) jigs[id].settings.chartFontSize = 11;
+            
+            if (!jigs[id].visuals) jigs[id].visuals = JSON.parse(JSON.stringify(defaultVisuals));
+            
+            for (let key in defaultVisuals) {
+                if (!jigs[id].visuals[key]) jigs[id].visuals[key] = JSON.parse(JSON.stringify(defaultVisuals[key]));
+            }
             
             jigs[id].data.forEach(d => { 
                 if (!d.group) d.group = "預設"; 
+                if (d.l === undefined) d.l = null; 
+                if (d.r === undefined) d.r = null; 
                 if (d.l2 === undefined) d.l2 = null; 
                 if (d.r2 === undefined) d.r2 = null;
                 if (d.exL === undefined) d.exL = false;
@@ -478,17 +517,21 @@
         localStorage.setItem('qcJigSystem', jigsStr);
         localStorage.setItem('qcCurrentJigId', currentJigId);
         
-        showSaveToast("🔄 雲端同步中...", "#f59e0b");
-        try {
-            await db.collection(DB_COLLECTION).doc(DB_DOC).set({
-                jigsJson: jigsStr,
-                currentJigId: currentJigId,
-                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-            showSaveToast("✅ 已同步至雲端", "#10b981");
-        } catch (error) {
-            console.error("Firebase 同步錯誤:", error);
-            showSaveToast("⚠️ 僅本機儲存 (網路異常)", "#ef4444");
+        if (db) {
+            showSaveToast("🔄 雲端同步中...", "#f59e0b");
+            try {
+                await db.collection(DB_COLLECTION).doc(DB_DOC).set({
+                    jigsJson: jigsStr,
+                    currentJigId: currentJigId,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                showSaveToast("✅ 已同步至雲端", "#10b981");
+            } catch (error) {
+                console.error("Firebase 同步錯誤:", error);
+                showSaveToast("⚠️ 僅本機儲存 (網路異常)", "#ef4444");
+            }
+        } else {
+            showSaveToast("💾 已儲存 (本機模式)", "#10b981");
         }
     }
 
@@ -500,10 +543,8 @@
         Object.keys(jigs).forEach(id => {
             const btn = document.createElement('div');
             btn.className = `tab-btn ${id === currentJigId ? 'active' : ''}`;
-            
             const span = document.createElement('span');
             span.innerText = id;
-            
             if (id === currentJigId) {
                 span.className = 'editable-tab-name';
                 span.contentEditable = "true";
@@ -543,7 +584,8 @@
         
         jigs[newName] = {
             data: [], specs: { target: 41.33, usl: 42.33, lsl: 40.33 },
-            visuals: JSON.parse(JSON.stringify(defaultVisuals))
+            visuals: JSON.parse(JSON.stringify(defaultVisuals)),
+            settings: { tableFontSize: 12, chartFontSize: 11 }
         };
         currentJigId = newName;
         hiddenGroups.clear();
@@ -578,9 +620,12 @@
     // --- 載入與設定管理 ---
     function loadCurrentJig() {
         const jig = jigs[currentJigId];
-        document.getElementById('specTarget').value = jig.specs.target;
-        document.getElementById('specUSL').value = jig.specs.usl;
-        document.getElementById('specLSL').value = jig.specs.lsl;
+        document.getElementById('specTarget').value = jig.specs ? jig.specs.target : 41.33;
+        document.getElementById('specUSL').value = jig.specs ? jig.specs.usl : 42.33;
+        document.getElementById('specLSL').value = jig.specs ? jig.specs.lsl : 40.33;
+        
+        document.getElementById('settingTableFontSize').value = jig.settings ? jig.settings.tableFontSize : 12;
+        document.getElementById('settingChartFontSize').value = jig.settings ? jig.settings.chartFontSize : 11;
         
         document.getElementById('sampleGroup').value = currentJigId;
         document.getElementById('popupGroup').value = currentJigId;
@@ -620,6 +665,10 @@
         jig.specs = {
             target: parseFloat(document.getElementById('specTarget').value), usl: parseFloat(document.getElementById('specUSL').value),
             lsl: parseFloat(document.getElementById('specLSL').value)
+        };
+        jig.settings = {
+            tableFontSize: parseInt(document.getElementById('settingTableFontSize').value) || 12,
+            chartFontSize: parseInt(document.getElementById('settingChartFontSize').value) || 11
         };
         const noShapeItems = ['toleranceBand', 'uslLine', 'lslLine', 'okText', 'ngText'];
         Object.values(seriesMap).forEach(seriesId => {
@@ -674,7 +723,7 @@
     function showSaveToast(msg, color) {
         const status = document.getElementById('saveStatus'); 
         status.innerText = msg; status.style.color = color; status.style.background = "#f8fafc";
-        if(msg.includes("已同步") || msg.includes("僅本機")) {
+        if(msg.includes("已同步") || msg.includes("本機模式") || msg.includes("儲存")) {
             setTimeout(() => { status.innerText = "☁️ 雲端同步啟用中"; status.style.color = "#64748b"; status.style.background = "#e2e8f0"; }, 3000);
         }
     }
@@ -730,75 +779,71 @@
     // --- 📊 Excel 匯出 (內嵌原生公式 + 底端平均與標準差) ---
     window.exportToExcel = function() {
         if (typeof XLSX === 'undefined') {
-            alert('Excel 匯出模組載入中，請稍後再試。');
+            alert('Excel 匯出模組載入中，請稍後再試。若網路阻擋可能無法匯出。');
             return;
         }
         
         const jig = jigs[currentJigId];
-        const target = isNaN(jig.specs.target) ? 41.33 : jig.specs.target;
-        const usl = isNaN(jig.specs.usl) ? 42.33 : jig.specs.usl;
-        const lsl = isNaN(jig.specs.lsl) ? 40.33 : jig.specs.lsl;
+        const target = (jig.specs && !isNaN(jig.specs.target)) ? jig.specs.target : 41.33;
+        const usl = (jig.specs && !isNaN(jig.specs.usl)) ? jig.specs.usl : 42.33;
+        const lsl = (jig.specs && !isNaN(jig.specs.lsl)) ? jig.specs.lsl : 40.33;
 
         let ws_data = [
-            ["Sample", "群組(治具)", "時間", "Off_L", "Off_R", "O_Δ", "Off均L", "Off均R", "T-Off_L", "T-Off_R", "O_結", "NK_L", "NK_R", "NK_Δ", "NK均L", "NK均R", "T-NK_L", "T-NK_R", "NK_結"]
+            ["Sample", "群組(治具)", "時間", "Off_L", "Off_R", "O_Δ", "Off均L", "Off均R", "Off總均", "T-Off_L", "T-Off_R", "O_結", "NK_L", "NK_R", "NK_Δ", "NK均L", "NK均R", "NK總均", "T-NK_L", "T-NK_R", "NK_結"]
         ];
 
         jig.data.forEach((item, index) => {
             const r = index + 2; 
             
-            // 被排除的資料設為空白，讓 Excel 公式自動略過
             let vL = item.exL ? "" : (item.l !== null ? item.l : "");
             let vR = item.exR ? "" : (item.r !== null ? item.r : "");
             let vL2 = item.exL2 ? "" : (item.l2 !== null ? item.l2 : "");
             let vR2 = item.exR2 ? "" : (item.r2 !== null ? item.r2 : "");
 
             let row = [
-                item.name || "",
-                item.group || "預設",
-                item.time || "",
-                vL,
-                vR,
+                item.name || "", item.group || "預設", item.time || "",
+                vL, vR,
                 { f: `IF(COUNT(D${r}:E${r})=2, ABS(E${r}-D${r}), "")` },                     
                 { f: `IF(ISNUMBER(D${r}), AVERAGE(D$2:D${r}), "")` },                       
                 { f: `IF(ISNUMBER(E${r}), AVERAGE(E$2:E${r}), "")` },                       
+                { f: `IFERROR(AVERAGE(D$2:E${r}), "")` },                                   
                 { f: `IF(ISNUMBER(D${r}), ROUND(${target}-D${r}, 2), "")` },                
                 { f: `IF(ISNUMBER(E${r}), ROUND(${target}-E${r}, 2), "")` },                
                 { f: `IF(COUNT(D${r}:E${r})=2, IF(AND(D${r}<=${usl}, D${r}>=${lsl}, E${r}<=${usl}, E${r}>=${lsl}), "OK", "NG"), "-")` }, 
-                vL2,
-                vR2,
-                { f: `IF(COUNT(L${r}:M${r})=2, ABS(M${r}-L${r}), "")` },                     
-                { f: `IF(ISNUMBER(L${r}), AVERAGE(L$2:L${r}), "")` },                       
+                vL2, vR2,
+                { f: `IF(COUNT(M${r}:N${r})=2, ABS(N${r}-M${r}), "")` },                     
                 { f: `IF(ISNUMBER(M${r}), AVERAGE(M$2:M${r}), "")` },                       
-                { f: `IF(ISNUMBER(L${r}), ROUND(${target}-L${r}, 2), "")` },                
+                { f: `IF(ISNUMBER(N${r}), AVERAGE(N$2:N${r}), "")` },                       
+                { f: `IFERROR(AVERAGE(M$2:N${r}), "")` },                                   
                 { f: `IF(ISNUMBER(M${r}), ROUND(${target}-M${r}, 2), "")` },                
-                { f: `IF(COUNT(L${r}:M${r})=2, IF(AND(L${r}<=${usl}, L${r}>=${lsl}, M${r}<=${usl}, M${r}>=${lsl}), "OK", "NG"), "-")` }  
+                { f: `IF(ISNUMBER(N${r}), ROUND(${target}-N${r}, 2), "")` },                
+                { f: `IF(COUNT(M${r}:N${r})=2, IF(AND(M${r}<=${usl}, M${r}>=${lsl}, N${r}<=${usl}, N${r}>=${lsl}), "OK", "NG"), "-")` }  
             ];
             ws_data.push(row);
         });
 
-        // 插入底部統計列
         let lastRow = Math.max(2, jig.data.length + 1);
 
-        // 1. 總體有效平均
         let avgRow = [
             "", "", "📊 總體有效平均：",
             { f: `IFERROR(ROUND(AVERAGE(D2:D${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(AVERAGE(E2:E${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(AVERAGE(F2:F${lastRow}),2), "-")` }, 
             "(不顯示)", "(不顯示)", 
-            { f: `IFERROR(ROUND(AVERAGE(I2:I${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(D2:E${lastRow}),2), "-")` },
             { f: `IFERROR(ROUND(AVERAGE(J2:J${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(K2:K${lastRow}),2), "-")` }, 
             "-", 
-            { f: `IFERROR(ROUND(AVERAGE(L2:L${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(AVERAGE(M2:M${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(AVERAGE(N2:N${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(O2:O${lastRow}),2), "-")` }, 
             "(不顯示)", "(不顯示)", 
-            { f: `IFERROR(ROUND(AVERAGE(Q2:Q${lastRow}),2), "-")` }, 
-            { f: `IFERROR(ROUND(AVERAGE(R2:R${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(M2:N${lastRow}),2), "-")` },
+            { f: `IFERROR(ROUND(AVERAGE(S2:S${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(AVERAGE(T2:T${lastRow}),2), "-")` }, 
             "-"  
         ];
 
-        // 2. 總體標準差
         const isSampleSD = document.getElementById('sdTypeSelect').value === 'sample';
         const sdFunc = isSampleSD ? "STDEV.S" : "STDEV.P";
         const sdLabel = isSampleSD ? "📈 總體標準差 (樣本 n-1)：" : "📈 總體標準差 (母體 n)：";
@@ -809,12 +854,14 @@
             { f: `IFERROR(ROUND(${sdFunc}(E2:E${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(${sdFunc}(F2:F${lastRow}),2), "-")` }, 
             "(不計算)", "(不計算)", 
+            { f: `IFERROR(ROUND(${sdFunc}(D2:E${lastRow}),2), "-")` },
             "(同量測值)", "(同量測值)", 
             "-", 
-            { f: `IFERROR(ROUND(${sdFunc}(L2:L${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(${sdFunc}(M2:M${lastRow}),2), "-")` }, 
             { f: `IFERROR(ROUND(${sdFunc}(N2:N${lastRow}),2), "-")` }, 
+            { f: `IFERROR(ROUND(${sdFunc}(O2:O${lastRow}),2), "-")` }, 
             "(不計算)", "(不計算)", 
+            { f: `IFERROR(ROUND(${sdFunc}(M2:N${lastRow}),2), "-")` },
             "(同量測值)", "(同量測值)", 
             "-" 
         ];
@@ -823,11 +870,10 @@
         ws_data.push(sdRow);
 
         const ws = XLSX.utils.aoa_to_sheet(ws_data);
-        
         ws['!cols'] = [
             { wch: 15 }, { wch: 12 }, { wch: 20 },
-            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 },
-            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 }
+            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 },
+            { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 6 }
         ];
 
         const wb = XLSX.utils.book_new();
@@ -849,6 +895,7 @@
             if (!jig) return;
             const ctx = chart.ctx; const { left, right } = chart.chartArea;
             const yAxis = chart.scales.y; const vis = jig.visuals; const specs = jig.specs;
+            const fSize = (jig.settings && jig.settings.chartFontSize) ? jig.settings.chartFontSize : 11;
             
             const drawLine = (yVal, color, dash, text) => {
                 if(isNaN(yVal)) return;
@@ -857,21 +904,24 @@
                 ctx.save(); ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y);
                 ctx.lineWidth = 1.5; ctx.strokeStyle = color; if(dash) ctx.setLineDash(dash); ctx.stroke();
                 
-                ctx.font = 'bold 12px Arial'; const textWidth = ctx.measureText(text).width;
+                ctx.font = 'bold ' + (fSize + 1) + 'px Arial'; 
+                const textWidth = ctx.measureText(text).width;
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; 
                 ctx.fillRect(right - textWidth - 8, y - 9, textWidth + 6, 18);
                 ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
                 ctx.fillStyle = color; ctx.fillText(text, right - 5, y); ctx.restore();
             };
             
-            if(!isNaN(specs.usl) && !isNaN(specs.lsl)) {
+            if(specs && !isNaN(specs.usl) && !isNaN(specs.lsl)) {
                 const yTop = Math.max(chart.chartArea.top, yAxis.getPixelForValue(specs.usl));
                 const yBot = Math.min(chart.chartArea.bottom, yAxis.getPixelForValue(specs.lsl));
                 ctx.save(); ctx.fillStyle = applyAlphaToHex(vis.toleranceBand.color, 0.08); ctx.fillRect(left, yTop, right - left, yBot - yTop); ctx.restore();
             }
-            drawLine(specs.target, vis.toleranceBand.color, null, 'Target ' + specs.target);
-            drawLine(specs.usl, vis.uslLine.color, [5,5], 'USL ' + specs.usl); 
-            drawLine(specs.lsl, vis.lslLine.color, [5,5], 'LSL ' + specs.lsl);
+            if(specs) {
+                drawLine(specs.target, vis.toleranceBand.color, null, 'Target ' + specs.target);
+                drawLine(specs.usl, vis.uslLine.color, [5,5], 'USL ' + specs.usl); 
+                drawLine(specs.lsl, vis.lslLine.color, [5,5], 'LSL ' + specs.lsl);
+            }
         }
     };
 
@@ -883,6 +933,7 @@
             const metaNckuL = chart.getDatasetMeta(2); const metaNckuR = chart.getDatasetMeta(3);
             
             const vis = jigs[currentJigId].visuals; 
+            const fSize = (jigs[currentJigId].settings && jigs[currentJigId].settings.chartFontSize) ? jigs[currentJigId].settings.chartFontSize : 11;
             const showOffice = document.getElementById('toggleOffice').checked;
             const showNcku = document.getElementById('toggleNCKU').checked;
             const showAnno = document.getElementById('toggleAnnotations').checked; 
@@ -946,22 +997,22 @@
                     if (topYs.length > 0) absTopY = Math.min(...topYs);
 
                     if (showOffice && pOffL && pOffR && item.offDelta !== '-') {
-                        drawTextWithBgBox('Δ ' + item.offDelta, xPos + 12, absBotYOff + 16, 'left', vis.rawDataL.color, 'bold 11px Arial');
+                        drawTextWithBgBox('Δ ' + item.offDelta, xPos + 12, absBotYOff + 16, 'left', vis.rawDataL.color, 'bold ' + fSize + 'px Arial');
                     }
                     if (showNcku && pNkL && pNkR && item.nckuDelta !== '-') {
-                        drawTextWithBgBox('Δ ' + item.nckuDelta, xPos - 12, absBotYNk + 16, 'right', vis.nckuDataL.color, 'bold 11px Arial');
+                        drawTextWithBgBox('Δ ' + item.nckuDelta, xPos - 12, absBotYNk + 16, 'right', vis.nckuDataL.color, 'bold ' + fSize + 'px Arial');
                     }
 
                     if (absTopY !== null) {
                         let textOffset = 12;
                         if (showNcku && (pNkL || pNkR) && item.nckuStatus !== '-') {
                             const color = item.nckuStatus === 'OK' ? vis.okText.color : vis.ngText.color;
-                            drawTextWithBgBox(item.nckuStatus, xPos, absTopY - textOffset, 'center', color, '900 13px Arial');
-                            textOffset += 16;
+                            drawTextWithBgBox(item.nckuStatus, xPos, absTopY - textOffset, 'center', color, '900 ' + (fSize + 2) + 'px Arial');
+                            textOffset += (fSize + 5);
                         }
                         if (showOffice && (pOffL || pOffR) && item.status !== '-') {
                             const color = item.status === 'OK' ? vis.okText.color : vis.ngText.color;
-                            drawTextWithBgBox(item.status, xPos, absTopY - textOffset, 'center', color, '900 13px Arial');
+                            drawTextWithBgBox(item.status, xPos, absTopY - textOffset, 'center', color, '900 ' + (fSize + 2) + 'px Arial');
                         }
                     }
                 }
@@ -987,15 +1038,19 @@
     const customXAxisPlugin = {
         id: 'customXAxis',
         afterDraw(chart) {
+            const jig = jigs[currentJigId];
+            if (!jig) return;
             const ctx = chart.ctx; const xAxis = chart.scales.x; const yPos = xAxis.top + 10; 
+            const fSize = (jig.settings && jig.settings.chartFontSize) ? jig.settings.chartFontSize : 11;
+            
             ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
             xAxis.ticks.forEach((tick, index) => {
                 const xPos = xAxis.getPixelForTick(index); const labelArray = chart.data.labels[index]; 
                 if (Array.isArray(labelArray) && labelArray.length >= 2) {
-                    ctx.font = 'bold 11px Arial'; ctx.fillStyle = '#2563eb'; ctx.fillText(labelArray[0], xPos, yPos);
-                    ctx.font = '10px Arial'; ctx.fillStyle = '#94a3b8'; ctx.fillText(labelArray[1], xPos, yPos + 16); 
+                    ctx.font = 'bold ' + fSize + 'px Arial'; ctx.fillStyle = '#2563eb'; ctx.fillText(labelArray[0], xPos, yPos);
+                    ctx.font = (fSize - 1) + 'px Arial'; ctx.fillStyle = '#94a3b8'; ctx.fillText(labelArray[1], xPos, yPos + fSize + 5); 
                 } else {
-                    ctx.font = '10px Arial'; ctx.fillStyle = '#64748b'; ctx.fillText(labelArray, xPos, yPos);
+                    ctx.font = (fSize - 1) + 'px Arial'; ctx.fillStyle = '#64748b'; ctx.fillText(labelArray, xPos, yPos);
                 }
             });
             ctx.restore();
@@ -1019,7 +1074,9 @@
                     { label: 'NK均值 L', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
                     { label: 'NK均值 R', data: [], yAxisID: 'y', borderDash: [2, 2], fill: false, tension: 0.1, borderWidth: 2, radius: 2},
                     { label: 'Off_L/R均值', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 2, radius: 3, z: 12 },
-                    { label: 'NCKU_L/R均值', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 2, radius: 4, z: 16 }
+                    { label: 'NCKU_L/R均值', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 2, radius: 4, z: 16 },
+                    { label: 'Off總均(L+R)', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 3, radius: 0, z: 5},
+                    { label: 'NK總均(L+R)', data: [], yAxisID: 'y', borderDash: [5, 5], fill: false, tension: 0.1, borderWidth: 3, radius: 0, z: 5}
                 ]
             },
             options: {
@@ -1027,7 +1084,11 @@
                 layout: { padding: { top: 30, right: 10, bottom: 45 } }, 
                 scales: {
                     x: { ticks: { display: false } }, 
-                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} } }
+                    y: { 
+                        type: 'linear', display: true, position: 'left', 
+                        title: { display: true, text: '切割角度 (Degree °)', font: {weight: 'bold'} },
+                        ticks: { font: { size: 11 } } // <- 防呆保護：強制預設字體物件
+                    }
                 },
                 plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
             }
@@ -1049,214 +1110,254 @@
     function updateAll() {
         if (!myChart) { initChart(); }
 
-        const jig = jigs[currentJigId];
-        const target = isNaN(jig.specs.target) ? 41.33 : jig.specs.target;
-        const usl = isNaN(jig.specs.usl) ? 42.33 : jig.specs.usl;
-        const lsl = isNaN(jig.specs.lsl) ? 40.33 : jig.specs.lsl;
-        const vis = jig.visuals;
+        try {
+            const jig = jigs[currentJigId];
+            const target = (jig.specs && !isNaN(jig.specs.target)) ? jig.specs.target : 41.33;
+            const usl = (jig.specs && !isNaN(jig.specs.usl)) ? jig.specs.usl : 42.33;
+            const lsl = (jig.specs && !isNaN(jig.specs.lsl)) ? jig.specs.lsl : 40.33;
+            const vis = jig.visuals;
 
-        myChart.data.datasets[0].borderColor = applyAlphaToHex(vis.rawDataL.color, 0.4); myChart.data.datasets[0].backgroundColor = vis.rawDataL.color; myChart.data.datasets[0].pointStyle = vis.rawDataL.shape;
-        myChart.data.datasets[1].borderColor = applyAlphaToHex(vis.rawDataR.color, 0.4); myChart.data.datasets[1].backgroundColor = vis.rawDataR.color; myChart.data.datasets[1].pointStyle = vis.rawDataR.shape;
-        myChart.data.datasets[2].borderColor = applyAlphaToHex(vis.nckuDataL.color, 0.4); myChart.data.datasets[2].backgroundColor = vis.nckuDataL.color; myChart.data.datasets[2].pointStyle = vis.nckuDataL.shape;
-        myChart.data.datasets[3].borderColor = applyAlphaToHex(vis.nckuDataR.color, 0.4); myChart.data.datasets[3].backgroundColor = vis.nckuDataR.color; myChart.data.datasets[3].pointStyle = vis.nckuDataR.shape;
-        
-        myChart.data.datasets[4].borderColor = vis.cumAvgL.color; myChart.data.datasets[4].pointStyle = vis.cumAvgL.shape;
-        myChart.data.datasets[5].borderColor = vis.cumAvgR.color; myChart.data.datasets[5].pointStyle = vis.cumAvgR.shape;
-        
-        myChart.data.datasets[6].borderColor = vis.nckuCumAvgL.color; myChart.data.datasets[6].pointStyle = vis.nckuCumAvgL.shape;
-        myChart.data.datasets[7].borderColor = vis.nckuCumAvgR.color; myChart.data.datasets[7].pointStyle = vis.nckuCumAvgR.shape;
-        
-        myChart.data.datasets[8].borderColor = vis.sampleAvgOff.color; myChart.data.datasets[8].backgroundColor = vis.sampleAvgOff.color; myChart.data.datasets[8].pointStyle = vis.sampleAvgOff.shape;
-        myChart.data.datasets[9].borderColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].backgroundColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].pointStyle = vis.sampleAvgNcku.shape;
+            // 雙層保護：安全套用字體大小
+            const tSize = (jig.settings && jig.settings.tableFontSize) ? jig.settings.tableFontSize : 12;
+            const cSize = (jig.settings && jig.settings.chartFontSize) ? jig.settings.chartFontSize : 11;
+            
+            const dataTable = document.getElementById('dataTable');
+            if (dataTable) dataTable.style.fontSize = tSize + 'px';
+            
+            if (myChart.options.scales.y) {
+                if (!myChart.options.scales.y.ticks) myChart.options.scales.y.ticks = {};
+                if (!myChart.options.scales.y.ticks.font) myChart.options.scales.y.ticks.font = {};
+                myChart.options.scales.y.ticks.font.size = cSize;
+            }
 
-        const allGroups = [...new Set(jig.data.map(d => d.group || '預設'))];
-        const filterContainer = document.getElementById('groupFilters');
-        filterContainer.innerHTML = '';
-        if (allGroups.length > 0) {
-            allGroups.forEach(g => {
-                const label = document.createElement('label'); label.className = 'group-filter-label';
-                const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !hiddenGroups.has(g);
-                cb.onchange = (e) => toggleGroup(g, e.target.checked);
-                label.appendChild(cb); label.appendChild(document.createTextNode(' ' + g)); filterContainer.appendChild(label);
+            myChart.data.datasets[0].borderColor = applyAlphaToHex(vis.rawDataL.color, 0.4); myChart.data.datasets[0].backgroundColor = vis.rawDataL.color; myChart.data.datasets[0].pointStyle = vis.rawDataL.shape;
+            myChart.data.datasets[1].borderColor = applyAlphaToHex(vis.rawDataR.color, 0.4); myChart.data.datasets[1].backgroundColor = vis.rawDataR.color; myChart.data.datasets[1].pointStyle = vis.rawDataR.shape;
+            myChart.data.datasets[2].borderColor = applyAlphaToHex(vis.nckuDataL.color, 0.4); myChart.data.datasets[2].backgroundColor = vis.nckuDataL.color; myChart.data.datasets[2].pointStyle = vis.nckuDataL.shape;
+            myChart.data.datasets[3].borderColor = applyAlphaToHex(vis.nckuDataR.color, 0.4); myChart.data.datasets[3].backgroundColor = vis.nckuDataR.color; myChart.data.datasets[3].pointStyle = vis.nckuDataR.shape;
+            
+            myChart.data.datasets[4].borderColor = vis.cumAvgL.color; myChart.data.datasets[4].pointStyle = vis.cumAvgL.shape;
+            myChart.data.datasets[5].borderColor = vis.cumAvgR.color; myChart.data.datasets[5].pointStyle = vis.cumAvgR.shape;
+            
+            myChart.data.datasets[6].borderColor = vis.nckuCumAvgL.color; myChart.data.datasets[6].pointStyle = vis.nckuCumAvgL.shape;
+            myChart.data.datasets[7].borderColor = vis.nckuCumAvgR.color; myChart.data.datasets[7].pointStyle = vis.nckuCumAvgR.shape;
+            
+            myChart.data.datasets[8].borderColor = vis.sampleAvgOff.color; myChart.data.datasets[8].backgroundColor = vis.sampleAvgOff.color; myChart.data.datasets[8].pointStyle = vis.sampleAvgOff.shape;
+            myChart.data.datasets[9].borderColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].backgroundColor = vis.sampleAvgNcku.color; myChart.data.datasets[9].pointStyle = vis.sampleAvgNcku.shape;
+
+            myChart.data.datasets[10].borderColor = vis.cumAvgOffLR.color; myChart.data.datasets[10].backgroundColor = vis.cumAvgOffLR.color; myChart.data.datasets[10].pointStyle = vis.cumAvgOffLR.shape;
+            myChart.data.datasets[11].borderColor = vis.cumAvgNckuLR.color; myChart.data.datasets[11].backgroundColor = vis.cumAvgNckuLR.color; myChart.data.datasets[11].pointStyle = vis.cumAvgNckuLR.shape;
+
+            const allGroups = [...new Set(jig.data.map(d => d.group || '預設'))];
+            const filterContainer = document.getElementById('groupFilters');
+            filterContainer.innerHTML = '';
+            if (allGroups.length > 0) {
+                allGroups.forEach(g => {
+                    const label = document.createElement('label'); label.className = 'group-filter-label';
+                    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !hiddenGroups.has(g);
+                    cb.onchange = (e) => toggleGroup(g, e.target.checked);
+                    label.appendChild(cb); label.appendChild(document.createTextNode(' ' + g)); filterContainer.appendChild(label);
+                });
+            }
+
+            const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
+            const labels = [], offLData = [], offRData = [], nckuLData = [], nckuRData = [];
+            const cumL = [], cumR = [], cumNckuL = [], cumNckuR = [];
+            const offSampleAvgData = [], nckuSampleAvgData = [];
+            const cumOffLRData = [], cumNkLRData = [];
+            
+            let sumL = 0, countL = 0, sumR = 0, countR = 0;
+            let sumNckuL = 0, countNckuL = 0, sumNckuR = 0, countNckuR = 0;
+            let sumDeltaOff = 0, countDeltaOff = 0, sumTOffL = 0, sumTOffR = 0;
+            let sumDeltaNcku = 0, countDeltaNcku = 0, sumTNckuL = 0, sumTNckuR = 0;
+            let sumOffLR = 0, countOffLR = 0, sumNkLR = 0, countNkLR = 0;
+            
+            let arrOffL = [], arrOffR = [], arrOffDelta = [], arrOffLR = [];
+            let arrNkL = [], arrNkR = [], arrNkDelta = [], arrNkLR = [];
+
+            myChart.data.customData = [];
+            let minY = isNaN(lsl) ? 40 : lsl - 0.5; let maxY = isNaN(usl) ? 43 : usl + 0.5; 
+
+            jig.data.forEach((item, originalIndex) => {
+                const grp = item.group || '預設';
+                if (hiddenGroups.has(grp)) return; 
+                
+                const hasOff = item.l !== null || item.r !== null;
+                const hasNcku = item.l2 !== null || item.r2 !== null;
+                
+                let curCumL = '-', curCumR = '-', curCumNckuL = '-', curCumNckuR = '-';
+                let tOffL = '-', tOffR = '-', tNckuL = '-', tNckuR = '-';
+                let deltaOff = '-', deltaNcku = '-', status = '-', nkStatus = '-';
+                let statusColorStyle = '', nkStatusColorStyle = '';
+                let sampleOffAvg = null, sampleNckuAvg = null;
+                let curCumOffLR = '-', curCumNkLR = '-';
+
+                if (hasOff) {
+                    let vL = item.l !== null && !item.exL;
+                    let vR = item.r !== null && !item.exR;
+                    
+                    if (vL) { sumL += item.l; countL++; arrOffL.push(item.l); }
+                    if (vR) { sumR += item.r; countR++; arrOffR.push(item.r); }
+                    
+                    curCumL = countL > 0 ? parseFloat((sumL / countL).toFixed(2)) : '-';
+                    curCumR = countR > 0 ? parseFloat((sumR / countR).toFixed(2)) : '-';
+                    
+                    tOffL = vL ? (target - item.l).toFixed(2) : '-';
+                    tOffR = vR ? (target - item.r).toFixed(2) : '-';
+                    
+                    if (vL) sumTOffL += parseFloat(tOffL);
+                    if (vR) sumTOffR += parseFloat(tOffR);
+
+                    if (vL && vR) {
+                        deltaOff = Math.abs(item.r - item.l).toFixed(2);
+                        sumDeltaOff += parseFloat(deltaOff); countDeltaOff++;
+                        arrOffDelta.push(parseFloat(deltaOff));
+                        sampleOffAvg = parseFloat(((item.l + item.r) / 2).toFixed(2));
+                        sumOffLR += sampleOffAvg; countOffLR++;
+                        curCumOffLR = parseFloat((sumOffLR / countOffLR).toFixed(2));
+                        arrOffLR.push(sampleOffAvg);
+                    }
+
+                    if (!vL && !vR) {
+                        status = '-'; statusColorStyle = 'color: #94a3b8;';
+                    } else {
+                        let okL = vL ? (item.l <= usl && item.l >= lsl) : true;
+                        let okR = vR ? (item.r <= usl && item.r >= lsl) : true;
+                        let isOk = (okL && okR);
+                        status = isOk ? 'OK' : 'NG';
+                        statusColorStyle = isOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
+                    }
+                }
+                
+                if (hasNcku) {
+                    let vL2 = item.l2 !== null && !item.exL2;
+                    let vR2 = item.r2 !== null && !item.exR2;
+                    
+                    if (vL2) { sumNckuL += item.l2; countNckuL++; arrNkL.push(item.l2); }
+                    if (vR2) { sumNckuR += item.r2; countNckuR++; arrNkR.push(item.r2); }
+                    
+                    curCumNckuL = countNckuL > 0 ? parseFloat((sumNckuL / countNckuL).toFixed(2)) : '-';
+                    curCumNckuR = countNckuR > 0 ? parseFloat((sumNckuR / countNckuR).toFixed(2)) : '-';
+                    
+                    tNckuL = vL2 ? (target - item.l2).toFixed(2) : '-';
+                    tNckuR = vR2 ? (target - item.r2).toFixed(2) : '-';
+
+                    if (vL2) sumTNckuL += parseFloat(tNckuL);
+                    if (vR2) sumTNckuR += parseFloat(tNckuR);
+
+                    if (vL2 && vR2) {
+                        deltaNcku = Math.abs(item.r2 - item.l2).toFixed(2);
+                        sumDeltaNcku += parseFloat(deltaNcku); countDeltaNcku++;
+                        arrNkDelta.push(parseFloat(deltaNcku));
+                        sampleNckuAvg = parseFloat(((item.l2 + item.r2) / 2).toFixed(2));
+                        sumNkLR += sampleNckuAvg; countNkLR++;
+                        curCumNkLR = parseFloat((sumNkLR / countNkLR).toFixed(2));
+                        arrNkLR.push(sampleNckuAvg);
+                    }
+
+                    if (!vL2 && !vR2) {
+                        nkStatus = '-'; nkStatusColorStyle = 'color: #94a3b8;';
+                    } else {
+                        let okL2 = vL2 ? (item.l2 <= usl && item.l2 >= lsl) : true;
+                        let okR2 = vR2 ? (item.r2 <= usl && item.r2 >= lsl) : true;
+                        let isNkOk = (okL2 && okR2);
+                        nkStatus = isNkOk ? 'OK' : 'NG';
+                        nkStatusColorStyle = isNkOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
+                    }
+                }
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td class="editable-col office-col" data-field="name" data-index="${originalIndex}" tabindex="0">${item.name}</td>
+                    <td class="editable-col office-col" data-field="group" data-index="${originalIndex}" tabindex="0">${grp}</td>
+                    <td class="time-col office-col">${item.time || '-'}</td>
+                    
+                    <td class="editable-col office-col" data-field="l" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL', 'noteL')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l, item.exL, item.noteL)}</td>
+                    <td class="editable-col office-col" data-field="r" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR', 'noteR')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r, item.exR, item.noteR)}</td>
+                    <td class="office-col">${deltaOff}</td>
+                    <td class="office-col">${curCumL}</td>
+                    <td class="office-col">${curCumR}</td>
+                    <td class="office-col" style="font-weight:bold; color:#1d4ed8; background:#eff6ff;">${curCumOffLR}</td>
+                    <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffL}</td>
+                    <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffR}</td>
+                    <td class="office-col" style="font-weight:bold; ${statusColorStyle}">${status}</td>
+                    
+                    <td class="editable-col ncku-col" data-field="l2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL2', 'noteL2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l2, item.exL2, item.noteL2)}</td>
+                    <td class="editable-col ncku-col" data-field="r2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR2', 'noteR2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r2, item.exR2, item.noteR2)}</td>
+                    <td class="ncku-col">${deltaNcku}</td>
+                    <td class="ncku-col">${curCumNckuL}</td>
+                    <td class="ncku-col">${curCumNckuR}</td>
+                    <td class="ncku-col" style="font-weight:bold; color:#6d28d9; background:#faf5ff;">${curCumNkLR}</td>
+                    <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuL}</td>
+                    <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuR}</td>
+                    <td class="ncku-col" style="font-weight:bold; ${nkStatusColorStyle}">${nkStatus}</td>
+                    
+                    <td class="office-col"><button onclick="deleteData(${originalIndex})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
+
+                labels.push([item.name, formatShortTime(item.time)]);
+                offLData.push(!item.exL ? item.l : null); 
+                offRData.push(!item.exR ? item.r : null); 
+                nckuLData.push(!item.exL2 ? item.l2 : null); 
+                nckuRData.push(!item.exR2 ? item.r2 : null);
+                
+                cumL.push(curCumL !== '-' ? curCumL : null); cumR.push(curCumR !== '-' ? curCumR : null);
+                cumNckuL.push(curCumNckuL !== '-' ? curCumNckuL : null); cumNckuR.push(curCumNckuR !== '-' ? curCumNckuR : null);
+                offSampleAvgData.push(sampleOffAvg); nckuSampleAvgData.push(sampleNckuAvg);
+                cumOffLRData.push(curCumOffLR !== '-' ? curCumOffLR : null); cumNkLRData.push(curCumNkLR !== '-' ? curCumNkLR : null);
+                
+                myChart.data.customData.push({ 
+                    offDelta: deltaOff, nckuDelta: deltaNcku, 
+                    status: status, nckuStatus: nkStatus, 
+                    hasOffice: hasOff, hasNcku: hasNcku,
+                    exL: item.exL, exR: item.exR, exL2: item.exL2, exR2: item.exR2
+                });
+
+                if(!item.exL && item.l !== null) { minY = Math.min(minY, item.l - 0.5); maxY = Math.max(maxY, item.l + 0.5); }
+                if(!item.exR && item.r !== null) { minY = Math.min(minY, item.r - 0.5); maxY = Math.max(maxY, item.r + 0.5); }
+                if(!item.exL2 && item.l2 !== null) { minY = Math.min(minY, item.l2 - 0.5); maxY = Math.max(maxY, item.l2 + 0.5); }
+                if(!item.exR2 && item.r2 !== null) { minY = Math.min(minY, item.r2 - 0.5); maxY = Math.max(maxY, item.r2 + 0.5); }
             });
+
+            document.getElementById('avgOffL').innerText = countL > 0 ? (sumL / countL).toFixed(2) : '-';
+            document.getElementById('avgOffR').innerText = countR > 0 ? (sumR / countR).toFixed(2) : '-';
+            document.getElementById('avgOffDelta').innerText = countDeltaOff > 0 ? (sumDeltaOff / countDeltaOff).toFixed(2) : '-';
+            document.getElementById('avgOffLR').innerText = countOffLR > 0 ? (sumOffLR / countOffLR).toFixed(2) : '-';
+            document.getElementById('avgTOffL').innerText = countL > 0 ? (sumTOffL / countL).toFixed(2) : '-';
+            document.getElementById('avgTOffR').innerText = countR > 0 ? (sumTOffR / countR).toFixed(2) : '-';
+
+            document.getElementById('avgNkL').innerText = countNckuL > 0 ? (sumNckuL / countNckuL).toFixed(2) : '-';
+            document.getElementById('avgNkR').innerText = countNckuR > 0 ? (sumNckuR / countNckuR).toFixed(2) : '-';
+            document.getElementById('avgNkDelta').innerText = countDeltaNcku > 0 ? (sumDeltaNcku / countDeltaNcku).toFixed(2) : '-';
+            document.getElementById('avgNkLR').innerText = countNkLR > 0 ? (sumNkLR / countNkLR).toFixed(2) : '-';
+            document.getElementById('avgTNkL').innerText = countNckuL > 0 ? (sumTNckuL / countNckuL).toFixed(2) : '-';
+            document.getElementById('avgTNkR').innerText = countNckuR > 0 ? (sumTNckuR / countNckuR).toFixed(2) : '-';
+
+            const isSampleSD = document.getElementById('sdTypeSelect').value === 'sample';
+            document.getElementById('sdOffL').innerText = calcStandardDeviation(arrOffL, isSampleSD);
+            document.getElementById('sdOffR').innerText = calcStandardDeviation(arrOffR, isSampleSD);
+            document.getElementById('sdOffDelta').innerText = calcStandardDeviation(arrOffDelta, isSampleSD);
+            document.getElementById('sdOffLR').innerText = calcStandardDeviation(arrOffLR, isSampleSD);
+            document.getElementById('sdNkL').innerText = calcStandardDeviation(arrNkL, isSampleSD);
+            document.getElementById('sdNkR').innerText = calcStandardDeviation(arrNkR, isSampleSD);
+            document.getElementById('sdNkDelta').innerText = calcStandardDeviation(arrNkDelta, isSampleSD);
+            document.getElementById('sdNkLR').innerText = calcStandardDeviation(arrNkLR, isSampleSD);
+
+            myChart.data.labels = labels;
+            myChart.data.datasets[0].data = offLData; myChart.data.datasets[1].data = offRData;
+            myChart.data.datasets[2].data = nckuLData; myChart.data.datasets[3].data = nckuRData;
+            myChart.data.datasets[4].data = cumL; myChart.data.datasets[5].data = cumR;
+            myChart.data.datasets[6].data = cumNckuL; myChart.data.datasets[7].data = cumNckuR;
+            myChart.data.datasets[8].data = offSampleAvgData; myChart.data.datasets[9].data = nckuSampleAvgData;
+            myChart.data.datasets[10].data = cumOffLRData; myChart.data.datasets[11].data = cumNkLRData;
+            
+            myChart.options.scales.y.min = Math.floor(minY); myChart.options.scales.y.max = Math.ceil(maxY);
+
+            updateChartVisibility(); 
+            document.getElementById('sampleTime').value = getCurrentTime();
+            
+        } catch (error) {
+            console.error("渲染表格或圖表時發生錯誤:", error);
+            alert("資料載入時遇到小錯誤已修復，請嘗試重整網頁。");
         }
-
-        const tbody = document.querySelector('#dataTable tbody'); tbody.innerHTML = '';
-        const labels = [], offLData = [], offRData = [], nckuLData = [], nckuRData = [];
-        const cumL = [], cumR = [], cumNckuL = [], cumNckuR = [];
-        const offSampleAvgData = [], nckuSampleAvgData = [];
-        
-        let sumL = 0, countL = 0, sumR = 0, countR = 0;
-        let sumNckuL = 0, countNckuL = 0, sumNckuR = 0, countNckuR = 0;
-        let sumDeltaOff = 0, countDeltaOff = 0, sumTOffL = 0, sumTOffR = 0;
-        let sumDeltaNcku = 0, countDeltaNcku = 0, sumTNckuL = 0, sumTNckuR = 0;
-        
-        let arrOffL = [], arrOffR = [], arrOffDelta = [];
-        let arrNkL = [], arrNkR = [], arrNkDelta = [];
-
-        myChart.data.customData = [];
-        let minY = isNaN(lsl) ? 40 : lsl - 0.5; let maxY = isNaN(usl) ? 43 : usl + 0.5; 
-
-        jig.data.forEach((item, originalIndex) => {
-            const grp = item.group || '預設';
-            if (hiddenGroups.has(grp)) return; 
-            
-            const hasOff = item.l !== null || item.r !== null;
-            const hasNcku = item.l2 !== null || item.r2 !== null;
-            
-            let curCumL = '-', curCumR = '-', curCumNckuL = '-', curCumNckuR = '-';
-            let tOffL = '-', tOffR = '-', tNckuL = '-', tNckuR = '-';
-            let deltaOff = '-', deltaNcku = '-', status = '-', nkStatus = '-';
-            let statusColorStyle = '', nkStatusColorStyle = '';
-            let sampleOffAvg = null, sampleNckuAvg = null;
-
-            if (hasOff) {
-                let vL = item.l !== null && !item.exL;
-                let vR = item.r !== null && !item.exR;
-                
-                if (vL) { sumL += item.l; countL++; arrOffL.push(item.l); }
-                if (vR) { sumR += item.r; countR++; arrOffR.push(item.r); }
-                
-                curCumL = countL > 0 ? parseFloat((sumL / countL).toFixed(2)) : '-';
-                curCumR = countR > 0 ? parseFloat((sumR / countR).toFixed(2)) : '-';
-                
-                tOffL = vL ? (target - item.l).toFixed(2) : '-';
-                tOffR = vR ? (target - item.r).toFixed(2) : '-';
-                
-                if (vL) sumTOffL += parseFloat(tOffL);
-                if (vR) sumTOffR += parseFloat(tOffR);
-
-                if (vL && vR) {
-                    deltaOff = Math.abs(item.r - item.l).toFixed(2);
-                    sumDeltaOff += parseFloat(deltaOff); countDeltaOff++;
-                    arrOffDelta.push(parseFloat(deltaOff));
-                    sampleOffAvg = parseFloat(((item.l + item.r) / 2).toFixed(2));
-                }
-
-                if (!vL && !vR) {
-                    status = '-'; statusColorStyle = 'color: #94a3b8;';
-                } else {
-                    let okL = vL ? (item.l <= usl && item.l >= lsl) : true;
-                    let okR = vR ? (item.r <= usl && item.r >= lsl) : true;
-                    let isOk = (okL && okR);
-                    status = isOk ? 'OK' : 'NG';
-                    statusColorStyle = isOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
-                }
-            }
-            
-            if (hasNcku) {
-                let vL2 = item.l2 !== null && !item.exL2;
-                let vR2 = item.r2 !== null && !item.exR2;
-                
-                if (vL2) { sumNckuL += item.l2; countNckuL++; arrNkL.push(item.l2); }
-                if (vR2) { sumNckuR += item.r2; countNckuR++; arrNkR.push(item.r2); }
-                
-                curCumNckuL = countNckuL > 0 ? parseFloat((sumNckuL / countNckuL).toFixed(2)) : '-';
-                curCumNckuR = countNckuR > 0 ? parseFloat((sumNckuR / countNckuR).toFixed(2)) : '-';
-                
-                tNckuL = vL2 ? (target - item.l2).toFixed(2) : '-';
-                tNckuR = vR2 ? (target - item.r2).toFixed(2) : '-';
-
-                if (vL2) sumTNckuL += parseFloat(tNckuL);
-                if (vR2) sumTNckuR += parseFloat(tNckuR);
-
-                if (vL2 && vR2) {
-                    deltaNcku = Math.abs(item.r2 - item.l2).toFixed(2);
-                    sumDeltaNcku += parseFloat(deltaNcku); countDeltaNcku++;
-                    arrNkDelta.push(parseFloat(deltaNcku));
-                    sampleNckuAvg = parseFloat(((item.l2 + item.r2) / 2).toFixed(2));
-                }
-
-                if (!vL2 && !vR2) {
-                    nkStatus = '-'; nkStatusColorStyle = 'color: #94a3b8;';
-                } else {
-                    let okL2 = vL2 ? (item.l2 <= usl && item.l2 >= lsl) : true;
-                    let okR2 = vR2 ? (item.r2 <= usl && item.r2 >= lsl) : true;
-                    let isNkOk = (okL2 && okR2);
-                    nkStatus = isNkOk ? 'OK' : 'NG';
-                    nkStatusColorStyle = isNkOk ? `color: ${vis.okText.color};` : `color: ${vis.ngText.color};`;
-                }
-            }
-
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td class="editable-col office-col" data-field="name" data-index="${originalIndex}" tabindex="0">${item.name}</td>
-                <td class="editable-col office-col" data-field="group" data-index="${originalIndex}" tabindex="0">${grp}</td>
-                <td class="time-col office-col">${item.time || '-'}</td>
-                
-                <td class="editable-col office-col" data-field="l" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL', 'noteL')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l, item.exL, item.noteL)}</td>
-                <td class="editable-col office-col" data-field="r" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR', 'noteR')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r, item.exR, item.noteR)}</td>
-                <td class="office-col">${deltaOff}</td>
-                <td class="office-col">${curCumL}</td>
-                <td class="office-col">${curCumR}</td>
-                <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffL}</td>
-                <td class="office-col" style="font-weight:bold; background:#f0f9ff; color:#0369a1;">${tOffR}</td>
-                <td class="office-col" style="font-weight:bold; ${statusColorStyle}">${status}</td>
-                
-                <td class="editable-col ncku-col" data-field="l2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exL2', 'noteL2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.l2, item.exL2, item.noteL2)}</td>
-                <td class="editable-col ncku-col" data-field="r2" data-index="${originalIndex}" tabindex="0" oncontextmenu="toggleExclude(event, ${originalIndex}, 'exR2', 'noteR2')" title="左鍵點擊修改，右鍵點擊排除/恢復">${formatAngle(item.r2, item.exR2, item.noteR2)}</td>
-                <td class="ncku-col">${deltaNcku}</td>
-                <td class="ncku-col">${curCumNckuL}</td>
-                <td class="ncku-col">${curCumNckuR}</td>
-                <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuL}</td>
-                <td class="ncku-col" style="font-weight:bold; background:#f5f3ff; color:#5b21b6;">${tNckuR}</td>
-                <td class="ncku-col" style="font-weight:bold; ${nkStatusColorStyle}">${nkStatus}</td>
-                
-                <td class="office-col"><button onclick="deleteData(${originalIndex})" class="btn-danger btn-small" style="padding:2px 6px;">🗑️</button></td>`;
-
-            labels.push([item.name, formatShortTime(item.time)]);
-            offLData.push(!item.exL ? item.l : null); 
-            offRData.push(!item.exR ? item.r : null); 
-            nckuLData.push(!item.exL2 ? item.l2 : null); 
-            nckuRData.push(!item.exR2 ? item.r2 : null);
-            
-            cumL.push(curCumL !== '-' ? curCumL : null); cumR.push(curCumR !== '-' ? curCumR : null);
-            cumNckuL.push(curCumNckuL !== '-' ? curCumNckuL : null); cumNckuR.push(curCumNckuR !== '-' ? curCumNckuR : null);
-            offSampleAvgData.push(sampleOffAvg); nckuSampleAvgData.push(sampleNckuAvg);
-            
-            myChart.data.customData.push({ 
-                offDelta: deltaOff, nckuDelta: deltaNcku, 
-                status: status, nckuStatus: nkStatus, 
-                hasOffice: hasOff, hasNcku: hasNcku,
-                exL: item.exL, exR: item.exR, exL2: item.exL2, exR2: item.exR2
-            });
-
-            if(!item.exL && item.l !== null) { minY = Math.min(minY, item.l - 0.5); maxY = Math.max(maxY, item.l + 0.5); }
-            if(!item.exR && item.r !== null) { minY = Math.min(minY, item.r - 0.5); maxY = Math.max(maxY, item.r + 0.5); }
-            if(!item.exL2 && item.l2 !== null) { minY = Math.min(minY, item.l2 - 0.5); maxY = Math.max(maxY, item.l2 + 0.5); }
-            if(!item.exR2 && item.r2 !== null) { minY = Math.min(minY, item.r2 - 0.5); maxY = Math.max(maxY, item.r2 + 0.5); }
-        });
-
-        document.getElementById('avgOffL').innerText = countL > 0 ? (sumL / countL).toFixed(2) : '-';
-        document.getElementById('avgOffR').innerText = countR > 0 ? (sumR / countR).toFixed(2) : '-';
-        document.getElementById('avgOffDelta').innerText = countDeltaOff > 0 ? (sumDeltaOff / countDeltaOff).toFixed(2) : '-';
-        document.getElementById('avgTOffL').innerText = countL > 0 ? (sumTOffL / countL).toFixed(2) : '-';
-        document.getElementById('avgTOffR').innerText = countR > 0 ? (sumTOffR / countR).toFixed(2) : '-';
-
-        document.getElementById('avgNkL').innerText = countNckuL > 0 ? (sumNckuL / countNckuL).toFixed(2) : '-';
-        document.getElementById('avgNkR').innerText = countNckuR > 0 ? (sumNckuR / countNckuR).toFixed(2) : '-';
-        document.getElementById('avgNkDelta').innerText = countDeltaNcku > 0 ? (sumDeltaNcku / countDeltaNcku).toFixed(2) : '-';
-        document.getElementById('avgTNkL').innerText = countNckuL > 0 ? (sumTNckuL / countNckuL).toFixed(2) : '-';
-        document.getElementById('avgTNkR').innerText = countNckuR > 0 ? (sumTNckuR / countNckuR).toFixed(2) : '-';
-
-        const isSampleSD = document.getElementById('sdTypeSelect').value === 'sample';
-        document.getElementById('sdOffL').innerText = calcStandardDeviation(arrOffL, isSampleSD);
-        document.getElementById('sdOffR').innerText = calcStandardDeviation(arrOffR, isSampleSD);
-        document.getElementById('sdOffDelta').innerText = calcStandardDeviation(arrOffDelta, isSampleSD);
-        document.getElementById('sdNkL').innerText = calcStandardDeviation(arrNkL, isSampleSD);
-        document.getElementById('sdNkR').innerText = calcStandardDeviation(arrNkR, isSampleSD);
-        document.getElementById('sdNkDelta').innerText = calcStandardDeviation(arrNkDelta, isSampleSD);
-
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = offLData; myChart.data.datasets[1].data = offRData;
-        myChart.data.datasets[2].data = nckuLData; myChart.data.datasets[3].data = nckuRData;
-        myChart.data.datasets[4].data = cumL; myChart.data.datasets[5].data = cumR;
-        myChart.data.datasets[6].data = cumNckuL; myChart.data.datasets[7].data = cumNckuR;
-        myChart.data.datasets[8].data = offSampleAvgData; myChart.data.datasets[9].data = nckuSampleAvgData;
-        myChart.options.scales.y.min = Math.floor(minY); myChart.options.scales.y.max = Math.ceil(maxY);
-
-        updateChartVisibility(); 
-        document.getElementById('sampleTime').value = getCurrentTime();
     }
 
     function updateChartVisibility() {
@@ -1265,6 +1366,7 @@
         const showNcku = document.getElementById('toggleNCKU').checked;
         const showCumOff = document.getElementById('toggleCumAvgOff').checked;
         const showCumNcku = document.getElementById('toggleCumAvgNcku').checked;
+        const showCumLR = document.getElementById('toggleCumAvgLR').checked;
         const showSampleAvgOff = document.getElementById('toggleSampleAvgOff').checked;
         const showSampleAvgNcku = document.getElementById('toggleSampleAvgNcku').checked;
 
@@ -1273,15 +1375,8 @@
         myChart.setDatasetVisibility(4, showCumOff); myChart.setDatasetVisibility(5, showCumOff);
         myChart.setDatasetVisibility(6, showCumNcku); myChart.setDatasetVisibility(7, showCumNcku);
         myChart.setDatasetVisibility(8, showSampleAvgOff); myChart.setDatasetVisibility(9, showSampleAvgNcku);
+        myChart.setDatasetVisibility(10, showCumLR); myChart.setDatasetVisibility(11, showCumLR);
         myChart.update();
-    }
-
-    // --- 圖表下載與繪製更新 ---
-    function downloadChart() { 
-        const a = document.createElement('a'); 
-        a.download=`${currentJigId}_監控_${getCurrentTime().replace(/[\/:]/g,'')}.png`; 
-        a.href=document.getElementById('qcChart').toDataURL('image/png',1.0); 
-        a.click(); 
     }
 
     function addData() {
@@ -1319,7 +1414,7 @@
             if(e.target && e.target.classList.contains('editable-col')) {
                 e.target.removeAttribute('contenteditable');
                 const cell = e.target; 
-                const newText = cell.innerText.trim().replace(/💬/g, ''); // 移除可能的圖示再解析
+                const newText = cell.innerText.trim().replace(/💬/g, ''); 
                 const index = cell.getAttribute('data-index'); 
                 const field = cell.getAttribute('data-field');
                 const curData = jigs[currentJigId].data;
@@ -1348,11 +1443,6 @@
         tbody.addEventListener('keydown', function(e) { if(e.target && e.target.classList.contains('editable-col')) { if(e.key === 'Enter') { e.preventDefault(); e.target.blur(); } } });
     }
     
-    function formatShortTime(timeStr) {
-        if (!timeStr) return "";
-        try { if(timeStr.includes('下午') || timeStr.includes('上午')) { return timeStr.split(' ')[0].split('/').slice(1).join('/'); } return timeStr.split(' ')[0]; } catch(e) { return timeStr; }
-    }
-
     window.onload = initSystem;
 </script>
 </body>
