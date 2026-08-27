@@ -233,6 +233,76 @@
             font-size: 0.85rem;
         }
 
+        /* --- 官方市場資料卡 --- */
+        .native-market-body {
+            min-height: 64px;
+            background: #fff;
+            border: 1px solid #e8ebef;
+            border-radius: 4px;
+            padding: 9px 12px 8px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .native-market-main {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .native-market-value {
+            color: #17202a;
+            font-size: 1.25rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .native-market-change {
+            font-size: 0.88rem;
+            font-weight: 750;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .native-market-change.up { color: #008f68; }
+        .native-market-change.down { color: #e53935; }
+        .native-market-change.flat { color: #7f8c8d; }
+
+        .native-market-meta {
+            margin-top: 5px;
+            font-size: 0.72rem;
+            color: #8a949e;
+            line-height: 1.25;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .native-market-error {
+            min-height: 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            background: #fff;
+            border: 1px solid #e8ebef;
+            border-radius: 4px;
+            color: #7f8c8d;
+            font-size: 0.82rem;
+            text-align: center;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .native-market-error small {
+            color: #a0a8b0;
+            font-size: 0.68rem;
+        }
+
         @media (max-width: 600px) {
             header { padding: 1.5rem 12px; }
             h1 { font-size: 2rem; }
@@ -287,7 +357,7 @@
         <section class="market-section">
             <div class="market-title-row">
                 <h2 class="market-title">🌍 全球市場快覽</h2>
-                <span class="market-note">日本國債＝10年期殖利率｜資料由 TradingView 顯示</span>
+                <span class="market-note">台指期／債券＝官方每日資料｜標普、道瓊、黃金＝TradingView</span>
             </div>
 
             <div class="market-grid" id="market-widget-host">
@@ -536,6 +606,298 @@
 
         let marketWidgetLoaded = false;
 
+        // --------------------
+        // 全球市場資料
+        // --------------------
+        // GitHub Pages 是純前端網站。有些政府網站未必允許瀏覽器跨網域讀取，
+        // 因此先直接讀官方資料；若被 CORS 擋住，再嘗試公開 CORS proxy。
+        const CORS_PROXIES = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?${encodeURIComponent(url)}`
+        ];
+
+        async function fetchWithFallback(url, options = {}) {
+            const attempts = [url, ...CORS_PROXIES.map(fn => fn(url))];
+            let lastError = null;
+
+            for (const attempt of attempts) {
+                try {
+                    const response = await fetch(attempt, {
+                        cache: 'no-store',
+                        ...options
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response;
+                } catch (err) {
+                    lastError = err;
+                    console.warn('市場資料來源嘗試失敗：', attempt, err);
+                }
+            }
+            throw lastError || new Error('市場資料讀取失敗');
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let quoted = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (quoted && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        quoted = !quoted;
+                    }
+                } else if (ch === ',' && !quoted) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += ch;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        function formatNumber(value, digits = 0) {
+            const n = Number(String(value).replace(/,/g, ''));
+            if (!Number.isFinite(n)) return '--';
+            return n.toLocaleString('zh-TW', {
+                minimumFractionDigits: digits,
+                maximumFractionDigits: digits
+            });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function renderOfficialCard(id, { value, changeText = '', direction = 'flat', meta = '' }) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML = `
+                <div class="native-market-body">
+                    <div class="native-market-main">
+                        <span class="native-market-value">${escapeHtml(value)}</span>
+                        <span class="native-market-change ${direction}">${escapeHtml(changeText)}</span>
+                    </div>
+                    <div class="native-market-meta">${escapeHtml(meta)}</div>
+                </div>`;
+        }
+
+        function renderOfficialError(id, sourceName) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML = `
+                <div class="native-market-error">
+                    <span>⚠️ 暫時無法取得資料</span>
+                    <small>${escapeHtml(sourceName)}｜稍後重新整理即可重試</small>
+                </div>`;
+        }
+
+        function directionFromNumber(n) {
+            if (n > 0) return 'up';
+            if (n < 0) return 'down';
+            return 'flat';
+        }
+
+        // 台指期：臺灣期貨交易所 OpenAPI（最新交易日；優先盤後、否則一般盤）
+        async function loadTaifex() {
+            const url = 'https://openapi.taifex.com.tw/v1/DailyMarketReportFut';
+            try {
+                const response = await fetchWithFallback(url);
+                const raw = await response.text();
+                const data = JSON.parse(raw);
+                if (!Array.isArray(data)) throw new Error('TAIFEX 回傳格式異常');
+
+                const rows = data.filter(row =>
+                    row.Contract === 'TX' &&
+                    /^\d{6}$/.test(String(row['ContractMonth(Week)'] || '')) &&
+                    Number.isFinite(Number(String(row.Last ?? '').replace(/,/g, '')))
+                );
+                if (!rows.length) throw new Error('找不到 TX 期貨資料');
+
+                const nearMonth = rows
+                    .map(row => String(row['ContractMonth(Week)']))
+                    .sort()[0];
+
+                const nearRows = rows.filter(row => String(row['ContractMonth(Week)']) === nearMonth);
+                const row = nearRows.find(r => r.TradingSession === '盤後')
+                    || nearRows.find(r => r.TradingSession === '一般')
+                    || nearRows[0];
+
+                const last = Number(String(row.Last).replace(/,/g, ''));
+                const change = Number(String(row.Change ?? '0').replace(/,/g, ''));
+                const pctRaw = String(row['%'] ?? '').replace('%', '').trim();
+                const pct = Number(pctRaw);
+                const dir = directionFromNumber(change);
+                const sign = change > 0 ? '+' : '';
+                const pctText = Number.isFinite(pct) ? ` (${pct > 0 ? '+' : ''}${pct.toFixed(2)}%)` : '';
+                const session = row.TradingSession === '盤後' ? '盤後' : '一般盤';
+                const date = String(row.Date || '').replace(/^(\d{4})(\d{2})(\d{2})$/, '$1/$2/$3');
+
+                renderOfficialCard('official-taifex', {
+                    value: formatNumber(last, 0),
+                    changeText: `${sign}${formatNumber(change, 0)}${pctText}`,
+                    direction: dir,
+                    meta: `TX ${nearMonth}｜${date} ${session}｜臺灣期交所`
+                });
+            } catch (err) {
+                console.error('台指期資料失敗', err);
+                renderOfficialError('official-taifex', '臺灣期貨交易所');
+            }
+        }
+
+        // 美債 30 年：U.S. Treasury Daily Treasury Par Yield Curve Rates
+        async function loadUSTreasury30Y() {
+            const year = new Date().getFullYear();
+            const url = `https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/${year}/all?_format=csv&field_tdr_date_value=${year}&page=&type=daily_treasury_yield_curve`;
+            try {
+                const response = await fetchWithFallback(url);
+                const text = await response.text();
+                const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(Boolean);
+                if (lines.length < 2) throw new Error('Treasury CSV 無資料');
+
+                const headers = parseCSVLine(lines[0]);
+                const dateIdx = headers.findIndex(h => /^Date$/i.test(h));
+                const y30Idx = headers.findIndex(h => /30\s*YR/i.test(h));
+                if (dateIdx < 0 || y30Idx < 0) throw new Error('找不到 30 YR 欄位');
+
+                const rows = lines.slice(1)
+                    .map(parseCSVLine)
+                    .filter(cols => cols[y30Idx] && cols[y30Idx] !== 'N/A' && Number.isFinite(Number(cols[y30Idx])));
+                if (!rows.length) throw new Error('30Y 無有效資料');
+
+                const latest = rows[rows.length - 1];
+                const previous = rows.length > 1 ? rows[rows.length - 2] : null;
+                const value = Number(latest[y30Idx]);
+                const previousValue = previous ? Number(previous[y30Idx]) : value;
+                const bp = (value - previousValue) * 100;
+                const dir = directionFromNumber(bp);
+                const bpText = `${bp > 0 ? '+' : ''}${bp.toFixed(0)} bp`;
+
+                renderOfficialCard('official-us30y', {
+                    value: `${value.toFixed(2)}%`,
+                    changeText: bpText,
+                    direction: dir,
+                    meta: `${latest[dateIdx]}｜U.S. Treasury`
+                });
+            } catch (err) {
+                console.error('美債 30Y 資料失敗', err);
+                renderOfficialError('official-us30y', 'U.S. Treasury');
+            }
+        }
+
+        function japaneseEraToDate(text) {
+            const s = String(text || '').trim();
+            let match = s.match(/^R(\d+)\.(\d+)\.(\d+)$/i);
+            if (match) {
+                const y = 2018 + Number(match[1]);
+                return `${y}/${String(match[2]).padStart(2, '0')}/${String(match[3]).padStart(2, '0')}`;
+            }
+            match = s.match(/^H(\d+)\.(\d+)\.(\d+)$/i);
+            if (match) {
+                const y = 1988 + Number(match[1]);
+                return `${y}/${String(match[2]).padStart(2, '0')}/${String(match[3]).padStart(2, '0')}`;
+            }
+            return s;
+        }
+
+        // 日本 10 年國債：日本財務省「国債金利情報」CSV
+        async function loadJapan10Y() {
+            const url = 'https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv';
+            try {
+                const response = await fetchWithFallback(url);
+                const buffer = await response.arrayBuffer();
+                let text;
+                try {
+                    // 財務省 CSV 為 Shift-JIS；Chrome/Edge 支援此解碼器。
+                    text = new TextDecoder('shift_jis').decode(buffer);
+                } catch (_) {
+                    text = new TextDecoder('utf-8').decode(buffer);
+                }
+
+                const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim());
+                const headerIndex = lines.findIndex(line => line.includes('基準日') && line.includes('10年'));
+                if (headerIndex < 0) throw new Error('找不到日本 10年欄位');
+
+                const headers = parseCSVLine(lines[headerIndex]);
+                const dateIdx = headers.findIndex(h => h.includes('基準日'));
+                const y10Idx = headers.findIndex(h => /^10年/.test(h));
+                if (dateIdx < 0 || y10Idx < 0) throw new Error('日本國債欄位異常');
+
+                const rows = lines.slice(headerIndex + 1)
+                    .map(parseCSVLine)
+                    .filter(cols => cols[y10Idx] && cols[y10Idx] !== '-' && Number.isFinite(Number(cols[y10Idx])));
+                if (!rows.length) throw new Error('日本 10Y 無有效資料');
+
+                const latest = rows[rows.length - 1];
+                const previous = rows.length > 1 ? rows[rows.length - 2] : null;
+                const value = Number(latest[y10Idx]);
+                const previousValue = previous ? Number(previous[y10Idx]) : value;
+                const bp = (value - previousValue) * 100;
+                const dir = directionFromNumber(bp);
+
+                renderOfficialCard('official-jp10y', {
+                    value: `${value.toFixed(3)}%`,
+                    changeText: `${bp > 0 ? '+' : ''}${bp.toFixed(1)} bp`,
+                    direction: dir,
+                    meta: `${japaneseEraToDate(latest[dateIdx])}｜日本財務省`
+                });
+            } catch (err) {
+                console.error('日本 10Y 資料失敗', err);
+                renderOfficialError('official-jp10y', '日本財務省');
+            }
+        }
+
+        async function loadOfficialMarketData() {
+            await Promise.allSettled([
+                loadTaifex(),
+                loadUSTreasury30Y(),
+                loadJapan10Y()
+            ]);
+        }
+
+        function makeOfficialCard(label, id) {
+            const card = document.createElement('div');
+            card.className = 'market-card';
+
+            const title = document.createElement('div');
+            title.className = 'market-label';
+            title.textContent = label;
+
+            const body = document.createElement('div');
+            body.id = id;
+            body.innerHTML = '<div class="market-loading">官方資料載入中…</div>';
+
+            card.appendChild(title);
+            card.appendChild(body);
+            return card;
+        }
+
+        function makeTradingViewCard(label, symbol) {
+            const card = document.createElement('div');
+            card.className = 'market-card';
+
+            const title = document.createElement('div');
+            title.className = 'market-label';
+            title.textContent = label;
+
+            const ticker = document.createElement('tv-single-ticker');
+            ticker.setAttribute('symbol', symbol);
+
+            card.appendChild(title);
+            card.appendChild(ticker);
+            return card;
+        }
+
         function loadMarketWidget() {
             if (marketWidgetLoaded) return;
 
@@ -543,36 +905,20 @@
             if (!host) return;
 
             marketWidgetLoaded = true;
-
-            // 改成 6 個獨立 Single Ticker：某一商品載入失敗時，不會影響其他商品。
-            // S&P / 道瓊改用 TradingView 官方 Widget 範例常用的 FOREXCOM 來源，
-            // 台指期與公債殖利率則保留對應的交易所 / TVC 代碼。
-            const markets = [
-                { label: '台指期', symbol: 'TAIFEX:TXF1!' },
-                { label: '標普 500', symbol: 'FOREXCOM:SPXUSD' },
-                { label: '道瓊', symbol: 'FOREXCOM:DJI' },
-                { label: '美債 30 年殖利率', symbol: 'TVC:US30Y' },
-                { label: '日本 10 年國債殖利率', symbol: 'TVC:JP10Y' },
-                { label: '黃金', symbol: 'OANDA:XAUUSD' }
-            ];
-
             host.innerHTML = '';
 
-            markets.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'market-card';
+            // 受 TradingView 外嵌授權限制的 3 項改用官方資料。
+            host.appendChild(makeOfficialCard('台指期', 'official-taifex'));
+            host.appendChild(makeTradingViewCard('標普 500', 'FOREXCOM:SPXUSD'));
+            host.appendChild(makeTradingViewCard('道瓊', 'FOREXCOM:DJI'));
+            host.appendChild(makeOfficialCard('美債 30 年殖利率', 'official-us30y'));
+            host.appendChild(makeOfficialCard('日本 10 年國債殖利率', 'official-jp10y'));
+            host.appendChild(makeTradingViewCard('黃金', 'OANDA:XAUUSD'));
 
-                const label = document.createElement('div');
-                label.className = 'market-label';
-                label.textContent = item.label;
+            loadOfficialMarketData();
 
-                const ticker = document.createElement('tv-single-ticker');
-                ticker.setAttribute('symbol', item.symbol);
-
-                card.appendChild(label);
-                card.appendChild(ticker);
-                host.appendChild(card);
-            });
+            // 官方每日資料不用每秒更新；15 分鐘重新確認一次即可。
+            setInterval(loadOfficialMarketData, 15 * 60 * 1000);
         }
 
         function unlock(isAutoUnlock = false) {
