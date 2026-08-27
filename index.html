@@ -357,7 +357,7 @@
         <section class="market-section">
             <div class="market-title-row">
                 <h2 class="market-title">🌍 全球市場快覽</h2>
-                <span class="market-note">台指期／債券＝官方每日資料｜標普、道瓊、黃金＝TradingView</span>
+                <span class="market-note">台指期／債券／DRAM＝定時更新｜標普、費半、黃金、WTI＝TradingView</span>
             </div>
 
             <div class="market-grid" id="market-widget-host">
@@ -858,11 +858,68 @@
         }
 
         async function loadOfficialMarketData() {
-            await Promise.allSettled([
-                loadTaifex(),
-                loadUSTreasury30Y(),
-                loadJapan10Y()
-            ]);
+            try {
+                const response = await fetch(`market_data.json?t=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`market_data.json HTTP ${response.status}`);
+                const data = await response.json();
+
+                const tx = data.taifex;
+                if (tx && Number.isFinite(Number(tx.value))) {
+                    const change = Number(tx.change || 0);
+                    const pct = Number(tx.change_pct);
+                    const pctText = Number.isFinite(pct) ? ` (${pct > 0 ? '+' : ''}${pct.toFixed(2)}%)` : '';
+                    renderOfficialCard('official-taifex', {
+                        value: formatNumber(tx.value, 0),
+                        changeText: `${change > 0 ? '+' : ''}${formatNumber(change, 0)}${pctText}`,
+                        direction: directionFromNumber(change),
+                        meta: `TX ${tx.contract || ''}｜${tx.date || ''} ${tx.session || ''}｜${tx.source || '臺灣期貨交易所'}`
+                    });
+                } else renderOfficialError('official-taifex', '臺灣期貨交易所');
+
+                const us = data.us30y;
+                if (us && Number.isFinite(Number(us.value))) {
+                    const bp = Number(us.change_bp || 0);
+                    renderOfficialCard('official-us30y', {
+                        value: `${Number(us.value).toFixed(2)}%`,
+                        changeText: `${bp > 0 ? '+' : ''}${bp.toFixed(1)} bp`,
+                        direction: directionFromNumber(bp),
+                        meta: `${us.date || ''}｜${us.source || 'U.S. Treasury'}`
+                    });
+                } else renderOfficialError('official-us30y', 'U.S. Treasury');
+
+                const jp = data.jp10y;
+                if (jp && Number.isFinite(Number(jp.value))) {
+                    const bp = Number(jp.change_bp || 0);
+                    renderOfficialCard('official-jp10y', {
+                        value: `${Number(jp.value).toFixed(3)}%`,
+                        changeText: `${bp > 0 ? '+' : ''}${bp.toFixed(1)} bp`,
+                        direction: directionFromNumber(bp),
+                        meta: `${jp.date || ''}｜${jp.source || '日本財務省'}`
+                    });
+                } else renderOfficialError('official-jp10y', '日本財務省');
+
+                const dram = data.dram || {};
+                const renderDram = (id, item, label) => {
+                    if (item && Number.isFinite(Number(item.average))) {
+                        const pct = Number(item.change_pct || 0);
+                        renderOfficialCard(id, {
+                            value: `$${Number(item.average).toFixed(3)}`,
+                            changeText: `${pct > 0 ? '+' : ''}${pct.toFixed(2)}%`,
+                            direction: directionFromNumber(pct),
+                            meta: `${dram.updated || ''}｜${label}｜${dram.source || 'DRAMeXchange / TrendForce'}`
+                        });
+                    } else renderOfficialError(id, 'DRAMeXchange / TrendForce');
+                };
+                renderDram('official-ddr5', dram.ddr5_16gb, 'DDR5 16Gb 4800/5600');
+                renderDram('official-ddr4', dram.ddr4_8gb, 'DDR4 8Gb 3200');
+            } catch (err) {
+                console.error('market_data.json 載入失敗', err);
+                renderOfficialError('official-taifex', 'market_data.json');
+                renderOfficialError('official-us30y', 'market_data.json');
+                renderOfficialError('official-jp10y', 'market_data.json');
+                renderOfficialError('official-ddr5', 'market_data.json');
+                renderOfficialError('official-ddr4', 'market_data.json');
+            }
         }
 
         function makeOfficialCard(label, id) {
@@ -907,17 +964,20 @@
             marketWidgetLoaded = true;
             host.innerHTML = '';
 
-            // 受 TradingView 外嵌授權限制的 3 項改用官方資料。
+            // 9 格市場快覽：受外嵌限制的官方/DRAM資料改讀本站 market_data.json。
             host.appendChild(makeOfficialCard('台指期', 'official-taifex'));
             host.appendChild(makeTradingViewCard('標普 500', 'FOREXCOM:SPXUSD'));
-            host.appendChild(makeTradingViewCard('道瓊', 'FOREXCOM:DJI'));
+            host.appendChild(makeTradingViewCard('費半', 'NASDAQ:SOX'));
             host.appendChild(makeOfficialCard('美債 30 年殖利率', 'official-us30y'));
             host.appendChild(makeOfficialCard('日本 10 年國債殖利率', 'official-jp10y'));
             host.appendChild(makeTradingViewCard('黃金', 'OANDA:XAUUSD'));
+            host.appendChild(makeTradingViewCard('WTI 原油', 'TVC:USOIL'));
+            host.appendChild(makeOfficialCard('DDR5 16Gb 現貨均價', 'official-ddr5'));
+            host.appendChild(makeOfficialCard('DDR4 8Gb 現貨均價', 'official-ddr4'));
 
             loadOfficialMarketData();
 
-            // 官方每日資料不用每秒更新；15 分鐘重新確認一次即可。
+            // JSON 由 GitHub Actions 更新；首頁每 15 分鐘重新讀一次。
             setInterval(loadOfficialMarketData, 15 * 60 * 1000);
         }
 
