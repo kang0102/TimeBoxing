@@ -143,6 +143,72 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* --- 日期 / 週別 --- */
+        .header-meta {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.18);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* --- 全球市場快覽 --- */
+        .market-section {
+            width: min(1160px, calc(100% - 40px));
+            box-sizing: border-box;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            padding: 18px 18px 12px;
+            margin: -10px auto 15px;
+        }
+
+        .market-title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .market-title {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.25rem;
+        }
+
+        .market-note {
+            color: #7f8c8d;
+            font-size: 0.82rem;
+        }
+
+        .tradingview-widget-container {
+            width: 100%;
+            min-height: 72px;
+        }
+
+        @media (max-width: 600px) {
+            header { padding: 1.5rem 12px; }
+            h1 { font-size: 2rem; }
+            .market-section { width: calc(100% - 24px); padding: 14px 10px 8px; }
+            .container { gap: 18px; padding: 12px; }
+            .card { width: min(100%, 340px); }
+        }
+
         footer { margin-top: auto; padding: 20px; color: #888; font-size: 0.9rem; text-align: center; width: 100%; }
     </style>
 </head>
@@ -177,8 +243,23 @@
     <div id="main-content">
         <header>
             <h1>🛠️ Neil's 工具箱</h1>
-            <p> 45度切割時分析與日常輔助工具 </p>
+            <p>45度切割時分析與日常輔助工具</p>
+            <div class="header-meta">
+                <span class="meta-pill" id="today-date">📅 --/--/----</span>
+                <span class="meta-pill" id="week-number">🗓️ W--</span>
+            </div>
         </header>
+
+        <section class="market-section">
+            <div class="market-title-row">
+                <h2 class="market-title">🌍 全球市場快覽</h2>
+                <span class="market-note">日本國債＝10年期殖利率｜資料由 TradingView 顯示</span>
+            </div>
+
+            <div class="tradingview-widget-container" id="market-widget-host">
+                <div class="tradingview-widget-container__widget"></div>
+            </div>
+        </section>
     
         <div class="container">
             <a href="timer.html" class="card">
@@ -330,7 +411,31 @@
             }
         }
 
-        fetchPassword();
+        // 當天在同一瀏覽器已驗證過，就直接進入首頁
+        // 注意：這是便利功能，不是強安全機制；localStorage 可被使用者自行清除/修改。
+        const DAILY_UNLOCK_KEY = "neil_toolbox_unlocked_date";
+
+        function getTodayKey() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function hasUnlockedToday() {
+            try {
+                return localStorage.getItem(DAILY_UNLOCK_KEY) === getTodayKey();
+            } catch (e) {
+                return false;
+            }
+        }
+
+        if (hasUnlockedToday()) {
+            unlock(true);
+        } else {
+            fetchPassword();
+        }
 
         // 2. 鍵盤事件監聽
         function enableKeyboardInput() {
@@ -395,17 +500,99 @@
             }
         }
 
-        function unlock() {
+        let marketWidgetLoaded = false;
+
+        function loadMarketWidget() {
+            if (marketWidgetLoaded) return;
+
+            const host = document.getElementById('market-widget-host');
+            if (!host) return;
+
+            marketWidgetLoaded = true;
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+            script.async = true;
+            script.textContent = JSON.stringify({
+                symbols: [
+                    { proName: 'TAIFEX:TXF1!', title: '台指期' },
+                    { proName: 'SP:SPX', title: '標普500' },
+                    { proName: 'TVC:DJI', title: '道瓊' },
+                    { proName: 'TVC:US30Y', title: '美債30年殖利率' },
+                    { proName: 'TVC:JP10Y', title: '日本10年國債' },
+                    { proName: 'OANDA:XAUUSD', title: '黃金' }
+                ],
+                showSymbolLogo: true,
+                isTransparent: true,
+                displayMode: 'adaptive',
+                colorTheme: 'light',
+                locale: 'zh_TW'
+            });
+            host.appendChild(script);
+        }
+
+        function unlock(isAutoUnlock = false) {
             isLocked = false; // 標記為已解鎖，停止鍵盤監聽
-            document.getElementById('status-msg').textContent = "驗證成功";
-            document.getElementById('status-msg').style.color = "#2ecc71";
-            document.getElementById('lock-screen').style.top = "-100%";
+
+            // 正常輸入正確密碼時，記錄「今天已驗證」
+            if (!isAutoUnlock) {
+                try {
+                    localStorage.setItem(DAILY_UNLOCK_KEY, getTodayKey());
+                } catch (e) {
+                    console.warn("無法寫入 localStorage，今日免登入功能不會生效。", e);
+                }
+            }
+
+            const lockScreen = document.getElementById('lock-screen');
+            const statusMsg = document.getElementById('status-msg');
+
+            if (isAutoUnlock) {
+                // 當天已驗證：直接隱藏鎖定頁，避免再顯示密碼輸入動畫
+                lockScreen.style.transition = "none";
+                lockScreen.style.top = "-100%";
+            } else {
+                statusMsg.textContent = "驗證成功";
+                statusMsg.style.color = "#2ecc71";
+                lockScreen.style.top = "-100%";
+            }
             
             const mainContent = document.getElementById('main-content');
             mainContent.style.display = "flex";
             document.body.style.overflow = "auto";
             document.title = "Neil's 工具箱";
+            updateDateAndWeek();
+
+            // 主內容可見後再載入行情，避免隱藏容器造成 TradingView 寬度判斷錯誤
+            requestAnimationFrame(() => loadMarketWidget());
         }
+
+        // 5. 顯示日期與 ISO 週別（星期一為每週第一天）
+        function getISOWeek(date = new Date()) {
+            const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = temp.getUTCDay() || 7;
+            temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(temp.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
+            return { year: temp.getUTCFullYear(), week: weekNo };
+        }
+
+        function updateDateAndWeek() {
+            const now = new Date();
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const iso = getISOWeek(now);
+
+            const dateEl = document.getElementById('today-date');
+            const weekEl = document.getElementById('week-number');
+
+            if (dateEl) dateEl.textContent = `📅 ${y}/${m}/${d} 週${weekdays[now.getDay()]}`;
+            if (weekEl) weekEl.textContent = `🗓️ ${iso.year} · W${String(iso.week).padStart(2, '0')}`;
+        }
+
+        // 頁面載入後先更新一次，即使尚未解鎖也不影響
+        updateDateAndWeek();
 
         function showError() {
             const ls = document.getElementById('lock-screen');
