@@ -196,21 +196,55 @@
             font-size: 0.82rem;
         }
 
-        .tradingview-widget-container {
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .market-card {
+            min-width: 0;
+            background: #f8fafc;
+            border: 1px solid #e7ebf0;
+            border-radius: 12px;
+            padding: 10px 10px 8px;
+            overflow: hidden;
+        }
+
+        .market-label {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #34495e;
+            margin: 0 4px 5px;
+        }
+
+        .market-card tv-single-ticker {
+            display: block;
             width: 100%;
-            min-height: 72px;
+            min-height: 64px;
+        }
+
+        .market-loading {
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #95a5a6;
+            font-size: 0.85rem;
         }
 
         @media (max-width: 600px) {
             header { padding: 1.5rem 12px; }
             h1 { font-size: 2rem; }
             .market-section { width: calc(100% - 24px); padding: 14px 10px 8px; }
+            .market-grid { grid-template-columns: 1fr; }
             .container { gap: 18px; padding: 12px; }
             .card { width: min(100%, 340px); }
         }
 
         footer { margin-top: auto; padding: 20px; color: #888; font-size: 0.9rem; text-align: center; width: 100%; }
     </style>
+    <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-single-ticker.js"></script>
 </head>
 <body>
 
@@ -256,8 +290,8 @@
                 <span class="market-note">日本國債＝10年期殖利率｜資料由 TradingView 顯示</span>
             </div>
 
-            <div class="tradingview-widget-container" id="market-widget-host">
-                <div class="tradingview-widget-container__widget"></div>
+            <div class="market-grid" id="market-widget-host">
+                <div class="market-loading">行情載入中…</div>
             </div>
         </section>
     
@@ -509,26 +543,36 @@
             if (!host) return;
 
             marketWidgetLoaded = true;
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-            script.async = true;
-            script.textContent = JSON.stringify({
-                symbols: [
-                    { proName: 'TAIFEX:TXF1!', title: '台指期' },
-                    { proName: 'SP:SPX', title: '標普500' },
-                    { proName: 'TVC:DJI', title: '道瓊' },
-                    { proName: 'TVC:US30Y', title: '美債30年殖利率' },
-                    { proName: 'TVC:JP10Y', title: '日本10年國債' },
-                    { proName: 'OANDA:XAUUSD', title: '黃金' }
-                ],
-                showSymbolLogo: true,
-                isTransparent: true,
-                displayMode: 'adaptive',
-                colorTheme: 'light',
-                locale: 'zh_TW'
+
+            // 改成 6 個獨立 Single Ticker：某一商品載入失敗時，不會影響其他商品。
+            // S&P / 道瓊改用 TradingView 官方 Widget 範例常用的 FOREXCOM 來源，
+            // 台指期與公債殖利率則保留對應的交易所 / TVC 代碼。
+            const markets = [
+                { label: '台指期', symbol: 'TAIFEX:TXF1!' },
+                { label: '標普 500', symbol: 'FOREXCOM:SPXUSD' },
+                { label: '道瓊', symbol: 'FOREXCOM:DJI' },
+                { label: '美債 30 年殖利率', symbol: 'TVC:US30Y' },
+                { label: '日本 10 年國債殖利率', symbol: 'TVC:JP10Y' },
+                { label: '黃金', symbol: 'OANDA:XAUUSD' }
+            ];
+
+            host.innerHTML = '';
+
+            markets.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'market-card';
+
+                const label = document.createElement('div');
+                label.className = 'market-label';
+                label.textContent = item.label;
+
+                const ticker = document.createElement('tv-single-ticker');
+                ticker.setAttribute('symbol', item.symbol);
+
+                card.appendChild(label);
+                card.appendChild(ticker);
+                host.appendChild(card);
             });
-            host.appendChild(script);
         }
 
         function unlock(isAutoUnlock = false) {
