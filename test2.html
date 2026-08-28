@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.1 - 專業介面版)</title>
+    <title>工程疊構圖產生器 (Pro V5.3 - 三欄式雲端總管)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -75,25 +75,26 @@
                 padding: 15px; 
             }
             
-            /* 2. 單一滾動軸，打破巢狀滾動陷阱 */
+            /* 2. 手機版改回單欄，資料夾使用橫向捲動 */
             .modal-body { 
-                flex-direction: column; 
-                overflow-y: auto; /* 手機版唯一可滾動層 */
-                overflow-x: hidden; 
-                display: flex; 
-                -webkit-overflow-scrolling: touch; /* iOS 順滑滾動 */
-                padding-bottom: 30px; 
+                display:flex; flex-direction:column;
+                overflow-y:auto; overflow-x:hidden;
+                -webkit-overflow-scrolling:touch; padding-bottom:30px;
             }
-            .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
-            .cloud-list { overflow: visible; flex-shrink: 0; }
-            
+            .cloud-folder-pane { flex-shrink:0; overflow:visible; }
+            .folder-pane-title { display:none; }
+            .tabs-header { flex-direction:row; overflow-x:auto; overflow-y:hidden; padding:8px; }
+            .tab { width:auto; min-width:max-content; box-shadow:none !important; }
+            .tab.active { border-color:var(--accent-cyan); }
+            .folder-actions { grid-template-columns:1fr 48px; }
+            .modal-left { overflow:visible; padding-right:0; flex-shrink:0; }
+            .cloud-list { overflow:visible; flex-shrink:0; }
             .modal-right { 
-                width: 100%; margin-top: 15px; padding: 15px 0 0 0; 
-                background: transparent; border: none; border-top: 1px solid var(--border-subtle); 
-                overflow-y: visible; /* 關閉原本的獨立捲軸 */
-                height: auto; 
-                flex-shrink: 0;
+                width:100%; margin-top:15px; padding:15px 0 0 0; 
+                background:transparent; border:none; border-top:1px solid var(--border-subtle); 
+                overflow-y:visible; height:auto; flex-shrink:0;
             }
+            .preview-primary-actions { position:static; background:transparent; padding-top:0; }
             
             /* 3. 畫布自適應避免把畫面撐破 */
             #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
@@ -180,36 +181,102 @@
         .home-btn:hover { background: var(--bg-card); border-color: var(--accent-cyan); }
         canvas { box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; max-width: 100%; border-radius: 4px;}
 
-        /* --- ☁️ 雲端管理 / 預覽 Modal (精緻化) --- */
+
+        /* --- ⭐ 常用專案快速區 (V5.2) --- */
+        #quickPanel {
+            position: absolute; top: 20px; left: 20px; width: 300px; max-height: calc(100% - 40px);
+            z-index: 20; background: rgba(26, 28, 35, 0.94); backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35); overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        #quickPanel.is-hidden { display: none; }
+        #quickPanelShow {
+            position: absolute; top: 20px; left: 20px; z-index: 21; width: auto; display: none;
+            padding: 8px 12px; border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
+            background: rgba(26, 28, 35, 0.94); backdrop-filter: blur(10px); border-radius: 20px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.3);
+        }
+        #quickPanelShow.visible { display: flex; }
+        .quick-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 12px 8px; border-bottom:1px solid var(--border-subtle); }
+        .quick-title { font-size:14px; font-weight:700; color:#fff; display:flex; align-items:center; gap:6px; }
+        .quick-hide-btn { width:auto; padding:4px 8px; font-size:11px; background:#374151; color:#ccc; margin:0; }
+        .quick-controls { display:flex; gap:6px; align-items:center; padding:8px 12px; background:rgba(0,0,0,0.16); }
+        .quick-controls label { margin:0; white-space:nowrap; }
+        #quickCount { width:72px; height:32px; padding:4px 8px; }
+        .quick-refresh { width:32px; height:32px; padding:0; margin-left:auto; background:#374151; }
+        #quickProjectList { padding:8px; overflow-y:auto; min-height:72px; }
+        .quick-project-card {
+            width:100%; text-align:left; display:block; padding:10px 11px; margin:0 0 7px 0;
+            background:#20232B; border:1px solid #343944; border-left:3px solid var(--accent-cyan);
+            border-radius:var(--radius-md); cursor:pointer; transition:0.18s; color:var(--text-primary);
+        }
+        .quick-project-card:hover { background:#2A2E38; border-color:#4A5260; transform:translateX(2px); filter:none; }
+        .quick-project-name { font-weight:700; font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .quick-project-meta { display:flex; justify-content:space-between; gap:8px; margin-top:4px; font-size:10px; color:var(--text-secondary); }
+        .quick-project-note { margin-top:5px; font-size:11px; color:var(--text-note); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .quick-empty { padding:18px 10px; text-align:center; color:#747B85; font-size:12px; line-height:1.6; }
+
+        @media (max-width: 1100px) {
+            #quickPanel { width:250px; }
+        }
+        @media (max-width: 768px) {
+            #quickPanel, #quickPanelShow {
+                position: relative; top:auto; left:auto; width:100%; max-width:100%; max-height:none;
+                margin:0 0 10px 0;
+            }
+            #quickPanelShow { border-radius:var(--radius-md); }
+        }
+
+        /* --- ☁️ 雲端管理 / 預覽 Modal (V5.3：三欄式 Project Manager) --- */
         .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85); backdrop-filter: blur(3px); z-index:2000; display:none;}
         .modal { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             background: var(--bg-panel); border: 1px solid #333; border-radius: var(--radius-lg); 
-            padding: 20px; z-index: 2001; display: none; width: 950px; max-width: 95%; height: 85vh; 
+            padding: 20px; z-index: 2001; display: none; width: 1200px; max-width: 96%; height: 88vh; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-direction: column; 
         }
         .modal-header { display:flex; justify-content:space-between; align-items:center; padding-bottom: 15px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 10px;}
-        .modal-body { display: flex; flex: 1; gap: 20px; overflow: hidden;}
-        .modal-left { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-right: 5px; }
-        .modal-right { width: 340px; display: flex; flex-direction: column; align-items: center; padding: 15px; background: #121317; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-shrink: 0; overflow-y:auto; }
+        .modal-body { display:grid; grid-template-columns: 180px minmax(0, 1fr) 360px; flex:1; gap:14px; overflow:hidden; min-height:0; }
+        .modal-left { min-width:0; display:flex; flex-direction:column; overflow:hidden; padding:0; }
+        .modal-right { min-width:0; display:flex; flex-direction:column; align-items:center; padding:15px; background:#121317; border-radius:var(--radius-md); border:1px solid var(--border-subtle); overflow-y:auto; }
 
-        /* 分頁系統樣式 (Tabs) */
+        /* 左側資料夾導覽 */
+        .cloud-folder-pane {
+            min-width:0; display:flex; flex-direction:column; overflow:hidden;
+            background:#15171D; border:1px solid var(--border-subtle); border-radius:var(--radius-md);
+        }
+        .folder-pane-title {
+            padding:12px 12px 9px; font-size:12px; font-weight:700; color:#B8BEC8;
+            letter-spacing:.5px; border-bottom:1px solid var(--border-subtle);
+        }
         .tabs-header {
-            display: flex; overflow-x: auto; overflow-y: hidden;
-            border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px;
-            scrollbar-width: none; /* 隱藏滾動條 */
+            display:flex; flex-direction:column; gap:4px; overflow-y:auto; overflow-x:hidden;
+            flex:1; min-height:0; padding:8px; margin:0; border:0;
+            scrollbar-width:thin;
         }
-        .tabs-header::-webkit-scrollbar { display: none; }
+        .tabs-header::-webkit-scrollbar { display:block; width:5px; }
         .tab {
-            padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary);
-            border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px;
-            border: 1px solid transparent; border-bottom: none; transition: 0.2s;
-            display: flex; align-items: center; gap: 6px; user-select: none; position: relative;
+            width:100%; min-height:38px; padding:9px 10px; margin:0;
+            background:transparent; color:var(--text-secondary); border-radius:var(--radius-md);
+            cursor:grab; white-space:nowrap; font-size:13px; border:1px solid transparent;
+            transition:.18s; display:flex; align-items:center; justify-content:space-between;
+            gap:8px; user-select:none; position:relative; overflow:hidden;
         }
-        .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tab.active { color: var(--accent-cyan); font-weight: bold; background: rgba(0, 229, 255, 0.05); }
-        .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); }
-        .tab.drag-over { background: rgba(0, 229, 255, 0.1); border: 1px dashed var(--accent-cyan); }
+        .tab:hover { color:var(--text-primary); background:#23262E; border-color:#343944; }
+        .tab.active { color:var(--accent-cyan); font-weight:700; background:#17303A; border-color:#245160; box-shadow:inset 3px 0 0 var(--accent-cyan); }
+        .tab.active::after { display:none; }
+        .tab.drag-over { background:rgba(0,229,255,.12); border:1px dashed var(--accent-cyan); }
+        .folder-actions { display:grid; grid-template-columns:1fr 42px; gap:6px; padding:8px; border-top:1px solid var(--border-subtle); background:#111318; }
+        .folder-actions button { height:36px; margin:0; font-size:12px; }
+
+        .project-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:38px; padding:0 2px 9px; color:#AEB5C0; font-size:12px; }
+        #currentFolderLabel { color:#fff; font-weight:700; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+        /* 右側主要操作固定在預覽上方 */
+        .preview-primary-actions { display:flex; gap:8px; width:100%; margin:0 0 12px; padding-bottom:12px; border-bottom:1px solid #30343D; position:sticky; top:-15px; z-index:5; background:#121317; padding-top:15px; }
+        #btn-load-preview { background:var(--btn-blue); min-height:42px; flex:2; }
+        #btn-del-preview { background:var(--btn-red); min-height:42px; flex:0 0 82px; }
 
         /* 檔案清單專用樣式 (極致對比設計) */
         .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; padding-right: 5px;}
@@ -272,21 +339,36 @@
             <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:transparent; border:1px solid #555; color:#ccc;">關閉 ✕</button>
         </div>
         
-        <div style="margin-bottom: 15px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
-             <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 200px; height: 38px;">
-             <button onclick="window.createNewFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); height: 38px;">📁 新增分頁</button>
-             <button onclick="window.deleteCurrentFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--btn-red); color:var(--btn-red); height: 38px;">🗑️ 刪除分頁</button>
+        <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
+             <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 240px; height: 38px;">
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
              <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
         </div>
 
         <div class="modal-body">
-            <div class="modal-left">
+            <aside class="cloud-folder-pane">
+                <div class="folder-pane-title">📁 資料夾</div>
                 <div id="cloudTabsEl" class="tabs-header"></div>
+                <div class="folder-actions">
+                    <button onclick="window.createNewFolder()" style="background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan);">＋ 新增資料夾</button>
+                    <button onclick="window.deleteCurrentFolder()" title="刪除目前資料夾" style="background:transparent; border:1px solid var(--btn-red); color:var(--btn-red);">🗑️</button>
+                </div>
+            </aside>
+
+            <div class="modal-left">
+                <div class="project-list-head">
+                    <span id="currentFolderLabel">📂 未分類</span>
+                    <span style="color:#666;">拖曳專案即可移動資料夾</span>
+                </div>
                 <ul id="cloudListEl" class="cloud-list"></ul>
             </div>
             
             <div class="modal-right">
+                <div class="preview-primary-actions">
+                    <button id="btn-load-preview" style="display:none;" onclick="window.loadSelectedToWorkspace()">📂 載入至工作區</button>
+                    <button id="btn-del-preview" style="display:none;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+                </div>
+
                 <h4 style="color:#fff; margin:0 0 10px 0; align-self:flex-start;">視覺預覽 (Preview)</h4>
                 <canvas id="previewCanvas"></canvas>
                 
@@ -299,12 +381,7 @@
                 </div>
 
                 <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:13px; padding:10px 0; margin-top:5px; line-height:1.6;">
-                    <div style="text-align:center; color:#666; margin-top:30px;">請從左側選擇專案以檢視詳細資訊</div>
-                </div>
-                
-                <div style="display:flex; gap:8px; width:100%; margin-top: auto; padding-top:15px; border-top:1px solid #333;">
-                    <button id="btn-load-preview" style="background:var(--btn-blue); display:none; flex:2; height:40px;" onclick="window.loadSelectedToWorkspace()">📂 載入至工作區</button>
-                    <button id="btn-del-preview" style="background:var(--btn-red); display:none; flex:1; height:40px;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+                    <div style="text-align:center; color:#666; margin-top:30px;">請從中間選擇專案以檢視詳細資訊</div>
                 </div>
             </div>
         </div>
@@ -313,7 +390,7 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.1)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.3)</span></h2>
 
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
@@ -409,7 +486,26 @@
     </div>
 
     <div id="resizer"></div>
-    <div id="main-area"><canvas id="stackCanvas"></canvas></div>
+    <div id="main-area">
+        <div id="quickPanel">
+            <div class="quick-header">
+                <div class="quick-title">⭐ 常用專案 <span id="quickStatus" style="font-size:10px; color:#6B7280; font-weight:normal;"></span></div>
+                <button class="quick-hide-btn" onclick="window.setQuickPanelHidden(true)">◀ 隱藏</button>
+            </div>
+            <div class="quick-controls">
+                <label>顯示</label>
+                <select id="quickCount" onchange="window.changeQuickCount(this.value)">
+                    <option value="1">1 個</option><option value="2">2 個</option><option value="3" selected>3 個</option>
+                    <option value="4">4 個</option><option value="5">5 個</option><option value="6">6 個</option>
+                    <option value="7">7 個</option><option value="8">8 個</option><option value="9">9 個</option><option value="10">10 個</option>
+                </select>
+                <button class="quick-refresh" onclick="window.refreshCloudList(true)" title="刷新常用專案">🔄</button>
+            </div>
+            <div id="quickProjectList"><div class="quick-empty">正在讀取常用專案...</div></div>
+        </div>
+        <button id="quickPanelShow" onclick="window.setQuickPanelHidden(false)">⭐ 顯示常用專案</button>
+        <canvas id="stackCanvas"></canvas>
+    </div>
 
     <script type="module">
         /* --- 模組與資料庫宣告 (完全保留 V5 邏輯) --- */
@@ -443,6 +539,233 @@
         // ⭐ 主標題全局變數與判定範圍區
         window.mainTitle = "Active Project";
         window.titleHitZone = null;
+
+
+        // =========================================================
+        // ⭐ V5.2：常用專案 + 上次工作區自動續接
+        // =========================================================
+        const QUICK_USAGE_KEY = 'stackQuickUsageV52';
+        const QUICK_COUNT_KEY = 'stackQuickCountV52';
+        const QUICK_HIDDEN_KEY = 'stackQuickHiddenV52';
+        const LAST_WORKSPACE_KEY = 'stackLastWorkspaceV52';
+        let workspaceSaveTimer = null;
+        let isRestoringWorkspace = false;
+
+        function safeJsonParse(raw, fallback) {
+            try { return raw ? JSON.parse(raw) : fallback; } catch(e) { return fallback; }
+        }
+
+        function getQuickUsage() {
+            return safeJsonParse(localStorage.getItem(QUICK_USAGE_KEY), {});
+        }
+
+        window.trackProjectUse = function(id) {
+            if(!id) return;
+            const usage = getQuickUsage();
+            const old = usage[id] || { count: 0, lastUsed: 0 };
+            usage[id] = { count: (old.count || 0) + 1, lastUsed: Date.now() };
+            try { localStorage.setItem(QUICK_USAGE_KEY, JSON.stringify(usage)); } catch(e) {}
+            window.renderQuickProjects();
+        };
+
+        window.changeQuickCount = function(value) {
+            const n = Math.max(1, Math.min(10, parseInt(value) || 3));
+            localStorage.setItem(QUICK_COUNT_KEY, String(n));
+            const sel = document.getElementById('quickCount');
+            if(sel) sel.value = String(n);
+            window.renderQuickProjects();
+        };
+
+        window.setQuickPanelHidden = function(hidden) {
+            const panel = document.getElementById('quickPanel');
+            const showBtn = document.getElementById('quickPanelShow');
+            if(!panel || !showBtn) return;
+            panel.classList.toggle('is-hidden', !!hidden);
+            showBtn.classList.toggle('visible', !!hidden);
+            localStorage.setItem(QUICK_HIDDEN_KEY, hidden ? '1' : '0');
+        };
+
+        window.initQuickPanel = function() {
+            const savedCount = Math.max(1, Math.min(10, parseInt(localStorage.getItem(QUICK_COUNT_KEY)) || 3));
+            const sel = document.getElementById('quickCount');
+            if(sel) sel.value = String(savedCount);
+            window.setQuickPanelHidden(localStorage.getItem(QUICK_HIDDEN_KEY) === '1');
+            window.renderQuickProjects();
+        };
+
+        window.renderQuickProjects = function() {
+            const list = document.getElementById('quickProjectList');
+            const status = document.getElementById('quickStatus');
+            if(!list) return;
+            const count = Math.max(1, Math.min(10, parseInt(localStorage.getItem(QUICK_COUNT_KEY)) || 3));
+            const usage = getQuickUsage();
+            const sorted = [...cloudProjectsCache].sort((a, b) => {
+                const ua = usage[a.id] || {};
+                const ub = usage[b.id] || {};
+                const countDiff = (ub.count || 0) - (ua.count || 0);
+                if(countDiff !== 0) return countDiff;
+                const aTime = ua.lastUsed || a.timestamp || 0;
+                const bTime = ub.lastUsed || b.timestamp || 0;
+                return bTime - aTime;
+            }).slice(0, count);
+
+            if(status) status.textContent = cloudProjectsCache.length ? `(${Math.min(count, cloudProjectsCache.length)}/${cloudProjectsCache.length})` : '';
+            if(sorted.length === 0) {
+                list.innerHTML = `<div class="quick-empty">${isFirebaseReady ? '目前沒有可顯示的雲端專案' : '尚未連線，常用專案無法同步'}<br>工作區仍會保留在本機。</div>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            sorted.forEach((p, index) => {
+                const stat = usage[p.id] || {};
+                const btn = document.createElement('button');
+                btn.className = 'quick-project-card';
+                btn.type = 'button';
+                btn.onclick = () => window.loadQuickProject(p.id);
+                const category = p.category || '未分類';
+                const useText = stat.count ? `使用 ${stat.count} 次` : '最近修改';
+                const note = (p.note || '無備註').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                btn.innerHTML = `
+                    <div class="quick-project-name">${index + 1}. ${p.id.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div class="quick-project-meta"><span>📁 ${category.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span><span>${useText}</span></div>
+                    <div class="quick-project-note">${note}</div>`;
+                list.appendChild(btn);
+            });
+        };
+
+        window.loadQuickProject = function(id) {
+            const p = cloudProjectsCache.find(x => x.id === id);
+            if(!p) return alert('找不到此專案，請按刷新後再試一次。');
+            window.applyConfig(p);
+            document.getElementById('projName').value = p.id;
+            const noteEl = document.getElementById('projNote');
+            noteEl.value = p.note || '';
+            window.autoResizeTextarea(noteEl);
+            window.trackProjectUse(p.id);
+            window.scheduleWorkspaceSave();
+        };
+
+        function makeSerializablePhotos() {
+            return (window.photos || []).map(p => ({
+                id: p.id,
+                data: p.data,
+                desc: p.desc,
+                w: p.w,
+                h: p.h
+            }));
+        }
+
+        window.getWorkspaceSnapshot = function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainArea = document.getElementById('main-area');
+            return {
+                version: 'V5.2',
+                savedAt: Date.now(),
+                projectName: document.getElementById('projName')?.value || '',
+                note: document.getElementById('projNote')?.value || '',
+                layers: window.layers || [],
+                dimensions: window.dimensions || [],
+                photos: makeSerializablePhotos(),
+                compareLayers: window.compareLayers || null,
+                settings: {
+                    unit: document.getElementById('unitInput')?.value || 'um',
+                    width: document.getElementById('canvasWidth')?.value || 250,
+                    globalFontSize: document.getElementById('globalFontSize')?.value || 14,
+                    mainTitle: window.mainTitle || 'Active Project',
+                    is3D: !!window.is3D
+                },
+                activeCategory,
+                scroll: {
+                    sidebarTop: sidebar?.scrollTop || 0,
+                    mainTop: mainArea?.scrollTop || 0,
+                    mainLeft: mainArea?.scrollLeft || 0
+                }
+            };
+        };
+
+        window.saveWorkspaceState = function() {
+            if(isRestoringWorkspace) return;
+            const snapshot = window.getWorkspaceSnapshot();
+            try {
+                localStorage.setItem(LAST_WORKSPACE_KEY, JSON.stringify(snapshot));
+            } catch(e) {
+                // 若圖片太多超過瀏覽器 localStorage 容量，至少保住疊構、文字與設定
+                try {
+                    snapshot.photos = [];
+                    snapshot.photosOmitted = true;
+                    localStorage.setItem(LAST_WORKSPACE_KEY, JSON.stringify(snapshot));
+                } catch(e2) {
+                    console.warn('無法儲存上次工作區', e2);
+                }
+            }
+        };
+
+        window.scheduleWorkspaceSave = function() {
+            if(isRestoringWorkspace) return;
+            clearTimeout(workspaceSaveTimer);
+            workspaceSaveTimer = setTimeout(window.saveWorkspaceState, 700);
+        };
+
+        function syncViewButtons() {
+            const btn3D = document.getElementById('btn3D');
+            if(btn3D) {
+                btn3D.innerHTML = window.is3D ? '🧊 關閉 3D 視角' : '🧊 開啟 3D 視角';
+                btn3D.style.background = window.is3D ? '#3949AB' : '#5E35B1';
+            }
+            const clearBtn = document.getElementById('btnClearCompare');
+            if(clearBtn) clearBtn.style.display = window.compareLayers ? 'flex' : 'none';
+        }
+
+        window.restoreLastWorkspace = function() {
+            const raw = localStorage.getItem(LAST_WORKSPACE_KEY);
+            if(!raw) return false;
+            const s = safeJsonParse(raw, null);
+            if(!s || !Array.isArray(s.layers)) return false;
+            isRestoringWorkspace = true;
+            try {
+                window.applyConfig({
+                    layers: s.layers,
+                    dimensions: s.dimensions || [],
+                    photos: s.photos || [],
+                    settings: s.settings || {}
+                });
+                document.getElementById('projName').value = s.projectName || '';
+                const noteEl = document.getElementById('projNote');
+                noteEl.value = s.note || '';
+                window.autoResizeTextarea(noteEl);
+                window.compareLayers = s.compareLayers || null;
+                window.is3D = !!s.settings?.is3D;
+                if(s.activeCategory) activeCategory = s.activeCategory;
+                syncViewButtons();
+                window.draw();
+
+                requestAnimationFrame(() => {
+                    const sidebar = document.getElementById('sidebar');
+                    const mainArea = document.getElementById('main-area');
+                    if(sidebar && s.scroll) sidebar.scrollTop = s.scroll.sidebarTop || 0;
+                    if(mainArea && s.scroll) {
+                        mainArea.scrollTop = s.scroll.mainTop || 0;
+                        mainArea.scrollLeft = s.scroll.mainLeft || 0;
+                    }
+                });
+                return true;
+            } catch(e) {
+                console.warn('還原上次工作區失敗', e);
+                return false;
+            } finally {
+                isRestoringWorkspace = false;
+            }
+        };
+
+        window.initWorkspacePersistence = function() {
+            document.addEventListener('input', window.scheduleWorkspaceSave, true);
+            document.addEventListener('change', window.scheduleWorkspaceSave, true);
+            document.getElementById('sidebar')?.addEventListener('scroll', window.scheduleWorkspaceSave, { passive:true });
+            document.getElementById('main-area')?.addEventListener('scroll', window.scheduleWorkspaceSave, { passive:true });
+            window.addEventListener('beforeunload', window.saveWorkspaceState);
+            window.addEventListener('pagehide', window.saveWorkspaceState);
+            document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') window.saveWorkspaceState(); });
+        };
 
         // --- 備註輸入框自動調整高度 ---
         window.autoResizeTextarea = function(el) {
@@ -627,14 +950,40 @@
             }
         };
 
-        window.refreshCloudList = async function() { showLoading(true); try { const savedFolders = localStorage.getItem('myStackFolders'); if(savedFolders) { customFolders = JSON.parse(savedFolders); } else { customFolders = ["未分類"]; } const q = await getDocs(collection(db, COL_PROJ)); cloudProjectsCache = []; q.forEach(doc => { const data = doc.data(); if(!data.category) data.category = "未分類"; if (!customFolders.includes(data.category)) { customFolders.push(data.category); } cloudProjectsCache.push({ id: doc.id, ...data }); }); cloudProjectsCache.sort((a,b) => b.timestamp - a.timestamp); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0]; window.renderCloudList(); } catch(e) { console.error(e); } showLoading(false); };
+        window.refreshCloudList = async function(silent = false) {
+            if(!isFirebaseReady) { window.renderQuickProjects(); return; }
+            if(!silent) showLoading(true);
+            try {
+                const savedFolders = localStorage.getItem('myStackFolders');
+                if(savedFolders) { customFolders = JSON.parse(savedFolders); } else { customFolders = ["未分類"]; }
+                const q = await getDocs(collection(db, COL_PROJ));
+                cloudProjectsCache = [];
+                q.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if(!data.category) data.category = "未分類";
+                    if(!customFolders.includes(data.category)) customFolders.push(data.category);
+                    cloudProjectsCache.push({ id: docSnap.id, ...data });
+                });
+                cloudProjectsCache.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+                localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
+                if(!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類";
+                window.renderCloudList();
+                window.renderQuickProjects();
+            } catch(e) {
+                console.error(e);
+                window.renderQuickProjects();
+            }
+            if(!silent) showLoading(false);
+        };
         
         window.renderCloudList = function() { 
             const tabsEl = document.getElementById('cloudTabsEl'); const listEl = document.getElementById('cloudListEl'); const search = document.getElementById('searchCloud').value.toLowerCase(); 
             if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類"; tabsEl.innerHTML = ''; 
+            const folderLabel = document.getElementById('currentFolderLabel');
+            if(folderLabel) folderLabel.textContent = search ? '🔎 搜尋全部資料夾' : `📂 ${activeCategory}`;
             customFolders.forEach(cat => { 
                 const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length; 
-                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `📂 ${cat} <span style="font-size:11px; opacity:0.6; margin-left:4px;">${count}</span>`; tab.draggable = true; 
+                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📂 ${cat}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`; tab.draggable = true; 
                 tab.onclick = () => { activeCategory = cat; window.renderCloudList(); }; 
                 tab.ondblclick = () => { if(cat === "未分類") return alert("預設分類無法更名"); const newName = prompt("重新命名分頁：", cat); if(newName && newName.trim() && !customFolders.includes(newName.trim())) { const finalName = newName.trim(); customFolders[customFolders.indexOf(cat)] = finalName; cloudProjectsCache.forEach(p => { if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); } }); if(activeCategory === cat) activeCategory = finalName; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); } }; 
                 tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; }; tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); }; tab.ondragleave = (e) => { tab.classList.remove('drag-over'); }; 
@@ -694,18 +1043,33 @@
                 const noteEl = document.getElementById('projNote');
                 noteEl.value = p.note || ""; 
                 window.autoResizeTextarea(noteEl);
+                window.trackProjectUse(p.id);
+                window.scheduleWorkspaceSave();
                 window.closeCloudManager(); 
             } 
         };
 
-        window.deleteSelectedCloud = async function() { if(!currentPreviewId) return; if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return; showLoading(true); try { await deleteDoc(doc(db, COL_PROJ, currentPreviewId)); await window.refreshCloudList(); currentPreviewId=null;} catch(e) {} showLoading(false); };
+        window.deleteSelectedCloud = async function() {
+            if(!currentPreviewId) return;
+            if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return;
+            const deletedId = currentPreviewId;
+            showLoading(true);
+            try {
+                await deleteDoc(doc(db, COL_PROJ, currentPreviewId));
+                const usage = getQuickUsage();
+                if(usage[deletedId]) { delete usage[deletedId]; localStorage.setItem(QUICK_USAGE_KEY, JSON.stringify(usage)); }
+                currentPreviewId = null;
+                await window.refreshCloudList(true);
+            } catch(e) {}
+            showLoading(false);
+        };
         
         /* 🔧 語法已修正：徹底修復前版漏掉的換行引號，絕不再卡死 */
         window.batchExportExcel = function() { const checks = document.querySelectorAll('.batch-check:checked'); if(checks.length === 0) { alert("請先勾選左側的核取方塊"); return; } let csv = "\uFEFF"; checks.forEach(chk => { const id = chk.value; const p = cloudProjectsCache.find(x => x.id === id); if(p) { csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; const layers = p.layers || []; layers.forEach((l,i) => { if(l.checked === false) return; csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; }); csv += "\n"; } }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Stackups_${Date.now()}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
         
         // --- 備份/儲存 ---
         window.backupAllCloudData = async function() { if(!isFirebaseReady) { alert("未連線"); return; } showLoading(true, "資料打包中..."); try { const projSnap = await getDocs(collection(db, COL_PROJ)); const projects = {}; projSnap.forEach(d => projects[d.id] = d.data()); const unitSnap = await getDocs(collection(db, COL_UNITS)); const units = {}; unitSnap.forEach(d => units[d.id] = d.data()); const str = JSON.stringify({ version: "V5", timestamp: Date.now(), projects, units, customFolders }, null, 2); const blob = new Blob([str], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Stackup_Backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); } catch(e) { alert("備份失敗"); } showLoading(false); };
-        window.restoreAllCloudData = function(input) { const file = input.files[0]; if(!file) return; if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { input.value = ''; return; } const reader = new FileReader(); reader.onload = async function(e) { showLoading(true, "資料還原中..."); try { const data = JSON.parse(e.target.result); const batch = writeBatch(db); let count = 0; if(data.projects) for(const [id,v] of Object.entries(data.projects)) { batch.set(doc(db,COL_PROJ,id),v); count++; } if(data.units) for(const [id,v] of Object.entries(data.units)) { batch.set(doc(db,COL_UNITS,id),v); count++; } if(data.customFolders) { customFolders = data.customFolders; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } await batch.commit(); alert(`成功還原 ${count} 筆資料。`); window.refreshUnitList(); } catch(err) { alert("還原失敗"); } showLoading(false); input.value = ''; }; reader.readAsText(file); };
+        window.restoreAllCloudData = function(input) { const file = input.files[0]; if(!file) return; if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { input.value = ''; return; } const reader = new FileReader(); reader.onload = async function(e) { showLoading(true, "資料還原中..."); try { const data = JSON.parse(e.target.result); const batch = writeBatch(db); let count = 0; if(data.projects) for(const [id,v] of Object.entries(data.projects)) { batch.set(doc(db,COL_PROJ,id),v); count++; } if(data.units) for(const [id,v] of Object.entries(data.units)) { batch.set(doc(db,COL_UNITS,id),v); count++; } if(data.customFolders) { customFolders = data.customFolders; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } await batch.commit(); alert(`成功還原 ${count} 筆資料。`); window.refreshUnitList(); await window.refreshCloudList(true); } catch(err) { alert("還原失敗"); } showLoading(false); input.value = ''; }; reader.readAsText(file); };
         function showLoading(show, text="處理中") { const ov = document.getElementById('loading-overlay'); if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none'; }
         
         window.saveToCloud = async function() { 
@@ -719,19 +1083,34 @@
             const data = { 
                 layers: window.layers, 
                 dimensions: window.dimensions, 
-                photos: window.photos, 
+                photos: makeSerializablePhotos(), 
                 settings: { 
                     unit: document.getElementById('unitInput').value, 
                     width: document.getElementById('canvasWidth').value,
-                    mainTitle: window.mainTitle  /* 儲存自訂主標題 */
+                    globalFontSize: document.getElementById('globalFontSize').value,
+                    mainTitle: window.mainTitle,
+                    is3D: !!window.is3D
                 }, 
                 note: document.getElementById('projNote').value, 
                 timestamp: Date.now(), 
                 category: existingCategory 
             }; 
             const size = new Blob([JSON.stringify(data)]).size; 
-            if(size > 950000) if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return; 
-            showLoading(true); try { await setDoc(doc(db, COL_PROJ, name), data, { merge: true }); alert("儲存成功"); } catch(e) { alert("儲存失敗"); } showLoading(false); 
+            if(size > 950000) if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。
+建議減少照片數量。確定儲存？`)) return; 
+            showLoading(true);
+            try {
+                await setDoc(doc(db, COL_PROJ, name), data, { merge: true });
+                const cached = { id: name, ...data };
+                const idx = cloudProjectsCache.findIndex(x => x.id === name);
+                if(idx >= 0) cloudProjectsCache[idx] = cached; else cloudProjectsCache.unshift(cached);
+                cloudProjectsCache.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+                window.trackProjectUse(name);
+                window.renderQuickProjects();
+                window.scheduleWorkspaceSave();
+                alert("儲存成功");
+            } catch(e) { alert("儲存失敗"); }
+            showLoading(false); 
         };
         window.saveUnitToCloud = async function() { const name = document.getElementById('unitName').value.trim(); const sel = window.layers.filter(l => l.checked!==false); if(!name || sel.length===0) return alert("請輸入名稱並勾選層次"); showLoading(true); try { await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); alert("已存"); window.refreshUnitList(); } catch(e) {} showLoading(false); };
         window.refreshUnitList = async function() { if(!isFirebaseReady) return; const s = document.getElementById('savedUnits'); try { const q = await getDocs(collection(db, COL_UNITS)); s.innerHTML = '<option value="">-- 選擇模組 --</option>'; q.forEach(d => { const opt = document.createElement('option'); opt.value=d.id; opt.innerText=d.id; s.appendChild(opt); }); } catch(e) {} };
@@ -740,15 +1119,20 @@
         window.exportCurrentToCSV = function() { const sel = window.layers.filter(l => l.checked!==false); if(sel.length===0) return alert("無選取層"); const name = document.getElementById('projName').value || "Stackup"; const unit = document.getElementById('unitInput').value; let csv = "\uFEFF層序,名稱,厚度,單位\n"; let t=0; sel.forEach((l,i) => { t += (parseFloat(l.thickness)||0); csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`; }); csv += `,,${t},${unit},總厚度\n`; const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); };
         
         window.applyConfig = (c) => { 
-            window.layers=c.layers||[]; 
-            window.dimensions=c.dimensions||[]; 
-            window.photos=c.photos||[]; 
+            window.layers = JSON.parse(JSON.stringify(c.layers || [])); 
+            window.dimensions = JSON.parse(JSON.stringify(c.dimensions || [])); 
+            window.photos = (c.photos || []).map(p => ({...p, imgElement:null})); 
             if(c.settings) { 
-                document.getElementById('unitInput').value=c.settings.unit||"um"; 
-                document.getElementById('canvasWidth').value=c.settings.width||250; 
-                window.mainTitle = c.settings.mainTitle || "Active Project"; /* 還原主標題 */
-            } 
-            window.renderList(); window.renderPhotoList(); window.draw(); 
+                document.getElementById('unitInput').value = c.settings.unit || "um"; 
+                document.getElementById('canvasWidth').value = c.settings.width || 250;
+                document.getElementById('globalFontSize').value = c.settings.globalFontSize || 14;
+                window.mainTitle = c.settings.mainTitle || "Active Project";
+                if(typeof c.settings.is3D !== 'undefined') window.is3D = !!c.settings.is3D;
+            }
+            syncViewButtons();
+            window.renderList();
+            window.renderPhotoList();
+            window.draw(); 
         };
         
         window.downloadImage = () => { const a=document.createElement('a'); a.download='stack.png'; a.href=canvas.toDataURL(); a.click(); };
@@ -782,7 +1166,7 @@
                 let cThick = window.compareLayers.reduce((s,l)=>s+(parseFloat(l.thickness)||0),0); 
                 if(cThick > maxThick) maxThick = cThick; 
             }
-            if(maxThick===0 && window.layers.length===0 && window.photos.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+            if(maxThick===0 && window.layers.length===0 && window.photos.length===0) { ctx.clearRect(0,0,canvas.width,canvas.height); window.scheduleWorkspaceSave(); return; }
             
             let maxOff = 20; window.dimensions.forEach(d => { if(d.offset>maxOff) maxOff=d.offset; });
 
@@ -911,11 +1295,24 @@
                      py += displayH + 50;
                 });
             }
+            window.scheduleWorkspaceSave();
         };
 
-        if(isFirebaseReady) { window.refreshUnitList(); }
-        window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
-        window.renderList(); window.resizeCanvas();
+        // --- V5.2 啟動流程：先還原上次工作區，再同步常用專案 ---
+        window.initQuickPanel();
+        const restoredLastWorkspace = window.restoreLastWorkspace();
+        if(!restoredLastWorkspace) {
+            window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
+            window.renderList();
+            window.resizeCanvas();
+        }
+        window.initWorkspacePersistence();
+        if(isFirebaseReady) {
+            window.refreshUnitList();
+            window.refreshCloudList(true);
+        } else {
+            window.renderQuickProjects();
+        }
 
     </script>
 </body>
