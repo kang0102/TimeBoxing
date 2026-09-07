@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.2 - 常用專案＋續接工作區)</title>
+    <title>工程疊構圖產生器 (Pro V5.3 - 三欄式雲端總管)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -75,25 +75,26 @@
                 padding: 15px; 
             }
             
-            /* 2. 單一滾動軸，打破巢狀滾動陷阱 */
+            /* 2. 手機版改回單欄，資料夾使用橫向捲動 */
             .modal-body { 
-                flex-direction: column; 
-                overflow-y: auto; /* 手機版唯一可滾動層 */
-                overflow-x: hidden; 
-                display: flex; 
-                -webkit-overflow-scrolling: touch; /* iOS 順滑滾動 */
-                padding-bottom: 30px; 
+                display:flex; flex-direction:column;
+                overflow-y:auto; overflow-x:hidden;
+                -webkit-overflow-scrolling:touch; padding-bottom:30px;
             }
-            .modal-left { overflow: visible; padding-right: 0; flex-shrink: 0; }
-            .cloud-list { overflow: visible; flex-shrink: 0; }
-            
+            .cloud-folder-pane { flex-shrink:0; overflow:visible; }
+            .folder-pane-title { display:none; }
+            .tabs-header { flex-direction:row; overflow-x:auto; overflow-y:hidden; padding:8px; }
+            .tab { width:auto; min-width:max-content; box-shadow:none !important; }
+            .tab.active { border-color:var(--accent-cyan); }
+            .folder-actions { grid-template-columns:1fr 48px; }
+            .modal-left { overflow:visible; padding-right:0; flex-shrink:0; }
+            .cloud-list { overflow:visible; flex-shrink:0; }
             .modal-right { 
-                width: 100%; margin-top: 15px; padding: 15px 0 0 0; 
-                background: transparent; border: none; border-top: 1px solid var(--border-subtle); 
-                overflow-y: visible; /* 關閉原本的獨立捲軸 */
-                height: auto; 
-                flex-shrink: 0;
+                width:100%; margin-top:15px; padding:15px 0 0 0; 
+                background:transparent; border:none; border-top:1px solid var(--border-subtle); 
+                overflow-y:visible; height:auto; flex-shrink:0;
             }
+            .preview-primary-actions { position:static; background:transparent; padding-top:0; }
             
             /* 3. 畫布自適應避免把畫面撐破 */
             #previewCanvas { width: 100% !important; height: auto !important; touch-action: pan-y; }
@@ -227,36 +228,55 @@
             #quickPanelShow { border-radius:var(--radius-md); }
         }
 
-        /* --- ☁️ 雲端管理 / 預覽 Modal (精緻化) --- */
+        /* --- ☁️ 雲端管理 / 預覽 Modal (V5.3：三欄式 Project Manager) --- */
         .modal-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85); backdrop-filter: blur(3px); z-index:2000; display:none;}
         .modal { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             background: var(--bg-panel); border: 1px solid #333; border-radius: var(--radius-lg); 
-            padding: 20px; z-index: 2001; display: none; width: 950px; max-width: 95%; height: 85vh; 
+            padding: 20px; z-index: 2001; display: none; width: 1200px; max-width: 96%; height: 88vh; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); flex-direction: column; 
         }
         .modal-header { display:flex; justify-content:space-between; align-items:center; padding-bottom: 15px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 10px;}
-        .modal-body { display: flex; flex: 1; gap: 20px; overflow: hidden;}
-        .modal-left { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding-right: 5px; }
-        .modal-right { width: 340px; display: flex; flex-direction: column; align-items: center; padding: 15px; background: #121317; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-shrink: 0; overflow-y:auto; }
+        .modal-body { display:grid; grid-template-columns: 180px minmax(0, 1fr) 360px; flex:1; gap:14px; overflow:hidden; min-height:0; }
+        .modal-left { min-width:0; display:flex; flex-direction:column; overflow:hidden; padding:0; }
+        .modal-right { min-width:0; display:flex; flex-direction:column; align-items:center; padding:15px; background:#121317; border-radius:var(--radius-md); border:1px solid var(--border-subtle); overflow-y:auto; }
 
-        /* 分頁系統樣式 (Tabs) */
+        /* 左側資料夾導覽 */
+        .cloud-folder-pane {
+            min-width:0; display:flex; flex-direction:column; overflow:hidden;
+            background:#15171D; border:1px solid var(--border-subtle); border-radius:var(--radius-md);
+        }
+        .folder-pane-title {
+            padding:12px 12px 9px; font-size:12px; font-weight:700; color:#B8BEC8;
+            letter-spacing:.5px; border-bottom:1px solid var(--border-subtle);
+        }
         .tabs-header {
-            display: flex; overflow-x: auto; overflow-y: hidden;
-            border-bottom: 2px solid var(--border-subtle); margin-bottom: 12px; padding-bottom: 1px;
-            scrollbar-width: none; /* 隱藏滾動條 */
+            display:flex; flex-direction:column; gap:4px; overflow-y:auto; overflow-x:hidden;
+            flex:1; min-height:0; padding:8px; margin:0; border:0;
+            scrollbar-width:thin;
         }
-        .tabs-header::-webkit-scrollbar { display: none; }
+        .tabs-header::-webkit-scrollbar { display:block; width:5px; }
         .tab {
-            padding: 10px 18px; margin-right: 4px; background: transparent; color: var(--text-secondary);
-            border-radius: var(--radius-md) var(--radius-md) 0 0; cursor: grab; white-space: nowrap; font-size: 14px;
-            border: 1px solid transparent; border-bottom: none; transition: 0.2s;
-            display: flex; align-items: center; gap: 6px; user-select: none; position: relative;
+            width:100%; min-height:38px; padding:9px 10px; margin:0;
+            background:transparent; color:var(--text-secondary); border-radius:var(--radius-md);
+            cursor:grab; white-space:nowrap; font-size:13px; border:1px solid transparent;
+            transition:.18s; display:flex; align-items:center; justify-content:space-between;
+            gap:8px; user-select:none; position:relative; overflow:hidden;
         }
-        .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tab.active { color: var(--accent-cyan); font-weight: bold; background: rgba(0, 229, 255, 0.05); }
-        .tab.active::after { content:''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); }
-        .tab.drag-over { background: rgba(0, 229, 255, 0.1); border: 1px dashed var(--accent-cyan); }
+        .tab:hover { color:var(--text-primary); background:#23262E; border-color:#343944; }
+        .tab.active { color:var(--accent-cyan); font-weight:700; background:#17303A; border-color:#245160; box-shadow:inset 3px 0 0 var(--accent-cyan); }
+        .tab.active::after { display:none; }
+        .tab.drag-over { background:rgba(0,229,255,.12); border:1px dashed var(--accent-cyan); }
+        .folder-actions { display:grid; grid-template-columns:1fr 42px; gap:6px; padding:8px; border-top:1px solid var(--border-subtle); background:#111318; }
+        .folder-actions button { height:36px; margin:0; font-size:12px; }
+
+        .project-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:38px; padding:0 2px 9px; color:#AEB5C0; font-size:12px; }
+        #currentFolderLabel { color:#fff; font-weight:700; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+        /* 右側主要操作固定在預覽上方 */
+        .preview-primary-actions { display:flex; gap:8px; width:100%; margin:0 0 12px; padding-bottom:12px; border-bottom:1px solid #30343D; position:sticky; top:-15px; z-index:5; background:#121317; padding-top:15px; }
+        #btn-load-preview { background:var(--btn-blue); min-height:42px; flex:2; }
+        #btn-del-preview { background:var(--btn-red); min-height:42px; flex:0 0 82px; }
 
         /* 檔案清單專用樣式 (極致對比設計) */
         .cloud-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; padding-right: 5px;}
@@ -319,21 +339,36 @@
             <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:transparent; border:1px solid #555; color:#ccc;">關閉 ✕</button>
         </div>
         
-        <div style="margin-bottom: 15px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
-             <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 200px; height: 38px;">
-             <button onclick="window.createNewFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); height: 38px;">📁 新增分頁</button>
-             <button onclick="window.deleteCurrentFolder()" style="width:auto; margin:0; background:transparent; border:1px solid var(--btn-red); color:var(--btn-red); height: 38px;">🗑️ 刪除分頁</button>
+        <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
+             <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 240px; height: 38px;">
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
              <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
         </div>
 
         <div class="modal-body">
-            <div class="modal-left">
+            <aside class="cloud-folder-pane">
+                <div class="folder-pane-title">📁 資料夾</div>
                 <div id="cloudTabsEl" class="tabs-header"></div>
+                <div class="folder-actions">
+                    <button onclick="window.createNewFolder()" style="background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan);">＋ 新增資料夾</button>
+                    <button onclick="window.deleteCurrentFolder()" title="刪除目前資料夾" style="background:transparent; border:1px solid var(--btn-red); color:var(--btn-red);">🗑️</button>
+                </div>
+            </aside>
+
+            <div class="modal-left">
+                <div class="project-list-head">
+                    <span id="currentFolderLabel">📂 未分類</span>
+                    <span style="color:#666;">拖曳專案即可移動資料夾</span>
+                </div>
                 <ul id="cloudListEl" class="cloud-list"></ul>
             </div>
             
             <div class="modal-right">
+                <div class="preview-primary-actions">
+                    <button id="btn-load-preview" style="display:none;" onclick="window.loadSelectedToWorkspace()">📂 載入至工作區</button>
+                    <button id="btn-del-preview" style="display:none;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+                </div>
+
                 <h4 style="color:#fff; margin:0 0 10px 0; align-self:flex-start;">視覺預覽 (Preview)</h4>
                 <canvas id="previewCanvas"></canvas>
                 
@@ -346,12 +381,7 @@
                 </div>
 
                 <div id="preview-details" style="width:100%; text-align:left; color:#ccc; font-size:13px; padding:10px 0; margin-top:5px; line-height:1.6;">
-                    <div style="text-align:center; color:#666; margin-top:30px;">請從左側選擇專案以檢視詳細資訊</div>
-                </div>
-                
-                <div style="display:flex; gap:8px; width:100%; margin-top: auto; padding-top:15px; border-top:1px solid #333;">
-                    <button id="btn-load-preview" style="background:var(--btn-blue); display:none; flex:2; height:40px;" onclick="window.loadSelectedToWorkspace()">📂 載入至工作區</button>
-                    <button id="btn-del-preview" style="background:var(--btn-red); display:none; flex:1; height:40px;" onclick="window.deleteSelectedCloud()">🗑️ 刪除</button>
+                    <div style="text-align:center; color:#666; margin-top:30px;">請從中間選擇專案以檢視詳細資訊</div>
                 </div>
             </div>
         </div>
@@ -360,7 +390,7 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.2)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.3)</span></h2>
 
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
@@ -949,9 +979,11 @@
         window.renderCloudList = function() { 
             const tabsEl = document.getElementById('cloudTabsEl'); const listEl = document.getElementById('cloudListEl'); const search = document.getElementById('searchCloud').value.toLowerCase(); 
             if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類"; tabsEl.innerHTML = ''; 
+            const folderLabel = document.getElementById('currentFolderLabel');
+            if(folderLabel) folderLabel.textContent = search ? '🔎 搜尋全部資料夾' : `📂 ${activeCategory}`;
             customFolders.forEach(cat => { 
                 const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length; 
-                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `📂 ${cat} <span style="font-size:11px; opacity:0.6; margin-left:4px;">${count}</span>`; tab.draggable = true; 
+                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📂 ${cat}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`; tab.draggable = true; 
                 tab.onclick = () => { activeCategory = cat; window.renderCloudList(); }; 
                 tab.ondblclick = () => { if(cat === "未分類") return alert("預設分類無法更名"); const newName = prompt("重新命名分頁：", cat); if(newName && newName.trim() && !customFolders.includes(newName.trim())) { const finalName = newName.trim(); customFolders[customFolders.indexOf(cat)] = finalName; cloudProjectsCache.forEach(p => { if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); } }); if(activeCategory === cat) activeCategory = finalName; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); } }; 
                 tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; }; tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); }; tab.ondragleave = (e) => { tab.classList.remove('drag-over'); }; 
