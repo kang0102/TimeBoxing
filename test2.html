@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.4.3 - Cloud Manager Copy)</title>
+    <title>工程疊構圖產生器 (Pro V5.4.4 - Cloud Manager Batch Copy)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -368,7 +368,18 @@
         .copy-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:7px; }
         .copy-hint { color:#8D96A3; font-size:10px; line-height:1.45; margin-top:7px; }
         #btn-copy-preview { background:#6D4C9A; min-height:42px; flex:1; }
-        @media (max-width:768px) { .copy-grid { grid-template-columns:1fr; } }
+        .batch-copy-box { display:none; margin:0 0 12px; padding:12px; background:#171A20; border:1px solid #39414D; border-radius:var(--radius-md); }
+        .batch-copy-box.visible { display:block; }
+        .batch-copy-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:9px; }
+        .batch-copy-title { color:#fff; font-size:13px; font-weight:800; }
+        .batch-copy-grid { display:grid; grid-template-columns:180px minmax(180px, 1fr) auto; gap:8px; align-items:end; }
+        .visibility-action { width:auto; min-width:86px; padding:5px 9px; font-size:11px; border:1px solid #47505C; background:#242832; color:#DCE2EA; flex-shrink:0; }
+        .visibility-action.public { border-color:#1F8F78; background:#173A33; color:#7FFFD4; }
+        .visibility-action.private { border-color:#5B6470; background:#2A2E36; color:#D2D7DE; }
+        .visibility-action:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+        .cloud-item-actions { display:flex; flex-direction:column; gap:5px; margin-left:10px; align-items:flex-end; }
+        .preview-access-box { width:100%; display:none; margin-top:10px; padding:12px; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--border-subtle); }
+        @media (max-width:768px) { .copy-grid, .batch-copy-grid { grid-template-columns:1fr; } .cloud-item-actions{margin-left:6px;} }
 
         /* Loading */
         #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
@@ -425,8 +436,34 @@
         <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
              <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 240px; height: 38px;">
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
-             <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
+             <button onclick="window.toggleVisibleChecks()" style="width:auto; margin:0; background:#45505E; height:38px;">☑ 全選目前</button>
+             <button onclick="window.openBatchCopyPanel()" style="width:auto; margin:0; background:#6D4C9A; height:38px;">📋 勾選 Copy</button>
+             <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📤 勾選匯出 Excel</button>
              <button id="adminClaimLegacyBtn" class="admin-tool" onclick="window.claimLegacyDataToAdmin()">🛡️ 接管 V5.3 舊資料</button>
+        </div>
+
+        <div id="batchCopyBox" class="batch-copy-box">
+            <div class="batch-copy-head">
+                <div class="batch-copy-title">📋 勾選專案批次 Copy <span id="batchCopyCount" style="color:var(--accent-cyan); font-weight:normal;"></span></div>
+                <button onclick="window.closeBatchCopyPanel()" style="width:auto; padding:4px 9px; margin:0; background:#374151; font-size:11px;">✕</button>
+            </div>
+            <div class="batch-copy-grid">
+                <div>
+                    <label>Copy 到</label>
+                    <select id="batchCopyTargetScope" onchange="window.onBatchCopyTargetChanged()">
+                        <option value="mine">👤 我的檔案</option>
+                        <option value="public">🌐 公開資料夾</option>
+                        <option id="batchCopyAdminOption" value="admin">🛡️ 全部檔案</option>
+                    </select>
+                </div>
+                <div>
+                    <label>指定資料夾 / 分類</label>
+                    <input type="text" id="batchCopyCategory" list="batchCopyCategoryList" placeholder="未分類">
+                    <datalist id="batchCopyCategoryList"></datalist>
+                </div>
+                <button onclick="window.batchCopyCheckedProjects()" style="margin:0; background:#6D4C9A; height:38px; white-space:nowrap;">📋 開始 Copy</button>
+            </div>
+            <div class="copy-hint" id="batchCopyHint">勾選的專案會全部 Copy 到同一個指定位置；原始檔不會移動或刪除。</div>
         </div>
 
         <div class="modal-body">
@@ -462,6 +499,17 @@
                     <div style="display:flex; gap:6px;">
                         <select id="preview-category-select" style="flex:1; height:34px;"></select>
                         <button onclick="window.changeCategoryFromPreview()" style="width:auto; margin:0; padding:0 12px; background:var(--btn-teal); height:34px;">套用</button>
+                    </div>
+                </div>
+
+                <div id="preview-access-box" class="preview-access-box">
+                    <label style="color:var(--text-secondary); margin-bottom:6px;">🔐 公開設定</label>
+                    <div style="display:flex; gap:6px;">
+                        <select id="previewVisibilitySelect" style="flex:1; height:34px;">
+                            <option value="private">🔒 不公開</option>
+                            <option value="public">🌐 公開</option>
+                        </select>
+                        <button onclick="window.applyPreviewVisibility()" style="width:auto; margin:0; padding:0 12px; background:#0D8C7F; height:34px;">套用</button>
                     </div>
                 </div>
 
@@ -501,7 +549,7 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4.3 Admin)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4.4 Admin)</span></h2>
 
         <div class="user-card">
             <div class="user-avatar" id="userAvatar">U</div>
@@ -660,6 +708,9 @@
          * 19. V5.4.2：Security Rules 補回 secrets/adminConfig 唯讀權限，恢復首頁 PIN 鎖。
          * 20. V5.4.3：Cloud Manager 標題簡化，只顯示「Cloud Manager」。
          * 21. V5.4.3：Cloud Manager 新增直接 Copy，不需先載入工作區再另存。
+         * 22. V5.4.4：支援勾選多個專案，一次 Copy 到指定「我的檔案 / 公開資料夾 / 全部檔案」與指定資料夾。
+         * 23. V5.4.4：Cloud Manager 內可直接切換專案「公開 / 不公開」，不需載入工作區。
+         * 24. V5.4.4：可管理的專案可直接拖曳到左側資料夾；Neil Admin 在公開與全部檔案亦可拖曳分類。
          * 22. V5.4.3：可從我的檔案／公開資料夾／全部檔案直接 Copy 到另外三個範圍。
          * 23. V5.4.3：Copy 時可直接指定副本名稱與資料夾，名稱衝突會自動產生不重複名稱。
          * 24. V5.4.3：「Copy 到全部檔案」建立 Admin-only 副本，只出現在全部檔案，不混入我的檔案或公開資料。
@@ -1238,7 +1289,9 @@
             document.getElementById('btn-copy-preview').style.display='none';
             document.getElementById('btn-del-preview').style.display='none';
             document.getElementById('preview-category-box').style.display='none';
+            document.getElementById('preview-access-box').style.display='none';
             document.getElementById('preview-copy-box')?.classList.remove('visible');
+            window.closeBatchCopyPanel?.();
             window.renderCloudList();
         };
         
@@ -1375,7 +1428,8 @@
                 tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${cat === '全部' ? '🗂️' : '📂'} ${escapeHtml(cat)}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`;
                 tab.onclick = () => { activeCategory = cat; window.renderCloudList(); };
 
-                // 只有自己的私人分類可以更名、排序、接收專案拖曳。
+                // V5.4.4：資料夾都可作為 Drop 目標（「全部」除外）。
+                // 一般使用者只能移動自己的專案；Neil Admin 可在公開/全部檔案直接整理所有專案。
                 tab.draggable = isMine && cat !== '未分類';
                 if(isMine) {
                     tab.ondblclick = () => {
@@ -1396,19 +1450,26 @@
                         }
                     };
                     tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; };
-                    tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); };
+                    tab.ondragend = () => { draggedTabCat = null; };
+                }
+                if(cat !== '全部') {
+                    tab.ondragover = (e) => {
+                        if(draggedCloudId || (isMine && draggedTabCat)) { e.preventDefault(); tab.classList.add('drag-over'); }
+                    };
                     tab.ondragleave = () => tab.classList.remove('drag-over');
                     tab.ondrop = async (e) => {
                         e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation();
                         if (draggedCloudId) {
                             const p = cloudProjectsCache.find(x => x.docId === draggedCloudId);
-                            if (p && p.ownerUid === currentUser.uid && (p.category || '未分類') !== cat) {
+                            if (!p || !canManageProject(p)) { draggedCloudId = null; return alert('你沒有移動此專案的權限。'); }
+                            if ((p.category || '未分類') !== cat) {
+                                const oldCat = p.category || '未分類';
                                 p.category = cat; window.renderCloudList();
-                                try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: cat }); }
-                                catch(err) { console.error(err); }
+                                try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: cat, timestamp: Date.now() }); }
+                                catch(err) { p.category = oldCat; console.error(err); window.renderCloudList(); alert('移動資料夾失敗'); }
                             }
                             draggedCloudId = null;
-                        } else if (draggedTabCat && draggedTabCat !== cat) {
+                        } else if (isMine && draggedTabCat && draggedTabCat !== cat) {
                             const fromIdx = customFolders.indexOf(draggedTabCat);
                             const toIdx = customFolders.indexOf(cat);
                             if(fromIdx >= 0 && toIdx >= 0) {
@@ -1419,7 +1480,6 @@
                             window.renderCloudList(); draggedTabCat = null;
                         }
                     };
-                    tab.ondragend = () => { draggedTabCat = null; };
                 }
                 tabsEl.appendChild(tab);
             });
@@ -1440,14 +1500,15 @@
                 const date = new Date(p.timestamp || 0).toLocaleDateString();
                 const li = document.createElement('li');
                 li.className = `cloud-item ${p.docId === currentPreviewId ? 'selected' : ''}`;
-                li.draggable = isMine && p.ownerUid === currentUser.uid;
+                li.draggable = canManageProject(p);
                 li.ondragstart = (e) => {
-                    if(!isMine || p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
+                    if(!canManageProject(p)) { e.preventDefault(); return; }
                     draggedCloudId = p.docId; draggedTabCat = null;
                     e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
                 };
                 li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; };
-                li.onclick = (e) => { if(e.target.type !== 'checkbox') window.selectCloudItem(p.docId); };
+                li.onclick = (e) => { if(e.target.type !== 'checkbox' && !e.target.closest('.visibility-action')) window.selectCloudItem(p.docId); };
+                const canManage = canManageProject(p);
                 li.innerHTML = `
                     <input type="checkbox" class="batch-check" value="${escapeHtml(p.docId)}">
                     <div class="cloud-info">
@@ -1460,7 +1521,12 @@
                             </span>
                         </div>
                         <div class="cloud-note">📂 ${escapeHtml(pCat)}　${escapeHtml(note)}</div>
+                    </div>
+                    <div class="cloud-item-actions">
+                        <button class="visibility-action ${p.visibility==='public'?'public':'private'}" ${canManage?'':'disabled'}>${p.visibility==='public'?'🌐 公開':'🔒 不公開'}</button>
                     </div>`;
+                const visBtn = li.querySelector('.visibility-action');
+                if(visBtn && canManage) visBtn.onclick = (event) => { event.stopPropagation(); window.toggleProjectVisibility(p.docId); };
                 listEl.appendChild(li);
             });
             updatePreviewCategorySelect();
@@ -1469,7 +1535,7 @@
         function updatePreviewCategorySelect() {
             const sel = document.getElementById('preview-category-select');
             sel.innerHTML = '';
-            customFolders.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+            allKnownCategories().forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
         }
 
         function allKnownCategories() {
@@ -1478,6 +1544,147 @@
             cloudProjectsCache.forEach(p => set.add(p.category || '未分類'));
             return [...set].sort((a,b) => a.localeCompare(b, 'zh-Hant'));
         }
+
+        window.toggleVisibleChecks = function() {
+            const checks = [...document.querySelectorAll('#cloudListEl .batch-check')];
+            if(!checks.length) return;
+            const shouldCheck = checks.some(c => !c.checked);
+            checks.forEach(c => c.checked = shouldCheck);
+        };
+
+        function getCheckedProjectIds() {
+            return [...document.querySelectorAll('#cloudListEl .batch-check:checked')].map(c => c.value);
+        }
+
+        window.openBatchCopyPanel = function() {
+            const ids = getCheckedProjectIds();
+            if(!ids.length) return alert('請先勾選要 Copy 的專案。');
+            document.getElementById('batchCopyBox')?.classList.add('visible');
+            document.getElementById('batchCopyCount').textContent = `（${ids.length} 個）`;
+            const adminOpt = document.getElementById('batchCopyAdminOption');
+            if(adminOpt) adminOpt.disabled = !isAdmin();
+            const targetSel = document.getElementById('batchCopyTargetScope');
+            targetSel.value = activeCloudScope === 'mine' ? 'public' : 'mine';
+            window.onBatchCopyTargetChanged();
+        };
+
+        window.closeBatchCopyPanel = function() {
+            document.getElementById('batchCopyBox')?.classList.remove('visible');
+        };
+
+        window.onBatchCopyTargetChanged = function() {
+            const target = document.getElementById('batchCopyTargetScope')?.value || 'mine';
+            if(target === 'admin' && !isAdmin()) document.getElementById('batchCopyTargetScope').value = 'mine';
+            const cats = allKnownCategories();
+            const dl = document.getElementById('batchCopyCategoryList');
+            if(dl) dl.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
+            const catEl = document.getElementById('batchCopyCategory');
+            if(catEl && !catEl.value.trim()) catEl.value = activeCategory !== '全部' ? activeCategory : '未分類';
+            const hint = document.getElementById('batchCopyHint');
+            const finalTarget = document.getElementById('batchCopyTargetScope')?.value || 'mine';
+            if(hint) hint.textContent = `勾選的專案會全部 Copy 到「${copyTargetLabel(finalTarget)}」的同一個指定資料夾；原始檔不會移動或刪除。`;
+        };
+
+        function makeUniqueCopyName(sourceProject, target, reservedNames = null) {
+            const base = sourceProject.id || 'Copy';
+            let name = base;
+            let suffix = 1;
+            const normalMine = target !== 'admin';
+            const exists = candidate =>
+                cloudProjectsCache.some(x => x.ownerUid === currentUser.uid && x.id === candidate && (normalMine ? x.storageScope !== 'admin' : x.storageScope === 'admin')) ||
+                (reservedNames && reservedNames.has(candidate));
+            while(exists(name)) {
+                name = suffix === 1 ? `${base} Copy` : `${base} Copy ${suffix}`;
+                suffix++;
+            }
+            reservedNames?.add(name);
+            return name;
+        }
+
+        window.batchCopyCheckedProjects = async function() {
+            if(!currentUser) return alert('請先登入。');
+            const ids = getCheckedProjectIds();
+            if(!ids.length) return alert('沒有勾選專案。');
+            const target = document.getElementById('batchCopyTargetScope')?.value || 'mine';
+            if(target === 'admin' && !isAdmin()) return alert('只有 Admin 可以 Copy 到「全部檔案」。');
+            const category = (document.getElementById('batchCopyCategory')?.value || '未分類').trim() || '未分類';
+            const projects = ids.map(id => cloudProjectsCache.find(x => x.docId === id)).filter(Boolean);
+            if(!projects.length) return alert('找不到勾選的專案，請刷新後再試。');
+
+            showLoading(true, `批次 Copy ${projects.length} 個專案...`);
+            let ok = 0, failed = 0;
+            const reservedNames = new Set();
+            try {
+                for(const src of projects) {
+                    try {
+                        const name = makeUniqueCopyName(src, target, reservedNames);
+                        const newDocId = makeProjectDocId(currentUser.uid, name);
+                        const now = Date.now();
+                        const data = {
+                            projectName: name, ownerUid: currentUser.uid, ownerDisplayName: getDisplayName(),
+                            visibility: target === 'public' ? 'public' : 'private',
+                            storageScope: target === 'admin' ? 'admin' : 'normal',
+                            layers: JSON.parse(JSON.stringify(src.layers || [])),
+                            dimensions: JSON.parse(JSON.stringify(src.dimensions || [])),
+                            photos: JSON.parse(JSON.stringify(src.photos || [])),
+                            settings: JSON.parse(JSON.stringify(src.settings || {})),
+                            note: src.note || '', timestamp: now, category,
+                            copiedFromDocId: src.docId || null, copiedFromOwnerUid: src.ownerUid || null,
+                            copiedFromOwnerDisplayName: src.ownerDisplayName || null, copiedFromProjectName: src.id || '', copiedAt: now
+                        };
+                        await setDoc(doc(db, COL_PROJ, newDocId), data);
+                        ok++;
+                    } catch(err) { failed++; console.error('批次 Copy 單筆失敗', src?.docId, err); }
+                }
+                if(target !== 'admin' && !customFolders.includes(category)) {
+                    customFolders.push(category);
+                    localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                }
+                await window.refreshCloudList(true);
+                activeCloudScope = target === 'admin' ? 'admin' : target;
+                activeCategory = category;
+                window.renderCloudList();
+                window.closeBatchCopyPanel();
+                alert(`批次 Copy 完成：${ok} 個${failed ? `，失敗 ${failed} 個` : ''}\n→ ${copyTargetLabel(target)} / ${category}`);
+            } finally { showLoading(false); }
+        };
+
+        window.toggleProjectVisibility = async function(docId) {
+            const p = cloudProjectsCache.find(x => x.docId === docId);
+            if(!p || !canManageProject(p)) return alert('你沒有修改此專案公開狀態的權限。');
+            const next = p.visibility === 'public' ? 'private' : 'public';
+            const oldVis = p.visibility;
+            const oldScope = p.storageScope;
+            p.visibility = next;
+            if(next === 'public' && p.storageScope === 'admin') p.storageScope = 'normal';
+            window.renderCloudList();
+            showLoading(true, next === 'public' ? '設為公開...' : '設為不公開...');
+            try {
+                await updateDoc(doc(db, COL_PROJ, p.docId), { visibility: next, storageScope: p.storageScope || 'normal', timestamp: Date.now() });
+                await window.refreshCloudList(true);
+            } catch(err) {
+                p.visibility = oldVis; p.storageScope = oldScope;
+                console.error(err); alert('公開設定更新失敗'); window.renderCloudList();
+            } finally { showLoading(false); }
+        };
+
+        window.applyPreviewVisibility = async function() {
+            if(!currentPreviewId) return;
+            const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
+            if(!p || !canManageProject(p)) return alert('你沒有修改此專案公開狀態的權限。');
+            const next = document.getElementById('previewVisibilitySelect')?.value || 'private';
+            if(next === p.visibility) return;
+            showLoading(true, next === 'public' ? '設為公開...' : '設為不公開...');
+            try {
+                const newStorageScope = next === 'public' && p.storageScope === 'admin' ? 'normal' : (p.storageScope || 'normal');
+                await updateDoc(doc(db, COL_PROJ, p.docId), { visibility: next, storageScope: newStorageScope, timestamp: Date.now() });
+                p.visibility = next; p.storageScope = newStorageScope;
+                await window.refreshCloudList(true);
+                if(cloudProjectsCache.some(x => x.docId === p.docId)) window.selectCloudItem(p.docId);
+                else { currentPreviewId = null; document.getElementById('preview-access-box').style.display='none'; }
+            } catch(err) { console.error(err); alert('公開設定更新失敗'); }
+            finally { showLoading(false); }
+        };
 
         function copyTargetLabel(target) {
             if(target === 'public') return '🌐 公開資料夾';
@@ -1601,7 +1808,7 @@
             if(!currentPreviewId) return;
             const targetCat = document.getElementById('preview-category-select').value;
             const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
-            if(!p || p.ownerUid !== currentUser.uid) return alert('只能修改自己的專案分類。');
+            if(!p || !canManageProject(p)) return alert('你沒有修改此專案分類的權限。');
             if(p.category !== targetCat) {
                 p.category = targetCat; window.renderCloudList(); showLoading(true);
                 try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: targetCat }); } catch(err) { console.error(err); alert('分類更新失敗'); }
@@ -1631,8 +1838,13 @@
                     <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${escapeHtml(p.note || '無備註')}</div>
                     ${adminManage && !mine ? '<div class="admin-note">🛡️ Admin 模式：可查看與刪除此專案。載入後一般「儲存專案」仍會另存成 Neil 自己的版本。</div>' : (mine ? '' : '<div class="readonly-note">此專案屬於其他成員。你可以載入查看；按「儲存專案」時會存成你的版本，不會覆蓋原作者。</div>')}
                 </div>`;
-            document.getElementById('preview-category-box').style.display = mine && activeCloudScope === 'mine' ? 'block' : 'none';
-            if(mine) document.getElementById('preview-category-select').value = p.category || '未分類';
+            document.getElementById('preview-category-box').style.display = canManageProject(p) ? 'block' : 'none';
+            if(canManageProject(p)) {
+                updatePreviewCategorySelect();
+                document.getElementById('preview-category-select').value = p.category || '未分類';
+            }
+            document.getElementById('preview-access-box').style.display = canManageProject(p) ? 'block' : 'none';
+            if(canManageProject(p)) document.getElementById('previewVisibilitySelect').value = p.visibility === 'public' ? 'public' : 'private';
             window.drawPreviewCanvas(p.layers);
             document.getElementById('btn-load-preview').style.display = 'flex';
             document.getElementById('btn-copy-preview').style.display = 'flex';
