@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.4.1 - Admin 管理員版)</title>
+    <title>工程疊構圖產生器 (Pro V5.4.2 - Admin 管理員版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -466,7 +466,7 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4.1 Admin)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4.2 Admin)</span></h2>
 
         <div class="user-card">
             <div class="user-avatar" id="userAvatar">U</div>
@@ -619,6 +619,10 @@
          * 13. Admin 備份改為可完整備份全站 projects + units。
          * 14. Admin 新增「接管 V5.3 舊資料」：將無 ownerUid 的舊專案/模組搬到目前 Admin 帳號。
          * 15. 帳號卡顯示 Firebase UID，方便在 Firestore users/{uid} 設定 role=admin。
+         * 16. V5.4.2：公開資料夾會依公開專案 category 自動重建分類。
+         * 17. V5.4.2：Admin 全部檔案會依全站專案 category 自動重建分類，並提供「全部」分類。
+         * 18. V5.4.2：公開/全部檔案分類列恢復可點選；僅我的檔案可新增、刪除、拖曳或更名分類。
+         * 19. V5.4.2：Security Rules 補回 secrets/adminConfig 唯讀權限，恢復首頁 PIN 鎖。
          *
          * 保留 V5.3：三欄雲端總管、資料夾拖曳、預覽、常用專案、上次工作區、
          * 3D、比對、尺寸線、SEM 圖、Unit Preset、PNG/PPT/CSV、手機版等功能。
@@ -1178,6 +1182,13 @@
         window.setCloudScope = function(scope) {
             if(scope === 'admin' && isAdmin()) activeCloudScope = 'admin';
             else activeCloudScope = scope === 'public' ? 'public' : 'mine';
+
+            // V5.4.2：每個瀏覽範圍使用合理的預設分類。
+            // 我的檔案沿用私人分類；公開/全部檔案先顯示全部，再由左側分類篩選。
+            activeCategory = activeCloudScope === 'mine'
+                ? (customFolders.includes(activeCategory) ? activeCategory : '未分類')
+                : '全部';
+
             currentPreviewId = null;
             document.getElementById('scopeMineBtn')?.classList.toggle('active', activeCloudScope === 'mine');
             document.getElementById('scopePublicBtn')?.classList.toggle('active', activeCloudScope === 'public');
@@ -1255,7 +1266,7 @@
             } catch(e) {
                 console.error('讀取專案失敗', e);
                 window.renderQuickProjects();
-                if(!silent) alert('讀取專案失敗，請確認 Firestore Rules 已更新為 V5.4.1 Admin 版本。');
+                if(!silent) alert('讀取專案失敗，請確認 Firestore Rules 已更新為 V5.4.2 Admin 版本。');
             }
             if(!silent) showLoading(false);
         };
@@ -1268,79 +1279,130 @@
             const folderLabel = document.getElementById('currentFolderLabel');
             const isPublic = activeCloudScope === 'public';
             const isAdminScope = activeCloudScope === 'admin' && isAdmin();
+            const isMine = !isPublic && !isAdminScope;
 
-            document.getElementById('scopeMineBtn')?.classList.toggle('active', !isPublic && !isAdminScope);
+            document.getElementById('scopeMineBtn')?.classList.toggle('active', isMine);
             document.getElementById('scopePublicBtn')?.classList.toggle('active', isPublic);
             document.getElementById('scopeAdminBtn')?.classList.toggle('active', isAdminScope);
-            if(folderPane) folderPane.style.opacity = (isPublic || isAdminScope) ? '.38' : '1';
-            if(folderPane) folderPane.style.pointerEvents = (isPublic || isAdminScope) ? 'none' : 'auto';
 
-            if (!customFolders.includes(activeCategory)) activeCategory = '未分類';
+            // V5.4.2：公開/全部檔案也要能點分類，不能再把整個 folder pane 鎖掉。
+            if(folderPane) {
+                folderPane.style.opacity = '1';
+                folderPane.style.pointerEvents = 'auto';
+            }
+
+            const source = isAdminScope
+                ? cloudProjectsCache
+                : (isPublic ? cloudProjectsCache.filter(p => p.visibility === 'public') : mineProjects());
+
+            // 我的檔案：使用 Neil 自己保存的資料夾順序。
+            // 公開/全部檔案：直接從目前可見專案的 category 重建，因此舊分類不會消失。
+            let visibleFolders;
+            if(isMine) {
+                visibleFolders = [...customFolders];
+                if(!visibleFolders.includes('未分類')) visibleFolders.unshift('未分類');
+            } else {
+                const cats = [];
+                source.forEach(p => {
+                    const cat = p.category || '未分類';
+                    if(!cats.includes(cat)) cats.push(cat);
+                });
+                cats.sort((a,b) => a.localeCompare(b, 'zh-Hant'));
+                visibleFolders = ['全部', ...cats];
+            }
+
+            if(!visibleFolders.includes(activeCategory)) {
+                activeCategory = isMine ? '未分類' : '全部';
+            }
+
             tabsEl.innerHTML = '';
-            if(folderLabel) folderLabel.textContent = isAdminScope ? '🛡️ 全站專案' : (isPublic ? '🌐 全員公開專案' : (search ? '🔎 搜尋我的資料夾' : `📂 ${activeCategory}`));
+            const scopeTitle = isAdminScope ? '🛡️ 全部檔案' : (isPublic ? '🌐 公開資料' : '👤 我的檔案');
+            if(folderLabel) {
+                folderLabel.textContent = search
+                    ? `🔎 ${scopeTitle}搜尋`
+                    : `${scopeTitle} / 📂 ${activeCategory}`;
+            }
 
-            customFolders.forEach(cat => {
-                const count = mineProjects().filter(p => (p.category || '未分類') === cat).length;
+            visibleFolders.forEach(cat => {
+                const count = cat === '全部'
+                    ? source.length
+                    : source.filter(p => (p.category || '未分類') === cat).length;
+
                 const tab = document.createElement('div');
                 tab.className = `tab ${cat === activeCategory ? 'active' : ''}`;
-                tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📂 ${escapeHtml(cat)}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`;
-                tab.draggable = true;
+                tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${cat === '全部' ? '🗂️' : '📂'} ${escapeHtml(cat)}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`;
                 tab.onclick = () => { activeCategory = cat; window.renderCloudList(); };
-                tab.ondblclick = () => {
-                    if(cat === '未分類') return alert('預設分類無法更名');
-                    const newName = prompt('重新命名分頁：', cat);
-                    if(newName && newName.trim() && !customFolders.includes(newName.trim())) {
-                        const finalName = newName.trim();
-                        customFolders[customFolders.indexOf(cat)] = finalName;
-                        mineProjects().forEach(p => {
-                            if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.docId), { category: finalName }).catch(console.error); }
-                        });
-                        if(activeCategory === cat) activeCategory = finalName;
-                        localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
-                        window.renderCloudList();
-                    }
-                };
-                tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; };
-                tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); };
-                tab.ondragleave = () => tab.classList.remove('drag-over');
-                tab.ondrop = async (e) => {
-                    e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation();
-                    if (draggedCloudId) {
-                        const p = cloudProjectsCache.find(x => x.docId === draggedCloudId);
-                        if (p && p.ownerUid === currentUser.uid && (p.category || '未分類') !== cat) {
-                            p.category = cat; window.renderCloudList();
-                            try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: cat }); } catch(err) { console.error(err); }
+
+                // 只有自己的私人分類可以更名、排序、接收專案拖曳。
+                tab.draggable = isMine && cat !== '未分類';
+                if(isMine) {
+                    tab.ondblclick = () => {
+                        if(cat === '未分類') return alert('預設分類無法更名');
+                        const newName = prompt('重新命名分頁：', cat);
+                        if(newName && newName.trim() && !customFolders.includes(newName.trim())) {
+                            const finalName = newName.trim();
+                            customFolders[customFolders.indexOf(cat)] = finalName;
+                            mineProjects().forEach(p => {
+                                if(p.category === cat) {
+                                    p.category = finalName;
+                                    updateDoc(doc(db, COL_PROJ, p.docId), { category: finalName }).catch(console.error);
+                                }
+                            });
+                            if(activeCategory === cat) activeCategory = finalName;
+                            localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                            window.renderCloudList();
                         }
-                        draggedCloudId = null;
-                    } else if (draggedTabCat && draggedTabCat !== cat) {
-                        const fromIdx = customFolders.indexOf(draggedTabCat), toIdx = customFolders.indexOf(cat);
-                        customFolders.splice(fromIdx, 1); customFolders.splice(toIdx, 0, draggedTabCat);
-                        localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
-                        window.renderCloudList(); draggedTabCat = null;
-                    }
-                };
-                tab.ondragend = () => { draggedTabCat = null; };
+                    };
+                    tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; };
+                    tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); };
+                    tab.ondragleave = () => tab.classList.remove('drag-over');
+                    tab.ondrop = async (e) => {
+                        e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation();
+                        if (draggedCloudId) {
+                            const p = cloudProjectsCache.find(x => x.docId === draggedCloudId);
+                            if (p && p.ownerUid === currentUser.uid && (p.category || '未分類') !== cat) {
+                                p.category = cat; window.renderCloudList();
+                                try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: cat }); }
+                                catch(err) { console.error(err); }
+                            }
+                            draggedCloudId = null;
+                        } else if (draggedTabCat && draggedTabCat !== cat) {
+                            const fromIdx = customFolders.indexOf(draggedTabCat);
+                            const toIdx = customFolders.indexOf(cat);
+                            if(fromIdx >= 0 && toIdx >= 0) {
+                                customFolders.splice(fromIdx, 1);
+                                customFolders.splice(toIdx, 0, draggedTabCat);
+                                localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                            }
+                            window.renderCloudList(); draggedTabCat = null;
+                        }
+                    };
+                    tab.ondragend = () => { draggedTabCat = null; };
+                }
                 tabsEl.appendChild(tab);
             });
 
             listEl.innerHTML = '';
-            const source = isAdminScope ? cloudProjectsCache : (isPublic ? cloudProjectsCache.filter(p => p.visibility === 'public') : mineProjects());
             source.forEach(p => {
                 const pCat = p.category || '未分類';
                 const ownerName = p.ownerDisplayName || 'Unknown';
+
                 if(search) {
-                    const hay = `${p.id} ${p.note || ''} ${ownerName}`.toLowerCase();
+                    const hay = `${p.id} ${p.note || ''} ${ownerName} ${pCat}`.toLowerCase();
                     if(!hay.includes(search)) return;
-                } else if(!isPublic && !isAdminScope && pCat !== activeCategory) return;
+                } else if(activeCategory !== '全部' && pCat !== activeCategory) {
+                    return;
+                }
 
                 const note = p.note || '無備註';
                 const date = new Date(p.timestamp || 0).toLocaleDateString();
                 const li = document.createElement('li');
                 li.className = `cloud-item ${p.docId === currentPreviewId ? 'selected' : ''}`;
-                li.draggable = activeCloudScope === 'mine' && p.ownerUid === currentUser.uid;
+                li.draggable = isMine && p.ownerUid === currentUser.uid;
                 li.ondragstart = (e) => {
-                    if(activeCloudScope !== 'mine' || p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
-                    draggedCloudId = p.docId; draggedTabCat = null; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+                    if(!isMine || p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
+                    draggedCloudId = p.docId; draggedTabCat = null;
+                    e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
                 };
                 li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; };
                 li.onclick = (e) => { if(e.target.type !== 'checkbox') window.selectCloudItem(p.docId); };
@@ -1350,9 +1412,12 @@
                         <div class="cloud-name">${escapeHtml(p.id)} ${p.visibility==='public' ? '<span class="public-badge">PUBLIC</span>' : ''}</div>
                         <div class="cloud-meta">
                             <span>${date}</span>
-                            <span>${(isPublic || isAdminScope) ? `<span class="owner-badge">👤 ${escapeHtml(ownerName)}${!p.ownerUid ? ' · LEGACY' : ''}</span>` : `<span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+escapeHtml(pCat)+']' : ''}</span>`}</span>
+                            <span>${(isPublic || isAdminScope)
+                                ? `<span class="owner-badge">👤 ${escapeHtml(ownerName)}${!p.ownerUid ? ' · LEGACY' : ''}</span>`
+                                : `<span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+escapeHtml(pCat)+']' : ''}</span>`}
+                            </span>
                         </div>
-                        <div class="cloud-note">${escapeHtml(note)}</div>
+                        <div class="cloud-note">📂 ${escapeHtml(pCat)}　${escapeHtml(note)}</div>
                     </div>`;
                 listEl.appendChild(li);
             });
@@ -1559,7 +1624,7 @@
                     ? await getDocs(collection(db, COL_UNITS))
                     : await getDocs(query(collection(db, COL_UNITS), where('ownerUid','==',currentUser.uid)));
                 const units = {}; unitSnap.forEach(d => units[d.id] = d.data());
-                const str = JSON.stringify({ version:'V5.4.1', backupScope:isAdmin()?'ALL':'OWN', ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now(), projects, units, customFolders }, null, 2);
+                const str = JSON.stringify({ version:'V5.4.2', backupScope:isAdmin()?'ALL':'OWN', ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now(), projects, units, customFolders }, null, 2);
                 const blob = new Blob([str], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`Stackup_${isAdmin()?'ADMIN_ALL':getDisplayName()}_${new Date().toISOString().slice(0,10)}.json`; a.click();
             } catch(e) { console.error(e); alert('備份失敗'); }
             showLoading(false);
