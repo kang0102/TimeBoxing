@@ -1,0 +1,91 @@
+疊構圖 Pro V5.4 — 多人帳號 / 私人檔案 / 公開資料夾
+====================================================
+
+【這次新增】
+1. Firebase Email/Password 登入系統。
+2. 建立帳號時可輸入「顯示名稱」。
+3. 登入後左側顯示目前使用者名稱與 Email。
+4. 每份專案新增：
+   - projectName
+   - ownerUid
+   - ownerDisplayName
+   - visibility = private / public
+5. 雲端總管新增：
+   - 👤 我的檔案
+   - 🌐 公開資料夾
+6. 我的檔案只顯示目前登入者自己的專案。
+7. 勾選「🌐 公開分享」再儲存，專案會出現在公開資料夾。
+8. 公開專案所有登入者可查看，但只有原作者可刪除、修改分類、覆蓋。
+9. 別人載入公開專案後再按儲存，會建立成自己的版本，不會修改原作者資料。
+10. 不同帳號可以使用相同專案名稱，Firestore 文件 ID 改為 uid + projectName。
+11. Unit Preset 改成每個帳號自己的模組，不會互相覆蓋。
+12. 常用專案統計改成每個帳號各自獨立。
+13. 上次工作區 localStorage 改成每個 UID 各自獨立，避免共用電腦時看到上一個人的工作區。
+14. 備份 / 還原改成只處理目前登入帳號的資料。
+15. 程式內加入 V5.4 CHANGELOG，保留歷來新增功能紀錄。
+
+【保留原本功能】
+- 三欄式雲端總管
+- 私人資料夾新增 / 更名 / 拖曳排序
+- 專案拖曳分類
+- 視覺預覽
+- 常用專案
+- 上次工作區續接
+- 3D 視角
+- 疊構比對
+- 層次拖曳 / 顏色 / 字體
+- 尺寸線
+- SEM Photos
+- Unit Preset
+- PNG / PPT / CSV 匯出
+- 備份 / 還原
+- 手機版介面
+
+====================================================
+【Firebase Console 要做的事】
+
+A. 開啟 Email / Password 登入
+1. Firebase Console
+2. Authentication
+3. Sign-in method
+4. Email/Password → Enable
+
+B. 更新 Firestore Rules
+把 firestore_V5.4.rules 的全部內容貼到：
+Firestore Database → Rules → Publish
+
+====================================================
+【重要：舊 V5.3 專案】
+
+舊版 projects 文件沒有 ownerUid / visibility。
+V5.4 正式安全規則開啟後，舊文件不會直接出現在「我的檔案」。
+
+建議用「備份 → 還原」完成遷移，最安全也最簡單：
+1. 先用原本 V5.3 按「⬇️ 備份」，下載 JSON。
+2. Firebase Authentication 開啟 Email/Password。
+3. 換成 V5.4 HTML，建立你的帳號並登入。
+4. 發布 firestore_V5.4.rules。
+5. 在 V5.4 按「⬆️ 還原」，選剛才 V5.3 的 JSON。
+6. V5.4 會自動把舊專案轉成目前登入者的資料：
+   ownerUid = 目前登入 UID
+   ownerDisplayName = 目前登入者顯示名稱
+   projectName = 舊文件名稱
+   visibility = private（舊資料預設私人）
+   Firestore docId = uid + projectName
+7. 確認「我的檔案」都有出現後即可正常使用。
+
+舊的 V5.3 legacy documents 仍可能留在 Firestore，但新 Rules 下不會被 V5.4 查到。
+確認遷移成功後，可以再到 Firebase Console 手動清理舊文件。
+
+====================================================
+【帳號建立方式】
+
+目前 V5.4 HTML 的「建立帳號」是使用者自助註冊。
+這樣最簡單，可以直接建立顯示名稱 + Email + 密碼。
+
+若你要改成：
+「只有管理員可以幫別人創帳號，其他人不能自己註冊」
+則不要只用前端 Firebase Auth Client SDK；應改成 Firebase Admin SDK / Cloud Function。
+原因：前端 createUserWithEmailAndPassword 建立新帳號時，會把目前瀏覽器切換成新建立的使用者。
+
+====================================================
