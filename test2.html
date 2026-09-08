@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.3 - 三欄式雲端總管)</title>
+    <title>工程疊構圖產生器 (Pro V5.4 - 多人帳號與公開資料夾)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -309,6 +309,52 @@
         #layerPopup input { margin-bottom: 8px; height: 34px; font-size: 14px;}
         #layerPopup button { width: auto; height: 32px; padding: 0 12px; margin: 0; font-size: 13px;}
 
+        /* --- 🔐 V5.4：登入 / 使用者 / 公開資料夾 --- */
+        #authGate {
+            position: fixed; inset: 0; z-index: 12000; display: flex; align-items: center; justify-content: center;
+            background: rgba(8,10,14,.96); backdrop-filter: blur(8px); padding: 20px;
+        }
+        #authGate.hidden { display: none; }
+        .auth-card {
+            width: 420px; max-width: 100%; background: var(--bg-panel); border: 1px solid var(--border-subtle);
+            border-radius: 16px; padding: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.55);
+        }
+        .auth-card h1 { margin: 0 0 6px; color: var(--accent-cyan); font-size: 22px; }
+        .auth-card p { margin: 0 0 18px; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+        .auth-card input { margin-bottom: 10px; min-height: 42px; }
+        .auth-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+        #authError { min-height: 20px; color: #ff8a80; font-size: 12px; margin-top: 10px; line-height: 1.5; }
+
+        .user-card {
+            background: linear-gradient(135deg, rgba(0,229,255,.08), rgba(39,111,191,.05));
+            border: 1px solid #31505d; padding: 10px 12px; border-radius: var(--radius-md);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .user-avatar {
+            width: 34px; height: 34px; border-radius: 50%; background: #17303A; color: var(--accent-cyan);
+            border: 1px solid #245160; display: flex; align-items: center; justify-content: center; font-weight: 800;
+            flex-shrink: 0;
+        }
+        .user-info { min-width: 0; flex: 1; }
+        .user-name { color: #fff; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-email { color: var(--text-secondary); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+        .logout-btn { width: auto; padding: 6px 9px; background: #374151; font-size: 11px; margin: 0; }
+
+        .publish-row {
+            display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: var(--radius-md);
+            background: #15171D; border: 1px solid var(--border-subtle); margin-top: 2px;
+        }
+        .publish-row input { width: 18px; height: 18px; accent-color: var(--accent-cyan); }
+        .publish-row label { margin: 0; color: var(--text-primary); cursor: pointer; }
+        .publish-hint { margin-left: auto; color: var(--text-secondary); font-size: 10px; }
+
+        .scope-switch { display: flex; gap: 6px; margin-bottom: 12px; }
+        .scope-btn { width: auto; min-width: 135px; background: #2B3038; border: 1px solid #3A414C; color: #B7BEC8; }
+        .scope-btn.active { color: var(--accent-cyan); background: #17303A; border-color: #245160; }
+        .owner-badge { color: #8CD9E5; font-size: 11px; margin-left: 6px; }
+        .public-badge { color: #7EE787; font-size: 10px; border: 1px solid rgba(126,231,135,.35); border-radius: 10px; padding: 1px 6px; }
+        .readonly-note { color: #F2B36D; font-size: 11px; margin-top: 7px; line-height: 1.5; }
+
         /* Loading */
         #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
         .spinner { border: 4px solid #333; border-top: 4px solid var(--accent-cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -316,6 +362,22 @@
     </style>
 </head>
 <body>
+
+    <!-- V5.4 登入閘門：登入前不進入疊構資料庫 -->
+    <div id="authGate">
+        <div class="auth-card">
+            <h1>📚 疊構資料庫登入</h1>
+            <p>登入後只會看到自己的疊構檔；勾選「公開分享」的專案會出現在所有成員都可查看的公開資料夾。</p>
+            <input type="text" id="authDisplayName" placeholder="顯示名稱（建立帳號時填寫，例如：Neil）">
+            <input type="email" id="authEmail" placeholder="Email">
+            <input type="password" id="authPassword" placeholder="密碼（至少 6 碼）">
+            <div class="auth-actions">
+                <button onclick="window.loginAccount()" style="background:var(--btn-blue);">🔐 登入</button>
+                <button onclick="window.registerAccount()" style="background:var(--btn-teal);">➕ 建立帳號</button>
+            </div>
+            <div id="authError"></div>
+        </div>
+    </div>
 
     <div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="font-size: 16px; font-weight:600; letter-spacing:1px;">PROCESSING...</div></div>
 
@@ -339,6 +401,11 @@
             <button onclick="window.closeCloudManager()" style="width:auto; margin:0; background:transparent; border:1px solid #555; color:#ccc;">關閉 ✕</button>
         </div>
         
+        <div class="scope-switch">
+            <button id="scopeMineBtn" class="scope-btn active" onclick="window.setCloudScope('mine')">👤 我的檔案</button>
+            <button id="scopePublicBtn" class="scope-btn" onclick="window.setCloudScope('public')">🌐 公開資料夾</button>
+        </div>
+
         <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
              <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 240px; height: 38px;">
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
@@ -390,12 +457,26 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.3)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4)</span></h2>
+
+        <div class="user-card">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+                <div class="user-name" id="currentUserName">尚未登入</div>
+                <div class="user-email" id="currentUserEmail"></div>
+            </div>
+            <button class="logout-btn" onclick="window.logoutAccount()">登出</button>
+        </div>
 
         <div class="control-group">
             <h3>☁️ 專案存取 (Project)</h3>
             <input type="text" id="projName" placeholder="輸入專案名稱 / 料號...">
             <textarea id="projNote" placeholder="在此輸入備註 (Edge cutting, Blade, RPM 等參數)..." oninput="window.autoResizeTextarea(this)"></textarea>
+            <div class="publish-row">
+                <input type="checkbox" id="publishPublic">
+                <label for="publishPublic">🌐 公開分享</label>
+                <span class="publish-hint">勾選後所有登入成員可查看</span>
+            </div>
             
             <div class="btn-row">
                 <button class="btn-save" onclick="window.saveToCloud()">💾 儲存專案</button>
@@ -508,10 +589,30 @@
     </div>
 
     <script type="module">
-        /* --- 模組與資料庫宣告 (完全保留 V5 邏輯) --- */
+        /*
+         * =========================================================
+         * V5.4 CHANGELOG - 多人帳號與公開資料夾
+         * =========================================================
+         * 1. 新增 Firebase Authentication Email/Password 登入。
+         * 2. 建立帳號時可設定 displayName，登入後左側顯示目前使用者。
+         * 3. 每個專案新增 ownerUid / ownerDisplayName / projectName / visibility。
+         * 4. 「我的檔案」只查目前登入者的 ownerUid。
+         * 5. 「公開資料夾」只查 visibility == public，可跨帳號共用。
+         * 6. 公開檔案只有原作者可刪除/改分類；他人載入後儲存會建立自己的副本。
+         * 7. 模組 Unit 也改為 ownerUid 分流，避免不同帳號互相覆蓋。
+         * 8. 專案/模組 Firestore docId 加入 uid，允許不同使用者使用相同名稱。
+         * 9. 常用專案只統計自己的專案。
+         * 10. 備份/還原改為「只處理目前帳號自己的資料」。
+         *
+         * 保留 V5.3：三欄雲端總管、資料夾拖曳、預覽、常用專案、上次工作區、
+         * 3D、比對、尺寸線、SEM 圖、Unit Preset、PNG/PPT/CSV、手機版等功能。
+         * =========================================================
+         */
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch, updateDoc } 
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, writeBatch, updateDoc, query, where } 
                from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile }
+               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI",
@@ -523,10 +624,13 @@
           measurementId: "G-QJNE60W8BB"
         };
 
-        let db = null; let isFirebaseReady = false; const COL_PROJ = "projects"; const COL_UNITS = "units";
+        let db = null; let auth = null; let isFirebaseReady = false;
+        let currentUser = null; let currentUserProfile = null;
+        const COL_PROJ = "projects"; const COL_UNITS = "units"; const COL_USERS = "users";
         
         let cloudProjectsCache = []; let currentPreviewId = null; let draggedCloudId = null; let draggedTabCat = null;
-        let customFolders = ["未分類"]; let activeCategory = "未分類";
+        let customFolders = ["未分類"]; let activeCategory = "未分類"; let activeCloudScope = "mine";
+        let currentLoadedOwnerUid = null;
 
         window.compareLayers = null;
         window.is3D = false;
@@ -544,10 +648,10 @@
         // =========================================================
         // ⭐ V5.2：常用專案 + 上次工作區自動續接
         // =========================================================
-        const QUICK_USAGE_KEY = 'stackQuickUsageV52';
+        const QUICK_USAGE_KEY = 'stackQuickUsageV54';
         const QUICK_COUNT_KEY = 'stackQuickCountV52';
         const QUICK_HIDDEN_KEY = 'stackQuickHiddenV52';
-        const LAST_WORKSPACE_KEY = 'stackLastWorkspaceV52';
+        const LAST_WORKSPACE_KEY = 'stackLastWorkspaceV54';
         let workspaceSaveTimer = null;
         let isRestoringWorkspace = false;
 
@@ -555,8 +659,11 @@
             try { return raw ? JSON.parse(raw) : fallback; } catch(e) { return fallback; }
         }
 
+        function getQuickUsageStorageKey() { return currentUser ? `${QUICK_USAGE_KEY}_${currentUser.uid}` : `${QUICK_USAGE_KEY}_guest`; }
+        function getWorkspaceStorageKey() { return currentUser ? `${LAST_WORKSPACE_KEY}_${currentUser.uid}` : null; }
+
         function getQuickUsage() {
-            return safeJsonParse(localStorage.getItem(QUICK_USAGE_KEY), {});
+            return safeJsonParse(localStorage.getItem(getQuickUsageStorageKey()), {});
         }
 
         window.trackProjectUse = function(id) {
@@ -564,7 +671,7 @@
             const usage = getQuickUsage();
             const old = usage[id] || { count: 0, lastUsed: 0 };
             usage[id] = { count: (old.count || 0) + 1, lastUsed: Date.now() };
-            try { localStorage.setItem(QUICK_USAGE_KEY, JSON.stringify(usage)); } catch(e) {}
+            try { localStorage.setItem(getQuickUsageStorageKey(), JSON.stringify(usage)); } catch(e) {}
             window.renderQuickProjects();
         };
 
@@ -599,9 +706,9 @@
             if(!list) return;
             const count = Math.max(1, Math.min(10, parseInt(localStorage.getItem(QUICK_COUNT_KEY)) || 3));
             const usage = getQuickUsage();
-            const sorted = [...cloudProjectsCache].sort((a, b) => {
-                const ua = usage[a.id] || {};
-                const ub = usage[b.id] || {};
+            const sorted = [...mineProjects()].sort((a, b) => {
+                const ua = usage[a.docId || a.id] || {};
+                const ub = usage[b.docId || b.id] || {};
                 const countDiff = (ub.count || 0) - (ua.count || 0);
                 if(countDiff !== 0) return countDiff;
                 const aTime = ua.lastUsed || a.timestamp || 0;
@@ -609,7 +716,8 @@
                 return bTime - aTime;
             }).slice(0, count);
 
-            if(status) status.textContent = cloudProjectsCache.length ? `(${Math.min(count, cloudProjectsCache.length)}/${cloudProjectsCache.length})` : '';
+            const myCount = mineProjects().length;
+            if(status) status.textContent = myCount ? `(${Math.min(count, myCount)}/${myCount})` : '';
             if(sorted.length === 0) {
                 list.innerHTML = `<div class="quick-empty">${isFirebaseReady ? '目前沒有可顯示的雲端專案' : '尚未連線，常用專案無法同步'}<br>工作區仍會保留在本機。</div>`;
                 return;
@@ -617,31 +725,31 @@
 
             list.innerHTML = '';
             sorted.forEach((p, index) => {
-                const stat = usage[p.id] || {};
+                const stat = usage[p.docId || p.id] || {};
                 const btn = document.createElement('button');
                 btn.className = 'quick-project-card';
                 btn.type = 'button';
-                btn.onclick = () => window.loadQuickProject(p.id);
+                btn.onclick = () => window.loadQuickProject(p.docId);
                 const category = p.category || '未分類';
                 const useText = stat.count ? `使用 ${stat.count} 次` : '最近修改';
-                const note = (p.note || '無備註').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const note = escapeHtml(p.note || '無備註');
                 btn.innerHTML = `
-                    <div class="quick-project-name">${index + 1}. ${p.id.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-                    <div class="quick-project-meta"><span>📁 ${category.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span><span>${useText}</span></div>
+                    <div class="quick-project-name">${index + 1}. ${escapeHtml(p.id)}</div>
+                    <div class="quick-project-meta"><span>📁 ${escapeHtml(category)}</span><span>${useText}</span></div>
                     <div class="quick-project-note">${note}</div>`;
                 list.appendChild(btn);
             });
         };
 
-        window.loadQuickProject = function(id) {
-            const p = cloudProjectsCache.find(x => x.id === id);
+        window.loadQuickProject = function(docId) {
+            const p = cloudProjectsCache.find(x => x.docId === docId);
             if(!p) return alert('找不到此專案，請按刷新後再試一次。');
             window.applyConfig(p);
             document.getElementById('projName').value = p.id;
             const noteEl = document.getElementById('projNote');
             noteEl.value = p.note || '';
             window.autoResizeTextarea(noteEl);
-            window.trackProjectUse(p.id);
+            window.trackProjectUse(p.docId || p.id);
             window.scheduleWorkspaceSave();
         };
 
@@ -659,10 +767,12 @@
             const sidebar = document.getElementById('sidebar');
             const mainArea = document.getElementById('main-area');
             return {
-                version: 'V5.2',
+                version: 'V5.4',
                 savedAt: Date.now(),
                 projectName: document.getElementById('projName')?.value || '',
                 note: document.getElementById('projNote')?.value || '',
+                visibility: document.getElementById('publishPublic')?.checked ? 'public' : 'private',
+                loadedOwnerUid: currentLoadedOwnerUid,
                 layers: window.layers || [],
                 dimensions: window.dimensions || [],
                 photos: makeSerializablePhotos(),
@@ -684,16 +794,18 @@
         };
 
         window.saveWorkspaceState = function() {
-            if(isRestoringWorkspace) return;
+            if(isRestoringWorkspace || !currentUser) return;
+            const storageKey = getWorkspaceStorageKey();
+            if(!storageKey) return;
             const snapshot = window.getWorkspaceSnapshot();
             try {
-                localStorage.setItem(LAST_WORKSPACE_KEY, JSON.stringify(snapshot));
+                localStorage.setItem(storageKey, JSON.stringify(snapshot));
             } catch(e) {
                 // 若圖片太多超過瀏覽器 localStorage 容量，至少保住疊構、文字與設定
                 try {
                     snapshot.photos = [];
                     snapshot.photosOmitted = true;
-                    localStorage.setItem(LAST_WORKSPACE_KEY, JSON.stringify(snapshot));
+                    localStorage.setItem(storageKey, JSON.stringify(snapshot));
                 } catch(e2) {
                     console.warn('無法儲存上次工作區', e2);
                 }
@@ -717,7 +829,9 @@
         }
 
         window.restoreLastWorkspace = function() {
-            const raw = localStorage.getItem(LAST_WORKSPACE_KEY);
+            if(!currentUser) return false;
+            const storageKey = getWorkspaceStorageKey();
+            const raw = localStorage.getItem(storageKey);
             if(!raw) return false;
             const s = safeJsonParse(raw, null);
             if(!s || !Array.isArray(s.layers)) return false;
@@ -730,6 +844,8 @@
                     settings: s.settings || {}
                 });
                 document.getElementById('projName').value = s.projectName || '';
+                document.getElementById('publishPublic').checked = s.visibility === 'public' && s.loadedOwnerUid === currentUser?.uid;
+                currentLoadedOwnerUid = s.loadedOwnerUid || null;
                 const noteEl = document.getElementById('projNote');
                 noteEl.value = s.note || '';
                 window.autoResizeTextarea(noteEl);
@@ -773,7 +889,88 @@
             el.style.height = (el.scrollHeight) + 'px';
         };
 
-        if (!firebaseConfig.apiKey.includes("你的API_KEY")) { try { const app = initializeApp(firebaseConfig); db = getFirestore(app); isFirebaseReady = true; } catch(e) {} }
+        if (!firebaseConfig.apiKey.includes("你的API_KEY")) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                isFirebaseReady = true;
+            } catch(e) { console.error("Firebase 初始化失敗", e); }
+        }
+
+        function escapeHtml(value="") {
+            return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+        function makeProjectDocId(uid, name) { return `${uid}__${encodeURIComponent(name)}`; }
+        function makeUnitDocId(uid, name) { return `${uid}__${encodeURIComponent(name)}`; }
+        function mineProjects() { return cloudProjectsCache.filter(p => currentUser && p.ownerUid === currentUser.uid); }
+        function getDisplayName() { return currentUser?.displayName || currentUserProfile?.displayName || currentUser?.email || "User"; }
+        function showAuthError(msg="") { const el=document.getElementById('authError'); if(el) el.textContent=msg; }
+
+        window.loginAccount = async function() {
+            if(!auth) return showAuthError('Firebase 尚未初始化');
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            if(!email || !password) return showAuthError('請輸入 Email 與密碼');
+            showAuthError('登入中...');
+            try { await signInWithEmailAndPassword(auth, email, password); showAuthError(''); }
+            catch(e) { console.error(e); showAuthError('登入失敗：請確認 Email / 密碼'); }
+        };
+
+        window.registerAccount = async function() {
+            if(!auth) return showAuthError('Firebase 尚未初始化');
+            const displayName = document.getElementById('authDisplayName').value.trim();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            if(!displayName) return showAuthError('建立帳號時請先輸入顯示名稱');
+            if(!email || password.length < 6) return showAuthError('請輸入 Email，密碼至少 6 碼');
+            showAuthError('建立帳號中...');
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(cred.user, { displayName });
+                await setDoc(doc(db, COL_USERS, cred.user.uid), {
+                    displayName, email, createdAt: Date.now(), updatedAt: Date.now()
+                }, { merge:true });
+                await cred.user.reload();
+                currentUser = cred.user;
+                currentUserProfile = { displayName, email };
+                renderCurrentUser();
+                showAuthError('');
+            } catch(e) {
+                console.error(e);
+                const map = {
+                    'auth/email-already-in-use':'這個 Email 已經有帳號',
+                    'auth/invalid-email':'Email 格式不正確',
+                    'auth/weak-password':'密碼強度不足'
+                };
+                showAuthError(map[e.code] || `建立帳號失敗：${e.code || e.message}`);
+            }
+        };
+
+        window.logoutAccount = async function() {
+            if(auth) await signOut(auth);
+        };
+
+        async function loadUserProfile(user) {
+            currentUserProfile = null;
+            try {
+                const snap = await getDoc(doc(db, COL_USERS, user.uid));
+                if(snap.exists()) currentUserProfile = snap.data();
+                else await setDoc(doc(db, COL_USERS, user.uid), {
+                    displayName: user.displayName || user.email || 'User', email: user.email || '', createdAt: Date.now(), updatedAt: Date.now()
+                }, { merge:true });
+            } catch(e) { console.warn('讀取 user profile 失敗', e); }
+        }
+
+        function renderCurrentUser() {
+            const name = getDisplayName();
+            const nameEl = document.getElementById('currentUserName');
+            const emailEl = document.getElementById('currentUserEmail');
+            const avatar = document.getElementById('userAvatar');
+            if(nameEl) nameEl.textContent = name;
+            if(emailEl) emailEl.textContent = currentUser?.email || '';
+            if(avatar) avatar.textContent = (name || 'U').trim().charAt(0).toUpperCase() || 'U';
+        }
 
         const canvas = document.getElementById('stackCanvas'); const ctx = canvas.getContext('2d'); const listEl = document.getElementById('layer-list');
         window.layers = []; window.dimensions = []; window.photos = []; let dragSrcEl = null;
@@ -796,15 +993,15 @@
                         <div style="cursor:grab; color:#555; display:flex; align-items:center; justify-content:center; padding:0 2px;">⣿</div>
                         <input type="checkbox" class="layer-check" ${isChecked} onchange="window.toggleLayerCheck(${index})">
                         <div class="layer-inputs">
-                            <input type="text" value="${layer.name}" oninput="window.updateLayer(${index}, 'name', this.value)" placeholder="名稱">
+                            <input type="text" value="${escapeHtml(layer.name)}" oninput="window.updateLayer(${index}, 'name', this.value)" placeholder="名稱">
                             <input type="number" value="${layer.thickness}" oninput="window.updateLayer(${index}, 'thickness', this.value)" placeholder="厚度">
                         </div>
-                        <input type="color" value="${layer.color}" oninput="window.updateLayer(${index}, 'color', this.value)" title="改變層次顏色">
+                        <input type="color" value="${escapeHtml(layer.color)}" oninput="window.updateLayer(${index}, 'color', this.value)" title="改變層次顏色">
                         <div class="btn-toggle-details ${layer.showDetails?'active':''}" onclick="window.toggleDetails(${index})" title="進階設定">⚙️</div>
                         <div class="btn-icon btn-del" onclick="window.deleteLayer(${index})" title="刪除此層">✕</div>
                     </div>
                     <div class="layer-details">
-                        <div><label>字體顏色</label><input type="color" value="${layer.textColor||'#000000'}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%; height:28px;"></div>
+                        <div><label>字體顏色</label><input type="color" value="${escapeHtml(layer.textColor||'#000000')}" oninput="window.updateLayer(${index}, 'textColor', this.value)" style="width:100%; height:28px;"></div>
                         <div><label>字體大小</label><input type="number" value="${layer.fontSize || ''}" placeholder="預設" oninput="window.updateLayer(${index}, 'fontSize', this.value)" style="height:28px; padding:0 5px;"></div>
                         <div><label>文字粗細</label><select onchange="window.updateLayer(${index}, 'fontStyle', this.value)" style="height:28px; padding:0 5px;"><option value="normal" ${layer.fontStyle==='normal'?'selected':''}>一般</option><option value="bold" ${layer.fontStyle==='bold'?'selected':''}>粗體</option></select></div>
                     </div>
@@ -837,11 +1034,11 @@
         window.deleteLayer = (i) => { window.layers.splice(i, 1); window.renderList(); window.draw(); };
         window.updateDimSelects = () => { const s1=document.getElementById('dimStart'), s2=document.getElementById('dimEnd'); const v1=s1.value, v2=s2.value; s1.innerHTML=''; s2.innerHTML=''; window.layers.forEach((l,i) => { const o = `<option value="${i}">${i+1}. ${l.name}</option>`; s1.innerHTML+=o; s2.innerHTML+=o; }); if(v1) s1.value=v1; if(v2) s2.value=v2; else if(window.layers.length>0) s2.value=window.layers.length-1; };
         window.addDimension = () => { const s=parseInt(document.getElementById('dimStart').value), e=parseInt(document.getElementById('dimEnd').value); window.dimensions.push({ start: Math.min(s,e), end: Math.max(s,e), label: document.getElementById('dimLabel').value, offset: parseInt(document.getElementById('dimOffset').value)||50 }); renderDims(); window.draw(); };
-        function renderDims() { const dimListEl = document.getElementById('dim-list'); dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { const n1=window.layers[d.start]?.name, n2=window.layers[d.end]?.name; dimListEl.innerHTML += `<div class="dim-item"><span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span><span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span></div>`; }); }
+        function renderDims() { const dimListEl = document.getElementById('dim-list'); dimListEl.innerHTML=''; window.dimensions.forEach((d,i) => { const n1=escapeHtml(window.layers[d.start]?.name || ''), n2=escapeHtml(window.layers[d.end]?.name || ''); dimListEl.innerHTML += `<div class="dim-item"><span>${n1} ~ ${n2} <span style="color:#666;">(偏${d.offset})</span></span><span class="btn-icon btn-del" style="font-size:14px;" onclick="window.deleteDim(${i})">✕</span></div>`; }); }
         window.deleteDim = (i) => { window.dimensions.splice(i,1); renderDims(); window.draw(); };
 
         window.addPhoto = function() { const input = document.getElementById('photoInput'); const descInput = document.getElementById('photoDesc'); if(input.files && input.files[0]) { const file = input.files[0]; const reader = new FileReader(); showLoading(true, "壓縮處理中..."); reader.onload = function(e) { const img = new Image(); img.onload = function() { const maxW = 600; let w = img.width; let h = img.height; if (w > maxW) { h = Math.round(h * (maxW / w)); w = maxW; } const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h; const ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); const compressedData = cvs.toDataURL('image/jpeg', 0.5); window.photos.push({ id: Date.now(), data: compressedData, desc: descInput.value || "圖說", w: w, h: h, imgElement: null }); descInput.value = ''; input.value = ''; window.renderPhotoList(); window.draw(); showLoading(false); }; img.src = e.target.result; }; reader.readAsDataURL(file); } else { alert("請先選擇圖片"); } };
-        window.renderPhotoList = function() { const list = document.getElementById('photo-list'); list.innerHTML = ''; window.photos.forEach((p, i) => { const div = document.createElement('div'); div.className = 'photo-item'; div.innerHTML = `<img src="${p.data}" class="photo-thumb"><div class="photo-info"><input type="text" class="photo-desc" value="${p.desc}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;"><button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button></div>`; list.appendChild(div); }); };
+        window.renderPhotoList = function() { const list = document.getElementById('photo-list'); list.innerHTML = ''; window.photos.forEach((p, i) => { const div = document.createElement('div'); div.className = 'photo-item'; div.innerHTML = `<img src="${p.data}" class="photo-thumb"><div class="photo-info"><input type="text" class="photo-desc" value="${escapeHtml(p.desc)}" oninput="window.updatePhotoDesc(${i}, this.value)" style="height:28px;"><button class="btn-tiny" onclick="window.deletePhoto(${i})" style="width:auto; padding:0 8px; font-size:12px; background:var(--btn-red); color:white;">刪除</button></div>`; list.appendChild(div); }); };
         window.updatePhotoDesc = (i, v) => { window.photos[i].desc = v; window.draw(); };
         window.deletePhoto = (i) => { window.photos.splice(i, 1); window.renderPhotoList(); window.draw(); };
 
@@ -929,193 +1126,371 @@
             window.currentPopIndex = n; window.renderList(); window.draw();
         };
 
-        // --- 分頁式雲端管理 ---
-        window.openCloudManager = function() { if(!isFirebaseReady) { alert("尚未連線"); return; } document.getElementById('mgrModal').style.display = 'flex'; document.getElementById('mgrBackdrop').style.display = 'block'; window.refreshCloudList(); };
+        // --- V5.4：多人版雲端管理 ---
+        window.openCloudManager = function() {
+            if(!isFirebaseReady || !currentUser) { alert("請先登入"); return; }
+            document.getElementById('mgrModal').style.display = 'flex';
+            document.getElementById('mgrBackdrop').style.display = 'block';
+            window.refreshCloudList();
+        };
         window.closeCloudManager = function() { document.getElementById('mgrModal').style.display = 'none'; document.getElementById('mgrBackdrop').style.display = 'none'; };
+
+        window.setCloudScope = function(scope) {
+            activeCloudScope = scope === 'public' ? 'public' : 'mine';
+            currentPreviewId = null;
+            document.getElementById('scopeMineBtn')?.classList.toggle('active', activeCloudScope === 'mine');
+            document.getElementById('scopePublicBtn')?.classList.toggle('active', activeCloudScope === 'public');
+            document.getElementById('preview-details').innerHTML = '<div style="text-align:center; color:#666; margin-top:30px;">請從中間選擇專案以檢視詳細資訊</div>';
+            document.getElementById('btn-load-preview').style.display='none';
+            document.getElementById('btn-del-preview').style.display='none';
+            document.getElementById('preview-category-box').style.display='none';
+            window.renderCloudList();
+        };
         
-        window.createNewFolder = function() { const newCat = prompt("請輸入新的分頁名稱："); if(newCat && newCat.trim() !== "") { const catName = newCat.trim(); if (!customFolders.includes(catName)) { customFolders.push(catName); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } activeCategory = catName; window.renderCloudList(); } };
+        window.createNewFolder = function() {
+            if(activeCloudScope === 'public') return alert('公開資料夾是所有人的共用區，不需要另外建立私人分類。');
+            const newCat = prompt("請輸入新的分頁名稱：");
+            if(newCat && newCat.trim() !== "") {
+                const catName = newCat.trim();
+                if (!customFolders.includes(catName)) { customFolders.push(catName); localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders)); }
+                activeCategory = catName; window.renderCloudList();
+            }
+        };
         
         window.deleteCurrentFolder = function() {
-            if (activeCategory === "未分類") { return alert("「未分類」為系統預設，無法刪除！"); }
-            const count = cloudProjectsCache.filter(p => (p.category || '未分類') === activeCategory).length;
-            if (count > 0) { return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`); }
+            if(activeCloudScope === 'public') return alert('公開資料夾不可刪除。');
+            if (activeCategory === "未分類") return alert("「未分類」為系統預設，無法刪除！");
+            const count = mineProjects().filter(p => (p.category || '未分類') === activeCategory).length;
+            if (count > 0) return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`);
             if (confirm(`確定要刪除分頁「${activeCategory}」嗎？`)) {
                 const idx = customFolders.indexOf(activeCategory);
                 if (idx > -1) {
                     customFolders.splice(idx, 1);
-                    localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
-                    activeCategory = "未分類"; 
-                    window.renderCloudList();
+                    localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                    activeCategory = "未分類"; window.renderCloudList();
                 }
             }
         };
 
         window.refreshCloudList = async function(silent = false) {
-            if(!isFirebaseReady) { window.renderQuickProjects(); return; }
-            if(!silent) showLoading(true);
+            if(!isFirebaseReady || !currentUser) { cloudProjectsCache=[]; window.renderQuickProjects(); return; }
+            if(!silent) showLoading(true, '同步專案中...');
             try {
-                const savedFolders = localStorage.getItem('myStackFolders');
-                if(savedFolders) { customFolders = JSON.parse(savedFolders); } else { customFolders = ["未分類"]; }
-                const q = await getDocs(collection(db, COL_PROJ));
-                cloudProjectsCache = [];
-                q.forEach(docSnap => {
+                const folderKey = `myStackFolders_${currentUser.uid}`;
+                const savedFolders = localStorage.getItem(folderKey);
+                customFolders = savedFolders ? JSON.parse(savedFolders) : ["未分類"];
+                if(!customFolders.includes('未分類')) customFolders.unshift('未分類');
+
+                const ownQuery = query(collection(db, COL_PROJ), where('ownerUid', '==', currentUser.uid));
+                const publicQuery = query(collection(db, COL_PROJ), where('visibility', '==', 'public'));
+                const [ownSnap, publicSnap] = await Promise.all([getDocs(ownQuery), getDocs(publicQuery)]);
+
+                const map = new Map();
+                const ingest = (snap) => snap.forEach(docSnap => {
                     const data = docSnap.data();
-                    if(!data.category) data.category = "未分類";
-                    if(!customFolders.includes(data.category)) customFolders.push(data.category);
-                    cloudProjectsCache.push({ id: docSnap.id, ...data });
+                    const projectName = data.projectName || docSnap.id;
+                    const item = { docId: docSnap.id, id: projectName, ...data };
+                    if(item.ownerUid === currentUser.uid) {
+                        item.category = item.category || '未分類';
+                        if(!customFolders.includes(item.category)) customFolders.push(item.category);
+                    }
+                    map.set(docSnap.id, item);
                 });
-                cloudProjectsCache.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-                localStorage.setItem('myStackFolders', JSON.stringify(customFolders));
-                if(!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類";
+                ingest(ownSnap); ingest(publicSnap);
+                cloudProjectsCache = [...map.values()].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                localStorage.setItem(folderKey, JSON.stringify(customFolders));
+                if(!customFolders.includes(activeCategory)) activeCategory = '未分類';
                 window.renderCloudList();
                 window.renderQuickProjects();
             } catch(e) {
-                console.error(e);
+                console.error('讀取專案失敗', e);
                 window.renderQuickProjects();
+                if(!silent) alert('讀取專案失敗，請確認 Firestore Rules 已更新為 V5.4 版本。');
             }
             if(!silent) showLoading(false);
         };
         
-        window.renderCloudList = function() { 
-            const tabsEl = document.getElementById('cloudTabsEl'); const listEl = document.getElementById('cloudListEl'); const search = document.getElementById('searchCloud').value.toLowerCase(); 
-            if (!customFolders.includes(activeCategory)) activeCategory = customFolders[0] || "未分類"; tabsEl.innerHTML = ''; 
+        window.renderCloudList = function() {
+            const tabsEl = document.getElementById('cloudTabsEl');
+            const listEl = document.getElementById('cloudListEl');
+            const folderPane = document.querySelector('.cloud-folder-pane');
+            const search = (document.getElementById('searchCloud').value || '').toLowerCase();
             const folderLabel = document.getElementById('currentFolderLabel');
-            if(folderLabel) folderLabel.textContent = search ? '🔎 搜尋全部資料夾' : `📂 ${activeCategory}`;
-            customFolders.forEach(cat => { 
-                const count = cloudProjectsCache.filter(p => (p.category || '未分類') === cat).length; 
-                const tab = document.createElement('div'); tab.className = `tab ${cat === activeCategory ? 'active' : ''}`; tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📂 ${cat}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`; tab.draggable = true; 
-                tab.onclick = () => { activeCategory = cat; window.renderCloudList(); }; 
-                tab.ondblclick = () => { if(cat === "未分類") return alert("預設分類無法更名"); const newName = prompt("重新命名分頁：", cat); if(newName && newName.trim() && !customFolders.includes(newName.trim())) { const finalName = newName.trim(); customFolders[customFolders.indexOf(cat)] = finalName; cloudProjectsCache.forEach(p => { if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.id), { category: finalName }).catch(()=>{}); } }); if(activeCategory === cat) activeCategory = finalName; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); } }; 
-                tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; }; tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); }; tab.ondragleave = (e) => { tab.classList.remove('drag-over'); }; 
-                tab.ondrop = async (e) => { e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation(); if (draggedCloudId) { const p = cloudProjectsCache.find(x => x.id === draggedCloudId); if (p && (p.category || '未分類') !== cat) { p.category = cat; window.renderCloudList(); try { await updateDoc(doc(db, COL_PROJ, p.id), { category: cat }); } catch(err){} } draggedCloudId = null; } else if (draggedTabCat && draggedTabCat !== cat) { const fromIdx = customFolders.indexOf(draggedTabCat); const toIdx = customFolders.indexOf(cat); customFolders.splice(fromIdx, 1); customFolders.splice(toIdx, 0, draggedTabCat); localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); window.renderCloudList(); draggedTabCat = null; } }; tab.ondragend = () => { draggedTabCat = null; }; tabsEl.appendChild(tab); 
-            }); 
-            
-            listEl.innerHTML = ''; 
-            cloudProjectsCache.forEach(p => { 
-                let pCat = p.category || '未分類'; 
-                if (search) { if (!p.id.toLowerCase().includes(search) && !(p.note||'').toLowerCase().includes(search)) return; } else { if (pCat !== activeCategory) return; } 
-                const note = p.note ? p.note : '無備註'; const date = new Date(p.timestamp || 0).toLocaleDateString(); const li = document.createElement('li'); li.className = `cloud-item ${p.id === currentPreviewId ? 'selected' : ''}`; li.setAttribute('draggable', 'true'); 
-                li.ondragstart = (e) => { draggedCloudId = p.id; draggedTabCat = null; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }; li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; }; li.onclick = (e) => { if(e.target.type !== 'checkbox') window.selectCloudItem(p.id); }; 
+            const isPublic = activeCloudScope === 'public';
+
+            document.getElementById('scopeMineBtn')?.classList.toggle('active', !isPublic);
+            document.getElementById('scopePublicBtn')?.classList.toggle('active', isPublic);
+            if(folderPane) folderPane.style.opacity = isPublic ? '.38' : '1';
+            if(folderPane) folderPane.style.pointerEvents = isPublic ? 'none' : 'auto';
+
+            if (!customFolders.includes(activeCategory)) activeCategory = '未分類';
+            tabsEl.innerHTML = '';
+            if(folderLabel) folderLabel.textContent = isPublic ? '🌐 全員公開專案' : (search ? '🔎 搜尋我的資料夾' : `📂 ${activeCategory}`);
+
+            customFolders.forEach(cat => {
+                const count = mineProjects().filter(p => (p.category || '未分類') === cat).length;
+                const tab = document.createElement('div');
+                tab.className = `tab ${cat === activeCategory ? 'active' : ''}`;
+                tab.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📂 ${escapeHtml(cat)}</span><span style="font-size:11px; opacity:0.65; margin-left:auto; flex-shrink:0;">${count}</span>`;
+                tab.draggable = true;
+                tab.onclick = () => { activeCategory = cat; window.renderCloudList(); };
+                tab.ondblclick = () => {
+                    if(cat === '未分類') return alert('預設分類無法更名');
+                    const newName = prompt('重新命名分頁：', cat);
+                    if(newName && newName.trim() && !customFolders.includes(newName.trim())) {
+                        const finalName = newName.trim();
+                        customFolders[customFolders.indexOf(cat)] = finalName;
+                        mineProjects().forEach(p => {
+                            if(p.category === cat) { p.category = finalName; updateDoc(doc(db, COL_PROJ, p.docId), { category: finalName }).catch(console.error); }
+                        });
+                        if(activeCategory === cat) activeCategory = finalName;
+                        localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                        window.renderCloudList();
+                    }
+                };
+                tab.ondragstart = (e) => { draggedTabCat = cat; e.dataTransfer.effectAllowed = 'move'; };
+                tab.ondragover = (e) => { e.preventDefault(); tab.classList.add('drag-over'); };
+                tab.ondragleave = () => tab.classList.remove('drag-over');
+                tab.ondrop = async (e) => {
+                    e.preventDefault(); tab.classList.remove('drag-over'); e.stopPropagation();
+                    if (draggedCloudId) {
+                        const p = cloudProjectsCache.find(x => x.docId === draggedCloudId);
+                        if (p && p.ownerUid === currentUser.uid && (p.category || '未分類') !== cat) {
+                            p.category = cat; window.renderCloudList();
+                            try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: cat }); } catch(err) { console.error(err); }
+                        }
+                        draggedCloudId = null;
+                    } else if (draggedTabCat && draggedTabCat !== cat) {
+                        const fromIdx = customFolders.indexOf(draggedTabCat), toIdx = customFolders.indexOf(cat);
+                        customFolders.splice(fromIdx, 1); customFolders.splice(toIdx, 0, draggedTabCat);
+                        localStorage.setItem(`myStackFolders_${currentUser.uid}`, JSON.stringify(customFolders));
+                        window.renderCloudList(); draggedTabCat = null;
+                    }
+                };
+                tab.ondragend = () => { draggedTabCat = null; };
+                tabsEl.appendChild(tab);
+            });
+
+            listEl.innerHTML = '';
+            const source = isPublic ? cloudProjectsCache.filter(p => p.visibility === 'public') : mineProjects();
+            source.forEach(p => {
+                const pCat = p.category || '未分類';
+                const ownerName = p.ownerDisplayName || 'Unknown';
+                if(search) {
+                    const hay = `${p.id} ${p.note || ''} ${ownerName}`.toLowerCase();
+                    if(!hay.includes(search)) return;
+                } else if(!isPublic && pCat !== activeCategory) return;
+
+                const note = p.note || '無備註';
+                const date = new Date(p.timestamp || 0).toLocaleDateString();
+                const li = document.createElement('li');
+                li.className = `cloud-item ${p.docId === currentPreviewId ? 'selected' : ''}`;
+                li.draggable = !isPublic || p.ownerUid === currentUser.uid;
+                li.ondragstart = (e) => {
+                    if(p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
+                    draggedCloudId = p.docId; draggedTabCat = null; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+                };
+                li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; };
+                li.onclick = (e) => { if(e.target.type !== 'checkbox') window.selectCloudItem(p.docId); };
                 li.innerHTML = `
-                    <input type="checkbox" class="batch-check" value="${p.id}">
+                    <input type="checkbox" class="batch-check" value="${escapeHtml(p.docId)}">
                     <div class="cloud-info">
-                        <div class="cloud-name">${p.id}</div>
+                        <div class="cloud-name">${escapeHtml(p.id)} ${p.visibility==='public' ? '<span class="public-badge">PUBLIC</span>' : ''}</div>
                         <div class="cloud-meta">
                             <span>${date}</span>
-                            <span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+pCat+']' : ''}</span>
+                            <span>${isPublic ? `<span class="owner-badge">👤 ${escapeHtml(ownerName)}</span>` : `<span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+escapeHtml(pCat)+']' : ''}</span>`}</span>
                         </div>
-                        <div class="cloud-note">${note}</div>
-                    </div>`; 
-                listEl.appendChild(li); 
-            }); 
-            updatePreviewCategorySelect(); 
+                        <div class="cloud-note">${escapeHtml(note)}</div>
+                    </div>`;
+                listEl.appendChild(li);
+            });
+            updatePreviewCategorySelect();
         };
 
-        function updatePreviewCategorySelect() { const sel = document.getElementById('preview-category-select'); sel.innerHTML = ''; customFolders.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; }); }
-        window.changeCategoryFromPreview = async function() { if(!currentPreviewId) return; const targetCat = document.getElementById('preview-category-select').value; const p = cloudProjectsCache.find(x => x.id === currentPreviewId); if(p && p.category !== targetCat) { p.category = targetCat; window.renderCloudList(); showLoading(true); try { await updateDoc(doc(db, COL_PROJ, p.id), { category: targetCat }); } catch(err) {} showLoading(false); } };
+        function updatePreviewCategorySelect() {
+            const sel = document.getElementById('preview-category-select');
+            sel.innerHTML = '';
+            customFolders.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+        }
+
+        window.changeCategoryFromPreview = async function() {
+            if(!currentPreviewId) return;
+            const targetCat = document.getElementById('preview-category-select').value;
+            const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
+            if(!p || p.ownerUid !== currentUser.uid) return alert('只能修改自己的專案分類。');
+            if(p.category !== targetCat) {
+                p.category = targetCat; window.renderCloudList(); showLoading(true);
+                try { await updateDoc(doc(db, COL_PROJ, p.docId), { category: targetCat }); } catch(err) { console.error(err); alert('分類更新失敗'); }
+                showLoading(false);
+            }
+        };
         
-        window.selectCloudItem = function(id) { 
-            currentPreviewId = id; document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected')); const inputs = document.querySelectorAll('.batch-check'); inputs.forEach(inp => { if(inp.value === id) inp.closest('.cloud-item').classList.add('selected'); }); const p = cloudProjectsCache.find(x => x.id === id); const detailEl = document.getElementById('preview-details'); 
-            if(p) { 
-                detailEl.innerHTML = `
-                    <div style="background:#1C1E22; padding:12px; border-radius:8px; border:1px solid #333;">
-                        <div style="color:var(--accent-cyan); font-weight:bold; font-size:15px; margin-bottom:5px;">${p.id}</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px; color:#aaa;">
-                            <div>層數: <span style="color:#fff;">${p.layers?.length || 0}</span></div>
-                            <div>附圖: <span style="color:#fff;">${p.photos?.length || 0}</span></div>
-                        </div>
-                        <div style="font-size:11px; color:#666; margin-bottom:8px;">上次修改：${new Date(p.timestamp).toLocaleString()}</div>
-                        <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${p.note || '無備註'}</div>
+        window.selectCloudItem = function(docId) {
+            currentPreviewId = docId;
+            document.querySelectorAll('.cloud-item').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.batch-check').forEach(inp => { if(inp.value === docId) inp.closest('.cloud-item')?.classList.add('selected'); });
+            const p = cloudProjectsCache.find(x => x.docId === docId);
+            const detailEl = document.getElementById('preview-details');
+            if(!p) return;
+            const mine = p.ownerUid === currentUser.uid;
+            detailEl.innerHTML = `
+                <div style="background:#1C1E22; padding:12px; border-radius:8px; border:1px solid #333;">
+                    <div style="color:var(--accent-cyan); font-weight:bold; font-size:15px; margin-bottom:5px;">${escapeHtml(p.id)}</div>
+                    <div style="color:#8CD9E5; font-size:12px; margin-bottom:8px;">👤 建立者：${escapeHtml(p.ownerDisplayName || 'Unknown')} ${p.visibility==='public' ? '・🌐 公開' : '・🔒 私人'}</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px; color:#aaa;">
+                        <div>層數: <span style="color:#fff;">${p.layers?.length || 0}</span></div>
+                        <div>附圖: <span style="color:#fff;">${p.photos?.length || 0}</span></div>
                     </div>
-                `; 
-                document.getElementById('preview-category-box').style.display = 'block'; document.getElementById('preview-category-select').value = p.category || '未分類'; window.drawPreviewCanvas(p.layers); document.getElementById('btn-load-preview').style.display = 'flex'; document.getElementById('btn-del-preview').style.display = 'flex'; 
-            } 
+                    <div style="font-size:11px; color:#666; margin-bottom:8px;">上次修改：${new Date(p.timestamp || 0).toLocaleString()}</div>
+                    <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${escapeHtml(p.note || '無備註')}</div>
+                    ${mine ? '' : '<div class="readonly-note">此專案屬於其他成員。你可以載入查看；按「儲存專案」時會存成你的版本，不會覆蓋原作者。</div>'}
+                </div>`;
+            document.getElementById('preview-category-box').style.display = mine && activeCloudScope === 'mine' ? 'block' : 'none';
+            if(mine) document.getElementById('preview-category-select').value = p.category || '未分類';
+            window.drawPreviewCanvas(p.layers);
+            document.getElementById('btn-load-preview').style.display = 'flex';
+            document.getElementById('btn-del-preview').style.display = mine ? 'flex' : 'none';
         };
 
         window.drawPreviewCanvas = function(layers) { const cvs = document.getElementById('previewCanvas'); const ctx = cvs.getContext('2d'); cvs.width = 300; cvs.height = 200; ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,200); if(!layers || layers.length === 0) return; const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1; const scale = 160 / totalThick; const cx = 150; const rw = 100; let cy = 20; layers.forEach(l => { const h = (parseFloat(l.thickness)||0) * scale; ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h); ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h); cy += h; }); };
         
-        window.loadSelectedToWorkspace = function() { 
-            if(!currentPreviewId) return; 
-            const p = cloudProjectsCache.find(x => x.id === currentPreviewId); 
-            if(p) { 
-                window.applyConfig(p); 
-                document.getElementById('projName').value = p.id; 
+        window.loadSelectedToWorkspace = function() {
+            if(!currentPreviewId) return;
+            const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
+            if(p) {
+                window.applyConfig(p);
+                document.getElementById('projName').value = p.id;
                 const noteEl = document.getElementById('projNote');
-                noteEl.value = p.note || ""; 
+                noteEl.value = p.note || '';
                 window.autoResizeTextarea(noteEl);
-                window.trackProjectUse(p.id);
+                currentLoadedOwnerUid = p.ownerUid || null;
+                // 自己的公開專案保留公開狀態；別人的公開檔載入後預設存成自己的私人副本
+                document.getElementById('publishPublic').checked = p.ownerUid === currentUser.uid && p.visibility === 'public';
+                if(p.ownerUid === currentUser.uid) window.trackProjectUse(p.docId || p.id);
                 window.scheduleWorkspaceSave();
-                window.closeCloudManager(); 
-            } 
+                window.closeCloudManager();
+                if(p.ownerUid !== currentUser.uid) alert(`已載入 ${p.ownerDisplayName || '其他成員'} 的公開專案。\n若按「儲存專案」，會建立成你自己的檔案。`);
+            }
         };
 
         window.deleteSelectedCloud = async function() {
             if(!currentPreviewId) return;
-            if(!confirm(`確定要永久刪除專案 [${currentPreviewId}] 嗎?`)) return;
-            const deletedId = currentPreviewId;
+            const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
+            if(!p || p.ownerUid !== currentUser.uid) return alert('只能刪除自己的專案。');
+            if(!confirm(`確定要永久刪除專案 [${p.id}] 嗎?`)) return;
             showLoading(true);
             try {
-                await deleteDoc(doc(db, COL_PROJ, currentPreviewId));
+                await deleteDoc(doc(db, COL_PROJ, p.docId));
                 const usage = getQuickUsage();
-                if(usage[deletedId]) { delete usage[deletedId]; localStorage.setItem(QUICK_USAGE_KEY, JSON.stringify(usage)); }
+                if(usage[p.docId]) { delete usage[p.docId]; localStorage.setItem(getQuickUsageStorageKey(), JSON.stringify(usage)); }
                 currentPreviewId = null;
                 await window.refreshCloudList(true);
-            } catch(e) {}
+            } catch(e) { console.error(e); alert('刪除失敗'); }
             showLoading(false);
         };
-        
-        /* 🔧 語法已修正：徹底修復前版漏掉的換行引號，絕不再卡死 */
-        window.batchExportExcel = function() { const checks = document.querySelectorAll('.batch-check:checked'); if(checks.length === 0) { alert("請先勾選左側的核取方塊"); return; } let csv = "\uFEFF"; checks.forEach(chk => { const id = chk.value; const p = cloudProjectsCache.find(x => x.id === id); if(p) { csv += `專案: ${p.id}\n備註: ${(p.note||"").replace(/\n/g," ")}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`; const layers = p.layers || []; layers.forEach((l,i) => { if(l.checked === false) return; csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness}\n`; }); csv += "\n"; } }); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Stackups_${Date.now()}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
+
+        /* V5.4：批次匯出可匯出目前清單勾選的私人或公開專案 */
+        window.batchExportExcel = function() {
+            const checks = document.querySelectorAll('.batch-check:checked');
+            if(checks.length === 0) return alert('請先勾選左側的核取方塊');
+            let csv = "\uFEFF";
+            checks.forEach(chk => {
+                const p = cloudProjectsCache.find(x => x.docId === chk.value);
+                if(!p) return;
+                csv += `專案: ${p.id}\n建立者: ${p.ownerDisplayName || ''}\n公開狀態: ${p.visibility === 'public' ? '公開' : '私人'}\n備註: ${(p.note||'').replace(/\n/g,' ')}\n分類: ${p.category||'未分類'}\n層序,名稱,厚度\n`;
+                (p.layers || []).forEach((l,i) => { if(l.checked !== false) csv += `${i+1},${(l.name||'').replace(/,/g,' ')},${l.thickness}\n`; });
+                csv += '\n';
+            });
+            const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+            const link = document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=`Stackups_${Date.now()}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        };
         
         // --- 備份/儲存 ---
-        window.backupAllCloudData = async function() { if(!isFirebaseReady) { alert("未連線"); return; } showLoading(true, "資料打包中..."); try { const projSnap = await getDocs(collection(db, COL_PROJ)); const projects = {}; projSnap.forEach(d => projects[d.id] = d.data()); const unitSnap = await getDocs(collection(db, COL_UNITS)); const units = {}; unitSnap.forEach(d => units[d.id] = d.data()); const str = JSON.stringify({ version: "V5", timestamp: Date.now(), projects, units, customFolders }, null, 2); const blob = new Blob([str], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Stackup_Backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); } catch(e) { alert("備份失敗"); } showLoading(false); };
-        window.restoreAllCloudData = function(input) { const file = input.files[0]; if(!file) return; if(!confirm("⚠️ 警告：還原將覆蓋雲端現有同名資料。\n確定執行？")) { input.value = ''; return; } const reader = new FileReader(); reader.onload = async function(e) { showLoading(true, "資料還原中..."); try { const data = JSON.parse(e.target.result); const batch = writeBatch(db); let count = 0; if(data.projects) for(const [id,v] of Object.entries(data.projects)) { batch.set(doc(db,COL_PROJ,id),v); count++; } if(data.units) for(const [id,v] of Object.entries(data.units)) { batch.set(doc(db,COL_UNITS,id),v); count++; } if(data.customFolders) { customFolders = data.customFolders; localStorage.setItem('myStackFolders', JSON.stringify(customFolders)); } await batch.commit(); alert(`成功還原 ${count} 筆資料。`); window.refreshUnitList(); await window.refreshCloudList(true); } catch(err) { alert("還原失敗"); } showLoading(false); input.value = ''; }; reader.readAsText(file); };
-        function showLoading(show, text="處理中") { const ov = document.getElementById('loading-overlay'); if(show) { document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none'; }
-        
-        window.saveToCloud = async function() { 
-            if(!isFirebaseReady) return alert("未連線"); 
-            const name = document.getElementById('projName').value.trim(); 
-            if(!name) return alert("請輸入專案名稱"); 
-            let existingCategory = "未分類"; 
-            const existingProj = cloudProjectsCache.find(x => x.id === name); 
-            if (existingProj && existingProj.category) { existingCategory = existingProj.category; } else if(activeCategory) { existingCategory = activeCategory; } 
-            
-            const data = { 
-                layers: window.layers, 
-                dimensions: window.dimensions, 
-                photos: makeSerializablePhotos(), 
-                settings: { 
-                    unit: document.getElementById('unitInput').value, 
-                    width: document.getElementById('canvasWidth').value,
-                    globalFontSize: document.getElementById('globalFontSize').value,
-                    mainTitle: window.mainTitle,
-                    is3D: !!window.is3D
-                }, 
-                note: document.getElementById('projNote').value, 
-                timestamp: Date.now(), 
-                category: existingCategory 
-            }; 
-            const size = new Blob([JSON.stringify(data)]).size; 
-            if(size > 950000) if(!confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。
-建議減少照片數量。確定儲存？`)) return; 
-            showLoading(true);
+        window.backupAllCloudData = async function() {
+            if(!isFirebaseReady || !currentUser) return alert('請先登入');
+            showLoading(true, '備份目前帳號資料...');
             try {
-                await setDoc(doc(db, COL_PROJ, name), data, { merge: true });
-                const cached = { id: name, ...data };
-                const idx = cloudProjectsCache.findIndex(x => x.id === name);
-                if(idx >= 0) cloudProjectsCache[idx] = cached; else cloudProjectsCache.unshift(cached);
-                cloudProjectsCache.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-                window.trackProjectUse(name);
-                window.renderQuickProjects();
-                window.scheduleWorkspaceSave();
-                alert("儲存成功");
-            } catch(e) { alert("儲存失敗"); }
-            showLoading(false); 
+                const projSnap = await getDocs(query(collection(db, COL_PROJ), where('ownerUid','==',currentUser.uid)));
+                const projects = {}; projSnap.forEach(d => projects[d.id] = d.data());
+                const unitSnap = await getDocs(query(collection(db, COL_UNITS), where('ownerUid','==',currentUser.uid)));
+                const units = {}; unitSnap.forEach(d => units[d.id] = d.data());
+                const str = JSON.stringify({ version:'V5.4', ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now(), projects, units, customFolders }, null, 2);
+                const blob = new Blob([str], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`Stackup_${getDisplayName()}_${new Date().toISOString().slice(0,10)}.json`; a.click();
+            } catch(e) { console.error(e); alert('備份失敗'); }
+            showLoading(false);
         };
-        window.saveUnitToCloud = async function() { const name = document.getElementById('unitName').value.trim(); const sel = window.layers.filter(l => l.checked!==false); if(!name || sel.length===0) return alert("請輸入名稱並勾選層次"); showLoading(true); try { await setDoc(doc(db, COL_UNITS, name), { layers: sel, timestamp: Date.now() }); alert("已存"); window.refreshUnitList(); } catch(e) {} showLoading(false); };
-        window.refreshUnitList = async function() { if(!isFirebaseReady) return; const s = document.getElementById('savedUnits'); try { const q = await getDocs(collection(db, COL_UNITS)); s.innerHTML = '<option value="">-- 選擇模組 --</option>'; q.forEach(d => { const opt = document.createElement('option'); opt.value=d.id; opt.innerText=d.id; s.appendChild(opt); }); } catch(e) {} };
-        window.insertUnit = async function() { const n = document.getElementById('savedUnits').value; if(!n) return; showLoading(true); try { const d = await getDoc(doc(db, COL_UNITS, n)); if(d.exists()) { const ul = d.data().layers.map(l => ({...l, id:Date.now()+Math.random(), checked:true})); window.layers = [...ul, ...window.layers]; window.renderList(); window.draw(); } } catch(e) {} showLoading(false); };
-        window.deleteUnitFromCloud = async function() { const n = document.getElementById('savedUnits').value; if(n && confirm(`刪除模組 ${n}?`)) { await deleteDoc(doc(db, COL_UNITS, n)); window.refreshUnitList(); } };
+
+        window.restoreAllCloudData = function(input) {
+            const file = input.files[0]; if(!file || !currentUser) return;
+            if(!confirm('⚠️ 還原會寫入目前登入帳號，並覆蓋相同專案名稱。\n確定執行？')) { input.value=''; return; }
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                showLoading(true, '資料還原中...');
+                try {
+                    const data = JSON.parse(e.target.result); const batch = writeBatch(db); let count=0;
+                    if(data.projects) for(const [oldId,v0] of Object.entries(data.projects)) {
+                        const v = {...v0}; const name = v.projectName || v.id || oldId || `Imported_${count+1}`;
+                        const docId = makeProjectDocId(currentUser.uid, name);
+                        v.projectName=name; v.ownerUid=currentUser.uid; v.ownerDisplayName=getDisplayName(); v.visibility = v.visibility === 'public' ? 'public' : 'private'; v.timestamp=Date.now();
+                        batch.set(doc(db,COL_PROJ,docId),v,{merge:true}); count++;
+                    }
+                    if(data.units) for(const [oldId,v0] of Object.entries(data.units)) {
+                        const v={...v0}; const name=v.unitName || oldId || `ImportedUnit_${count+1}`; const docId=makeUnitDocId(currentUser.uid,name);
+                        batch.set(doc(db,COL_UNITS,docId), {...v, unitName:name, ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now()}, {merge:true}); count++;
+                    }
+                    if(data.customFolders) { customFolders=data.customFolders; localStorage.setItem(`myStackFolders_${currentUser.uid}`,JSON.stringify(customFolders)); }
+                    await batch.commit(); alert(`成功還原 ${count} 筆資料。`); window.refreshUnitList(); await window.refreshCloudList(true);
+                } catch(err) { console.error(err); alert('還原失敗：檔案格式或權限有問題'); }
+                showLoading(false); input.value='';
+            };
+            reader.readAsText(file);
+        };
+        function showLoading(show, text="處理中") { const ov=document.getElementById('loading-overlay'); if(show){ document.getElementById('loading-text').innerText=text; ov.style.display='flex'; } else ov.style.display='none'; }
+        
+        window.saveToCloud = async function() {
+            if(!isFirebaseReady || !currentUser) return alert('請先登入');
+            const name=document.getElementById('projName').value.trim(); if(!name) return alert('請輸入專案名稱');
+            const ownExisting = cloudProjectsCache.find(x => x.ownerUid===currentUser.uid && x.id===name);
+            let existingCategory = ownExisting?.category || activeCategory || '未分類';
+            const visibility = document.getElementById('publishPublic').checked ? 'public' : 'private';
+            const docId = makeProjectDocId(currentUser.uid, name);
+            const data = {
+                projectName:name, ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), visibility,
+                layers:window.layers, dimensions:window.dimensions, photos:makeSerializablePhotos(),
+                settings:{ unit:document.getElementById('unitInput').value, width:document.getElementById('canvasWidth').value, globalFontSize:document.getElementById('globalFontSize').value, mainTitle:window.mainTitle, is3D:!!window.is3D },
+                note:document.getElementById('projNote').value, timestamp:Date.now(), category:existingCategory
+            };
+            const size=new Blob([JSON.stringify(data)]).size;
+            if(size>950000 && !confirm(`⚠️ 專案過大 (${Math.round(size/1024)}KB)。\n建議減少照片數量。確定儲存？`)) return;
+            showLoading(true, visibility==='public' ? '儲存並發布公開...' : '儲存私人專案...');
+            try {
+                await setDoc(doc(db,COL_PROJ,docId),data,{merge:true});
+                const cached={docId,id:name,...data}; const idx=cloudProjectsCache.findIndex(x=>x.docId===docId);
+                if(idx>=0) cloudProjectsCache[idx]=cached; else cloudProjectsCache.unshift(cached);
+                cloudProjectsCache.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+                currentLoadedOwnerUid=currentUser.uid; window.trackProjectUse(docId); window.renderQuickProjects(); window.scheduleWorkspaceSave();
+                alert(visibility==='public' ? '儲存成功，已放到公開資料夾 🌐' : '儲存成功（只有你看得到） 🔒');
+            } catch(e) { console.error(e); alert('儲存失敗，請確認 Firestore Rules'); }
+            showLoading(false);
+        };
+
+        window.saveUnitToCloud = async function() {
+            if(!currentUser) return alert('請先登入');
+            const name=document.getElementById('unitName').value.trim(); const sel=window.layers.filter(l=>l.checked!==false);
+            if(!name || sel.length===0) return alert('請輸入名稱並勾選層次');
+            showLoading(true); try { const docId=makeUnitDocId(currentUser.uid,name); await setDoc(doc(db,COL_UNITS,docId), {unitName:name,ownerUid:currentUser.uid,ownerDisplayName:getDisplayName(),layers:sel,timestamp:Date.now()},{merge:true}); alert('已存'); window.refreshUnitList(); } catch(e){console.error(e); alert('模組儲存失敗');} showLoading(false);
+        };
+        window.refreshUnitList = async function() {
+            if(!isFirebaseReady || !currentUser) return;
+            const sel=document.getElementById('savedUnits');
+            try { const qSnap=await getDocs(query(collection(db,COL_UNITS),where('ownerUid','==',currentUser.uid))); sel.innerHTML='<option value="">-- 選擇模組 --</option>'; qSnap.forEach(d=>{const data=d.data(); const opt=document.createElement('option'); opt.value=d.id; opt.textContent=data.unitName||d.id; sel.appendChild(opt);}); } catch(e){console.error(e);}
+        };
+        window.insertUnit = async function() {
+            const docId=document.getElementById('savedUnits').value; if(!docId) return; showLoading(true);
+            try { const d=await getDoc(doc(db,COL_UNITS,docId)); if(d.exists() && d.data().ownerUid===currentUser.uid){ const ul=(d.data().layers||[]).map(l=>({...l,id:Date.now()+Math.random(),checked:true})); window.layers=[...ul,...window.layers]; window.renderList(); window.draw(); } } catch(e){console.error(e);} showLoading(false);
+        };
+        window.deleteUnitFromCloud = async function() { const docId=document.getElementById('savedUnits').value; if(docId && confirm('刪除此模組?')) { await deleteDoc(doc(db,COL_UNITS,docId)); window.refreshUnitList(); } };
         window.exportCurrentToCSV = function() { const sel = window.layers.filter(l => l.checked!==false); if(sel.length===0) return alert("無選取層"); const name = document.getElementById('projName').value || "Stackup"; const unit = document.getElementById('unitInput').value; let csv = "\uFEFF層序,名稱,厚度,單位\n"; let t=0; sel.forEach((l,i) => { t += (parseFloat(l.thickness)||0); csv += `${i+1},${(l.name||"").replace(/,/g," ")},${l.thickness},${unit}\n`; }); csv += `,,${t},${unit},總厚度\n`; const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${name}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); };
         
         window.applyConfig = (c) => { 
@@ -1300,18 +1675,41 @@
 
         // --- V5.2 啟動流程：先還原上次工作區，再同步常用專案 ---
         window.initQuickPanel();
-        const restoredLastWorkspace = window.restoreLastWorkspace();
-        if(!restoredLastWorkspace) {
-            window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
-            window.renderList();
-            window.resizeCanvas();
-        }
+        window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
+        window.renderList(); window.resizeCanvas();
         window.initWorkspacePersistence();
-        if(isFirebaseReady) {
-            window.refreshUnitList();
-            window.refreshCloudList(true);
+
+        if(isFirebaseReady && auth) {
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                cloudProjectsCache = []; currentPreviewId = null; currentLoadedOwnerUid = null;
+                if(user) {
+                    await loadUserProfile(user);
+                    renderCurrentUser();
+                    document.getElementById('authGate').classList.add('hidden');
+                    const restored = window.restoreLastWorkspace();
+                    if(!restored) {
+                        window.layers = [{name:"基板",thickness:100,color:"#90CAF9",checked:true}];
+                        window.dimensions = []; window.photos = []; window.compareLayers = null; window.is3D = false;
+                        document.getElementById('projName').value = '';
+                        document.getElementById('projNote').value = '';
+                        document.getElementById('publishPublic').checked = false;
+                        window.renderList(); window.renderPhotoList(); syncViewButtons(); window.resizeCanvas();
+                    }
+                    await window.refreshCloudList(true);
+                    await window.refreshUnitList();
+                    window.renderQuickProjects();
+                } else {
+                    currentUserProfile = null;
+                    document.getElementById('authGate').classList.remove('hidden');
+                    document.getElementById('currentUserName').textContent = '尚未登入';
+                    document.getElementById('currentUserEmail').textContent = '';
+                    document.getElementById('userAvatar').textContent = 'U';
+                    window.renderQuickProjects();
+                }
+            });
         } else {
-            window.renderQuickProjects();
+            showAuthError('Firebase 初始化失敗，請檢查設定');
         }
 
     </script>
