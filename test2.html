@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>工程疊構圖產生器 (Pro V5.4 - 多人帳號與公開資料夾)</title>
+    <title>工程疊構圖產生器 (Pro V5.4.1 - Admin 管理員版)</title>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <style>
         /* --- 🎨 全域視覺與色彩變數 (Modern Dark Theme) --- */
@@ -354,6 +354,13 @@
         .owner-badge { color: #8CD9E5; font-size: 11px; margin-left: 6px; }
         .public-badge { color: #7EE787; font-size: 10px; border: 1px solid rgba(126,231,135,.35); border-radius: 10px; padding: 1px 6px; }
         .readonly-note { color: #F2B36D; font-size: 11px; margin-top: 7px; line-height: 1.5; }
+        .admin-badge { display:none; margin-top:4px; width:max-content; padding:2px 7px; border-radius:10px; font-size:9px; font-weight:800; letter-spacing:.6px; color:#FFD166; border:1px solid rgba(255,209,102,.45); background:rgba(255,209,102,.08); }
+        .admin-badge.visible { display:inline-flex; }
+        .admin-scope { color:#FFD166 !important; border-color:#806B30 !important; }
+        .admin-scope.active { background:#3A3117 !important; color:#FFD166 !important; border-color:#9D8135 !important; }
+        .admin-tool { display:none; width:auto; margin:0; background:#7C5C13; height:38px; color:#fff4c5; }
+        .admin-tool.visible { display:flex; }
+        .admin-note { color:#FFD166; font-size:11px; margin-top:7px; line-height:1.5; }
 
         /* Loading */
         #loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
@@ -404,12 +411,14 @@
         <div class="scope-switch">
             <button id="scopeMineBtn" class="scope-btn active" onclick="window.setCloudScope('mine')">👤 我的檔案</button>
             <button id="scopePublicBtn" class="scope-btn" onclick="window.setCloudScope('public')">🌐 公開資料夾</button>
+            <button id="scopeAdminBtn" class="scope-btn admin-scope" style="display:none;" onclick="window.setCloudScope('admin')">🛡️ 全部檔案</button>
         </div>
 
         <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items:center; flex-wrap: wrap;">
              <input type="text" id="searchCloud" placeholder="🔍 搜尋專案名稱或備註..." oninput="window.renderCloudList()" style="flex:1; min-width: 240px; height: 38px;">
              <button onclick="window.refreshCloudList()" style="width:auto; margin:0; background:#374151; height: 38px;">🔄 刷新</button>
              <button onclick="window.batchExportExcel()" style="width:auto; margin:0; background:var(--btn-excel); height: 38px;">📋 勾選匯出 Excel</button>
+             <button id="adminClaimLegacyBtn" class="admin-tool" onclick="window.claimLegacyDataToAdmin()">🛡️ 接管 V5.3 舊資料</button>
         </div>
 
         <div class="modal-body">
@@ -457,13 +466,15 @@
     <a href="index.html" class="home-btn">🏠 Home</a>
 
     <div id="sidebar">
-        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4)</span></h2>
+        <h2><span style="font-size:22px;">📚</span> 疊構資料庫 <span style="font-size:12px; color:#666; font-weight:normal;">(Pro V5.4.1 Admin)</span></h2>
 
         <div class="user-card">
             <div class="user-avatar" id="userAvatar">U</div>
             <div class="user-info">
                 <div class="user-name" id="currentUserName">尚未登入</div>
                 <div class="user-email" id="currentUserEmail"></div>
+                <div class="user-email" id="currentUserUid"></div>
+                <div class="admin-badge" id="adminBadge">ADMIN</div>
             </div>
             <button class="logout-btn" onclick="window.logoutAccount()">登出</button>
         </div>
@@ -591,7 +602,7 @@
     <script type="module">
         /*
          * =========================================================
-         * V5.4 CHANGELOG - 多人帳號與公開資料夾
+         * V5.4.1 CHANGELOG - Admin 管理員與舊資料接管
          * =========================================================
          * 1. 新增 Firebase Authentication Email/Password 登入。
          * 2. 建立帳號時可設定 displayName，登入後左側顯示目前使用者。
@@ -603,6 +614,11 @@
          * 8. 專案/模組 Firestore docId 加入 uid，允許不同使用者使用相同名稱。
          * 9. 常用專案只統計自己的專案。
          * 10. 備份/還原改為「只處理目前帳號自己的資料」。
+         * 11. 新增 users/{uid}.role 角色系統；role=admin 才是真正管理員。
+         * 12. Admin 可查看所有人的私人/公開專案，並可刪除任何專案。
+         * 13. Admin 備份改為可完整備份全站 projects + units。
+         * 14. Admin 新增「接管 V5.3 舊資料」：將無 ownerUid 的舊專案/模組搬到目前 Admin 帳號。
+         * 15. 帳號卡顯示 Firebase UID，方便在 Firestore users/{uid} 設定 role=admin。
          *
          * 保留 V5.3：三欄雲端總管、資料夾拖曳、預覽、常用專案、上次工作區、
          * 3D、比對、尺寸線、SEM 圖、Unit Preset、PNG/PPT/CSV、手機版等功能。
@@ -767,7 +783,7 @@
             const sidebar = document.getElementById('sidebar');
             const mainArea = document.getElementById('main-area');
             return {
-                version: 'V5.4',
+                version: 'V5.4.1',
                 savedAt: Date.now(),
                 projectName: document.getElementById('projName')?.value || '',
                 note: document.getElementById('projNote')?.value || '',
@@ -904,6 +920,8 @@
         function makeProjectDocId(uid, name) { return `${uid}__${encodeURIComponent(name)}`; }
         function makeUnitDocId(uid, name) { return `${uid}__${encodeURIComponent(name)}`; }
         function mineProjects() { return cloudProjectsCache.filter(p => currentUser && p.ownerUid === currentUser.uid); }
+        function isAdmin() { return !!currentUser && currentUserProfile?.role === 'admin'; }
+        function canManageProject(p) { return !!p && (isAdmin() || p.ownerUid === currentUser?.uid); }
         function getDisplayName() { return currentUser?.displayName || currentUserProfile?.displayName || currentUser?.email || "User"; }
         function showAuthError(msg="") { const el=document.getElementById('authError'); if(el) el.textContent=msg; }
 
@@ -929,11 +947,11 @@
                 const cred = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(cred.user, { displayName });
                 await setDoc(doc(db, COL_USERS, cred.user.uid), {
-                    displayName, email, createdAt: Date.now(), updatedAt: Date.now()
+                    displayName, email, role:'user', createdAt: Date.now(), updatedAt: Date.now()
                 }, { merge:true });
                 await cred.user.reload();
                 currentUser = cred.user;
-                currentUserProfile = { displayName, email };
+                currentUserProfile = { displayName, email, role:'user' };
                 renderCurrentUser();
                 showAuthError('');
             } catch(e) {
@@ -954,11 +972,24 @@
         async function loadUserProfile(user) {
             currentUserProfile = null;
             try {
-                const snap = await getDoc(doc(db, COL_USERS, user.uid));
-                if(snap.exists()) currentUserProfile = snap.data();
-                else await setDoc(doc(db, COL_USERS, user.uid), {
-                    displayName: user.displayName || user.email || 'User', email: user.email || '', createdAt: Date.now(), updatedAt: Date.now()
-                }, { merge:true });
+                const ref = doc(db, COL_USERS, user.uid);
+                const snap = await getDoc(ref);
+                if(snap.exists()) {
+                    currentUserProfile = snap.data();
+                    // 舊帳號若尚未有 role，只補成一般 user；Admin 必須由 Firestore 明確設為 admin。
+                    if(!currentUserProfile.role) {
+                        try {
+                            await setDoc(ref, { role:'user', updatedAt:Date.now() }, { merge:true });
+                            currentUserProfile.role = 'user';
+                        } catch(roleErr) { console.warn('補 role=user 失敗', roleErr); }
+                    }
+                } else {
+                    currentUserProfile = {
+                        displayName: user.displayName || user.email || 'User',
+                        email: user.email || '', role:'user', createdAt: Date.now(), updatedAt: Date.now()
+                    };
+                    await setDoc(ref, currentUserProfile, { merge:true });
+                }
             } catch(e) { console.warn('讀取 user profile 失敗', e); }
         }
 
@@ -966,10 +997,19 @@
             const name = getDisplayName();
             const nameEl = document.getElementById('currentUserName');
             const emailEl = document.getElementById('currentUserEmail');
+            const uidEl = document.getElementById('currentUserUid');
             const avatar = document.getElementById('userAvatar');
+            const badge = document.getElementById('adminBadge');
+            const adminScopeBtn = document.getElementById('scopeAdminBtn');
+            const claimBtn = document.getElementById('adminClaimLegacyBtn');
             if(nameEl) nameEl.textContent = name;
             if(emailEl) emailEl.textContent = currentUser?.email || '';
+            if(uidEl) uidEl.textContent = currentUser ? `UID: ${currentUser.uid}` : '';
             if(avatar) avatar.textContent = (name || 'U').trim().charAt(0).toUpperCase() || 'U';
+            if(badge) badge.classList.toggle('visible', isAdmin());
+            if(adminScopeBtn) adminScopeBtn.style.display = isAdmin() ? 'flex' : 'none';
+            if(claimBtn) claimBtn.classList.toggle('visible', isAdmin());
+            if(!isAdmin() && activeCloudScope === 'admin') activeCloudScope = 'mine';
         }
 
         const canvas = document.getElementById('stackCanvas'); const ctx = canvas.getContext('2d'); const listEl = document.getElementById('layer-list');
@@ -1136,10 +1176,12 @@
         window.closeCloudManager = function() { document.getElementById('mgrModal').style.display = 'none'; document.getElementById('mgrBackdrop').style.display = 'none'; };
 
         window.setCloudScope = function(scope) {
-            activeCloudScope = scope === 'public' ? 'public' : 'mine';
+            if(scope === 'admin' && isAdmin()) activeCloudScope = 'admin';
+            else activeCloudScope = scope === 'public' ? 'public' : 'mine';
             currentPreviewId = null;
             document.getElementById('scopeMineBtn')?.classList.toggle('active', activeCloudScope === 'mine');
             document.getElementById('scopePublicBtn')?.classList.toggle('active', activeCloudScope === 'public');
+            document.getElementById('scopeAdminBtn')?.classList.toggle('active', activeCloudScope === 'admin');
             document.getElementById('preview-details').innerHTML = '<div style="text-align:center; color:#666; margin-top:30px;">請從中間選擇專案以檢視詳細資訊</div>';
             document.getElementById('btn-load-preview').style.display='none';
             document.getElementById('btn-del-preview').style.display='none';
@@ -1148,7 +1190,7 @@
         };
         
         window.createNewFolder = function() {
-            if(activeCloudScope === 'public') return alert('公開資料夾是所有人的共用區，不需要另外建立私人分類。');
+            if(activeCloudScope !== 'mine') return alert('只有「我的檔案」可以建立私人分類。');
             const newCat = prompt("請輸入新的分頁名稱：");
             if(newCat && newCat.trim() !== "") {
                 const catName = newCat.trim();
@@ -1158,7 +1200,7 @@
         };
         
         window.deleteCurrentFolder = function() {
-            if(activeCloudScope === 'public') return alert('公開資料夾不可刪除。');
+            if(activeCloudScope !== 'mine') return alert('只有「我的檔案」可以刪除私人分類。');
             if (activeCategory === "未分類") return alert("「未分類」為系統預設，無法刪除！");
             const count = mineProjects().filter(p => (p.category || '未分類') === activeCategory).length;
             if (count > 0) return alert(`無法刪除！此分頁內還有 ${count} 個專案，請先將它們移至其他分頁或刪除。`);
@@ -1181,10 +1223,6 @@
                 customFolders = savedFolders ? JSON.parse(savedFolders) : ["未分類"];
                 if(!customFolders.includes('未分類')) customFolders.unshift('未分類');
 
-                const ownQuery = query(collection(db, COL_PROJ), where('ownerUid', '==', currentUser.uid));
-                const publicQuery = query(collection(db, COL_PROJ), where('visibility', '==', 'public'));
-                const [ownSnap, publicSnap] = await Promise.all([getDocs(ownQuery), getDocs(publicQuery)]);
-
                 const map = new Map();
                 const ingest = (snap) => snap.forEach(docSnap => {
                     const data = docSnap.data();
@@ -1196,7 +1234,18 @@
                     }
                     map.set(docSnap.id, item);
                 });
-                ingest(ownSnap); ingest(publicSnap);
+
+                if(isAdmin()) {
+                    // Admin 的 Security Rules 允許整個 projects collection，因此可看到私人檔與舊 V5.3 無 ownerUid 資料。
+                    const allSnap = await getDocs(collection(db, COL_PROJ));
+                    ingest(allSnap);
+                } else {
+                    // 一般使用者查詢必須與 Rules 條件一致，Rules 不是事後 filter。
+                    const ownQuery = query(collection(db, COL_PROJ), where('ownerUid', '==', currentUser.uid));
+                    const publicQuery = query(collection(db, COL_PROJ), where('visibility', '==', 'public'));
+                    const [ownSnap, publicSnap] = await Promise.all([getDocs(ownQuery), getDocs(publicQuery)]);
+                    ingest(ownSnap); ingest(publicSnap);
+                }
                 cloudProjectsCache = [...map.values()].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
 
                 localStorage.setItem(folderKey, JSON.stringify(customFolders));
@@ -1206,7 +1255,7 @@
             } catch(e) {
                 console.error('讀取專案失敗', e);
                 window.renderQuickProjects();
-                if(!silent) alert('讀取專案失敗，請確認 Firestore Rules 已更新為 V5.4 版本。');
+                if(!silent) alert('讀取專案失敗，請確認 Firestore Rules 已更新為 V5.4.1 Admin 版本。');
             }
             if(!silent) showLoading(false);
         };
@@ -1218,15 +1267,17 @@
             const search = (document.getElementById('searchCloud').value || '').toLowerCase();
             const folderLabel = document.getElementById('currentFolderLabel');
             const isPublic = activeCloudScope === 'public';
+            const isAdminScope = activeCloudScope === 'admin' && isAdmin();
 
-            document.getElementById('scopeMineBtn')?.classList.toggle('active', !isPublic);
+            document.getElementById('scopeMineBtn')?.classList.toggle('active', !isPublic && !isAdminScope);
             document.getElementById('scopePublicBtn')?.classList.toggle('active', isPublic);
-            if(folderPane) folderPane.style.opacity = isPublic ? '.38' : '1';
-            if(folderPane) folderPane.style.pointerEvents = isPublic ? 'none' : 'auto';
+            document.getElementById('scopeAdminBtn')?.classList.toggle('active', isAdminScope);
+            if(folderPane) folderPane.style.opacity = (isPublic || isAdminScope) ? '.38' : '1';
+            if(folderPane) folderPane.style.pointerEvents = (isPublic || isAdminScope) ? 'none' : 'auto';
 
             if (!customFolders.includes(activeCategory)) activeCategory = '未分類';
             tabsEl.innerHTML = '';
-            if(folderLabel) folderLabel.textContent = isPublic ? '🌐 全員公開專案' : (search ? '🔎 搜尋我的資料夾' : `📂 ${activeCategory}`);
+            if(folderLabel) folderLabel.textContent = isAdminScope ? '🛡️ 全站專案' : (isPublic ? '🌐 全員公開專案' : (search ? '🔎 搜尋我的資料夾' : `📂 ${activeCategory}`));
 
             customFolders.forEach(cat => {
                 const count = mineProjects().filter(p => (p.category || '未分類') === cat).length;
@@ -1273,22 +1324,22 @@
             });
 
             listEl.innerHTML = '';
-            const source = isPublic ? cloudProjectsCache.filter(p => p.visibility === 'public') : mineProjects();
+            const source = isAdminScope ? cloudProjectsCache : (isPublic ? cloudProjectsCache.filter(p => p.visibility === 'public') : mineProjects());
             source.forEach(p => {
                 const pCat = p.category || '未分類';
                 const ownerName = p.ownerDisplayName || 'Unknown';
                 if(search) {
                     const hay = `${p.id} ${p.note || ''} ${ownerName}`.toLowerCase();
                     if(!hay.includes(search)) return;
-                } else if(!isPublic && pCat !== activeCategory) return;
+                } else if(!isPublic && !isAdminScope && pCat !== activeCategory) return;
 
                 const note = p.note || '無備註';
                 const date = new Date(p.timestamp || 0).toLocaleDateString();
                 const li = document.createElement('li');
                 li.className = `cloud-item ${p.docId === currentPreviewId ? 'selected' : ''}`;
-                li.draggable = !isPublic || p.ownerUid === currentUser.uid;
+                li.draggable = activeCloudScope === 'mine' && p.ownerUid === currentUser.uid;
                 li.ondragstart = (e) => {
-                    if(p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
+                    if(activeCloudScope !== 'mine' || p.ownerUid !== currentUser.uid) { e.preventDefault(); return; }
                     draggedCloudId = p.docId; draggedTabCat = null; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
                 };
                 li.ondragend = (e) => { e.currentTarget.classList.remove('dragging'); draggedCloudId = null; };
@@ -1299,7 +1350,7 @@
                         <div class="cloud-name">${escapeHtml(p.id)} ${p.visibility==='public' ? '<span class="public-badge">PUBLIC</span>' : ''}</div>
                         <div class="cloud-meta">
                             <span>${date}</span>
-                            <span>${isPublic ? `<span class="owner-badge">👤 ${escapeHtml(ownerName)}</span>` : `<span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+escapeHtml(pCat)+']' : ''}</span>`}</span>
+                            <span>${(isPublic || isAdminScope) ? `<span class="owner-badge">👤 ${escapeHtml(ownerName)}${!p.ownerUid ? ' · LEGACY' : ''}</span>` : `<span style="color:var(--accent-cyan); font-weight:bold; font-size:11px;">${search ? '['+escapeHtml(pCat)+']' : ''}</span>`}</span>
                         </div>
                         <div class="cloud-note">${escapeHtml(note)}</div>
                     </div>`;
@@ -1334,23 +1385,25 @@
             const detailEl = document.getElementById('preview-details');
             if(!p) return;
             const mine = p.ownerUid === currentUser.uid;
+            const adminManage = isAdmin();
+            const legacy = !p.ownerUid;
             detailEl.innerHTML = `
                 <div style="background:#1C1E22; padding:12px; border-radius:8px; border:1px solid #333;">
                     <div style="color:var(--accent-cyan); font-weight:bold; font-size:15px; margin-bottom:5px;">${escapeHtml(p.id)}</div>
-                    <div style="color:#8CD9E5; font-size:12px; margin-bottom:8px;">👤 建立者：${escapeHtml(p.ownerDisplayName || 'Unknown')} ${p.visibility==='public' ? '・🌐 公開' : '・🔒 私人'}</div>
+                    <div style="color:#8CD9E5; font-size:12px; margin-bottom:8px;">👤 建立者：${legacy ? 'V5.3 Legacy（尚未歸屬）' : escapeHtml(p.ownerDisplayName || 'Unknown')} ${p.visibility==='public' ? '・🌐 公開' : '・🔒 私人'}</div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:10px; color:#aaa;">
                         <div>層數: <span style="color:#fff;">${p.layers?.length || 0}</span></div>
                         <div>附圖: <span style="color:#fff;">${p.photos?.length || 0}</span></div>
                     </div>
                     <div style="font-size:11px; color:#666; margin-bottom:8px;">上次修改：${new Date(p.timestamp || 0).toLocaleString()}</div>
                     <div style="color:var(--text-note); font-family:monospace; white-space:pre-wrap; border-top:1px dashed #444; padding-top:8px;">${escapeHtml(p.note || '無備註')}</div>
-                    ${mine ? '' : '<div class="readonly-note">此專案屬於其他成員。你可以載入查看；按「儲存專案」時會存成你的版本，不會覆蓋原作者。</div>'}
+                    ${adminManage && !mine ? '<div class="admin-note">🛡️ Admin 模式：可查看與刪除此專案。載入後一般「儲存專案」仍會另存成 Neil 自己的版本。</div>' : (mine ? '' : '<div class="readonly-note">此專案屬於其他成員。你可以載入查看；按「儲存專案」時會存成你的版本，不會覆蓋原作者。</div>')}
                 </div>`;
             document.getElementById('preview-category-box').style.display = mine && activeCloudScope === 'mine' ? 'block' : 'none';
             if(mine) document.getElementById('preview-category-select').value = p.category || '未分類';
             window.drawPreviewCanvas(p.layers);
             document.getElementById('btn-load-preview').style.display = 'flex';
-            document.getElementById('btn-del-preview').style.display = mine ? 'flex' : 'none';
+            document.getElementById('btn-del-preview').style.display = canManageProject(p) ? 'flex' : 'none';
         };
 
         window.drawPreviewCanvas = function(layers) { const cvs = document.getElementById('previewCanvas'); const ctx = cvs.getContext('2d'); cvs.width = 300; cvs.height = 200; ctx.fillStyle = "#fff"; ctx.fillRect(0,0,300,200); if(!layers || layers.length === 0) return; const totalThick = layers.reduce((s,l) => s+(parseFloat(l.thickness)||0),0) || 1; const scale = 160 / totalThick; const cx = 150; const rw = 100; let cy = 20; layers.forEach(l => { const h = (parseFloat(l.thickness)||0) * scale; ctx.fillStyle = l.color || "#ccc"; ctx.fillRect(cx - rw/2, cy, rw, h); ctx.strokeStyle = "#333"; ctx.strokeRect(cx - rw/2, cy, rw, h); cy += h; }); };
@@ -1370,14 +1423,14 @@
                 if(p.ownerUid === currentUser.uid) window.trackProjectUse(p.docId || p.id);
                 window.scheduleWorkspaceSave();
                 window.closeCloudManager();
-                if(p.ownerUid !== currentUser.uid) alert(`已載入 ${p.ownerDisplayName || '其他成員'} 的公開專案。\n若按「儲存專案」，會建立成你自己的檔案。`);
+                if(p.ownerUid !== currentUser.uid) alert(isAdmin() ? `已用 Admin 權限載入 ${p.ownerDisplayName || 'Legacy/其他成員'} 的專案。\n一般「儲存專案」會另存成 Neil 自己的檔案，不會直接覆寫原檔。` : `已載入 ${p.ownerDisplayName || '其他成員'} 的公開專案。\n若按「儲存專案」，會建立成你自己的檔案。`);
             }
         };
 
         window.deleteSelectedCloud = async function() {
             if(!currentPreviewId) return;
             const p = cloudProjectsCache.find(x => x.docId === currentPreviewId);
-            if(!p || p.ownerUid !== currentUser.uid) return alert('只能刪除自己的專案。');
+            if(!p || !canManageProject(p)) return alert('你沒有刪除此專案的權限。');
             if(!confirm(`確定要永久刪除專案 [${p.id}] 嗎?`)) return;
             showLoading(true);
             try {
@@ -1387,6 +1440,93 @@
                 currentPreviewId = null;
                 await window.refreshCloudList(true);
             } catch(e) { console.error(e); alert('刪除失敗'); }
+            showLoading(false);
+        };
+
+        // --- V5.4.1 Admin：接管舊 V5.3 無 ownerUid 資料 ---
+        window.claimLegacyDataToAdmin = async function() {
+            if(!isAdmin()) return alert('只有 Admin 可以執行舊資料接管。');
+            if(!confirm('將把所有「沒有 ownerUid」的 V5.3 舊專案與模組搬到目前 Admin 帳號（' + getDisplayName() + '）。\n\n原資料會改成新的 UID 專屬 docId；若名稱衝突，會自動加上 (Legacy)。\n確定執行？')) return;
+            showLoading(true, '接管 V5.3 舊資料中...');
+            try {
+                const [projSnap, unitSnap] = await Promise.all([
+                    getDocs(collection(db, COL_PROJ)),
+                    getDocs(collection(db, COL_UNITS))
+                ]);
+
+                const usedProjIds = new Set(); projSnap.forEach(d => usedProjIds.add(d.id));
+                const usedUnitIds = new Set(); unitSnap.forEach(d => usedUnitIds.add(d.id));
+                const legacyProjects = []; projSnap.forEach(d => { if(!d.data().ownerUid) legacyProjects.push(d); });
+                const legacyUnits = []; unitSnap.forEach(d => { if(!d.data().ownerUid) legacyUnits.push(d); });
+
+                if(legacyProjects.length === 0 && legacyUnits.length === 0) {
+                    showLoading(false); return alert('沒有找到需要接管的 V5.3 舊資料。');
+                }
+
+                let batch = writeBatch(db), opCount = 0, movedProjects = 0, movedUnits = 0;
+                const flush = async () => { if(opCount > 0) { await batch.commit(); batch = writeBatch(db); opCount = 0; } };
+                const ensureCapacity = async (needed=2) => { if(opCount + needed > 400) await flush(); };
+
+                for(const oldDoc of legacyProjects) {
+                    const data = oldDoc.data();
+                    const baseName = data.projectName || oldDoc.id || `LegacyProject_${movedProjects+1}`;
+                    let name = baseName, n = 2;
+                    let targetId = makeProjectDocId(currentUser.uid, name);
+                    while(usedProjIds.has(targetId) && targetId !== oldDoc.id) {
+                        name = `${baseName} (Legacy${n > 2 ? ' '+n : ''})`; n++;
+                        targetId = makeProjectDocId(currentUser.uid, name);
+                    }
+                    usedProjIds.add(targetId);
+                    const migrated = {
+                        ...data,
+                        projectName:name,
+                        ownerUid:currentUser.uid,
+                        ownerDisplayName:getDisplayName(),
+                        visibility:data.visibility === 'public' ? 'public' : 'private',
+                        timestamp:data.timestamp || Date.now(),
+                        migratedFromLegacy:true,
+                        migratedAt:Date.now()
+                    };
+                    await ensureCapacity(targetId === oldDoc.id ? 1 : 2);
+                    batch.set(doc(db, COL_PROJ, targetId), migrated, {merge:true}); opCount++;
+                    if(targetId !== oldDoc.id) { batch.delete(doc(db, COL_PROJ, oldDoc.id)); opCount++; }
+                    movedProjects++;
+                }
+
+                for(const oldDoc of legacyUnits) {
+                    const data = oldDoc.data();
+                    const baseName = data.unitName || oldDoc.id || `LegacyUnit_${movedUnits+1}`;
+                    let name = baseName, n = 2;
+                    let targetId = makeUnitDocId(currentUser.uid, name);
+                    while(usedUnitIds.has(targetId) && targetId !== oldDoc.id) {
+                        name = `${baseName} (Legacy${n > 2 ? ' '+n : ''})`; n++;
+                        targetId = makeUnitDocId(currentUser.uid, name);
+                    }
+                    usedUnitIds.add(targetId);
+                    const migrated = {
+                        ...data,
+                        unitName:name,
+                        ownerUid:currentUser.uid,
+                        ownerDisplayName:getDisplayName(),
+                        timestamp:data.timestamp || Date.now(),
+                        migratedFromLegacy:true,
+                        migratedAt:Date.now()
+                    };
+                    await ensureCapacity(targetId === oldDoc.id ? 1 : 2);
+                    batch.set(doc(db, COL_UNITS, targetId), migrated, {merge:true}); opCount++;
+                    if(targetId !== oldDoc.id) { batch.delete(doc(db, COL_UNITS, oldDoc.id)); opCount++; }
+                    movedUnits++;
+                }
+                await flush();
+                activeCloudScope = 'mine';
+                await window.refreshCloudList(true);
+                await window.refreshUnitList();
+                window.setCloudScope('mine');
+                alert(`接管完成：\n專案 ${movedProjects} 筆\n模組 ${movedUnits} 筆\n\n現在都歸 ${getDisplayName()} 帳號所有。`);
+            } catch(e) {
+                console.error('舊資料接管失敗', e);
+                alert('接管失敗：請確認 Neil 已設定 role=admin，而且已發布 V5.4.1 Security Rules。');
+            }
             showLoading(false);
         };
 
@@ -1409,14 +1549,18 @@
         // --- 備份/儲存 ---
         window.backupAllCloudData = async function() {
             if(!isFirebaseReady || !currentUser) return alert('請先登入');
-            showLoading(true, '備份目前帳號資料...');
+            showLoading(true, isAdmin() ? 'Admin 全站備份中...' : '備份目前帳號資料...');
             try {
-                const projSnap = await getDocs(query(collection(db, COL_PROJ), where('ownerUid','==',currentUser.uid)));
+                const projSnap = isAdmin()
+                    ? await getDocs(collection(db, COL_PROJ))
+                    : await getDocs(query(collection(db, COL_PROJ), where('ownerUid','==',currentUser.uid)));
                 const projects = {}; projSnap.forEach(d => projects[d.id] = d.data());
-                const unitSnap = await getDocs(query(collection(db, COL_UNITS), where('ownerUid','==',currentUser.uid)));
+                const unitSnap = isAdmin()
+                    ? await getDocs(collection(db, COL_UNITS))
+                    : await getDocs(query(collection(db, COL_UNITS), where('ownerUid','==',currentUser.uid)));
                 const units = {}; unitSnap.forEach(d => units[d.id] = d.data());
-                const str = JSON.stringify({ version:'V5.4', ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now(), projects, units, customFolders }, null, 2);
-                const blob = new Blob([str], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`Stackup_${getDisplayName()}_${new Date().toISOString().slice(0,10)}.json`; a.click();
+                const str = JSON.stringify({ version:'V5.4.1', backupScope:isAdmin()?'ALL':'OWN', ownerUid:currentUser.uid, ownerDisplayName:getDisplayName(), timestamp:Date.now(), projects, units, customFolders }, null, 2);
+                const blob = new Blob([str], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`Stackup_${isAdmin()?'ADMIN_ALL':getDisplayName()}_${new Date().toISOString().slice(0,10)}.json`; a.click();
             } catch(e) { console.error(e); alert('備份失敗'); }
             showLoading(false);
         };
@@ -1704,6 +1848,10 @@
                     document.getElementById('authGate').classList.remove('hidden');
                     document.getElementById('currentUserName').textContent = '尚未登入';
                     document.getElementById('currentUserEmail').textContent = '';
+                    document.getElementById('currentUserUid').textContent = '';
+                    document.getElementById('adminBadge')?.classList.remove('visible');
+                    document.getElementById('scopeAdminBtn').style.display = 'none';
+                    document.getElementById('adminClaimLegacyBtn')?.classList.remove('visible');
                     document.getElementById('userAvatar').textContent = 'U';
                     window.renderQuickProjects();
                 }
