@@ -15,6 +15,8 @@ on:
       - 'scripts/rotation_prices.py'
       - 'scripts/rotation_briefing.py'
       - 'scripts/rotation_sync.py'
+      - 'scripts/rotation_universe.py'
+      - 'scripts/rotation_etf.py'
       - 'scripts/update_rotation_data.py'
       - 'rotation/universe.json'
       - 'rotation/catalysts.json'
@@ -44,6 +46,8 @@ jobs:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: rotation/requirements.txt
+      - name: Start from latest observations
+        run: git pull --ff-only origin main
       - name: Install dependencies
         run: pip install -r rotation/requirements.txt
       - name: Verify signal calculations
@@ -52,6 +56,10 @@ jobs:
         id: calculate
         continue-on-error: true
         run: python scripts/update_rotation_data.py
+      - name: Observe active ETF risks
+        id: etf
+        continue-on-error: true
+        run: python scripts/rotation_etf.py
       - name: Save results and request Pages refresh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -59,7 +67,8 @@ jobs:
           test -f rotation/data.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/data.json rotation/institutional.json rotation/observations.json rotation/official_closes.json
+          git add rotation/data.json rotation/institutional.json rotation/observations.json rotation/official_closes.json rotation/top100.json rotation/universe_current.json rotation/active_etf.json
+          if test -f rotation/etf_history.json; then git add rotation/etf_history.json; fi
           if ! git diff --cached --quiet; then
             git commit -m 'Update stock rotation observations'
             # Another market-data workflow may commit while quotes are downloading.
@@ -75,7 +84,7 @@ jobs:
           # Bot commits alone may not trigger branch-based Pages rebuilds.
           gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
       - name: Report data-source failure
-        if: steps.calculate.outcome == 'failure'
+        if: steps.calculate.outcome == 'failure' || steps.etf.outcome == 'failure'
         run: |
           echo '行情更新失敗；已保留舊值並發布資料狀態。請檢查更新紀錄。'
           exit 1
