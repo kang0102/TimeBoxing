@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12344a">
+  <title>股票輪動雷達｜Neil's 工具箱</title>
+  <link rel="stylesheet" href="styles/rotation.css">
+  <script src="scripts/rotation.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a href="index.html">← Neil's 工具箱</a><span>QUANT / 01</span></header>
+  <main>
+    <section class="heading">
+      <div><p class="eyebrow">MARKET ROTATION</p><h1>股票輪動雷達</h1><p class="intro">先看族群，再找正在轉強的個股。</p></div>
+      <div class="update"><p id="updated">正在讀取雲端資料…</p><button id="refresh" type="button">重新讀取</button></div>
+    </section>
+    <div class="notice" id="notice" role="status" aria-live="polite">載入完成後顯示各市場的行情日期。</div>
+    <section class="controls" aria-label="觀察條件">
+      <div class="tabs" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
+      <label>族群<select id="group"><option value="all">全部族群</option></select></label>
+      <label>訊號<select id="stage"><option value="all">全部訊號</option><option value="breakout">放量突破</option><option value="improving">動能轉強</option><option value="laggard">補漲觀察</option><option value="extended">漲幅偏熱</option><option value="weakening">轉弱觀察</option><option value="watch">等待訊號</option></select></label>
+      <label class="search">搜尋<input id="search" type="search" placeholder="股票代號或名稱" autocomplete="off"></label>
+    </section>
+    <section class="stats" aria-label="市場摘要" id="stats"></section>
+    <section class="section"><div class="section-title"><h2>族群強弱</h2><span>等權觀察清單 · 點選族群篩選</span></div><div id="groups" class="groups"></div></section>
+    <section class="section"><div class="section-title"><h2>量價階段</h2><span>當前狀態分布，不代表固定輪動順序</span></div><div id="stages" class="stages"></div></section>
+    <section class="section"><div class="section-title"><h2>個股觀察</h2><span id="result-count"></span></div>
+      <div class="table-wrap"><table><thead><tr><th>股票／族群</th><th>收盤／日漲跌</th><th><button id="sort-score" type="button">動能分數 ↓</button></th><th>相對大盤 5 日</th><th>量比</th><th>訊號</th><th>明細</th></tr></thead><tbody id="stocks"></tbody></table></div>
+      <p id="empty" class="empty" hidden>目前沒有符合條件的股票，試著調整族群、訊號或搜尋文字。</p>
+    </section>
+    <section class="section"><div class="section-title"><h2>催化事件與輪動路徑</h2><span>僅追蹤附來源事件 · 最多 10 個交易日</span></div><div id="events" class="event-list"></div></section>
+    <details class="method"><summary>分數、訊號與資料怎麼看？</summary>
+      <p><strong>動能分數為 0–100 分的規則指標，不是行情已反映的百分比，也不是勝率。</strong>高分表示近期量價較強，並不表示越適合買進。</p>
+      <p>35 分：20 日個股／大盤價格比的變化，−10% 到 +10% 線性換算；20 分：最近 5 日相對報酬減去前一段 5 日相對報酬，−5 到 +5 個百分點線性換算；20 分：收盤高於 MA20、MA20 高於 MA60 各 10 分；15 分：當日量／前 20 日均量，0.5 到 2 倍線性換算；10 分：收盤／前 20 日最高價，0.9 到 1 線性換算。各項分數皆設上下限。</p>
+      <ul><li><strong>放量突破：</strong>收盤突破前 20 日高點、量比 ≥ 1.5、5 日相對大盤轉正。</li><li><strong>動能轉強：</strong>收盤高於 MA20、5 日相對大盤為正，且相對動能加速。</li><li><strong>補漲觀察：</strong>同市場族群至少 2 檔有效資料、至少一半站上 MA20、族群平均相對大盤為正；個股 20 日漲幅落後族群平均至少 5 個百分點，同時站上 MA20、5 日相對大盤為正且未過熱。</li><li><strong>漲幅偏熱：</strong>20 日漲幅 > 25% 或收盤高於 MA20 超過 15%。</li><li><strong>轉弱觀察：</strong>收盤低於 MA20 且 5 日相對大盤 ≤ 0。這些是觀察條件，不是交易指令。</li></ul>
+      <p>台股基準：加權指數；美股基準：S&amp;P 500。使用 Yahoo Finance 還原日線，拆股與配息會影響歷史值；至少需 65 個共同交易日。台北時間 14:00、美東時間 16:30 前不納入當日 K 棒。休市日沿用最近完整交易日，資料日期永遠另外顯示。</p>
+      <p>族群按觀察名單等權計算，有效資料不足 60% 時不評分。單一美股代表只代表該股。此頁第一版涵蓋 8 個主題，並非全市場。族群歸類只用於研究，不代表任何公司已確認接單或供應關係。</p>
+      <p>雲端每日安排兩次更新：台北時間 15:43 與 06:43。GitHub 排程可能延遲；「重新讀取」只抓取最新結果，不會執行 Python。催化事件需人工查證並附來源；尚未連接自動新聞掃描。資料來源失敗時會標明舊資料並排除訊號。</p>
+    </details>
+    <footer>Neil's 工具箱 · 日線研究看板 · 不含帳戶、持倉或下單功能</footer>
+  </main>
+  <dialog id="detail"><button type="button" id="close-detail" class="close" aria-label="關閉明細">×</button><div id="detail-content"></div></dialog>
+</body>
+</html>
