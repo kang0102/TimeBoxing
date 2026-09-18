@@ -20,8 +20,9 @@ def completed_bars(frame, market, now=None):
         data.index = data.index.tz_convert(zone).tz_localize(None)
     data.index = data.index.normalize()
     data = data.loc[~data.index.duplicated(keep="last")].sort_index()
-    data = data.loc[data.index.date <= end, ["Close", "High", "Volume"]]
-    data = data.replace([float("inf"), -float("inf")], float("nan")).dropna()
+    columns = ["Close", "High", "Volume"] + (["Low"] if "Low" in data else [])
+    data = data.loc[data.index.date <= end, columns]
+    data = data.replace([float("inf"), -float("inf")], float("nan")).dropna(subset=["Close", "High", "Volume"])
     return data.loc[(data.Close > 0) & (data.High > 0) & (data.Volume >= 0)]
 
 
