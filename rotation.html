@@ -20,8 +20,10 @@
       <div class="tabs" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
       <label>族群<select id="group"><option value="all">全部族群</option></select></label>
       <label>訊號<select id="stage"><option value="all">全部訊號</option><option value="breakout">放量突破</option><option value="improving">動能轉強</option><option value="laggard_watch">相對落後</option><option value="laggard">補漲轉強</option><option value="extended">漲幅偏熱</option><option value="weakening">轉弱觀察</option><option value="watch">等待訊號</option></select></label>
+      <label>Smart Money<select id="money"><option value="all">全部資金狀態</option><option value="buying">偏買／買壓</option><option value="selling">偏賣／賣壓</option><option value="mixed">方向分歧／中性</option><option value="unavailable">資料不足</option></select></label>
       <label class="search">搜尋<input id="search" type="search" placeholder="股票代號或名稱" autocomplete="off"></label>
     </section>
+    <p id="money-description" class="money-note">Smart Money 載入中…</p>
     <section class="section research-section"><div class="section-title"><h2>研究主線與下一棒</h2><span>研究角色保留原日期 · 最新條件由行情重算</span></div><div id="research"></div></section>
     <section class="section"><div class="section-title"><h2>已核實催化事件</h2><span>展開查看來源與關係邊界</span></div><div id="events" class="event-list"></div></section>
     <div class="section-title quant-title"><h2>量價篩選</h2><span>上方族群、訊號與搜尋條件套用於下方個股清單</span></div>
@@ -29,7 +31,7 @@
     <section class="section"><div class="section-title"><h2>族群強弱</h2><span>等權觀察清單 · 點選族群篩選</span></div><div id="groups" class="groups"></div></section>
     <section class="section"><div class="section-title"><h2>量價階段</h2><span>當前狀態分布，不代表固定輪動順序</span></div><div id="stages" class="stages"></div></section>
     <section class="section"><div class="section-title"><h2>個股觀察</h2><span id="result-count"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>股票／族群</th><th>收盤／日漲跌</th><th><button id="sort-score" type="button">動能分數 ↓</button></th><th>相對大盤 5 日</th><th>量比</th><th>訊號</th><th>明細</th></tr></thead><tbody id="stocks"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>股票／族群</th><th>收盤／日漲跌</th><th><button id="sort-score" type="button">動能分數 ↓</button></th><th>相對大盤 5 日</th><th>量比</th><th>訊號</th><th>Smart Money</th><th>明細</th></tr></thead><tbody id="stocks"></tbody></table></div>
       <p id="empty" class="empty" hidden>目前沒有符合條件的股票，試著調整族群、訊號或搜尋文字。</p>
     </section>
     <details class="method"><summary>分數、訊號與資料怎麼看？</summary>
@@ -39,7 +41,10 @@
       <p>台股基準：加權指數；美股基準：S&amp;P 500。使用 Yahoo Finance 還原日線，拆股與配息會影響歷史值；至少需 65 個共同交易日。台北時間 14:00、美東時間 16:30 前不納入當日 K 棒。休市日沿用最近完整交易日，資料日期永遠另外顯示。</p>
       <p>族群按觀察名單等權計算，有效資料不足 60% 時不評分。單一美股代表只代表該股。觀察範圍包含封測、光通訊等 10 個主題，並非全市場。族群歸類只用於研究，不代表任何公司已確認接單或供應關係。</p>
       <p>研究主線的第一、二、三波是報告中的角色分類；它與當天量價狀態是不同欄位。優先序保留報告日期，不自動冒充今日推薦。主線最多追蹤 10 個市場交易日，期滿停止條件判定並保留研究紀錄。具體門檻為本版可驗證的初始規則，尚未回測。</p>
-      <p>雲端每日安排兩次更新：台北時間 15:43 與 06:43。GitHub 排程可能延遲；「重新讀取」只抓取最新結果，不會執行 Python。催化事件需人工查證並附來源；尚未連接自動新聞掃描。資料來源失敗時會標明舊資料並排除訊號。</p>
+      <p><strong>Smart Money／台股法人籌碼：</strong>使用證交所、櫃買中心公告股數。外資不含外資自營商；判斷方向使用外資＋投信，自營商（含避險）另列。最近 5 個交易日有至少 3 日淨買超且合計淨買超，才標為「法人偏買」；賣超相反，其餘為方向分歧。連買天數只檢查此 5 日窗口，5 日表示至少 5 日。缺日、行情日期不符或舊資料不作判斷。張數以 1,000 股換算。不同市場的成交統計範圍有差異，未將買賣超除以成交量，也不跨股比較張數大小。</p>
+      <p><strong>美股 CMF20：</strong>最近 20 日 Σ[((2×收盤−最高−最低)÷(最高−最低))×成交量] ÷ Σ成交量，最高＝最低時該日乘數為 0。CMF ≥ 0.05 標示量價買壓，≤ −0.05 標示量價賣壓，其餘中性。這是量價推估，不能辨識機構身分，也不是實際資金流金額。美股尚未串接 13F／機構持股資料。</p>
+      <p>Smart Money 是獨立評估欄位，不改寫原報告順序或原動能分數。「價格轉強」僅指站上 MA20 且 5 日相對大盤為正；與法人偏買並列也不是買進指令。上述門檻為未回測的初始觀察規則。</p>
+      <p>雲端每日安排更新：台北時間 15:43、20:43 與 06:43（依各市場工作日），晚間補抓法人資料。GitHub 排程可能延遲；「重新讀取」只抓取最新結果，不會執行 Python。催化事件需人工查證並附來源；尚未連接自動新聞掃描。資料來源失敗時會標明舊資料並排除訊號。</p>
     </details>
     <footer>Neil's 工具箱 · 日線研究看板 · 不含帳戶、持倉或下單功能</footer>
   </main>

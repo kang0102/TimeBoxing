@@ -8,11 +8,12 @@ import sys
 
 from rotation_signals import active_events, aggregate, analyze, completed_bars
 from rotation_research import evaluate_cases
+from rotation_money import assess_money, refresh_flows, save_archive
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build_snapshot(config, downloads, previous=None, now=None, events=None, research_cases=None):
+def build_snapshot(config, downloads, previous=None, now=None, events=None, research_cases=None, institutional=None):
     now = now or datetime.now(timezone.utc)
     previous = previous or {}
     old = {r["symbol"]: r for r in previous.get("stocks", [])}
@@ -49,6 +50,7 @@ def build_snapshot(config, downloads, previous=None, now=None, events=None, rese
                 row = {**old.get(symbol, {}), **base, "status": "stale" if symbol in old else "unavailable",
                        "error": str(error) if isinstance(error, ValueError) else "行情來源暫時無法取得",
                        "history": old.get(symbol, {}).get("history", [])}
+            row["smart_money"] = assess_money(row, completed_prices.get(symbol), institutional)
             rows.append(row)
     sectors = aggregate(rows, config["groups"])
     count = sum(r["status"] == "ok" for r in rows)
@@ -56,7 +58,7 @@ def build_snapshot(config, downloads, previous=None, now=None, events=None, rese
             "last_success_at": now.isoformat() if count else previous.get("last_success_at"),
             "status": "ok" if count == len(rows) else "partial" if count else "failed",
             "source": "Yahoo Finance / yfinance；還原日線，僅完整交易日",
-            "methodology_version": "event-rotation-v2", "markets": market_info,
+            "methodology_version": "event-rotation-v3-money", "markets": market_info,
             "coverage": {"available": count, "total": len(rows)},
             "stocks": rows, "groups": sectors,
             "events": active_events(events or [], benchmarks, rows, now=now),
@@ -91,12 +93,27 @@ def main():
     previous = {}
     if args.output.exists():
         previous = json.loads(args.output.read_text(encoding="utf-8"))
-    snapshot = build_snapshot(config, downloads, previous, events=events, research_cases=cases)
+    now = datetime.now(timezone.utc)
+    archive_path = ROOT / "rotation" / "institutional.json"
+    archive = json.loads(archive_path.read_text(encoding="utf-8")) if archive_path.exists() else {"schema_version": 1, "days": {}}
+    try:
+        tw_bars = completed_bars(downloads[config["benchmarks"]["TW"]], "TW", now)
+        days = [d.date().isoformat() for d in tw_bars.index[-5:]]
+    except (KeyError, ValueError):
+        days = []
+    if days:
+        archive, flow_errors = refresh_flows(config, days, archive)
+    else:
+        flow_errors = ["缺少台股交易日期，法人更新暫停"]
+    save_archive(archive_path, archive)
+    snapshot = build_snapshot(config, downloads, previous, now=now, events=events, research_cases=cases, institutional=archive)
+    snapshot["institutional_refresh_errors"] = flow_errors
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temp = args.output.with_suffix(".tmp")
     temp.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     temp.replace(args.output)
     print(f"Rotation: {snapshot['status']} {snapshot['coverage']}")
+    print(f"Smart Money: {sum(r['smart_money']['status'] == 'ok' for r in snapshot['stocks'])}/{len(snapshot['stocks'])}; source errors: {len(flow_errors)}")
     return 1 if snapshot["status"] == "failed" else 0
 
 

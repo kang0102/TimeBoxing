@@ -10,7 +10,7 @@ Python 3.12：
 
 ```sh
 pip install -r rotation/requirements.txt
-python -m unittest discover -s tests -p 'test_rotation.py' -v
+python -m unittest discover -s tests -p 'test_rotation*.py' -v
 python scripts/update_rotation_data.py
 python -m http.server 8765
 ```
@@ -19,7 +19,7 @@ python -m http.server 8765
 
 ## 雲端更新
 
-`Update stock rotation radar`：台股工作日 UTC 07:43、美股工作日 UTC 22:43（台北 15:43 與翌日 06:43），也可從 Actions 手動執行。排程僅 main 啟用；GitHub 排程可能延遲，公開儲存庫長期無活動也可能被停用，不具即時交易保證。
+`Update stock rotation radar`：台股工作日 UTC 07:43、12:43，美股工作日 UTC 22:43（台北 15:43、20:43 與翌日 06:43），也可從 Actions 手動執行。晚間多一次更新以補抓法人公告。排程僅 main 啟用；GitHub 排程可能延遲，公開儲存庫長期無活動也可能被停用，不具即時交易保證。
 
 流程先跑測試、下载行情、排除未收盤 K 棒、原子寫入 `data.json`，再將結果提交 main 並要求現有 branch-based GitHub Pages 重建。需 repository Actions 允許 `contents: write` 與 `pages: write`。保留 `CNAME` 與現有網站。若未來改用 workflow-based Pages，需相應更換發布步驟。
 
@@ -64,6 +64,16 @@ python -m http.server 8765
 若已核實新聞發布後，行情來源尚未提供首個完整交易日，仍展示新聞與來源，標示等待資料，研究條件保持未判定。
 
 量價篩選中，「相對落後」只表示同市場同族群至少兩筆有效資料時，20 日漲幅落後組內平均至少 5 個百分點；下跌趨勢也可能入列。「補漲轉強」沿用較嚴格條件：族群站上 MA20 比例至少 50%、平均 5 日相對強弱為正，個股亦站上 MA20、5 日相對強弱為正且非短線過熱。兩者都不是買進指令。
+
+## Smart Money
+
+台股使用 [證交所三大法人日報](https://www.twse.com.tw/zh/trading/foreign/t86.html) 與 [櫃買中心三大法人明細](https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html)，追蹤外資（不含外資自營商）、投信與自營商。來源單位為股，介面除以 1,000 顯示張；不重複加計外資自營商。自營商含避險部位，方向判斷只使用外資＋投信。
+
+以股價最新完整交易日及其前四個交易日為窗口。外資＋投信至少 3 日淨買超且五日合計為正，標示法人偏買；至少 3 日淨賣超且合計為負，標示法人偏賣，其餘方向分歧。連買天數最多觀察五日，顯示 ≥5 不代表精確總天數。「價格轉強」另要求站上 MA20 且 5 日相對大盤為正；資金面與價格不一致時並列呈現，不修改原動能分數或報告順位。
+
+`institutional.json` 保存觀察名單最多 30 個有資料日。首次回填五個交易日，後續重抓最新日並補缺日；報表日期或欄位不符、個股缺列、買賣超加總不符皆不推測。五日未齊不出判斷，資料來源失敗仍保留已驗證且具原日期的歷史。法人刷新錯誤另存於快照 `institutional_refresh_errors`。上市／上櫃報表成交統計涵蓋範圍有差異，因此未使用成交量作分母，也不比較跨市場絕對張數大小。
+
+美股先使用 [CMF20](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf)：Σ[((2C−H−L)/(H−L))×V] / ΣV。H=L 時乘數設 0；量為零或 OHLC 不合理不計算。≥0.05 為量價買壓、≤−0.05 為量價賣壓，其餘中性。此項只是價格與成交量推估，不辨識機構身分，並未串接 13F 或宣稱實際機構資金流。台美股方法分開標示，以上門檻尚未回測。
 
 ## 存取範圍
 

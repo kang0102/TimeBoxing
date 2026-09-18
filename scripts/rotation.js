@@ -3,7 +3,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const labels = {breakout:'放量突破', improving:'動能轉強', extended:'漲幅偏熱', weakening:'轉弱觀察', watch:'等待訊號'};
-  const state = {data:null, market:'TW', group:'all', stage:'all', query:'', descending:true};
+  const state = {data:null, market:'TW', group:'all', stage:'all', money:'all', query:'', descending:true};
   const make = (tag, text, cls) => { const e=document.createElement(tag); if(text!=null)e.textContent=text; if(cls)e.className=cls; return e; };
   const finite = n => typeof n === 'number' && Number.isFinite(n);
   const num = (n,d=1) => finite(n) ? n.toLocaleString('zh-TW',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
@@ -12,6 +12,21 @@
   const current = () => (state.data?.stocks||[]).filter(r=>r.market===state.market);
   const safeLink = (url,label) => {let e=make('span',label);try {const u=new URL(url);if(u.protocol==='https:'){e=make('a',label);e.href=u.href;e.target='_blank';e.rel='noopener noreferrer';}} catch {}return e;};
   function badge(stage){return make('span',labels[stage]||'等待資料',`badge ${stage||''}`);}
+  const lots = n => finite(n)?`${n>0?'+':''}${num(n/1000,1)} 張`:'—';
+  function moneyLabel(m){
+    if(!m||m.status!=='ok')return '資料不足';
+    return m.method==='institutional'?({buying:'法人偏買',selling:'法人偏賣',mixed:'法人方向分歧'}[m.bias]):({buying:'量價買壓',selling:'量價賣壓',mixed:'量價中性'}[m.bias]);
+  }
+  function moneyBlock(r,withPrice=false){
+    const m=r.smart_money,box=make('div',null,'money-cell');box.append(make('span',moneyLabel(m),`money-badge ${m?.status==='ok'?m.bias:'unknown'}`));
+    if(m?.status==='ok'){
+      box.append(make('small',m.method==='institutional'?`外資＋投信 5 日 ${lots(m.core_net_5d)}`:`CMF20 ${num(m.cmf_20d,3)} · 量價推估`));
+      if(m.method==='institutional')box.append(make('small',`近 5 日買超 ${m.buy_days} 日 · 連買 ${m.buy_streak===5?'≥5':m.buy_streak} 日`));
+      if(withPrice)box.append(make('small',m.price_confirmed?'價格：站上月線且相對大盤轉強':'價格：轉強條件尚未同時成立'));
+    }else box.append(make('small',m?.method==='institutional'?`法人資料 ${m?.coverage||0}/5 日 · 尚不判定`:'指標資料未齊'));
+    if(m?.as_of)box.append(make('small',`指標日期 ${m.as_of}`));
+    return box;
+  }
   function setGroup(id){state.group=id;$('group').value=id;render();}
   function render(){
     const rows=current(), valid=rows.filter(r=>r.status==='ok');
@@ -21,6 +36,9 @@
     if(!groups.some(g=>g.id===state.group))state.group='all';
     $('group').value=state.group;
     $('stage').value=state.stage;
+    $('money').value=state.money;
+    const moneyCount=valid.filter(r=>r.smart_money?.status==='ok').length;
+    $('money-description').textContent=state.market==='TW'?`Smart Money＝法人籌碼 · 以外資＋投信近 5 日方向交叉觀察輪動 · 完整資料 ${moneyCount}/${rows.length} 檔 · 缺資料不判斷。`:`Smart Money 參考＝CMF20 量價買賣壓力 · 完整資料 ${moneyCount}/${rows.length} 檔 · 屬量價推估，尚未接入機構持股資料。`;
     const asOf=state.data.markets[state.market]?.as_of||'尚未取得';
     const oldSnapshot=Date.now()-Date.parse(state.data.generated_at)>36*3600000;
     const warn=state.data.status!=='ok'||oldSnapshot;
@@ -39,16 +57,17 @@
     $('stages').replaceChildren(...['watch','improving','breakout','extended','weakening'].map(s=>{
       const e=make('button',null,'stage-box');e.type='button';e.setAttribute('aria-pressed',String(state.stage===s));e.append(make('small',labels[s]),make('strong',String(valid.filter(r=>r.stage===s).length)));e.addEventListener('click',()=>{state.stage=state.stage===s?'all':s;render();});return e;
     }));
-    const filtered=rows.filter(r=>(state.group==='all'||r.group===state.group)&&(state.stage==='all'||(r.status==='ok'&&(['laggard','laggard_watch'].includes(state.stage)?r[state.stage]:r.stage===state.stage)))&&`${r.symbol} ${r.name}`.toLowerCase().includes(state.query.toLowerCase()));
+    const filtered=rows.filter(r=>(state.group==='all'||r.group===state.group)&&(state.stage==='all'||(r.status==='ok'&&(['laggard','laggard_watch'].includes(state.stage)?r[state.stage]:r.stage===state.stage)))&&(state.money==='all'||(state.money==='unavailable'?r.smart_money?.status!=='ok':r.smart_money?.status==='ok'&&r.smart_money.bias===state.money))&&`${r.symbol} ${r.name}`.toLowerCase().includes(state.query.toLowerCase()));
     filtered.sort((a,b)=>{if(a.status!==b.status)return a.status==='ok'?-1:b.status==='ok'?1:0;return state.descending?(b.score??-1)-(a.score??-1):(a.score??101)-(b.score??101);});
     $('stocks').replaceChildren(...filtered.map(r=>{
-      const tr=make('tr'),name=make('td'),price=make('td'),score=make('td'),rs=make('td'),vol=make('td'),signal=make('td'),action=make('td');
+      const tr=make('tr'),name=make('td'),price=make('td'),score=make('td'),rs=make('td'),vol=make('td'),signal=make('td'),money=make('td'),action=make('td');
+      money.dataset.label='Smart Money';money.append(moneyBlock(r));
       for(const [cell,label]of [[price,'收盤／日漲跌'],[score,'動能分數'],[rs,'相對大盤 5 日'],[vol,'成交量比'],[signal,'訊號']])cell.dataset.label=label;
       name.append(make('strong',r.name),make('small',`${r.symbol} · ${r.group_name}`));
       price.append(make('strong',num(r.close,2)),make('small',pct(r.change_1d),colored(r.change_1d)));
       if(r.status==='ok'){score.append(make('strong',num(r.score)),make('small','/ 100'));rs.append(make('span',pct(r.rs_5d),colored(r.rs_5d)));vol.textContent=`${num(r.volume_ratio,2)}×`;signal.append(badge(r.stage));if(r.laggard_watch)signal.append(make('span',r.laggard?'補漲轉強':'相對落後，待轉強','laggard'));}
       else{score.textContent='—';rs.textContent='—';vol.textContent='—';signal.append(make('span',r.status==='stale'?'舊資料':'缺少資料','badge'));price.append(make('small',r.as_of||'未取得'));}
-      const button=make('button','查看');button.type='button';button.setAttribute('aria-label',`查看${r.name}明細`);button.addEventListener('click',()=>showDetail(r));action.append(button);tr.append(name,price,score,rs,vol,signal,action);return tr;
+      const button=make('button','查看');button.type='button';button.setAttribute('aria-label',`查看${r.name}明細`);button.addEventListener('click',()=>showDetail(r));action.append(button);tr.append(name,price,score,rs,vol,signal,money,action);return tr;
     }));
     $('result-count').textContent=`${filtered.length} 檔 · ${state.market==='TW'?'TWD':'USD'}`;$('empty').hidden=filtered.length>0;
     $('sort-score').textContent=`動能分數 ${state.descending?'↓':'↑'}`;
@@ -70,6 +89,7 @@
         const title=make('div',null,'priority-top');title.append(make('span',String(p.priority),'rank'),make('strong',p.name),make('span',p.role,'badge'));card.append(title,make('p',p.observation,'current-observation'));
         if(row?.status==='ok')card.append(make('p',`${row.as_of} · ${row.symbol} · 收盤 ${num(row.close,2)} · 日 ${pct(row.change_1d)}`,'detail-note'),make('p',`量比 ${num(row.volume_ratio,2)}× · 20 日 ${pct(row.return_20d)}`,'detail-note'),make('p',`該日收盤${row.above_ma20?'站上':'未站上'} MA20 ${num(row.ma20,2)}`,'detail-note'));
         else card.append(make('p','行情未更新，不能判定轉強。','detail-note'));
+        if(row)card.append(moneyBlock(row,true));
         card.append(make('p',p.report_view,'report-view'));
         const b=make('button','行情與評分明細');b.type='button';b.setAttribute('aria-label',`查看研究名單${p.name}明細`);b.disabled=!row;b.addEventListener('click',()=>showDetail(row));card.append(b);list.append(card);
       }
@@ -96,6 +116,19 @@
       const list=make('ul');for(const reason of r.reasons)list.append(make('li',reason));box.append(list,make('h3','近 20 個交易日相對大盤走勢'),make('p','起點設為 0%，向上代表相對大盤轉強。','detail-note'));box.append(chart(r.series));
       box.append(make('h3','分數組成'),make('p',`相對強弱 ${num(r.components.relative_strength)} / 35 · 動能加速 ${num(r.components.acceleration)} / 20 · 均線 ${num(r.components.trend)} / 20 · 成交量 ${num(r.components.volume)} / 15 · 突破 ${num(r.components.breakout)} / 10`,'detail-note'));
     }
+    box.append(make('h3','Smart Money · 資金面交叉觀察'),moneyBlock(r,true));
+    const m=r.smart_money;
+    if(m){
+      box.append(make('p',m.note,'detail-note'));
+      if(m.method==='institutional'){
+        if(m.status==='ok'){
+          const grid=make('div',null,'detail-grid');for(const [key,label]of [['foreign','外資 5 日'],['trust','投信 5 日'],['dealer','自營商 5 日'],['total','三大法人 5 日']]){const cell=make('div');cell.append(make('span',label),make('strong',lots(m.net_5d[key])));grid.append(cell);}box.append(grid,make('p',`外資與投信 5 日合計同步買超：${m.joint_buying?'是':'否'}。自營商含避險部位，另列參考。`,'detail-note'));
+        }
+        const history=make('div',null,'money-history');for(const h of [...(m.history||[])].reverse()){const line=make('div');line.append(make('strong',h.date),make('span',`外資 ${lots(h.foreign)} · 投信 ${lots(h.trust)}`),make('small',`自營商 ${lots(h.dealer)} · 三大法人 ${lots(h.total)}`));history.append(line);}box.append(history);
+        box.append(make('p','單位為張（股數÷1,000）。上市／上櫃成交統計範圍依官方報表，原始報表可由下方連結核對。','detail-note'));
+      }
+      box.append(safeLink(m.source,m.source_name));
+    }
     box.append(make('h3','每日訊號紀錄'));
     const history=make('div',null,'history');for(const h of [...(r.history||[])].reverse()){const e=make('div',h.date);e.append(make('strong',num(h.score)),make('span',labels[h.stage]||h.stage));history.append(e);}box.append(history);if(!history.children.length)box.append(make('p','尚未累積歷史紀錄。'));
     box.append(safeLink(`https://finance.yahoo.com/quote/${encodeURIComponent(r.symbol)}/history/`,'查看行情來源'));
@@ -118,6 +151,7 @@
     finally{button.disabled=false;button.textContent='重新讀取';}
   }
   document.querySelectorAll('[data-market]').forEach(b=>b.addEventListener('click',()=>{state.market=b.dataset.market;if(state.data)render();}));
+  $('money').addEventListener('change',e=>{state.money=e.target.value;if(state.data)render();});
   $('group').addEventListener('change',e=>{state.group=e.target.value;if(state.data)render();});$('stage').addEventListener('change',e=>{state.stage=e.target.value;if(state.data)render();});$('search').addEventListener('input',e=>{state.query=e.target.value;if(state.data)render();});$('sort-score').addEventListener('click',()=>{state.descending=!state.descending;if(state.data)render();});$('refresh').addEventListener('click',load);$('close-detail').addEventListener('click',()=>$('detail').close());
   load();
 })();
