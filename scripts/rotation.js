@@ -3,7 +3,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const labels = {breakout:'放量突破', improving:'動能轉強', extended:'漲幅偏熱', weakening:'轉弱觀察', watch:'等待訊號'};
-  const state = {data:null, market:'TW', group:'all', stage:'all', money:'all', query:'', descending:true};
+  const state = {data:null, backtest:null, holding:10, market:'TW', group:'all', stage:'all', money:'all', query:'', descending:true};
   const make = (tag, text, cls) => { const e=document.createElement(tag); if(text!=null)e.textContent=text; if(cls)e.className=cls; return e; };
   const finite = n => typeof n === 'number' && Number.isFinite(n);
   const num = (n,d=1) => finite(n) ? n.toLocaleString('zh-TW',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
@@ -41,9 +41,11 @@
     $('money-description').textContent=state.market==='TW'?`Smart Money＝法人籌碼 · 以外資＋投信近 5 日方向交叉觀察輪動 · 完整資料 ${moneyCount}/${rows.length} 檔 · 缺資料不判斷。`:`Smart Money 參考＝CMF20 量價買賣壓力 · 完整資料 ${moneyCount}/${rows.length} 檔 · 屬量價推估，尚未接入機構持股資料。`;
     const asOf=state.data.markets[state.market]?.as_of||'尚未取得';
     const oldSnapshot=Date.now()-Date.parse(state.data.generated_at)>36*3600000;
-    const warn=state.data.status!=='ok'||oldSnapshot;
+    const marketInfo=state.data.markets[state.market];
+    const delayed=marketInfo?.status==='delayed';
+    const warn=state.data.status!=='ok'||oldSnapshot||delayed;
     $('notice').className=`notice${warn?' warn':''}`;
-    $('notice').textContent=`${state.market==='TW'?'台股':'美股'}行情日期：${asOf} · 完整日線 · 有效資料 ${valid.length}/${rows.length} 檔。${oldSnapshot?' 雲端已超過 36 小時未更新，以下為歷史觀察。':''}${valid.length<rows.length?' 部分資料未更新，已排除在訊號與族群評分之外。':''}`;
+    $('notice').textContent=`${state.market==='TW'?'台股':'美股'}行情日期：${asOf} · 完整日線 · 有效資料 ${valid.length}/${rows.length} 檔。${delayed?` 官方已公布 ${marketInfo.expected_as_of}，來源仍落後，暫停最新訊號。`:''}${oldSnapshot?' 雲端已超過 36 小時未更新，以下為歷史觀察。':''}${valid.length<rows.length?' 部分資料未更新，已排除在訊號與族群評分之外。':''}`;
     const counts=[['行情日期',asOf],['放量突破',`${valid.filter(r=>r.stage==='breakout').length} 檔`],['補漲轉強',`${valid.filter(r=>r.laggard).length} 檔`],['相對落後',`${valid.filter(r=>r.laggard_watch).length} 檔`]];
     $('stats').replaceChildren(...counts.map(([k,v])=>{const e=make('div',null,'stat');e.append(make('span',k),make('strong',v));if(k==='行情日期')e.lastChild.style.fontSize='1.35rem';return e;}));
     $('groups').replaceChildren(...[...groups].sort((a,b)=>(b.score??-1)-(a.score??-1)).map(g=>{
@@ -71,8 +73,119 @@
     }));
     $('result-count').textContent=`${filtered.length} 檔 · ${state.market==='TW'?'TWD':'USD'}`;$('empty').hidden=filtered.length>0;
     $('sort-score').textContent=`動能分數 ${state.descending?'↓':'↑'}`;
+    renderBriefing();
+    renderSynchrony();
+    renderBacktest();
     renderResearch();
     renderEvents();
+  }
+  function renderBriefing(){
+    const view=$('briefing'),brief=(state.data.briefings||[]).find(b=>b.market===state.market);
+    view.replaceChildren();
+    if(!brief){
+      const box=make('div',null,'brief-hero');box.append(make('h2',state.market==='US'?'美股：先看量價，傳導路徑待建立':'研究摘要尚未建立'),make('p','目前沒有可核實的波次候選圖。可展開下方完整清單查看價格與資金面。'));
+      view.append(box);return;
+    }
+    const items=brief.items,focus=brief.focus_symbols.map(symbol=>items.find(i=>i.symbol===symbol));
+    const active=['waiting','diffusing','weakening'].includes(brief.status);
+    const phase={diffusing:'第 3 波已出現接棒訊號',waiting:'第 2 波領先，等待第 3 波接棒',weakening:'領先股轉弱，主線先降級',pending:'等待研究開始後的完整行情',expired:'研究追蹤期已結束',unavailable:'資料未齊，暫不判定'}[brief.status];
+    const hero=make('div',null,'brief-hero');hero.append(make('p',`${brief.as_of||'日期待確認'} 收盤觀察 · 封測／AI ASIC 測試`,'eyebrow'),make('h2',focus.length?`下一棒先看：${focus.map(i=>i.name).join('、')}`:phase),make('p',focus.length?phase:'目前沒有通過初步條件的下一棒候選。'));
+    hero.append(make('small','這是條件觀察名單；波次為研究路徑，並非上漲機率。'));view.append(hero);
+    const cards=make('div',null,'opportunity-grid');
+    for(const item of focus){
+      const card=make('article',null,`opportunity-card ${item.category}`),head=make('div',null,'opportunity-head');
+      head.append(make('h3',item.name),make('span',item.wave?`第 ${item.wave} 波 · 接棒觀察`:'另一路觀察','path-tag'));card.append(head);
+      card.append(make('p',`收盤 ${num(item.close,2)} · ${pct(item.change_1d)} · ${item.symbol}`,'detail-note'));
+      const reasons=['站上 20 日均線','近 5 日強於大盤'];if(item.money_bias==='buying')reasons.push('外資＋投信偏買');else if(item.money_bias==='selling')reasons.push('但外資＋投信偏賣，籌碼尚未配合');else reasons.push('法人方向尚未一致');
+      card.append(make('p',`為什麼觀察：${reasons.join('，')}。`,'opportunity-reason'));
+      const passed=item.checks.filter(c=>c.passed).length;
+      card.append(make('h4',passed===item.checks.length?'條件已成立，接著看能否守住':`還在等什麼？已達 ${passed}/${item.checks.length} 項條件`));
+      const checks=make('div',null,'trigger-list');
+      for(const c of item.checks){
+        let title,actual;
+        if(c.kind==='breakout'){title=`收盤突破 ${num(c.target,2)} 元`;actual=`目前 ${num(c.actual,2)}${c.passed?'，已突破':`，距前高約 ${num(item.gap_to_high,2)}%`}`;}
+        else if(c.kind==='ma20'){title=`收盤站回月線 ${num(c.target,2)} 元`;actual=`目前 ${num(c.actual,2)}`;}
+        else if(c.kind==='volume'){title=`量比維持 ${num(c.target,1)} 倍以上`;actual=`目前 ${num(c.actual,2)} 倍`;}
+        else{title='近 5 日持續強於大盤';actual=`目前相對大盤 ${pct(c.actual)}`;}
+        const line=make('div',null,`trigger ${c.passed?'met':'waiting'}`);line.append(make('span',c.passed?'✓':'待','trigger-icon'));const text=make('div');text.append(make('strong',title),make('small',actual));line.append(text);checks.append(line);
+      }
+      card.append(checks,make('p',`何時降級：若收盤跌回月線 ${num(item.ma20,2)} 元以下，先撤出優先觀察。`,'invalidation'));
+      if(item.category==='ready')card.append(make('p',`已觸發也要觀察隔日是否跌回 ${num(item.high20,2)} 元下方。`,'detail-note'));
+      const button=make('button','查看行情與籌碼');button.type='button';button.setAttribute('aria-label',`查看機會卡${item.name}明細`);button.addEventListener('click',()=>showDetail(state.data.stocks.find(r=>r.symbol===item.symbol)));card.append(button);cards.append(card);
+    }
+    view.append(cards);
+    const path=make('section',null,'transmission');path.append(make('h2','這條主線走到第幾波？'),make('p','箭頭表示研究上的接棒路徑；每家公司是否啟動，另外看當天條件。','detail-note'));
+    const grid=make('div',null,'path-grid'),status={anchor:'大型股錨點',leader:'領先觀察',leader_hot:'已領先 · 漲幅偏熱',hot:'已啟動 · 漲幅偏熱',ready:'接棒條件成立',watch:'下一棒 · 等待突破',wait:'先等止跌／轉強',unavailable:'尚未判定'};
+    for(const [wave,title]of [[1,'大型股錨點'],[2,'領先股'],[3,'接棒與落後觀察']]){
+      const lane=make('div',null,`path-lane wave-${wave}`);lane.append(make('p',`第 ${wave} 波`,'path-number'),make('h3',title));
+      for(const item of items.filter(i=>i.wave===wave)){
+        const node=make('div',null,`path-stock ${item.category}`);node.append(make('strong',item.name),make('span',status[item.category]||'待確認'));
+        if(finite(item.change_1d))node.append(make('small',`當日 ${pct(item.change_1d)}`));lane.append(node);
+      }grid.append(lane);
+    }path.append(grid);view.append(path);
+    const waiting=items.filter(i=>['wait','hot'].includes(i.category));
+    if(waiting.length){const section=make('section',null,'wait-section');section.append(make('h2','其餘名單：現在先等什麼？'));const list=make('div',null,'wait-list');
+      for(const item of waiting){const row=make('div',null,'wait-row');row.append(make('strong',item.name),make('span',item.category==='hot'?'已啟動，漲幅偏熱':'先等轉強',`path-tag ${item.category}`));
+        let text;if(item.category==='hot')text=`${item.close>item.high20?`已突破前高 ${num(item.high20,2)} 元`:'漲幅或月線乖離偏大'}；20 日漲幅 ${pct(item.return_20d)}。${item.close>item.high20?'接著觀察能否守住突破價。':'先等價格整理與量價重新確認。'}`;
+        else if(brief.status==='weakening')text='主線領先股失守，先等領先股穩住，再重新驗證接棒條件。';
+        else text=`目前 ${num(item.close,2)} 元。${item.close<=item.ma20?`先收盤站回月線 ${num(item.ma20,2)} 元`:'已站上月線'}${item.rs_5d<=0?'，且近 5 日表現轉為強於大盤':''}。`;
+        row.append(make('p',text));list.append(row);
+      }section.append(list);view.append(section);}
+    if(active)view.append(make('p','以上均以完整收盤資料判斷，價位與條件每日重算。歷史績效與交易成本請看回測區。','brief-footnote'));
+  }
+  function renderSynchrony(){
+    const view=$('synchrony'),all=(state.data.synchrony||[]).filter(s=>s.market===state.market);
+    view.replaceChildren(make('h2','異常同步：有沒有一群一起動？'));
+    view.append(make('p','同族群至少 3 檔放量、走強，且各自強於大盤；再看參與比例是否突然增加。法人配合另外確認。','detail-note'));
+    const active=all.filter(s=>!['quiet','insufficient'].includes(s.status)).sort((a,b)=>Number(b.status.includes('anomaly'))-Number(a.status.includes('anomaly'))||b.up_count-a.up_count);
+    if(!active.length)view.append(make('p','本次沒有達到門檻的族群同步；不代表沒有個股機會。','notice'));
+    const cards=make('div',null,'sync-grid');
+    const names=symbols=>symbols.map(s=>state.data.stocks.find(r=>r.symbol===s)?.name||s).join('、');
+    for(const s of active){
+      const down=s.status.startsWith('down'),box=make('article',null,`sync-card${down?' risk':''}`);
+      const label=s.status.includes('anomaly')?(down?'異常同步轉弱':'異常同步轉強'):(down?'多檔一起轉弱':'多檔一起轉強');
+      box.append(make('span',`${s.as_of} · ${label}`,'path-tag'),make('h3',s.name),make('strong',`${down?s.down_count:s.up_count} / ${s.total} 檔符合量價條件`),make('p',names(down?s.down_symbols:s.up_symbols)));
+      if(!down){box.append(make('p',`目前參與 ${num(s.up_count/s.total*100,0)}% · 前 20 日平均 ${num(s.baseline_pct,0)}%`,'detail-note'));
+        box.append(make('p',s.money_confirmed.length?`${state.market==='TW'?'法人偏買配合':'CMF 買壓配合（推估）'}：${names(s.money_confirmed)}`:'資金面尚未配合或資料不足。','sync-money'));
+        if(s.money_divergence.length)box.append(make('p',`價格與資金方向分歧：${names(s.money_divergence)}。`,'invalidation'));
+      }else box.append(make('p','這是風險提醒：先看同族群是否繼續失守月線。','invalidation'));
+      cards.append(box);
+    }view.append(cards);
+    const details=make('details',null,'method');details.append(make('summary','同步門檻與觀察範圍'));
+    details.append(make('p','先要求至少 80% 成員有完整資料。轉強成員：當日上漲且漲幅大於大盤、量比 ≥ 1.5、5 日相對大盤 > 0、收盤在月線上。至少 3 檔且占族群 60% 才稱同步。'));
+    details.append(make('p','「異常」另外要求：參與比例比此前 20 日平均增加至少 25 個百分點，且增幅達此前標準差的 2 倍。轉弱採反向條件。這是固定觀察門檻，沒有統計顯著性或因果保證；不是判定主力操盤。'));
+    const insufficient=all.filter(s=>s.status==='insufficient');if(insufficient.length)details.append(make('p',`樣本少於 3 檔或資料不足：${insufficient.map(s=>s.name).join('、')}。`));
+    view.append(details);
+  }
+  function renderBacktest(){
+    const view=$('backtest');view.replaceChildren(make('h2','短波段與中期：回測怎麼說？'));
+    const report=state.backtest?.markets?.find(m=>m.market===state.market);
+    if(!report){view.append(make('p','回測尚未取得或載入失敗；目前不顯示績效數字。','notice'));return;}
+    const age=Date.now()-Date.parse(state.backtest.generated_at);
+    view.append(make('p',`量價接棒代理規則 · ${report.available}/${report.total} 檔 · 驗證 ${report.validation_start} ～ ${report.validation_end}`,'detail-note'));
+    view.append(make('p','回測只檢查量價規則；新聞傳導、人工波次與法人條件尚未完成歷史驗證。今天挑的觀察名單回看歷史，也有事後選股偏差。','notice'));
+    if(age>9*86400000)view.append(make('p','回測超過 9 天未更新，請先查看雲端執行紀錄。','notice warn'));
+    if(report.data_gaps?.length)view.append(make('p',`來源缺價 ${report.data_gaps.join('、')}；隔開缺漏並重新累積 65 日資料後才開始驗證，因此台股驗證期間較短。`,'detail-note'));
+    const grid=make('div',null,'backtest-grid');
+    for(const row of report.results){
+      const r=row.validation,button=make('button',null,`backtest-card${state.holding===row.holding_days?' selected':''}`);button.type='button';button.setAttribute('aria-pressed',String(state.holding===row.holding_days));
+      button.append(make('span',`最長持有 ${row.holding_days} 個交易日`),make('strong',pct(r.return_pct),colored(r.return_pct)),make('small',`最深回落 ${pct(r.max_drawdown_pct)}`),make('small',`${r.trades} 筆 · 勝率 ${num(r.win_rate_pct,1)}%`),make('span',{insufficient:'樣本仍少',needs_revision:'結果未過關',forward_test:'待前瞻驗證'}[row.assessment],'backtest-assessment'));
+      button.addEventListener('click',()=>{state.holding=row.holding_days;renderBacktest();});grid.append(button);
+    }view.append(grid);
+    const selected=report.results.find(r=>r.holding_days===state.holding)||report.results[0];
+    view.append(make('h3',`最長 ${selected.holding_days} 日 · 扣成本後的模擬資金走勢`));
+    const svg=chart(selected.validation.curve.map(p=>({...p,value:p.value-100})));svg.setAttribute('aria-label',`最長持有 ${selected.holding_days} 日驗證期累積報酬走勢`);view.append(svg);
+    const dates=make('div',null,'chart-dates');dates.append(make('span',report.validation_start),make('span',report.validation_end));view.append(dates);
+    view.append(make('p',`成本加倍後 ${pct(selected.double_cost_return_pct)} · 同期大盤價格指數 ${pct(report.benchmark_return_pct)}（基準口徑不同，非純超額報酬）。`,'detail-note'));
+    const sync=selected.synchrony_filter;
+    if(sync){const box=make('div',null,'sync-comparison');box.append(make('h3','加上「異常同步」有比較好嗎？'),make('p',`原規則 ${pct(selected.validation.return_pct)} / ${selected.validation.trades} 筆 → 加同步門檻 ${pct(sync.return_pct)} / ${sync.trades} 筆`),make('p',`同步版最深回落 ${pct(sync.max_drawdown_pct)}。${sync.trades<20?'同步樣本少於 20 筆，還不能下結論。':'本次僅作比較，尚未升級成正式交易規則。'}`,'detail-note'),make('p',`只有族群樣本至少 3 檔可測，共涵蓋 ${report.synchrony_eligible_stocks} 檔；加入門檻也會改變交易次數與資金使用。`,'detail-note'));view.append(box);}
+    const detail=make('details',null,'method');detail.append(make('summary','交易規則、成本與持續修正方式'));
+    detail.append(make('p',state.backtest.settings.description),make('p',`最多同時 ${state.backtest.settings.max_positions} 檔、每檔目標占資金 1/5，不借錢；單邊成本假設 ${num(report.one_way_cost_pct,2)}%。期末強制結清 ${selected.validation.forced_exits} 筆。報酬非年化，最長持有天數會因跌破月線而提前離場。`));
+    detail.append(make('p',`訓練 ${report.train_start} ～ ${report.train_end}。量比候選 1.2／1.5／2.0 只在訓練期比較，驗證期另看結果。此持有期訓練選出的量比為 ${selected.candidate.volume_ratio}，驗證報酬 ${pct(selected.candidate.validation_return_pct)}；候選尚未套用。`));
+    detail.append(make('p','GitHub 每週六台北 09:23 重跑並保留紀錄，排程可能延遲。四種持有期與同步版本固定並列；不因單次績效較高就自動調參。修正前要記錄原因、保留原版，並再看新的前瞻資料。'));
+    for(const text of state.backtest.limitations||[])detail.append(make('p',text));
+    detail.append(safeLink('https://github.com/kang0102/TimeBoxing/actions/workflows/backtest-rotation.yml','查看雲端回測執行紀錄'),make('p',`計算時間：${new Date(state.backtest.generated_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false})}（台北） · ${state.backtest.strategy_version}`,'detail-note'));
+    view.append(detail);
   }
   function renderResearch(){
     const cases=(state.data.research_cases||[]).filter(c=>c.market===state.market);
@@ -111,6 +224,7 @@
   }
   function showDetail(r){
     const box=$('detail-content');box.replaceChildren(make('p',`${r.symbol} · ${r.group_name}`,'eyebrow'),make('h2',r.name),make('p',`行情日期 ${r.as_of||'尚未取得'} · ${r.currency}`,'detail-note'));
+    if(r.price_repair)box.append(make('p',r.price_repair.note,'detail-note'),safeLink(r.price_repair.source,'核對官方收盤來源'));
     if(r.status!=='ok'){box.append(make('p',`未納入目前訊號：${r.error||'資料未更新'}`,'notice warn'));}
     else{box.append(badge(r.stage));const grid=make('div',null,'detail-grid');for(const [label,value]of [['動能分數',`${num(r.score)} / 100`],['20 日漲幅',pct(r.return_20d)],['5 日相對大盤',pct(r.rs_5d)],['20 日相對大盤',pct(r.rs_20d)],['成交量比',`${num(r.volume_ratio,2)}×`],['MA20 乖離',pct(r.ma20_distance)]]){const e=make('div');e.append(make('span',label),make('strong',value));grid.append(e);}box.append(grid);
       const list=make('ul');for(const reason of r.reasons)list.append(make('li',reason));box.append(list,make('h3','近 20 個交易日相對大盤走勢'),make('p','起點設為 0%，向上代表相對大盤轉強。','detail-note'));box.append(chart(r.series));
@@ -145,10 +259,11 @@
   }
   async function load(){
     const button=$('refresh');button.disabled=true;button.textContent='讀取中…';
+    const backtestLoad=fetch(`rotation/backtest.json?t=${Date.now()}`,{cache:'no-store',signal:AbortSignal.timeout(20000)}).then(r=>{if(!r.ok)throw new Error('backtest unavailable');return r.json();}).then(data=>{state.backtest=data;renderBacktest();}).catch(()=>{state.backtest=null;renderBacktest();});
     try{const response=await fetch(`rotation/data.json?t=${Date.now()}`,{cache:'no-store',signal:AbortSignal.timeout(20000)});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(data.schema_version!==1||!Array.isArray(data.stocks)||!Array.isArray(data.groups)||!data.markets||!Number.isFinite(Date.parse(data.generated_at)))throw new Error('Invalid snapshot');state.data=data;
       $('updated').textContent=`雲端計算：${new Date(data.generated_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false})}（台北）`;render();
     }catch{ $('notice').className='notice warn';$('notice').textContent=state.data?'更新失敗，畫面保留上次成功讀取的資料；請留意行情日期。':'目前無法載入輪動資料。首次雲端更新尚未完成，或網路暫時無法連線，請稍後再試。';if(!state.data){$('updated').textContent='尚未取得雲端結果';$('events').replaceChildren(make('p','資料載入後顯示已核實的催化事件。','event-empty'));}}
-    finally{button.disabled=false;button.textContent='重新讀取';}
+    finally{await backtestLoad;button.disabled=false;button.textContent='重新讀取';}
   }
   document.querySelectorAll('[data-market]').forEach(b=>b.addEventListener('click',()=>{state.market=b.dataset.market;if(state.data)render();}));
   $('money').addEventListener('change',e=>{state.money=e.target.value;if(state.data)render();});

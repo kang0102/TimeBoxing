@@ -5,27 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12344a">
   <title>大型股輪動雷達｜Neil's 工具箱</title>
-  <link rel="stylesheet" href="styles/rotation.css">
-  <script src="scripts/rotation.js" defer></script>
+  <link rel="stylesheet" href="styles/rotation.css?v=5">
+  <script src="scripts/rotation.js?v=5" defer></script>
 </head>
 <body>
   <header class="topbar"><a href="index.html">← Neil's 工具箱</a><span>QUANT / 01</span></header>
   <main>
     <section class="heading">
-      <div><p class="eyebrow">CATALYST → LEADERS → NEXT WAVE</p><h1>大型股輪動雷達</h1><p class="intro">追蹤催化事件，分清領先股、落後股與接棒訊號。</p></div>
+      <div><p class="eyebrow">ROTATION RADAR</p><h1>大型股輪動雷達</h1><p class="intro">先看誰、等什麼訊號、走到第幾波。</p></div>
       <div class="update"><p id="updated">正在讀取雲端資料…</p><button id="refresh" type="button">重新讀取</button></div>
     </section>
     <div class="notice" id="notice" role="status" aria-live="polite">載入完成後顯示各市場的行情日期。</div>
+    <div class="tabs market-switch" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
+    <section id="briefing" class="briefing" aria-label="一眼看懂輪動與等待訊號"></section>
+    <section id="synchrony" class="section" aria-label="異常同步"></section>
+    <section id="backtest" class="section" aria-label="回測比較"><h2>短波段與中期回測</h2><p>正在讀取回測結果…</p></section>
+    <details class="secondary-panel"><summary>完整個股清單、量價分數與 Smart Money</summary>
     <section class="controls" aria-label="觀察條件">
-      <div class="tabs" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
       <label>族群<select id="group"><option value="all">全部族群</option></select></label>
       <label>訊號<select id="stage"><option value="all">全部訊號</option><option value="breakout">放量突破</option><option value="improving">動能轉強</option><option value="laggard_watch">相對落後</option><option value="laggard">補漲轉強</option><option value="extended">漲幅偏熱</option><option value="weakening">轉弱觀察</option><option value="watch">等待訊號</option></select></label>
       <label>Smart Money<select id="money"><option value="all">全部資金狀態</option><option value="buying">偏買／買壓</option><option value="selling">偏賣／賣壓</option><option value="mixed">方向分歧／中性</option><option value="unavailable">資料不足</option></select></label>
       <label class="search">搜尋<input id="search" type="search" placeholder="股票代號或名稱" autocomplete="off"></label>
     </section>
     <p id="money-description" class="money-note">Smart Money 載入中…</p>
-    <section class="section research-section"><div class="section-title"><h2>研究主線與下一棒</h2><span>研究角色保留原日期 · 最新條件由行情重算</span></div><div id="research"></div></section>
-    <section class="section"><div class="section-title"><h2>已核實催化事件</h2><span>展開查看來源與關係邊界</span></div><div id="events" class="event-list"></div></section>
     <div class="section-title quant-title"><h2>量價篩選</h2><span>上方族群、訊號與搜尋條件套用於下方個股清單</span></div>
     <section class="stats" aria-label="市場摘要" id="stats"></section>
     <section class="section"><div class="section-title"><h2>族群強弱</h2><span>等權觀察清單 · 點選族群篩選</span></div><div id="groups" class="groups"></div></section>
@@ -34,13 +36,16 @@
       <div class="table-wrap"><table><thead><tr><th>股票／族群</th><th>收盤／日漲跌</th><th><button id="sort-score" type="button">動能分數 ↓</button></th><th>相對大盤 5 日</th><th>量比</th><th>訊號</th><th>Smart Money</th><th>明細</th></tr></thead><tbody id="stocks"></tbody></table></div>
       <p id="empty" class="empty" hidden>目前沒有符合條件的股票，試著調整族群、訊號或搜尋文字。</p>
     </section>
+    </details>
+    <details class="secondary-panel"><summary>原研究報告、波次角色與完整驗證</summary><section class="section research-section"><div class="section-title"><h2>研究主線與下一棒</h2><span>研究角色保留原日期 · 最新條件由行情重算</span></div><div id="research"></div></section></details>
+    <details class="secondary-panel"><summary>催化事件、官方來源與證據邊界</summary><section class="section"><div class="section-title"><h2>已核實催化事件</h2><span>展開查看來源與關係邊界</span></div><div id="events" class="event-list"></div></section></details>
     <details class="method"><summary>分數、訊號與資料怎麼看？</summary>
       <p><strong>動能分數為 0–100 分的規則指標，不是行情已反映的百分比，也不是勝率。</strong>高分表示近期量價較強，並不表示越適合買進。</p>
       <p>35 分：20 日個股／大盤價格比的變化，−10% 到 +10% 線性換算；20 分：最近 5 日相對報酬減去前一段 5 日相對報酬，−5 到 +5 個百分點線性換算；20 分：收盤高於 MA20、MA20 高於 MA60 各 10 分；15 分：當日量／前 20 日均量，0.5 到 2 倍線性換算；10 分：收盤／前 20 日最高價，0.9 到 1 線性換算。各項分數皆設上下限。</p>
       <ul><li><strong>放量突破：</strong>收盤突破前 20 日高點、量比 ≥ 1.5、5 日相對大盤轉正。</li><li><strong>動能轉強：</strong>收盤高於 MA20、5 日相對大盤為正，且相對動能加速。</li><li><strong>相對落後：</strong>同市場族群至少 2 檔有效資料，個股 20 日漲幅落後族群平均至少 5 個百分點；不要求已止跌。與原報告的人工落後觀察角色分開。</li><li><strong>補漲轉強：</strong>相對落後，且族群至少一半站上 MA20、族群平均相對大盤為正；個股站上 MA20、5 日相對大盤為正且未過熱。</li><li><strong>漲幅偏熱：</strong>20 日漲幅 > 25% 或收盤高於 MA20 超過 15%。</li><li><strong>轉弱觀察：</strong>收盤低於 MA20 且 5 日相對大盤 ≤ 0。這些是觀察條件，不是交易指令。</li></ul>
-      <p>台股基準：加權指數；美股基準：S&amp;P 500。使用 Yahoo Finance 還原日線，拆股與配息會影響歷史值；至少需 65 個共同交易日。台北時間 14:00、美東時間 16:30 前不納入當日 K 棒。休市日沿用最近完整交易日，資料日期永遠另外顯示。</p>
+      <p>台股基準：加權指數；美股基準：S&amp;P 500。使用 Yahoo Finance 還原日線，拆股與配息會影響歷史值；至少需 65 個共同交易日。台北時間 14:00、美東時間 16:30 前不納入當日 K 棒。休市日沿用最近完整交易日，資料日期永遠另外顯示。台股最新收盤欄位缺值時，須經官方同日日期、最高最低價、前日價格基準及無除權息核對後才補齊；成交量仍沿用 Yahoo。官方已有新交易日而來源未齊時，顯示延遲並停止最新訊號。</p>
       <p>族群按觀察名單等權計算，有效資料不足 60% 時不評分。單一美股代表只代表該股。觀察範圍包含封測、光通訊等 10 個主題，並非全市場。族群歸類只用於研究，不代表任何公司已確認接單或供應關係。</p>
-      <p>研究主線的第一、二、三波是報告中的角色分類；它與當天量價狀態是不同欄位。優先序保留報告日期，不自動冒充今日推薦。主線最多追蹤 10 個市場交易日，期滿停止條件判定並保留研究紀錄。具體門檻為本版可驗證的初始規則，尚未回測。</p>
+      <p>研究主線的第一、二、三波是報告中的角色分類；它與當天量價狀態是不同欄位。優先序保留報告日期，不自動冒充今日推薦。主線最多追蹤 10 個市場交易日，期滿停止條件判定並保留研究紀錄。新聞、人工波次尚未完成歷史回測；量價代理規則的結果與限制見上方回測區。</p>
       <p><strong>Smart Money／台股法人籌碼：</strong>使用證交所、櫃買中心公告股數。外資不含外資自營商；判斷方向使用外資＋投信，自營商（含避險）另列。最近 5 個交易日有至少 3 日淨買超且合計淨買超，才標為「法人偏買」；賣超相反，其餘為方向分歧。連買天數只檢查此 5 日窗口，5 日表示至少 5 日。缺日、行情日期不符或舊資料不作判斷。張數以 1,000 股換算。不同市場的成交統計範圍有差異，未將買賣超除以成交量，也不跨股比較張數大小。</p>
       <p><strong>美股 CMF20：</strong>最近 20 日 Σ[((2×收盤−最高−最低)÷(最高−最低))×成交量] ÷ Σ成交量，最高＝最低時該日乘數為 0。CMF ≥ 0.05 標示量價買壓，≤ −0.05 標示量價賣壓，其餘中性。這是量價推估，不能辨識機構身分，也不是實際資金流金額。美股尚未串接 13F／機構持股資料。</p>
       <p>Smart Money 是獨立評估欄位，不改寫原報告順序或原動能分數。「價格轉強」僅指站上 MA20 且 5 日相對大盤為正；與法人偏買並列也不是買進指令。上述門檻為未回測的初始觀察規則。</p>

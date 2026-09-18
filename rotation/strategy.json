@@ -1,0 +1,12 @@
+{
+  "version": "price-rotation-v1",
+  "holding_days": [5, 10, 20, 60],
+  "volume_ratio": 1.5,
+  "candidate_volume_ratios": [1.2, 1.5, 2.0],
+  "max_positions": 5,
+  "one_way_cost": {"TW": 0.003, "US": 0.001},
+  "history_years": 5,
+  "validation_months": 18,
+  "minimum_validation_trades": 20,
+  "description": "收盤突破前20日高點、量比達門檻、5日相對大盤為正、站上MA20、20日漲幅不超過25%且MA20乖離不超過15%；次日開盤進場。收盤跌破MA20則次日開盤離場，或達最長持有天數離場。"
+}

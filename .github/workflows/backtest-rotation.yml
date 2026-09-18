@@ -1,0 +1,64 @@
+name: Backtest stock rotation strategies
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 1 * * 6'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/backtest_rotation.py'
+      - 'scripts/rotation_sync.py'
+      - 'scripts/rotation_prices.py'
+      - 'scripts/rotation_signals.py'
+      - 'rotation/strategy.json'
+      - 'rotation/universe.json'
+      - 'rotation/requirements.txt'
+      - 'tests/test_rotation_backtest.py'
+      - '.github/workflows/backtest-rotation.yml'
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: stock-rotation-update
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: rotation/requirements.txt
+      - name: Install dependencies
+        run: pip install -r rotation/requirements.txt
+      - name: Verify prices, signals and next-open accounting
+        run: python -m unittest discover -s tests -p 'test_rotation*.py' -v
+      - name: Compare fixed horizons and synchrony filter
+        run: python scripts/backtest_rotation.py
+      - name: Save report and request Pages refresh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add rotation/backtest.json rotation/backtest_history.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update rotation backtest validation report'
+            for attempt in 1 2 3; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then break; fi
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
