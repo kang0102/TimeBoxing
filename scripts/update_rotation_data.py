@@ -12,6 +12,7 @@ from rotation_money import assess_money, refresh_flows, save_archive
 from rotation_prices import adjust_with_verified_close, fetch_official_closes
 from rotation_briefing import build_briefings
 from rotation_sync import build_synchrony
+from rotation_universe import refresh_top100, expand_universe
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -86,6 +87,9 @@ def main():
     import yfinance as yf
     logging.getLogger("yfinance").setLevel(logging.CRITICAL)
     config = json.loads((ROOT / "rotation" / "universe.json").read_text(encoding="utf-8"))
+    top100 = refresh_top100()
+    config = expand_universe(config, top100)
+    save_archive(ROOT / 'rotation/universe_current.json', config)
     events = json.loads((ROOT / "rotation" / "catalysts.json").read_text(encoding="utf-8"))["events"]
     cases = json.loads((ROOT / "rotation" / "research_cases.json").read_text(encoding="utf-8"))["cases"]
     symbols = sorted(set(config["benchmarks"].values()) | {s[0] for g in config["groups"] for s in g["stocks"]})
@@ -133,6 +137,14 @@ def main():
     save_archive(archive_path, archive)
     snapshot = build_snapshot(config, downloads, previous, now=now, events=events, research_cases=cases, institutional=archive, price_check=price_check)
     snapshot["institutional_refresh_errors"] = flow_errors
+    ranking = {r['symbol']: r for r in top100.get('stocks', [])}
+    snapshot['top100'] = {k: v for k, v in top100.items() if k != 'stocks'}
+    for row in snapshot['stocks']:
+        rank = ranking.get(row['symbol'], {})
+        row.update(market_cap_rank=rank.get('rank'), market_cap=rank.get('market_cap'),
+                   market_cap_as_of=top100.get('as_of') if rank else None,
+                   shares_as_of=rank.get('shares_as_of'))
+    snapshot['methodology_version'] = 'event-rotation-v6-top100'
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temp = args.output.with_suffix(".tmp")
     temp.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")

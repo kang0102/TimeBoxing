@@ -2,11 +2,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from rotation_prices import adjust_with_verified_close, official_index, official_twse, official_tpex
+from rotation_prices import adjust_with_verified_close, official_index, official_twse, official_tpex, fetch_official_closes
 from update_rotation_data import build_snapshot
 from test_rotation import bars
 
@@ -57,6 +58,16 @@ class ClosingPriceTests(unittest.TestCase):
         snapshot = build_snapshot(config, {"INDEX":data,"A":data}, now=datetime(2026,9,18,17,tzinfo=timezone.utc), price_check={"expected_tw_date":"2026-09-18"})
         self.assertEqual(snapshot["markets"]["TW"]["status"], "delayed")
         self.assertEqual(snapshot["coverage"]["available"], 0)
+
+    def test_first_session_of_month_uses_previous_month_reference(self):
+        def payload(url):
+            if 'MI_5MINS_HIST' not in url: return {}
+            row = ['115/09/30','102','99','101'] if 'date=20260930' in url else ['115/10/01','105','101','104']
+            return {'stat':'OK','fields':['日期','最高指數','最低指數','收盤指數'],'data':[row]}
+        with patch('rotation_prices.read_json', side_effect=payload):
+            quotes, _ = fetch_official_closes(datetime(2026,10,1,10,tzinfo=timezone.utc))
+        self.assertEqual(quotes['^TWII']['previous_date'], '2026-09-30')
+        self.assertEqual(quotes['^TWII']['reference_close'], 101)
 
 
 if __name__ == "__main__":

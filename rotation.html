@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12344a">
   <title>大型股輪動雷達｜Neil's 工具箱</title>
-  <link rel="stylesheet" href="styles/rotation.css?v=5">
-  <script src="scripts/rotation.js?v=5" defer></script>
+  <link rel="stylesheet" href="styles/rotation.css?v=6">
+  <script src="scripts/rotation.js?v=6" defer></script>
 </head>
 <body>
   <header class="topbar"><a href="index.html">← Neil's 工具箱</a><span>QUANT / 01</span></header>
@@ -17,11 +17,16 @@
     </section>
     <div class="notice" id="notice" role="status" aria-live="polite">載入完成後顯示各市場的行情日期。</div>
     <div class="tabs market-switch" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
+    <nav class="radar-jumps" aria-label="快速查看"><a href="#briefing">主線訊號</a><a href="#breadth-map">提前準備</a><a href="#etf-risk">ETF 警訊</a><a href="#stock-list" id="jump-stocks">百大／個股</a><a href="#backtest">回測</a></nav>
     <section id="briefing" class="briefing" aria-label="一眼看懂輪動與等待訊號"></section>
+    <section id="breadth-map" class="section" aria-label="延伸兩層與產業支線"></section>
     <section id="synchrony" class="section" aria-label="異常同步"></section>
+    <section id="etf-risk" class="section" aria-label="主動式ETF風險觀察"></section>
     <section id="backtest" class="section" aria-label="回測比較"><h2>短波段與中期回測</h2><p>正在讀取回測結果…</p></section>
-    <details class="secondary-panel"><summary>完整個股清單、量價分數與 Smart Money</summary>
+    <details id="stock-list" class="secondary-panel"><summary>完整個股清單、量價分數與 Smart Money</summary>
     <section class="controls" aria-label="觀察條件">
+      <label id="scope-label">台股範圍<select id="scope"><option value="top100">市值前 100 大</option><option value="supplement">研究補充股</option><option value="all">全部觀察股</option></select></label>
+      <label>排序<select id="order"><option value="cap">市值名次</option><option value="score">動能分數</option></select></label>
       <label>族群<select id="group"><option value="all">全部族群</option></select></label>
       <label>訊號<select id="stage"><option value="all">全部訊號</option><option value="breakout">放量突破</option><option value="improving">動能轉強</option><option value="laggard_watch">相對落後</option><option value="laggard">補漲轉強</option><option value="extended">漲幅偏熱</option><option value="weakening">轉弱觀察</option><option value="watch">等待訊號</option></select></label>
       <label>Smart Money<select id="money"><option value="all">全部資金狀態</option><option value="buying">偏買／買壓</option><option value="selling">偏賣／賣壓</option><option value="mixed">方向分歧／中性</option><option value="unavailable">資料不足</option></select></label>
@@ -44,7 +49,7 @@
       <p>35 分：20 日個股／大盤價格比的變化，−10% 到 +10% 線性換算；20 分：最近 5 日相對報酬減去前一段 5 日相對報酬，−5 到 +5 個百分點線性換算；20 分：收盤高於 MA20、MA20 高於 MA60 各 10 分；15 分：當日量／前 20 日均量，0.5 到 2 倍線性換算；10 分：收盤／前 20 日最高價，0.9 到 1 線性換算。各項分數皆設上下限。</p>
       <ul><li><strong>放量突破：</strong>收盤突破前 20 日高點、量比 ≥ 1.5、5 日相對大盤轉正。</li><li><strong>動能轉強：</strong>收盤高於 MA20、5 日相對大盤為正，且相對動能加速。</li><li><strong>相對落後：</strong>同市場族群至少 2 檔有效資料，個股 20 日漲幅落後族群平均至少 5 個百分點；不要求已止跌。與原報告的人工落後觀察角色分開。</li><li><strong>補漲轉強：</strong>相對落後，且族群至少一半站上 MA20、族群平均相對大盤為正；個股站上 MA20、5 日相對大盤為正且未過熱。</li><li><strong>漲幅偏熱：</strong>20 日漲幅 > 25% 或收盤高於 MA20 超過 15%。</li><li><strong>轉弱觀察：</strong>收盤低於 MA20 且 5 日相對大盤 ≤ 0。這些是觀察條件，不是交易指令。</li></ul>
       <p>台股基準：加權指數；美股基準：S&amp;P 500。使用 Yahoo Finance 還原日線，拆股與配息會影響歷史值；至少需 65 個共同交易日。台北時間 14:00、美東時間 16:30 前不納入當日 K 棒。休市日沿用最近完整交易日，資料日期永遠另外顯示。台股最新收盤欄位缺值時，須經官方同日日期、最高最低價、前日價格基準及無除權息核對後才補齊；成交量仍沿用 Yahoo。官方已有新交易日而來源未齊時，顯示延遲並停止最新訊號。</p>
-      <p>族群按觀察名單等權計算，有效資料不足 60% 時不評分。單一美股代表只代表該股。觀察範圍包含封測、光通訊等 10 個主題，並非全市場。族群歸類只用於研究，不代表任何公司已確認接單或供應關係。</p>
+      <p>族群按觀察名單等權計算，有效資料不足 60% 時不評分。台股包含上市＋上櫃普通股估算市值前 100 大，加原研究補充股；不含 ETF、權證、TDR。市值以最近公告普通股股數乘同日官方收盤價估算，股數公告日可落後行情日。百大名單每天重算；新增公司依官方產業分類補充，原研究主題保留。族群摘要涵蓋全部觀察股，不受清單範圍篩選影響。美股仍為研究名單。歸類不是已確認接單或供應關係。</p>
       <p>研究主線的第一、二、三波是報告中的角色分類；它與當天量價狀態是不同欄位。優先序保留報告日期，不自動冒充今日推薦。主線最多追蹤 10 個市場交易日，期滿停止條件判定並保留研究紀錄。新聞、人工波次尚未完成歷史回測；量價代理規則的結果與限制見上方回測區。</p>
       <p><strong>Smart Money／台股法人籌碼：</strong>使用證交所、櫃買中心公告股數。外資不含外資自營商；判斷方向使用外資＋投信，自營商（含避險）另列。最近 5 個交易日有至少 3 日淨買超且合計淨買超，才標為「法人偏買」；賣超相反，其餘為方向分歧。連買天數只檢查此 5 日窗口，5 日表示至少 5 日。缺日、行情日期不符或舊資料不作判斷。張數以 1,000 股換算。不同市場的成交統計範圍有差異，未將買賣超除以成交量，也不跨股比較張數大小。</p>
       <p><strong>美股 CMF20：</strong>最近 20 日 Σ[((2×收盤−最高−最低)÷(最高−最低))×成交量] ÷ Σ成交量，最高＝最低時該日乘數為 0。CMF ≥ 0.05 標示量價買壓，≤ −0.05 標示量價賣壓，其餘中性。這是量價推估，不能辨識機構身分，也不是實際資金流金額。美股尚未串接 13F／機構持股資料。</p>
