@@ -108,7 +108,7 @@ def main():
     if args.output.exists():
         previous = json.loads(args.output.read_text(encoding="utf-8"))
     now = datetime.now(timezone.utc)
-    official, price_check = fetch_official_closes(now)
+    official, price_check = fetch_official_closes(now, ROOT/'rotation/official_closes.json', symbols)
     price_check["repairs"] = {}
     for symbol in list(downloads):
         try:

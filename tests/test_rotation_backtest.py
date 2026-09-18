@@ -1,11 +1,15 @@
 import sys
 import unittest
+import json
+import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
 import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
-from backtest_rotation import features, simulate, training_choice
+from backtest_rotation import features, simulate, training_choice, mark_refresh_failure
 from rotation_sync import synchrony_series
+from rotation_prices import merge_verified_cache, TPEX_SOURCE
 
 
 class BacktestTests(unittest.TestCase):
@@ -45,6 +49,23 @@ class BacktestTests(unittest.TestCase):
 
     def test_training_candidate_needs_sample_and_tie_keeps_baseline(self):
         self.assertEqual(training_choice({1.2:{'trades':2,'sharpe':99},1.5:{'trades':20,'sharpe':1},2:{'trades':20,'sharpe':1}},1.5),1.5)
+
+    def test_refresh_failure_retains_actual_results_and_date(self):
+        with tempfile.TemporaryDirectory() as folder:
+            p=Path(folder)/'backtest.json'
+            original={'generated_at':'2026-09-17','markets':[{'return_pct':10}]}
+            p.write_text(json.dumps(original),encoding='utf-8')
+            mark_refresh_failure(p,datetime(2026,9,19,tzinfo=timezone.utc))
+            result=json.loads(p.read_text(encoding='utf-8'))
+            self.assertEqual(result['markets'],original['markets'])
+            self.assertEqual(result['generated_at'],'2026-09-17')
+            self.assertEqual(result['refresh_status'],'failed')
+
+    def test_official_cache_is_same_session_only(self):
+        quotes={};diagnostics={'expected_tw_date':'2026-09-18'}
+        cache={'quotes':{'A':{'date':'2026-09-18','source':TPEX_SOURCE},'B':{'date':'2026-09-17','source':TPEX_SOURCE},'C':{'date':'2026-09-19','source':TPEX_SOURCE}}}
+        self.assertEqual(list(merge_verified_cache(quotes,diagnostics,cache)),['A'])
+        self.assertEqual(diagnostics['cached_symbols'],['A'])
 
 
 class SynchronyTests(unittest.TestCase):

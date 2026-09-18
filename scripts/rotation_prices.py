@@ -2,6 +2,8 @@
 from datetime import datetime, timedelta
 import json
 import math
+import time
+from pathlib import Path
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
@@ -24,8 +26,14 @@ def roc_date(value):
 
 def read_json(url):
     request = Request(url, headers={"User-Agent": "TimeBoxing-RotationRadar/1.0", "Accept": "application/json"})
-    with urlopen(request, timeout=20) as response:
-        return json.loads(response.read().decode("utf-8-sig"))
+    for attempt in range(3):
+        try:
+            with urlopen(request, timeout=20) as response:
+                return json.loads(response.read().decode("utf-8-sig"))
+        except (OSError, ValueError):
+            if attempt == 2:
+                raise
+            time.sleep(attempt + 1)
 
 
 def official_index(payload, cutoff):
@@ -87,7 +95,20 @@ def official_tpex(payload, day):
     return quotes
 
 
-def fetch_official_closes(now):
+def merge_verified_cache(quotes, diagnostics, cache):
+    """Reuse only a dated official quote matching this run's official calendar."""
+    day = diagnostics.get('expected_tw_date')
+    used = []
+    for symbol, quote in cache.get('quotes', {}).items():
+        if (symbol not in quotes and day and quote.get('date') == day
+                and quote.get('source') in (TWSE_SOURCE, TPEX_SOURCE, INDEX_SOURCE)):
+            quotes[symbol] = quote
+            used.append(symbol)
+    diagnostics['cached_symbols'] = used
+    return quotes
+
+
+def fetch_official_closes(now, cache_path=None, symbols=None):
     local = now.astimezone(ZoneInfo("Asia/Taipei"))
     cutoff = local.date() if local.hour >= 14 else local.date() - timedelta(days=1)
     diagnostics = {"checked_at": now.isoformat(), "expected_tw_date": None, "errors": []}
@@ -112,6 +133,12 @@ def fetch_official_closes(now):
             diagnostics["errors"].append(f"{exchange} 官方收盤價核對失敗")
     for quote in quotes.values():
         quote["previous_date"] = index["previous_date"]
+    if cache_path is not None:
+        cache_path = Path(cache_path)
+        cache = json.loads(cache_path.read_text(encoding='utf-8')) if cache_path.exists() else {}
+        quotes = merge_verified_cache(quotes, diagnostics, cache)
+        selected = {s:q for s,q in quotes.items() if symbols is None or s in symbols}
+        cache_path.write_text(json.dumps({'checked_at':now.isoformat(),'quotes':selected},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     return quotes, diagnostics
 
 

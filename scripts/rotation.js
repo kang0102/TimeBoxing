@@ -162,6 +162,7 @@
     const report=state.backtest?.markets?.find(m=>m.market===state.market);
     if(!report){view.append(make('p','回測尚未取得或載入失敗；目前不顯示績效數字。','notice'));return;}
     const age=Date.now()-Date.parse(state.backtest.generated_at);
+    if(state.backtest.refresh_status==='failed')view.append(make('p',`最近一次雲端回測失敗（${new Date(state.backtest.last_attempt_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false})} 台北），以下保留上次成功結果，尚未更新。`,'notice warn'));
     view.append(make('p',`量價接棒代理規則 · ${report.available}/${report.total} 檔 · 驗證 ${report.validation_start} ～ ${report.validation_end}`,'detail-note'));
     view.append(make('p','回測只檢查量價規則；新聞傳導、人工波次與法人條件尚未完成歷史驗證。今天挑的觀察名單回看歷史，也有事後選股偏差。','notice'));
     if(age>9*86400000)view.append(make('p','回測超過 9 天未更新，請先查看雲端執行紀錄。','notice warn'));

@@ -44,6 +44,8 @@ jobs:
       - name: Verify prices, signals and next-open accounting
         run: python -m unittest discover -s tests -p 'test_rotation*.py' -v
       - name: Compare fixed horizons and synchrony filter
+        id: calculate
+        continue-on-error: true
         run: python scripts/backtest_rotation.py
       - name: Save report and request Pages refresh
         env:
@@ -51,7 +53,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/backtest.json rotation/backtest_history.json
+          git add rotation/backtest.json rotation/backtest_history.json rotation/official_closes.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update rotation backtest validation report'
             for attempt in 1 2 3; do
@@ -62,3 +64,8 @@ jobs:
             done
           fi
           gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Report calculation failure
+        if: steps.calculate.outcome == 'failure'
+        run: |
+          echo '回測未完成；保留上次績效與原始計算日期，網站已標明本次失敗。'
+          exit 1
