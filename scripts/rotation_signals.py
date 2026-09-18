@@ -20,7 +20,7 @@ def completed_bars(frame, market, now=None):
         data.index = data.index.tz_convert(zone).tz_localize(None)
     data.index = data.index.normalize()
     data = data.loc[~data.index.duplicated(keep="last")].sort_index()
-    columns = ["Close", "High", "Volume"] + (["Low"] if "Low" in data else [])
+    columns = ["Close", "High", "Volume"] + [c for c in ("Low", "Open") if c in data]
     data = data.loc[data.index.date <= end, columns]
     data = data.replace([float("inf"), -float("inf")], float("nan")).dropna(subset=["Close", "High", "Volume"])
     return data.loc[(data.Close > 0) & (data.High > 0) & (data.Volume >= 0)]
@@ -89,6 +89,7 @@ def analyze(stock, benchmark):
         "rs_5d": rs5, "rs_20d": rs20, "rs_acceleration": acceleration,
         "volume_ratio": volume_ratio, "ma20_distance": distance, "ma20": ma20,
         "above_ma20": close > ma20, "breakout_20d": breakout,
+        "previous_high20": high20, "volume_mean20": avg_volume, "volume": float(s.Volume.iloc[-1]),
         "score": score, "stage": stage, "reasons": reasons,
         "components": {k: round(v, 2) for k, v in parts.items()},
         "series": [{"date": dt.date().isoformat(), "value": round(float(v / relative.iloc[-21] - 1) * 100, 3)}
