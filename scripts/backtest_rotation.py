@@ -3,6 +3,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -124,7 +125,7 @@ def evaluate_market(market, prices, benchmark, symbols, settings, groups=None):
         if not expected.isin(frame.index).all() or "Open" not in frame or frame.Open.isna().any() or (frame.Open<=0).any():
             excluded.append({"symbol":symbol,"reason":"行情缺日或缺開盤價"});continue
         valid[symbol] = frame.loc[frame.index.intersection(benchmark.index)]
-    if len(valid) < max(2,int(len(symbols)*.8)) or len(test_dates)<120 or len(train_dates)<252:
+    if len(valid) != len(symbols) or len(test_dates)<120 or len(train_dates)<252:
         raise ValueError(f"{market} 回測資料覆蓋或期間不足: {len(valid)}/{len(symbols)}, train={len(train_dates)}, validation={len(test_dates)}, excluded={excluded}")
     prepared = {threshold:{s:features(f,benchmark,threshold) for s,f in valid.items()} for threshold in settings["candidate_volume_ratios"]}
     synchronized = {s:f.copy() for s,f in prepared[settings['volume_ratio']].items()}
@@ -167,20 +168,28 @@ def main():
     universe=json.loads((ROOT/'rotation/universe.json').read_text(encoding='utf-8'))
     cache=ROOT/'.rotation-cache/backtest_downloads.pkl';cache.parent.mkdir(exist_ok=True)
     now=datetime.now(timezone.utc)
+    symbols=sorted(set(universe['benchmarks'].values())|{s[0] for g in universe['groups'] for s in g['stocks']})
     if args.use_cache and cache.exists():
         raw=pd.read_pickle(cache)
     else:
         import yfinance as yf
         yf.set_tz_cache_location(str(ROOT/'.rotation-cache'))
-        symbols=sorted(set(universe['benchmarks'].values())|{s[0] for g in universe['groups'] for s in g['stocks']})
         raw={}
         for start in range(0,len(symbols),8):
             batch=symbols[start:start+8]
             data=yf.download(batch,period=f"{settings['history_years']}y",interval='1d',auto_adjust=False,actions=True,keepna=True,group_by='ticker',threads=4,progress=False,timeout=20)
             for symbol in batch:
                 if symbol in data.columns.get_level_values(0):raw[symbol]=data[symbol].dropna(how='all')
+        for attempt in range(2):
+            missing=[s for s in symbols if s not in raw or raw[s].Close.notna().sum()<150]
+            if not missing:break
+            time.sleep(attempt+1)
+            for symbol in missing:
+                data=yf.download([symbol],period=f"{settings['history_years']}y",interval='1d',auto_adjust=False,actions=True,keepna=True,group_by='ticker',threads=False,progress=False,timeout=20)
+                if symbol in data.columns.get_level_values(0):raw[symbol]=data[symbol].dropna(how='all')
         pd.to_pickle(raw,cache)
-    quotes,diagnostics=fetch_official_closes(now)
+    quotes,diagnostics=fetch_official_closes(now, ROOT/'rotation/official_closes.json', symbols)
+    print('Official close verification:',json.dumps(diagnostics,ensure_ascii=False),flush=True)
     all_markets={s[0]:s[2] for g in universe['groups'] for s in g['stocks']}
     all_markets.update({symbol:market for market,symbol in universe['benchmarks'].items()})
     prices={}
@@ -188,12 +197,14 @@ def main():
         try:
             adjusted,_=adjust_with_verified_close(frame,quotes.get(symbol))
             prices[symbol]=completed_bars(adjusted,all_markets[symbol],now)
+            if symbol.endswith('.TWO'):
+                print(symbol,'raw latest',str(frame.index[-1]),'completed latest',str(prices[symbol].index[-1]),'official',quotes.get(symbol,{}).get('date'),flush=True)
         except (KeyError,ValueError,TypeError):pass
     reports=[]
     for market,benchmark in universe['benchmarks'].items():
         symbols=[s[0] for g in universe['groups'] for s in g['stocks'] if s[2]==market]
         reports.append(evaluate_market(market,prices,prices[benchmark],symbols,settings,universe['groups']))
-    result={"schema_version":1,"status":"ok","generated_at":now.isoformat(),"strategy_version":settings['version'],
+    result={"schema_version":1,"status":"ok","refresh_status":"ok","last_attempt_at":now.isoformat(),"generated_at":now.isoformat(),"strategy_version":settings['version'],
             "config_hash":hashlib.sha256(json.dumps(settings,sort_keys=True).encode()).hexdigest()[:12],
             "settings":settings,"markets":reports,"official_check":diagnostics,
             "limitations":["回測僅涵蓋量價接棒代理規則，不含新聞催化、人工波次或 Smart Money 法人条件。",
@@ -213,4 +224,15 @@ def main():
         for row in report['results']: print(row['holding_days'],'days',row['validation']['return_pct'],'return',row['validation']['max_drawdown_pct'],'drawdown',row['validation']['trades'],'trades',row['assessment'])
 
 
-if __name__=='__main__':main()
+def mark_refresh_failure(path, now):
+    report=json.loads(path.read_text(encoding='utf-8')) if path.exists() else {'schema_version':1,'status':'failed','markets':[]}
+    report.update(refresh_status='failed',last_attempt_at=now.isoformat())
+    temp=path.with_suffix('.tmp')
+    temp.write_text(json.dumps(report,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8');temp.replace(path)
+
+
+if __name__=='__main__':
+    try:main()
+    except Exception:
+        mark_refresh_failure(ROOT/'rotation/backtest.json',datetime.now(timezone.utc))
+        raise

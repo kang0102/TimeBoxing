@@ -59,7 +59,7 @@ jobs:
           test -f rotation/data.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/data.json rotation/institutional.json rotation/observations.json
+          git add rotation/data.json rotation/institutional.json rotation/observations.json rotation/official_closes.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update stock rotation observations'
             # Another market-data workflow may commit while quotes are downloading.
