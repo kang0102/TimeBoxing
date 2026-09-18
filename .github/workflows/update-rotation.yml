@@ -1,0 +1,74 @@
+name: Update stock rotation radar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 7 * * 1-5'
+    - cron: '43 22 * * 1-5'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/rotation_signals.py'
+      - 'scripts/update_rotation_data.py'
+      - 'rotation/universe.json'
+      - 'rotation/catalysts.json'
+      - 'rotation/requirements.txt'
+      - '.github/workflows/update-rotation.yml'
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: stock-rotation-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: rotation/requirements.txt
+      - name: Install dependencies
+        run: pip install -r rotation/requirements.txt
+      - name: Verify signal calculations
+        run: python -m unittest discover -s tests -p 'test_rotation.py' -v
+      - name: Calculate completed-session signals
+        id: calculate
+        continue-on-error: true
+        run: python scripts/update_rotation_data.py
+      - name: Save results and request Pages refresh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f rotation/data.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add rotation/data.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update stock rotation observations'
+            # Another market-data workflow may commit while quotes are downloading.
+            for attempt in 1 2 3; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then
+                break
+              fi
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+          # Bot commits alone may not trigger branch-based Pages rebuilds.
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Report data-source failure
+        if: steps.calculate.outcome == 'failure'
+        run: |
+          echo '行情更新失敗；已保留舊值並發布資料狀態。請檢查更新紀錄。'
+          exit 1
