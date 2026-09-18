@@ -1,4 +1,41 @@
 {
-  "events": [],
-  "note": "只加入經查證、附公開來源的催化事件。觀察族群不代表已確認供應商。事件格式見 rotation/README.md。"
+  "events": [
+    {
+      "id": "crusoe-series-f-20260917",
+      "title": "Crusoe 募資 39 億美元，NVIDIA 參與",
+      "date": "2026-09-18",
+      "published_date": "2026-09-17",
+      "market": "TW",
+      "markets": ["TW", "US"],
+      "verification": "verified",
+      "summary": "Crusoe 官方宣布 Series F 首次交割，預計募資 39 億美元，投後估值 309 億美元；投資者包括 NVIDIA。用途包括擴展 AI 基礎建設。",
+      "boundary": "公告支持投資與擴建事實，沒有確認下列台廠取得本輪新增訂單；也不能據此推論整個 AI 產業需求風險已解除。",
+      "sources": [{"title":"Crusoe 官方公告 · 2026-09-17","url":"https://www.crusoe.ai/resources/newsroom/crusoe-announces-series-f-funding"}],
+      "relationships": [
+        {"symbol":"NVDA","wave":1,"kind":"confirmed","description":"本輪投資者；投資關係不等於新增訂單已確認。","source":"https://www.crusoe.ai/resources/newsroom/crusoe-announces-series-f-funding"},
+        {"symbol":"2308.TW","wave":2,"kind":"hypothesis","description":"電源／散熱需求延伸觀察，未確認 Crusoe 此次擴建訂單。"},
+        {"symbol":"3017.TW","wave":3,"kind":"hypothesis","description":"散熱族群延伸觀察，未確認此次供應關係。"}
+      ]
+    },
+    {
+      "id": "marvell-gf-sige-20260917",
+      "title": "Marvell × GlobalFoundries 擴大 SiGe 產能合作",
+      "date": "2026-09-18",
+      "published_date": "2026-09-17",
+      "market": "TW",
+      "markets": ["TW", "US"],
+      "verification": "verified",
+      "summary": "GF 官方宣布擴大與 Marvell 的多年協議，增加高效能 SiGe 產能，用於可插拔光收發器、NPO 與 CPO。",
+      "boundary": "新增 SiGe 產能在 GF；台灣光通訊股僅列需求延伸假設。台積電與 Marvell 的 2nm 合作是另一項已確認的既有關係，不能寫成承接本次 GF 協議的訂單。",
+      "sources": [{"title":"GlobalFoundries 官方公告 · 2026-09-17","url":"https://gf.gcs-web.com/news-releases/news-release-details/globalfoundries-and-marvell-expand-collaboration-next-generation"},{"title":"Marvell／台積電既有 2nm 合作 · 2024-03-07","url":"https://www.marvell.com/company/newsroom/marvell-announces-industry-first-2nm-platform-for-accelerated-infrastructure-silicon.html"}],
+      "relationships": [
+        {"symbol":"MRVL","wave":1,"kind":"confirmed","description":"協議當事方：光互連技術需求方。","source":"https://gf.gcs-web.com/news-releases/news-release-details/globalfoundries-and-marvell-expand-collaboration-next-generation"},
+        {"symbol":"GFS","wave":1,"kind":"confirmed","description":"協議當事方：新增 SiGe 製造產能。","source":"https://gf.gcs-web.com/news-releases/news-release-details/globalfoundries-and-marvell-expand-collaboration-next-generation"},
+        {"symbol":"6531.TW","wave":3,"kind":"hypothesis","description":"光通訊需求延伸觀察；沒有本協議直接供應證據。"},
+        {"symbol":"3081.TWO","wave":3,"kind":"hypothesis","description":"光通訊需求延伸觀察；沒有本協議直接供應證據。"},
+        {"symbol":"3363.TWO","wave":3,"kind":"hypothesis","description":"CPO 題材延伸觀察；沒有本協議直接供應證據。"}
+      ]
+    }
+  ],
+  "note": "公告日期與台股首個觀察日分開記錄。波次為研究傳導假設，不宣稱已確認因果或供應訂單。"
 }

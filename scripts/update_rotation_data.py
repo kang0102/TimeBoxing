@@ -7,11 +7,12 @@ from pathlib import Path
 import sys
 
 from rotation_signals import active_events, aggregate, analyze, completed_bars
+from rotation_research import evaluate_cases
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build_snapshot(config, downloads, previous=None, now=None, events=None):
+def build_snapshot(config, downloads, previous=None, now=None, events=None, research_cases=None):
     now = now or datetime.now(timezone.utc)
     previous = previous or {}
     old = {r["symbol"]: r for r in previous.get("stocks", [])}
@@ -28,16 +29,17 @@ def build_snapshot(config, downloads, previous=None, now=None, events=None):
             market_info[market] = {"symbol": symbol, "as_of": frame.index[-1].date().isoformat(), "status": "ok"}
         except Exception:
             market_info[market] = {"symbol": symbol, "as_of": None, "status": "unavailable"}
-    rows = []
+    rows, completed_prices = [], {}
     for group in config["groups"]:
         for symbol, name, market in group["stocks"]:
             base = {"symbol": symbol, "name": name, "market": market, "group": group["id"],
-                    "group_name": group["name"], "currency": "TWD" if market == "TW" else "USD", "laggard": False}
+                    "group_name": group["name"], "currency": "TWD" if market == "TW" else "USD", "laggard": False, "laggard_watch": False}
             try:
                 if market not in benchmarks:
                     raise ValueError("市場基準資料暫時無法取得")
                 bars = completed_bars(downloads[symbol], market, now)
                 data = analyze(bars, benchmarks[market])
+                completed_prices[symbol] = bars
                 history = list(old.get(symbol, {}).get("history", []))
                 history = [h for h in history if h["date"] < data["as_of"]]
                 history.append({"date": data["as_of"], "score": data["score"], "stage": data["stage"]})
@@ -54,10 +56,11 @@ def build_snapshot(config, downloads, previous=None, now=None, events=None):
             "last_success_at": now.isoformat() if count else previous.get("last_success_at"),
             "status": "ok" if count == len(rows) else "partial" if count else "failed",
             "source": "Yahoo Finance / yfinance；還原日線，僅完整交易日",
-            "methodology_version": "price-volume-v1", "markets": market_info,
+            "methodology_version": "event-rotation-v2", "markets": market_info,
             "coverage": {"available": count, "total": len(rows)},
             "stocks": rows, "groups": sectors,
-            "events": active_events(events or [], benchmarks, rows)}
+            "events": active_events(events or [], benchmarks, rows, now=now),
+            "research_cases": evaluate_cases(research_cases or [], rows, completed_prices, benchmarks)}
 
 
 def main():
@@ -68,6 +71,7 @@ def main():
     logging.getLogger("yfinance").setLevel(logging.CRITICAL)
     config = json.loads((ROOT / "rotation" / "universe.json").read_text(encoding="utf-8"))
     events = json.loads((ROOT / "rotation" / "catalysts.json").read_text(encoding="utf-8"))["events"]
+    cases = json.loads((ROOT / "rotation" / "research_cases.json").read_text(encoding="utf-8"))["cases"]
     symbols = sorted(set(config["benchmarks"].values()) | {s[0] for g in config["groups"] for s in g["stocks"]})
     yf.set_tz_cache_location(str(ROOT / ".rotation-cache"))
     downloads = {}
@@ -87,7 +91,7 @@ def main():
     previous = {}
     if args.output.exists():
         previous = json.loads(args.output.read_text(encoding="utf-8"))
-    snapshot = build_snapshot(config, downloads, previous, events=events)
+    snapshot = build_snapshot(config, downloads, previous, events=events, research_cases=cases)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temp = args.output.with_suffix(".tmp")
     temp.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")

@@ -8,6 +8,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from rotation_signals import active_events, aggregate, analyze, completed_bars
+from rotation_research import evaluate_cases
 from update_rotation_data import build_snapshot
 
 
@@ -80,6 +81,7 @@ class RotationTests(unittest.TestCase):
         rows[0]["above_ma20"] = False
         aggregate(rows, [{"id":"g","name":"G"}])
         self.assertFalse(rows[0]["laggard"])
+        self.assertTrue(rows[0]["laggard_watch"])
 
     def test_events_require_verified_source_and_ten_day_window(self):
         b = bars()
@@ -92,6 +94,66 @@ class RotationTests(unittest.TestCase):
         self.assertEqual(active_events([bad], {"TW":b}, []), [])
         bad=copy.deepcopy(event);bad["sources"][0]["url"]="javascript:alert(1)"
         self.assertEqual(active_events([bad], {"TW":b}, []), [])
+
+    def test_published_news_can_wait_for_first_post_event_candle(self):
+        now = datetime(2026, 9, 18, 8, tzinfo=timezone.utc)
+        event = {"date": "2026-09-18", "published_date": "2026-09-17", "market": "TW",
+                 "verification": "verified", "sources": [{"url": "https://example.com/press"}]}
+        result = active_events([event], {"TW": bars(end="2026-09-17")}, [], now=now)
+        self.assertEqual(result[0]["trading_days"], 0)
+        self.assertEqual(result[0]["tracking_status"], "pending")
+        event["published_date"] = "2026-09-19"
+        self.assertEqual(active_events([event], {"TW": bars()}, [], now=now), [])
+
+
+class ResearchTests(unittest.TestCase):
+    def setUp(self):
+        self.case = {"market": "TW", "baseline_date": "2026-09-17", "start_date": "2026-09-18",
+                     "max_sessions": 10, "rules": {"leader_floor_pct": -3, "volume_ratio_min": 1.5},
+                     "leaders": ["A", "B"], "followers": ["C", "D"],
+                     "positions": [{"symbol": s, "role": "接棒候選", "wave": 2} for s in "ABCD"]}
+        self.rows = [{"symbol": s, "name": s, "status": "ok", "as_of": "2026-09-18", "close": 100,
+                      "breakout_20d": s == "C", "volume_ratio": 2, "rs_5d": 1, "above_ma20": True,
+                      "ma20": 95} for s in "ABCD"]
+        self.prices = {s: pd.DataFrame({"Close": [100, 100]}, index=pd.to_datetime(["2026-09-17", "2026-09-18"])) for s in "ABCD"}
+        self.benchmarks = {"TW": bars()}
+
+    def result(self):
+        return evaluate_cases([self.case], self.rows, self.prices, self.benchmarks)[0]
+
+    def test_diffusion_requires_both_leaders_and_one_follower(self):
+        self.assertEqual(self.result()["status"], "diffusing")
+        self.rows[2]["volume_ratio"] = 1.4
+        self.assertEqual(self.result()["status"], "waiting")
+        self.rows[3]["breakout_20d"] = True
+        self.assertEqual(self.result()["status"], "diffusing")
+
+    def test_leader_loss_overrides_follower_breakout(self):
+        self.rows[0]["close"] = 96
+        result = self.result()
+        self.assertEqual(result["status"], "weakening")
+        self.assertEqual(result["positions"][0]["since_report"], -4)
+
+    def test_stale_leader_never_confirms_diffusion(self):
+        self.rows[1]["status"] = "stale"
+        result = self.result()
+        self.assertEqual(result["status"], "unavailable")
+        self.assertIsNone(result["checks"][1]["passed"])
+
+    def test_missing_baseline_cannot_confirm_leader_hold(self):
+        self.prices["A"] = self.prices["A"].iloc[1:]
+        self.assertEqual(self.result()["status"], "unavailable")
+
+    def test_pending_and_expired_cases_do_not_emit_confirmation(self):
+        for end, expected in [("2026-09-17", "pending"), ("2026-10-05", "expired")]:
+            self.benchmarks["TW"] = bars(end=end)
+            result = self.result()
+            self.assertEqual(result["status"], expected)
+            self.assertTrue(all(check["passed"] is None for check in result["checks"]))
+
+    def test_stock_date_must_match_market_date(self):
+        self.rows[0]["as_of"] = "2026-09-17"
+        self.assertEqual(self.result()["status"], "unavailable")
 
 
 if __name__ == "__main__":

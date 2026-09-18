@@ -86,7 +86,7 @@ def analyze(stock, benchmark):
         "as_of": s.index[-1].date().isoformat(), "close": close,
         "change_1d": ret(1), "return_5d": ret(5), "return_20d": ret(20),
         "rs_5d": rs5, "rs_20d": rs20, "rs_acceleration": acceleration,
-        "volume_ratio": volume_ratio, "ma20_distance": distance,
+        "volume_ratio": volume_ratio, "ma20_distance": distance, "ma20": ma20,
         "above_ma20": close > ma20, "breakout_20d": breakout,
         "score": score, "stage": stage, "reasons": reasons,
         "components": {k: round(v, 2) for k, v in parts.items()},
@@ -116,6 +116,8 @@ def aggregate(rows, groups):
                            return_20d=round(mean(r["return_20d"] for r in usable), 2))
                 # A laggard candidate requires improving price action and group breadth.
                 for row in usable:
+                    row["laggard_watch"] = bool(len(usable) >= 2
+                                                and out["return_20d"] - row["return_20d"] >= 5)
                     row["laggard"] = bool(len(usable) >= 2 and out["breadth"] >= 50
                                           and out["rs_5d"] > 0
                                           and out["return_20d"] - row["return_20d"] >= 5
@@ -125,9 +127,10 @@ def aggregate(rows, groups):
     return results
 
 
-def active_events(events, benchmarks, rows):
+def active_events(events, benchmarks, rows, now=None):
     """Only sourced events, within ten observed market sessions, enter the radar."""
     result = []
+    today = (now or datetime.now(timezone.utc)).date()
     by_symbol = {r["symbol"]: r for r in rows}
     for event in events:
         if event.get("verification") != "verified" or not event.get("sources"):
@@ -142,10 +145,14 @@ def active_events(events, benchmarks, rows):
             date = datetime.strptime(event["date"], "%Y-%m-%d").date()
         except (ValueError, KeyError, TypeError):
             continue
-        if date > bars.index[-1].date():
+        try:
+            published = datetime.strptime(event.get("published_date", event["date"]), "%Y-%m-%d").date()
+        except (ValueError, KeyError, TypeError):
+            continue
+        if published > today:
             continue
         days = sum(d >= date for d in bars.index.date)
-        if not 1 <= days <= 10:
+        if not 0 <= days <= 10:
             continue
         waves = []
         for relation in event.get("relationships", []):
@@ -156,5 +163,5 @@ def active_events(events, benchmarks, rows):
             if relation["kind"] == "confirmed" and not str(relation.get("source", "")).startswith("https://"):
                 continue
             waves.append(relation)
-        result.append({**event, "trading_days": days, "relationships": waves})
+        result.append({**event, "trading_days": days, "tracking_status": "pending" if days == 0 else "active", "relationships": waves})
     return result
