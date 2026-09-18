@@ -188,7 +188,7 @@ def main():
                 data=yf.download([symbol],period=f"{settings['history_years']}y",interval='1d',auto_adjust=False,actions=True,keepna=True,group_by='ticker',threads=False,progress=False,timeout=20)
                 if symbol in data.columns.get_level_values(0):raw[symbol]=data[symbol].dropna(how='all')
         pd.to_pickle(raw,cache)
-    quotes,diagnostics=fetch_official_closes(now, ROOT/'rotation/official_closes.json', symbols)
+    quotes,diagnostics=fetch_official_closes(now, ROOT/'rotation/official_closes.json', symbols, persist_cache=False)
     print('Official close verification:',json.dumps(diagnostics,ensure_ascii=False),flush=True)
     all_markets={s[0]:s[2] for g in universe['groups'] for s in g['stocks']}
     all_markets.update({symbol:market for market,symbol in universe['benchmarks'].items()})

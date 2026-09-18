@@ -108,7 +108,7 @@ def merge_verified_cache(quotes, diagnostics, cache):
     return quotes
 
 
-def fetch_official_closes(now, cache_path=None, symbols=None):
+def fetch_official_closes(now, cache_path=None, symbols=None, persist_cache=True):
     local = now.astimezone(ZoneInfo("Asia/Taipei"))
     cutoff = local.date() if local.hour >= 14 else local.date() - timedelta(days=1)
     diagnostics = {"checked_at": now.isoformat(), "expected_tw_date": None, "errors": []}
@@ -138,7 +138,8 @@ def fetch_official_closes(now, cache_path=None, symbols=None):
         cache = json.loads(cache_path.read_text(encoding='utf-8')) if cache_path.exists() else {}
         quotes = merge_verified_cache(quotes, diagnostics, cache)
         selected = {s:q for s,q in quotes.items() if symbols is None or s in symbols}
-        cache_path.write_text(json.dumps({'checked_at':now.isoformat(),'quotes':selected},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        if persist_cache:
+            cache_path.write_text(json.dumps({'checked_at':now.isoformat(),'quotes':selected},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     return quotes, diagnostics
 
 
