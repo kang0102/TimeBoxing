@@ -34,6 +34,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Start from latest published observations
+        run: git pull --ff-only origin main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -53,7 +55,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/backtest.json rotation/backtest_history.json rotation/official_closes.json
+          git add rotation/backtest.json rotation/backtest_history.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update rotation backtest validation report'
             for attempt in 1 2 3; do
