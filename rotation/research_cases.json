@@ -1,0 +1,27 @@
+{
+  "cases": [
+    {
+      "id": "asic-testing-20260918",
+      "title": "封測／AI ASIC 測試：下一棒有沒有接上？",
+      "market": "TW",
+      "report_at": "2026-09-18T06:57:00+08:00",
+      "baseline_date": "2026-09-17",
+      "start_date": "2026-09-18",
+      "max_sessions": 10,
+      "thesis": "以欣銓、矽格作為原報告的領先觀察股，追蹤京元電、日月光是否放量接棒；欣興保留在落後觀察名單，另外檢查是否止跌轉強。",
+      "evidence_note": "這是 9/18 晨報的研究假設。9/17 台股走勢早於當晚美國新聞，兩者並列觀察，不認定新聞已造成封測輪動。原報告的營收、產能與設備金額尚未逐項取得官方來源，沒有納入自動基本面評分。",
+      "rules": {"leader_floor_pct": -3.0, "volume_ratio_min": 1.5},
+      "leaders": ["3264.TWO", "6257.TW"],
+      "followers": ["2449.TW", "3711.TW"],
+      "positions": [
+        {"symbol":"2330.TW","wave":1,"role":"大型股錨點","report_view":"既有 Marvell 2nm 合作可核實，但非本次 GF 協議的直接受惠證據。","evidence":"confirmed_background","source":"https://www.marvell.com/company/newsroom/marvell-announces-industry-first-2nm-platform-for-accelerated-infrastructure-silicon.html"},
+        {"symbol":"3264.TWO","wave":2,"role":"領先觀察","priority":4,"report_view":"原報告列為第二波領先股；用來檢查行情能否延續，不因已大漲而列為落後候選。","evidence":"research_hypothesis"},
+        {"symbol":"6257.TW","wave":2,"role":"領先觀察","report_view":"與欣銓一起觀察封測族群領先動能是否延續。","evidence":"research_hypothesis"},
+        {"symbol":"2449.TW","wave":3,"role":"接棒候選","priority":2,"report_view":"原報告的下一棒候選；須看到放量突破才確認本看板的接棒條件。","evidence":"research_hypothesis"},
+        {"symbol":"3711.TW","wave":3,"role":"接棒候選","priority":3,"report_view":"原報告的下一棒候選；低量本身不是轉強證據。","evidence":"research_hypothesis"},
+        {"symbol":"3037.TW","wave":3,"role":"落後觀察","priority":1,"report_view":"原報告提出基本面與股價背離假設；先保留觀察，再檢查止跌與轉強。基本面敘述尚待官方資料核實。","evidence":"research_hypothesis"},
+        {"symbol":"2308.TW","wave":0,"role":"另一路：電源／散熱","priority":5,"report_view":"原報告將價格確認降級。每天檢查是否重新站上動態 20 日均線；不沿用固定 1,750 元當永久門檻。","evidence":"research_hypothesis"}
+      ]
+    }
+  ]
+}
