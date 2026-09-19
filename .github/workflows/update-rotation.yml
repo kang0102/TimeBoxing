@@ -17,6 +17,8 @@ on:
       - 'scripts/rotation_sync.py'
       - 'scripts/rotation_universe.py'
       - 'scripts/rotation_etf.py'
+      - 'scripts/rotation_decisions.js'
+      - 'tests/test_rotation_decisions.js'
       - 'scripts/update_rotation_data.py'
       - 'rotation/universe.json'
       - 'rotation/catalysts.json'
@@ -51,7 +53,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r rotation/requirements.txt
       - name: Verify signal calculations
-        run: python -m unittest discover -s tests -p 'test_rotation*.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_rotation*.py' -v
+          node --test tests/test_rotation_decisions.js
       - name: Calculate completed-session signals
         id: calculate
         continue-on-error: true

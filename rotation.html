@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12344a">
   <title>大型股輪動雷達｜Neil's 工具箱</title>
-  <link rel="stylesheet" href="styles/rotation.css?v=6">
-  <script src="scripts/rotation.js?v=6" defer></script>
+  <link rel="stylesheet" href="styles/rotation.css?v=7">
+  <script src="scripts/rotation_decisions.js?v=7" defer></script>
+  <script src="scripts/rotation.js?v=7" defer></script>
 </head>
 <body>
   <header class="topbar"><a href="index.html">← Neil's 工具箱</a><span>QUANT / 01</span></header>
@@ -17,8 +18,9 @@
     </section>
     <div class="notice" id="notice" role="status" aria-live="polite">載入完成後顯示各市場的行情日期。</div>
     <div class="tabs market-switch" role="group" aria-label="市場"><button type="button" data-market="TW" aria-pressed="true">台股</button><button type="button" data-market="US" aria-pressed="false">美股</button></div>
-    <nav class="radar-jumps" aria-label="快速查看"><a href="#briefing">主線訊號</a><a href="#breadth-map">提前準備</a><a href="#etf-risk">ETF 警訊</a><a href="#stock-list" id="jump-stocks">百大／個股</a><a href="#backtest">回測</a></nav>
+    <nav class="radar-jumps" aria-label="快速查看"><a href="#briefing">主線訊號</a><a href="#flat-map">平面總覽</a><a href="#breadth-map">提前準備</a><a href="#etf-risk">ETF 布局股票</a><a href="#stock-list" id="jump-stocks">百大／個股</a><a href="#backtest">回測</a></nav>
     <section id="briefing" class="briefing" aria-label="一眼看懂輪動與等待訊號"></section>
+    <section id="flat-map" class="section" aria-label="所有產業股票平面總覽"></section>
     <section id="breadth-map" class="section" aria-label="延伸兩層與產業支線"></section>
     <section id="synchrony" class="section" aria-label="異常同步"></section>
     <section id="etf-risk" class="section" aria-label="主動式ETF風險觀察"></section>

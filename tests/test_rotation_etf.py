@@ -65,6 +65,25 @@ class ETFTests(unittest.TestCase):
         self.assertEqual(result['2454']['reduced_funds'][0]['per_unit_change_pct'], -100)
         self.assertIsNone(result['2330']['ordinary_shares_pct'])
 
+    def test_subscription_growth_is_not_accumulation_and_new_needs_baseline(self):
+        old = {'code':'00980A','as_of':'2026-09-17','units':1000,'holdings':[{'code':'2330','name':'台積電','shares':100,'weight_pct':50}]}
+        new = {'code':'00980A','as_of':'2026-09-18','units':2000,'holdings':[{'code':'2330','name':'台積電','shares':200,'weight_pct':50},{'code':'2454','name':'聯發科','shares':20,'weight_pct':5}]}
+        result = {r['code']:r for r in overlap([new],{'00980A':old},[],{})}
+        self.assertEqual(result['2330']['increased_funds'], [])
+        self.assertEqual(result['2454']['new_funds'][0]['previous_date'], '2026-09-17')
+        for baseline in [{}, {'00980A':{**old,'as_of':'2026-09-18'}}, {'00980A':{**old,'as_of':'2026-09-19'}}]:
+            self.assertTrue(all(not r['new_funds'] and not r['increased_funds'] and not r['reduced_funds'] for r in overlap([new],baseline,[],{})))
+
+    def test_per_unit_increase_retains_weights_and_mixed_fund_directions(self):
+        old = {'code':'00980A','as_of':'2026-09-17','units':1000,'holdings':[{'code':'2330','name':'台積電','shares':100,'weight_pct':10}]}
+        new = {'code':'00980A','as_of':'2026-09-18','units':2000,'holdings':[{'code':'2330','name':'台積電','shares':240,'weight_pct':12}]}
+        seller = {**new,'code':'00985A','holdings':[{**new['holdings'][0],'shares':100}]}
+        r = overlap([new,seller],{'00980A':old,'00985A':{**old,'code':'00985A'}},[],{})[0]
+        self.assertEqual(r['increased_funds'][0]['per_unit_change_pct'],20)
+        self.assertEqual(r['increased_funds'][0]['previous_weight_pct'],10)
+        self.assertEqual(r['increased_funds'][0]['weight_pct'],12)
+        self.assertEqual(r['reduced_funds'][0]['per_unit_change_pct'],-50)
+
 
 class UniverseTests(unittest.TestCase):
     def test_all_market_ranking_and_supplement_preservation(self):

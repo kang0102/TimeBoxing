@@ -6,7 +6,8 @@ import math
 from pathlib import Path
 from urllib.request import Request, urlopen
 from rotation_prices import read_json, fetch_official_closes, adjust_with_verified_close, roc_date
-from rotation_signals import completed_bars
+from rotation_signals import completed_bars, analyze
+from rotation_money import assess_money
 from rotation_money import save_archive
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -138,21 +139,29 @@ def overlap(funds, previous, stocks, top100):
     caps = {r['symbol'].split('.')[0]: r for r in top100.get('stocks', [])}
     for fund in funds:
         old = previous.get(fund['code'], {})
+        if not old.get('as_of') or old['as_of'] >= fund['as_of'] or old.get('units', 0) <= 0:
+            old = {}
         old_stocks = {r['code']: r for r in old.get('holdings', [])}
         for r in fund['holdings']:
             s = output.setdefault(r['code'], {'code': r['code'], 'name': by_code.get(r['code'], {}).get('name', r['name']),
-                                            'funds': [], 'shares': 0, 'reduced_funds': []})
+                                            'funds': [], 'shares': 0, 'reduced_funds': [], 'increased_funds': [], 'new_funds': []})
             s['funds'].append({'code': fund['code'], 'weight_pct': r['weight_pct']}); s['shares'] += r['shares']
             prior = old_stocks.get(r['code'])
             if prior and old.get('units', 0) > 0 and prior['shares'] > 0:
                 change = (r['shares']/fund['units'])/(prior['shares']/old['units'])-1
+                if change >= .01:
+                    s['increased_funds'].append({'code': fund['code'], 'per_unit_change_pct': round(change*100, 2),
+                                                'previous_date': old['as_of'], 'previous_weight_pct': prior['weight_pct'], 'weight_pct': r['weight_pct'],
+                                                'source': fund.get('source')})
                 if change <= -.01:
                     s['reduced_funds'].append({'code': fund['code'], 'per_unit_change_pct': round(change*100, 2), 'previous_date': old['as_of']})
+            elif not prior and old.get('units', 0) > 0:
+                s['new_funds'].append({'code': fund['code'], 'previous_date': old['as_of'], 'weight_pct': r['weight_pct'], 'source': fund.get('source')})
         # A fully exited stock must remain visible in the reduction observations.
         current_codes = {r['code'] for r in fund['holdings']}
         for code, r in old_stocks.items():
             if code not in current_codes:
-                s = output.setdefault(code, {'code': code, 'name': by_code.get(code, {}).get('name', r['name']), 'funds': [], 'shares': 0, 'reduced_funds': []})
+                s = output.setdefault(code, {'code': code, 'name': by_code.get(code, {}).get('name', r['name']), 'funds': [], 'shares': 0, 'reduced_funds': [], 'increased_funds': [], 'new_funds': []})
                 s['reduced_funds'].append({'code': fund['code'], 'per_unit_change_pct': -100, 'previous_date': old['as_of']})
     for r in output.values():
         price = by_code.get(r['code'], {})
@@ -160,6 +169,30 @@ def overlap(funds, previous, stocks, top100):
         r['price_as_of'] = price.get('as_of'); r['symbol'] = price.get('symbol')
         r['ordinary_shares_pct'] = round(r['shares']/caps[r['code']]['shares']*100, 4) if r['code'] in caps else None
     return sorted(output.values(), key=lambda r: (-len(r['reduced_funds']), -len(r['funds']), -max([f['weight_pct'] for f in r['funds']] or [0]), r['code']))
+
+
+def extra_candidate_prices(candidates, stocks, quotes, benchmark, now, downloader):
+    """Price newly observed ETF additions even when outside the top-100 watchlist."""
+    known = {r['symbol'].split('.')[0] for r in stocks if r['market'] == 'TW'}
+    output = []
+    for item in candidates:
+        code = item['code']
+        if code in known or not (item.get('new_funds') or item.get('increased_funds')): continue
+        symbol = next((code+suffix for suffix in ['.TW', '.TWO'] if code+suffix in quotes), None)
+        if not symbol: continue
+        base = {'symbol':symbol,'name':item['name'],'market':'TW','currency':'TWD','group':'etf-additions',
+                'group_name':'ETF 布局補充','status':'unavailable','history':[]}
+        try:
+            downloaded = downloader([symbol],period='9mo',auto_adjust=False,actions=True,keepna=True,group_by='ticker',threads=False,progress=False,timeout=20)
+            raw = downloaded[symbol].dropna(how='all')
+            adjusted, _ = adjust_with_verified_close(raw, quotes[symbol])
+            bars = completed_bars(adjusted, 'TW', now)
+            base.update(analyze(bars, benchmark), status='ok')
+            base['smart_money'] = assess_money(base, bars, {})
+        except Exception:
+            base['error'] = 'ETF 新增觀察股行情未齊，暫不判斷買入條件'
+        output.append(base)
+    return output
 
 
 def main():
@@ -180,12 +213,13 @@ def main():
         raw = {}
         for start in range(0, len(symbols), 8):
             batch = symbols[start:start+8]
-            data = yf.download(batch, period='3mo', auto_adjust=False, actions=True, keepna=True, group_by='ticker', threads=4, progress=False, timeout=20)
+            data = yf.download(batch, period='9mo', auto_adjust=False, actions=True, keepna=True, group_by='ticker', threads=4, progress=False, timeout=20)
             for symbol in batch:
                 if symbol in data.columns.get_level_values(0):
                     raw[symbol] = data[symbol].dropna(how='all')
         benchmark, _ = adjust_with_verified_close(raw['^TWII'], quotes['^TWII'])
-        dates = completed_bars(benchmark, 'TW', now).index
+        benchmark = completed_bars(benchmark, 'TW', now)
+        dates = benchmark.index
         if dates[-1].date().isoformat() != day:
             raise ValueError('ETF趨勢基準日期未齊')
         prev_day = quotes['^TWII']['previous_date']
@@ -234,12 +268,15 @@ def main():
             r['risks'] = risks(r)
         market = json.loads((ROOT/'rotation/data.json').read_text(encoding='utf-8'))
         caps = json.loads((ROOT/'rotation/top100.json').read_text(encoding='utf-8'))
+        overlaps = overlap(list(holding_now.values()), holding_prev, market['stocks'], caps)
+        extras = extra_candidate_prices(overlaps, market['stocks'], quotes, benchmark, now, yf.download)
+        overlaps = overlap(list(holding_now.values()), holding_prev, market['stocks']+extras, caps)
         result = {'schema_version': 1, 'status': 'ok', 'generated_at': now.isoformat(), 'as_of': day,
                   'scope': '台灣上市、投資國內股票的主動式 ETF；不含海外股票與債券型。',
                   'catalog_as_of': max(roc_date(r['出表日期']) for r in domestic_active(basic, day).values()),
                   'funds': rows, 'holdings_coverage': len(holding_now), 'holdings_provider': '野村投信',
                   'comparison_coverage': len(set(holding_now)&set(holding_prev)),
-                  'overlap': overlap(list(holding_now.values()), holding_prev, market['stocks'], caps), 'errors': errors,
+                  'overlap': overlaps, 'extra_stocks': extras, 'errors': errors,
                   'sources': [BASIC, NAV, 'https://www.nomurafunds.com.tw/ETFWEB/', 'https://www.twse.com.tw/zh/trading/historical/stock-day.html'],
                   'method': '初始觀察門檻未回測。預估折溢價不是最終淨值折溢價；申贖單位變化不是經理人買賣股票金額。每單位持股減少仍可能受公司行動等影響，不等同確認賣出。持股僅計股票現貨，不含期貨等曝險。'}
         archive['days'].setdefault(day, {})['funds'] = [{k: v for k, v in r.items() if k not in ['holding', 'trend']} for r in rows]
