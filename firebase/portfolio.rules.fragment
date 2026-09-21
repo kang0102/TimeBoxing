@@ -1,0 +1,30 @@
+// Merge inside the existing match /databases/{database}/documents block.
+// Review broad recursive allow rules first: Firestore matches are additive.
+match /rotationPortfolios/{uid}/positions/{positionId} {
+  function owner() { return request.auth != null && request.auth.uid == uid; }
+  function valid() {
+    let d = request.resource.data;
+    return d.keys().hasAll(['schemaVersion','symbol','market','name','cost','quantity','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt'])
+      && d.keys().hasOnly(['schemaVersion','symbol','market','name','cost','quantity','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt'])
+      && d.schemaVersion == 1 && d.market in ['TW','US']
+      && d.symbol is string && d.symbol.size() <= 16
+      && d.name is string && d.name.size() <= 80
+      && d.cost is number && d.cost > 0 && d.cost <= 10000000
+      && d.quantity is number && d.quantity > 0 && d.quantity <= 1000000000
+      && (d.market != 'TW' || d.quantity % 1 == 0)
+      && d.durationValue is int && d.durationValue > 0
+      && ((d.durationUnit == 'days' && d.durationValue <= 3650) || (d.durationUnit == 'months' && d.durationValue <= 120) || (d.durationUnit == 'years' && d.durationValue <= 10))
+      && d.profile in ['conservative','balanced','aggressive']
+      && d.maxLossPct is number && d.maxLossPct > 0 && d.maxLossPct <= 50
+      && d.planStart is string && d.planStart.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && d.boughtOn is string && d.boughtOn.size() <= 10
+      && d.reviewedOn is string && d.reviewedOn.size() <= 10
+      && d.thesis is string && d.thesis.size() <= 500
+      && d.archived is bool && d.revision is int && d.updatedAt == request.time;
+  }
+  allow read: if owner();
+  allow create: if owner() && valid() && request.resource.data.revision == 1;
+  allow update: if owner() && valid() && request.resource.data.revision == resource.data.revision + 1;
+  // Removal is an archived flag and can be restored; no permanent delete here.
+  allow delete: if false;
+}

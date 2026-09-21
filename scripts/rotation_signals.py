@@ -88,6 +88,8 @@ def analyze(stock, benchmark):
         "change_1d": ret(1), "return_5d": ret(5), "return_20d": ret(20),
         "rs_5d": rs5, "rs_20d": rs20, "rs_acceleration": acceleration,
         "volume_ratio": volume_ratio, "ma20_distance": distance, "ma20": ma20,
+        "ma60": ma60, "ma200": float(s.Close.iloc[-200:].mean()) if len(s)>=200 else None,
+        "ma60_slope20": (ma60/float(s.Close.iloc[-80:-20].mean())-1)*100 if len(s)>=80 else None,
         "above_ma20": close > ma20, "breakout_20d": breakout,
         "previous_high20": high20, "volume_mean20": avg_volume, "volume": float(s.Volume.iloc[-1]),
         "next_session_high20": float(s.High.iloc[-20:].max()),
