@@ -13,7 +13,9 @@ permissions:
   contents: write
   pages: write
 concurrency:
-  group: stock-rotation-update
+  # Separate queue: a daily/weekly pending run must not replace an intraday run.
+  # This job writes only intraday.json and rebases before pushing.
+  group: stock-rotation-intraday
   cancel-in-progress: false
 jobs:
   observe:
