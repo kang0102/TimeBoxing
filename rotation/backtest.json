@@ -2,8 +2,8 @@
   "schema_version": 1,
   "status": "ok",
   "refresh_status": "ok",
-  "last_attempt_at": "2026-09-19T06:02:39.764532+00:00",
-  "generated_at": "2026-09-19T06:02:39.764532+00:00",
+  "last_attempt_at": "2026-09-21T09:21:45.933089+00:00",
+  "generated_at": "2026-09-21T09:21:45.933089+00:00",
   "strategy_version": "price-rotation-v1",
   "config_hash": "6bc89167d97f",
   "settings": {
@@ -33,36 +33,36 @@
   "markets": [
     {
       "market": "TW",
-      "as_of": "2026-09-18",
+      "as_of": "2026-09-21",
       "available": 39,
       "total": 39,
       "excluded": [],
       "train_start": "2021-12-23",
-      "train_end": "2025-03-17",
+      "train_end": "2025-03-20",
       "validation_start": "2025-11-07",
-      "validation_end": "2026-09-18",
+      "validation_end": "2026-09-21",
       "data_gaps": [
         "2025-08-01"
       ],
       "synchrony_eligible_stocks": 37,
-      "benchmark_return_pct": 69.6,
+      "benchmark_return_pct": 71.54,
       "one_way_cost_pct": 0.3,
       "results": [
         {
           "holding_days": 5,
           "volume_ratio": 1.5,
           "train": {
-            "return_pct": -12.63,
-            "annualized_pct": -4.28,
-            "max_drawdown_pct": -35.01,
-            "sharpe": -0.13,
+            "return_pct": -10.66,
+            "annualized_pct": -3.57,
+            "max_drawdown_pct": -31.9,
+            "sharpe": -0.09,
             "trades": 463,
-            "win_rate_pct": 41.9,
-            "forced_exits": 2
+            "win_rate_pct": 42.1,
+            "forced_exits": 0
           },
           "validation": {
             "return_pct": 13.69,
-            "annualized_pct": 16.56,
+            "annualized_pct": 16.48,
             "max_drawdown_pct": -12.14,
             "sharpe": 0.83,
             "trades": 72,
@@ -240,6 +240,10 @@
               {
                 "date": "2026-09-18",
                 "value": 113.693
+              },
+              {
+                "date": "2026-09-21",
+                "value": 113.693
               }
             ],
             "recent_trades": [
@@ -247,49 +251,49 @@
                 "symbol": "3189.TW",
                 "entry": "2026-06-26",
                 "exit": "2026-07-03",
-                "return_pct": -7.402886005055165,
+                "return_pct": -7.402886005055176,
                 "reason": "max_hold"
               },
               {
                 "symbol": "6781.TW",
                 "entry": "2026-07-07",
                 "exit": "2026-07-09",
-                "return_pct": -6.560867172948715,
+                "return_pct": -6.560867172948703,
                 "reason": "ma20"
               },
               {
                 "symbol": "3264.TWO",
                 "entry": "2026-07-07",
                 "exit": "2026-07-14",
-                "return_pct": -16.111780266138,
+                "return_pct": -16.111780266137977,
                 "reason": "ma20"
               },
               {
                 "symbol": "5388.TW",
                 "entry": "2026-07-16",
                 "exit": "2026-07-23",
-                "return_pct": -1.6056576783882948,
+                "return_pct": -1.6056576783882837,
                 "reason": "max_hold"
               },
               {
                 "symbol": "3665.TW",
                 "entry": "2026-07-23",
                 "exit": "2026-07-30",
-                "return_pct": -2.942587332342572,
+                "return_pct": -2.9425873323425944,
                 "reason": "max_hold"
               },
               {
                 "symbol": "2049.TW",
                 "entry": "2026-08-06",
                 "exit": "2026-08-13",
-                "return_pct": 5.75246482773899,
+                "return_pct": 5.752464827739012,
                 "reason": "max_hold"
               },
               {
                 "symbol": "3265.TWO",
                 "entry": "2026-08-13",
                 "exit": "2026-08-20",
-                "return_pct": 1.339991168555632,
+                "return_pct": 1.3399911685556098,
                 "reason": "max_hold"
               },
               {
@@ -303,14 +307,14 @@
                 "symbol": "2330.TW",
                 "entry": "2026-09-09",
                 "exit": "2026-09-14",
-                "return_pct": -4.4059340630079324,
+                "return_pct": -4.405934063007921,
                 "reason": "ma20"
               },
               {
                 "symbol": "6531.TW",
                 "entry": "2026-09-10",
                 "exit": "2026-09-16",
-                "return_pct": -9.407226457585939,
+                "return_pct": -9.40722645758596,
                 "reason": "ma20"
               }
             ]
@@ -319,7 +323,7 @@
           "assessment": "forward_test",
           "synchrony_filter": {
             "return_pct": 1.86,
-            "annualized_pct": 2.23,
+            "annualized_pct": 2.22,
             "max_drawdown_pct": -5.3,
             "sharpe": 0.35,
             "trades": 11,
@@ -338,17 +342,17 @@
           "holding_days": 10,
           "volume_ratio": 1.5,
           "train": {
-            "return_pct": -13.01,
-            "annualized_pct": -4.42,
-            "max_drawdown_pct": -43.61,
-            "sharpe": -0.1,
+            "return_pct": -11.23,
+            "annualized_pct": -3.77,
+            "max_drawdown_pct": -41.2,
+            "sharpe": -0.07,
             "trades": 329,
-            "win_rate_pct": 41.9,
+            "win_rate_pct": 42.2,
             "forced_exits": 2
           },
           "validation": {
             "return_pct": 17.3,
-            "annualized_pct": 20.99,
+            "annualized_pct": 20.88,
             "max_drawdown_pct": -15.96,
             "sharpe": 0.89,
             "trades": 60,
@@ -526,6 +530,10 @@
               {
                 "date": "2026-09-18",
                 "value": 117.299
+              },
+              {
+                "date": "2026-09-21",
+                "value": 117.299
               }
             ],
             "recent_trades": [
@@ -547,56 +555,56 @@
                 "symbol": "3264.TWO",
                 "entry": "2026-07-07",
                 "exit": "2026-07-14",
-                "return_pct": -16.111780266138,
+                "return_pct": -16.111780266137988,
                 "reason": "ma20"
               },
               {
                 "symbol": "5388.TW",
                 "entry": "2026-07-16",
                 "exit": "2026-07-30",
-                "return_pct": -8.881689691905137,
+                "return_pct": -8.881689691905159,
                 "reason": "max_hold"
               },
               {
                 "symbol": "3665.TW",
                 "entry": "2026-07-23",
                 "exit": "2026-07-31",
-                "return_pct": -1.5359581632461095,
+                "return_pct": -1.5359581632460984,
                 "reason": "ma20"
               },
               {
                 "symbol": "2049.TW",
                 "entry": "2026-08-06",
                 "exit": "2026-08-20",
-                "return_pct": 3.8196521546471685,
+                "return_pct": 3.8196521546471907,
                 "reason": "max_hold"
               },
               {
                 "symbol": "3265.TWO",
                 "entry": "2026-08-13",
                 "exit": "2026-08-27",
-                "return_pct": -3.0901723797965297,
+                "return_pct": -3.0901723797965075,
                 "reason": "max_hold"
               },
               {
                 "symbol": "2449.TW",
                 "entry": "2026-08-31",
                 "exit": "2026-09-14",
-                "return_pct": -3.4167817907336473,
+                "return_pct": -3.4167817907336584,
                 "reason": "max_hold"
               },
               {
                 "symbol": "2330.TW",
                 "entry": "2026-09-09",
                 "exit": "2026-09-14",
-                "return_pct": -4.4059340630079324,
+                "return_pct": -4.405934063007921,
                 "reason": "ma20"
               },
               {
                 "symbol": "6531.TW",
                 "entry": "2026-09-10",
                 "exit": "2026-09-16",
-                "return_pct": -9.407226457585926,
+                "return_pct": -9.40722645758595,
                 "reason": "ma20"
               }
             ]
@@ -605,7 +613,7 @@
           "assessment": "forward_test",
           "synchrony_filter": {
             "return_pct": 10.56,
-            "annualized_pct": 12.74,
+            "annualized_pct": 12.68,
             "max_drawdown_pct": -3.24,
             "sharpe": 1.39,
             "trades": 11,
@@ -624,19 +632,19 @@
           "holding_days": 20,
           "volume_ratio": 1.5,
           "train": {
-            "return_pct": -21.87,
-            "annualized_pct": -7.68,
-            "max_drawdown_pct": -41.95,
-            "sharpe": -0.25,
-            "trades": 239,
-            "win_rate_pct": 33.5,
+            "return_pct": -19.19,
+            "annualized_pct": -6.64,
+            "max_drawdown_pct": -39.05,
+            "sharpe": -0.2,
+            "trades": 238,
+            "win_rate_pct": 33.6,
             "forced_exits": 2
           },
           "validation": {
-            "return_pct": 29.2,
-            "annualized_pct": 35.8,
+            "return_pct": 30.2,
+            "annualized_pct": 36.85,
             "max_drawdown_pct": -16.62,
-            "sharpe": 1.17,
+            "sharpe": 1.2,
             "trades": 50,
             "win_rate_pct": 38.0,
             "forced_exits": 1,
@@ -811,7 +819,11 @@
               },
               {
                 "date": "2026-09-18",
-                "value": 129.205
+                "value": 129.292
+              },
+              {
+                "date": "2026-09-21",
+                "value": 130.201
               }
             ],
             "recent_trades": [
@@ -881,19 +893,19 @@
               {
                 "symbol": "2449.TW",
                 "entry": "2026-08-31",
-                "exit": "2026-09-18",
-                "return_pct": 9.54866968093826,
+                "exit": "2026-09-21",
+                "return_pct": 13.306771556785213,
                 "reason": "period_end"
               }
             ]
           },
-          "double_cost_return_pct": 21.94,
+          "double_cost_return_pct": 22.88,
           "assessment": "forward_test",
           "synchrony_filter": {
-            "return_pct": 15.18,
-            "annualized_pct": 18.39,
+            "return_pct": 16.03,
+            "annualized_pct": 19.33,
             "max_drawdown_pct": -7.46,
-            "sharpe": 1.37,
+            "sharpe": 1.43,
             "trades": 11,
             "win_rate_pct": 54.5,
             "forced_exits": 1
@@ -901,7 +913,7 @@
           "candidate": {
             "volume_ratio": 2.0,
             "selection": "訓練期夏普值最高，至少20筆交易；不使用驗證期挑參數",
-            "validation_return_pct": 45.03,
+            "validation_return_pct": 46.12,
             "validation_drawdown_pct": -11.43,
             "applied": false
           }
@@ -910,19 +922,19 @@
           "holding_days": 60,
           "volume_ratio": 1.5,
           "train": {
-            "return_pct": -3.16,
-            "annualized_pct": -1.04,
-            "max_drawdown_pct": -43.04,
-            "sharpe": 0.08,
-            "trades": 202,
-            "win_rate_pct": 32.7,
+            "return_pct": -8.24,
+            "annualized_pct": -2.74,
+            "max_drawdown_pct": -40.25,
+            "sharpe": 0.01,
+            "trades": 203,
+            "win_rate_pct": 32.0,
             "forced_exits": 2
           },
           "validation": {
-            "return_pct": 24.06,
-            "annualized_pct": 29.36,
+            "return_pct": 25.01,
+            "annualized_pct": 30.39,
             "max_drawdown_pct": -29.81,
-            "sharpe": 0.96,
+            "sharpe": 0.98,
             "trades": 43,
             "win_rate_pct": 30.2,
             "forced_exits": 1,
@@ -1097,7 +1109,11 @@
               },
               {
                 "date": "2026-09-18",
-                "value": 124.056
+                "value": 124.14
+              },
+              {
+                "date": "2026-09-21",
+                "value": 125.013
               }
             ],
             "recent_trades": [
@@ -1167,19 +1183,19 @@
               {
                 "symbol": "2449.TW",
                 "entry": "2026-08-31",
-                "exit": "2026-09-18",
-                "return_pct": 9.548669680938282,
+                "exit": "2026-09-21",
+                "return_pct": 13.306771556785236,
                 "reason": "period_end"
               }
             ]
           },
-          "double_cost_return_pct": 18.44,
+          "double_cost_return_pct": 19.35,
           "assessment": "forward_test",
           "synchrony_filter": {
-            "return_pct": 11.15,
-            "annualized_pct": 13.46,
+            "return_pct": 11.97,
+            "annualized_pct": 14.39,
             "max_drawdown_pct": -9.6,
-            "sharpe": 0.93,
+            "sharpe": 0.98,
             "trades": 11,
             "win_rate_pct": 54.5,
             "forced_exits": 1
@@ -1187,7 +1203,7 @@
           "candidate": {
             "volume_ratio": 2.0,
             "selection": "訓練期夏普值最高，至少20筆交易；不使用驗證期挑參數",
-            "validation_return_pct": 39.16,
+            "validation_return_pct": 40.21,
             "validation_drawdown_pct": -20.22,
             "applied": false
           }
@@ -1213,12 +1229,12 @@
           "holding_days": 5,
           "volume_ratio": 1.5,
           "train": {
-            "return_pct": 7.78,
-            "annualized_pct": 2.35,
+            "return_pct": 7.6,
+            "annualized_pct": 2.3,
             "max_drawdown_pct": -23.35,
-            "sharpe": 0.25,
-            "trades": 121,
-            "win_rate_pct": 52.1,
+            "sharpe": 0.24,
+            "trades": 122,
+            "win_rate_pct": 51.6,
             "forced_exits": 0
           },
           "validation": {
@@ -1551,7 +1567,7 @@
                 "symbol": "ETN",
                 "entry": "2026-05-01",
                 "exit": "2026-05-08",
-                "return_pct": -7.847263075321642,
+                "return_pct": -7.847263075321664,
                 "reason": "max_hold"
               },
               {
@@ -1579,7 +1595,7 @@
                 "symbol": "APH",
                 "entry": "2026-07-01",
                 "exit": "2026-07-08",
-                "return_pct": -11.28361497768947,
+                "return_pct": -11.283614977689494,
                 "reason": "ma20"
               },
               {
@@ -1966,21 +1982,21 @@
                 "symbol": "ANET",
                 "entry": "2026-04-09",
                 "exit": "2026-04-23",
-                "return_pct": 22.076599752090264,
+                "return_pct": 22.07659975209029,
                 "reason": "max_hold"
               },
               {
                 "symbol": "ETN",
                 "entry": "2026-05-01",
                 "exit": "2026-05-08",
-                "return_pct": -7.847263075321664,
+                "return_pct": -7.847263075321653,
                 "reason": "ma20"
               },
               {
                 "symbol": "ROK",
                 "entry": "2026-05-06",
                 "exit": "2026-05-20",
-                "return_pct": -4.899018524658494,
+                "return_pct": -4.899018524658483,
                 "reason": "max_hold"
               },
               {
@@ -2001,21 +2017,21 @@
                 "symbol": "APH",
                 "entry": "2026-07-01",
                 "exit": "2026-07-08",
-                "return_pct": -11.283614977689494,
+                "return_pct": -11.283614977689481,
                 "reason": "ma20"
               },
               {
                 "symbol": "ETN",
                 "entry": "2026-08-04",
                 "exit": "2026-08-18",
-                "return_pct": -1.5282433655067096,
+                "return_pct": -1.5282433655067207,
                 "reason": "max_hold"
               },
               {
                 "symbol": "ANET",
                 "entry": "2026-08-05",
                 "exit": "2026-08-19",
-                "return_pct": -7.393167739213158,
+                "return_pct": -7.393167739213169,
                 "reason": "max_hold"
               },
               {
@@ -2029,7 +2045,7 @@
                 "symbol": "AMD",
                 "entry": "2026-09-18",
                 "exit": "2026-09-18",
-                "return_pct": 2.0701702349340767,
+                "return_pct": 2.0701702349340545,
                 "reason": "period_end"
               }
             ]
@@ -2395,7 +2411,7 @@
                 "symbol": "ETN",
                 "entry": "2026-05-01",
                 "exit": "2026-05-08",
-                "return_pct": -7.847263075321642,
+                "return_pct": -7.847263075321653,
                 "reason": "ma20"
               },
               {
@@ -2409,21 +2425,21 @@
                 "symbol": "AVGO",
                 "entry": "2026-06-01",
                 "exit": "2026-06-05",
-                "return_pct": -9.619058488101928,
+                "return_pct": -9.619058488101938,
                 "reason": "ma20"
               },
               {
                 "symbol": "CSCO",
                 "entry": "2026-05-12",
                 "exit": "2026-06-10",
-                "return_pct": 20.05707687817504,
+                "return_pct": 20.057076878175017,
                 "reason": "max_hold"
               },
               {
                 "symbol": "APH",
                 "entry": "2026-07-01",
                 "exit": "2026-07-08",
-                "return_pct": -11.283614977689481,
+                "return_pct": -11.283614977689494,
                 "reason": "ma20"
               },
               {
@@ -2437,21 +2453,21 @@
                 "symbol": "ANET",
                 "entry": "2026-08-05",
                 "exit": "2026-08-20",
-                "return_pct": -12.013061675101877,
+                "return_pct": -12.013061675101888,
                 "reason": "ma20"
               },
               {
                 "symbol": "NVDA",
                 "entry": "2026-08-28",
                 "exit": "2026-08-31",
-                "return_pct": -3.926503794623759,
+                "return_pct": -3.926503794623748,
                 "reason": "ma20"
               },
               {
                 "symbol": "AMD",
                 "entry": "2026-09-18",
                 "exit": "2026-09-18",
-                "return_pct": 2.0701702349340545,
+                "return_pct": 2.0701702349340767,
                 "reason": "period_end"
               }
             ]
@@ -2817,35 +2833,35 @@
                 "symbol": "ETN",
                 "entry": "2026-05-01",
                 "exit": "2026-05-08",
-                "return_pct": -7.847263075321653,
+                "return_pct": -7.847263075321642,
                 "reason": "ma20"
               },
               {
                 "symbol": "ROK",
                 "entry": "2026-05-06",
                 "exit": "2026-05-20",
-                "return_pct": -4.899018524658494,
+                "return_pct": -4.899018524658483,
                 "reason": "ma20"
               },
               {
                 "symbol": "AVGO",
                 "entry": "2026-06-01",
                 "exit": "2026-06-05",
-                "return_pct": -9.61905848810195,
+                "return_pct": -9.619058488101938,
                 "reason": "ma20"
               },
               {
                 "symbol": "CSCO",
                 "entry": "2026-05-12",
                 "exit": "2026-06-11",
-                "return_pct": 17.509925871604402,
+                "return_pct": 17.50992587160438,
                 "reason": "ma20"
               },
               {
                 "symbol": "APH",
                 "entry": "2026-07-01",
                 "exit": "2026-07-08",
-                "return_pct": -11.283614977689494,
+                "return_pct": -11.28361497768947,
                 "reason": "ma20"
               },
               {
@@ -2859,7 +2875,7 @@
                 "symbol": "ANET",
                 "entry": "2026-08-05",
                 "exit": "2026-08-20",
-                "return_pct": -12.013061675101888,
+                "return_pct": -12.013061675101866,
                 "reason": "ma20"
               },
               {
@@ -2901,9 +2917,11 @@
     }
   ],
   "official_check": {
-    "checked_at": "2026-09-19T06:02:39.764532+00:00",
-    "expected_tw_date": "2026-09-18",
-    "errors": [],
+    "checked_at": "2026-09-21T09:21:45.933089+00:00",
+    "expected_tw_date": "2026-09-21",
+    "errors": [
+      "TPEX 官方收盤價核對失敗"
+    ],
     "cached_symbols": []
   },
   "limitations": [
