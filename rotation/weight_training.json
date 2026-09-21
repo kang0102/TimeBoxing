@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "ok",
-  "generated_at": "2026-09-21T16:09:52.033711+00:00",
+  "generated_at": "2026-09-21T16:51:58.110310+00:00",
   "trained_at": "2026-09-21T15:43:11.827017+00:00",
   "forward_start": "2026-09-22",
   "version": "momentum-weights-v1",
@@ -120,7 +120,7 @@
   "markets": [
     {
       "market": "TW",
-      "as_of": "2026-09-17",
+      "as_of": "2026-09-21",
       "available": 39,
       "total": 39,
       "train_start": "2021-12-23",
@@ -194,6 +194,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -24.99,
@@ -273,6 +274,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -24.99,
@@ -352,6 +354,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -24.99,
@@ -431,6 +434,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -39.31,
@@ -510,6 +514,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -39.31,
@@ -589,6 +594,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -39.31,
@@ -668,6 +674,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -35.88,
@@ -747,6 +754,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -35.88,
@@ -826,6 +834,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -35.88,
@@ -905,6 +914,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -38.68,
@@ -984,6 +994,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -38.68,
@@ -1063,6 +1074,7 @@
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": -38.68,
@@ -1107,7 +1119,7 @@
       "gaps": [],
       "folds": [
         {
-          "start": "2021-12-21",
+          "start": "2021-12-22",
           "end": "2023-01-19"
         },
         {
@@ -1131,44 +1143,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.44,
@@ -1210,44 +1223,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.44,
@@ -1289,44 +1303,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.77,
-            "annualized_pct": 6.39,
+            "return_pct": 10.4,
+            "annualized_pct": 6.8,
             "max_drawdown_pct": -7.47,
-            "sharpe": 0.69,
+            "sharpe": 0.73,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.72,
-            "annualized_pct": 5.07,
+            "return_pct": 8.34,
+            "annualized_pct": 5.47,
             "max_drawdown_pct": -7.55,
-            "sharpe": 0.57,
+            "sharpe": 0.61,
             "trades": 47,
-            "win_rate_pct": 57.4,
+            "win_rate_pct": 59.6,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.44,
@@ -1368,44 +1383,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.89,
@@ -1447,44 +1463,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.89,
@@ -1526,44 +1543,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -3.88,
-            "annualized_pct": -2.59,
+            "return_pct": -3.32,
+            "annualized_pct": -2.22,
             "max_drawdown_pct": -10.34,
-            "sharpe": -0.16,
+            "sharpe": -0.12,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -5.58,
-            "annualized_pct": -3.75,
+            "return_pct": -5.04,
+            "annualized_pct": -3.38,
             "max_drawdown_pct": -10.73,
-            "sharpe": -0.25,
+            "sharpe": -0.22,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 8.89,
@@ -1605,44 +1623,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 9.98,
@@ -1684,44 +1703,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 9.98,
@@ -1763,44 +1783,45 @@
             10
           ],
           "baseline": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": -1.1,
-            "annualized_pct": -0.73,
-            "max_drawdown_pct": -15.06,
-            "sharpe": 0.02,
+            "return_pct": -0.53,
+            "annualized_pct": -0.35,
+            "max_drawdown_pct": -15.01,
+            "sharpe": 0.05,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": -2.84,
-            "annualized_pct": -1.9,
-            "max_drawdown_pct": -15.78,
-            "sharpe": -0.06,
+            "return_pct": -2.29,
+            "annualized_pct": -1.53,
+            "max_drawdown_pct": -15.67,
+            "sharpe": -0.03,
             "trades": 45,
-            "win_rate_pct": 35.6,
+            "win_rate_pct": 37.8,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 9.98,
@@ -1842,44 +1863,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 4.87,
@@ -1921,44 +1943,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 4.87,
@@ -2000,44 +2023,45 @@
             10
           ],
           "baseline": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "baseline_double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "candidate": {
-            "return_pct": 9.4,
-            "annualized_pct": 6.16,
-            "max_drawdown_pct": -18.31,
-            "sharpe": 0.44,
+            "return_pct": 10.03,
+            "annualized_pct": 6.56,
+            "max_drawdown_pct": -18.26,
+            "sharpe": 0.46,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "double_cost": {
-            "return_pct": 7.7,
-            "annualized_pct": 5.06,
-            "max_drawdown_pct": -19.01,
-            "sharpe": 0.37,
+            "return_pct": 8.32,
+            "annualized_pct": 5.46,
+            "max_drawdown_pct": -18.91,
+            "sharpe": 0.4,
             "trades": 40,
-            "win_rate_pct": 35.0,
+            "win_rate_pct": 37.5,
             "forced_exits": 1
           },
           "assessment": "no_improvement",
           "applied": false,
           "forward": null,
+          "forward_status": "pending",
           "training_folds": [
             {
               "return_pct": 4.87,
