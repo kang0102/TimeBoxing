@@ -90,6 +90,10 @@ def analyze(stock, benchmark):
         "volume_ratio": volume_ratio, "ma20_distance": distance, "ma20": ma20,
         "above_ma20": close > ma20, "breakout_20d": breakout,
         "previous_high20": high20, "volume_mean20": avg_volume, "volume": float(s.Volume.iloc[-1]),
+        "next_session_high20": float(s.High.iloc[-20:].max()),
+        "next_session_volume_mean20": float(s.Volume.iloc[-20:].mean()),
+        "prior_session": {"as_of": s.index[-2].date().isoformat(), "close": float(s.Close.iloc[-2]),
+                          "ma20": float(s.Close.iloc[-21:-1].mean()), "high20": high20, "volume_mean20": avg_volume},
         "score": score, "stage": stage, "reasons": reasons,
         "components": {k: round(v, 2) for k, v in parts.items()},
         "series": [{"date": dt.date().isoformat(), "value": round(float(v / relative.iloc[-21] - 1) * 100, 3)}

@@ -4,11 +4,22 @@ import sys
 import unittest
 import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from rotation_etf import nav_rows, risks, parse_holdings, parse_daily, official_trend, overlap
+from rotation_etf import nav_rows, risks, parse_holdings, parse_daily, official_trend, overlap, latest_holdings
 from rotation_universe import rank_top100, expand_universe
 
 
 class ETFTests(unittest.TestCase):
+    def test_pending_holdings_retain_real_dates_without_future_or_duplicate_baseline(self):
+        fund = {'code':'00980A','status':'ok','units':1000,'holdings':[{'code':'2330','shares':100,'weight_pct':50}]}
+        days = {d:{'holdings':{'00980A':{**fund,'as_of':d}}} for d in ['2026-09-17','2026-09-18','2026-09-22']}
+        days['2026-09-21'] = {'holdings':{'00985A':{**fund,'as_of':'2026-09-18'}}}
+        current, previous = latest_holdings(days,'2026-09-21')
+        self.assertEqual(list(current), ['00980A'])
+        self.assertEqual(current['00980A']['as_of'], '2026-09-18')
+        self.assertEqual(previous['00980A']['as_of'], '2026-09-17')
+        self.assertNotIn('00980A', days['2026-09-21']['holdings'])
+        self.assertEqual(latest_holdings(days,'2026-09-16'), ({},{}))
+
     def setUp(self):
         self.basic = [{'基金代號':'00980A','基金簡稱':'測試基金','基金類型':'國內成分證券主動式交易所交易基金(股票)','出表日期':'1150918'}]
         self.raw = {'a':'00980A','c':'900','d':'-100','e':'10.2','f':'10','g':'2','i':'20260918','j':'15:00:00','k':1}

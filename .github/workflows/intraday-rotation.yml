@@ -1,0 +1,56 @@
+name: Observe Taiwan intraday rotation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '52 0 * * 1-5'
+    - cron: '7,22,37,52 1-5 * * 1-5'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/rotation_intraday.py'
+      - '.github/workflows/intraday-rotation.yml'
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: stock-rotation-update
+  cancel-in-progress: false
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: git pull --ff-only origin main
+      - name: Verify quote rules
+        run: python -m unittest discover -s tests -p 'test_rotation_intraday.py' -v
+      - name: Observe current prices
+        id: observe
+        continue-on-error: true
+        run: python scripts/rotation_intraday.py
+      - name: Publish snapshot including unavailable status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f rotation/intraday.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add rotation/intraday.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update Taiwan intraday observation'
+            for attempt in 1 2 3; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then break; fi
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Report unavailable provider
+        if: steps.observe.outcome == 'failure'
+        run: exit 1
