@@ -1,0 +1,1494 @@
+{
+  "version": "momentum-weights-v1",
+  "trained_at": "2026-09-21T15:43:11.827017+00:00",
+  "forward_start": "2026-09-22",
+  "config_hash": "a82120c7636fb9066e13c92aa1ef4ef981c42fa78c4cdca1f463f2276cff0abc",
+  "config": {
+    "version": "momentum-weights-v1",
+    "components": [
+      "relative_strength",
+      "acceleration",
+      "trend",
+      "volume",
+      "breakout"
+    ],
+    "baseline": [
+      35,
+      20,
+      20,
+      15,
+      10
+    ],
+    "candidates": [
+      [
+        35,
+        20,
+        20,
+        15,
+        10
+      ],
+      [
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      [
+        45,
+        15,
+        20,
+        10,
+        10
+      ],
+      [
+        25,
+        30,
+        20,
+        15,
+        10
+      ],
+      [
+        25,
+        15,
+        35,
+        15,
+        10
+      ],
+      [
+        25,
+        15,
+        20,
+        30,
+        10
+      ],
+      [
+        25,
+        15,
+        20,
+        15,
+        25
+      ],
+      [
+        40,
+        25,
+        15,
+        10,
+        10
+      ],
+      [
+        30,
+        10,
+        35,
+        15,
+        10
+      ],
+      [
+        30,
+        15,
+        25,
+        20,
+        10
+      ],
+      [
+        30,
+        25,
+        15,
+        20,
+        10
+      ]
+    ],
+    "holding_days": [
+      5,
+      10,
+      20,
+      60
+    ],
+    "drawdown_penalty": {
+      "conservative": 1.5,
+      "balanced": 0.75,
+      "aggressive": 0.25
+    },
+    "minimum_training_trades": 30,
+    "minimum_fold_trades": 5,
+    "minimum_validation_trades": 20,
+    "max_positions": 5,
+    "selection": "三個不重疊訓練時段的年化報酬減回落懲罰，取中位數；同分保留原權重。只改符合原進場條件股票的排序，不修改進出場門檻。"
+  },
+  "markets": [
+    {
+      "market": "TW",
+      "split": "2025-03-17",
+      "train_start": "2021-12-23",
+      "train_end": "2025-03-14",
+      "validation_start": "2025-11-07",
+      "models": [
+        {
+          "holding_days": 5,
+          "profile": "conservative",
+          "candidate_index": 3,
+          "weights": [
+            25,
+            30,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -24.99,
+              "annualized_pct": -24.4,
+              "max_drawdown_pct": -30.7,
+              "sharpe": -1.6,
+              "trades": 139,
+              "win_rate_pct": 34.5,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 22.57,
+              "annualized_pct": 21.9,
+              "max_drawdown_pct": -25.45,
+              "sharpe": 1.16,
+              "trades": 179,
+              "win_rate_pct": 50.3,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -6.78,
+              "annualized_pct": -6.6,
+              "max_drawdown_pct": -17.22,
+              "sharpe": -0.24,
+              "trades": 141,
+              "win_rate_pct": 40.4,
+              "forced_exits": 2
+            }
+          ],
+          "training_objectives": [
+            -34.425,
+            -36.58,
+            -33.915,
+            -32.43,
+            -34.865,
+            -36.58,
+            -34.865,
+            -33.745,
+            -34.355,
+            -34.865,
+            -33.745
+          ]
+        },
+        {
+          "holding_days": 5,
+          "profile": "balanced",
+          "candidate_index": 3,
+          "weights": [
+            25,
+            30,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -24.99,
+              "annualized_pct": -24.4,
+              "max_drawdown_pct": -30.7,
+              "sharpe": -1.6,
+              "trades": 139,
+              "win_rate_pct": 34.5,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 22.57,
+              "annualized_pct": 21.9,
+              "max_drawdown_pct": -25.45,
+              "sharpe": 1.16,
+              "trades": 179,
+              "win_rate_pct": 50.3,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -6.78,
+              "annualized_pct": -6.6,
+              "max_drawdown_pct": -17.22,
+              "sharpe": -0.24,
+              "trades": 141,
+              "win_rate_pct": 40.4,
+              "forced_exits": 2
+            }
+          ],
+          "training_objectives": [
+            -21.3975,
+            -23.05,
+            -20.8875,
+            -19.515,
+            -21.8375,
+            -23.05,
+            -21.8375,
+            -20.8375,
+            -21.3275,
+            -21.8375,
+            -20.8375
+          ]
+        },
+        {
+          "holding_days": 5,
+          "profile": "aggressive",
+          "candidate_index": 3,
+          "weights": [
+            25,
+            30,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -24.99,
+              "annualized_pct": -24.4,
+              "max_drawdown_pct": -30.7,
+              "sharpe": -1.6,
+              "trades": 139,
+              "win_rate_pct": 34.5,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 22.57,
+              "annualized_pct": 21.9,
+              "max_drawdown_pct": -25.45,
+              "sharpe": 1.16,
+              "trades": 179,
+              "win_rate_pct": 50.3,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -6.78,
+              "annualized_pct": -6.6,
+              "max_drawdown_pct": -17.22,
+              "sharpe": -0.24,
+              "trades": 141,
+              "win_rate_pct": 40.4,
+              "forced_exits": 2
+            }
+          ],
+          "training_objectives": [
+            -12.7125,
+            -14.03,
+            -12.2025,
+            -10.905,
+            -13.1525,
+            -14.03,
+            -13.1525,
+            -12.2325,
+            -12.6425,
+            -13.1525,
+            -12.2325
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "conservative",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -39.31,
+              "annualized_pct": -38.49,
+              "max_drawdown_pct": -41.28,
+              "sharpe": -2.65,
+              "trades": 107,
+              "win_rate_pct": 32.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 37.15,
+              "annualized_pct": 35.98,
+              "max_drawdown_pct": -24.87,
+              "sharpe": 1.47,
+              "trades": 116,
+              "win_rate_pct": 50.9,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": 7.65,
+              "annualized_pct": 7.43,
+              "max_drawdown_pct": -24.1,
+              "sharpe": 0.42,
+              "trades": 106,
+              "win_rate_pct": 40.6,
+              "forced_exits": 1
+            }
+          ],
+          "training_objectives": [
+            -31.98,
+            -29.33,
+            -31.98,
+            -29.33,
+            -31.98,
+            -31.73,
+            -31.98,
+            -28.72,
+            -31.98,
+            -31.98,
+            -28.72
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "balanced",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -39.31,
+              "annualized_pct": -38.49,
+              "max_drawdown_pct": -41.28,
+              "sharpe": -2.65,
+              "trades": 107,
+              "win_rate_pct": 32.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 37.15,
+              "annualized_pct": 35.98,
+              "max_drawdown_pct": -24.87,
+              "sharpe": 1.47,
+              "trades": 116,
+              "win_rate_pct": 50.9,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": 7.65,
+              "annualized_pct": 7.43,
+              "max_drawdown_pct": -24.1,
+              "sharpe": 0.42,
+              "trades": 106,
+              "win_rate_pct": 40.6,
+              "forced_exits": 1
+            }
+          ],
+          "training_objectives": [
+            -13.905,
+            -11.255,
+            -13.905,
+            -11.255,
+            -13.905,
+            -13.655,
+            -13.905,
+            -10.645,
+            -13.905,
+            -13.905,
+            -10.645
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "aggressive",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -39.31,
+              "annualized_pct": -38.49,
+              "max_drawdown_pct": -41.28,
+              "sharpe": -2.65,
+              "trades": 107,
+              "win_rate_pct": 32.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 37.15,
+              "annualized_pct": 35.98,
+              "max_drawdown_pct": -24.87,
+              "sharpe": 1.47,
+              "trades": 116,
+              "win_rate_pct": 50.9,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": 7.65,
+              "annualized_pct": 7.43,
+              "max_drawdown_pct": -24.1,
+              "sharpe": 0.42,
+              "trades": 106,
+              "win_rate_pct": 40.6,
+              "forced_exits": 1
+            }
+          ],
+          "training_objectives": [
+            -1.855,
+            0.795,
+            -1.855,
+            0.795,
+            -1.855,
+            -1.605,
+            -1.855,
+            1.405,
+            -1.855,
+            -1.855,
+            1.405
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "conservative",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -35.88,
+              "annualized_pct": -35.1,
+              "max_drawdown_pct": -38.3,
+              "sharpe": -2.18,
+              "trades": 85,
+              "win_rate_pct": 24.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 15.47,
+              "annualized_pct": 15.03,
+              "max_drawdown_pct": -23.61,
+              "sharpe": 0.74,
+              "trades": 83,
+              "win_rate_pct": 41.0,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -1.58,
+              "annualized_pct": -1.54,
+              "max_drawdown_pct": -23.15,
+              "sharpe": 0.05,
+              "trades": 78,
+              "win_rate_pct": 29.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -42.635,
+            -41.38,
+            -40.415,
+            -42.94,
+            -38.515,
+            -41.7,
+            -41.085,
+            -36.265,
+            -38.845,
+            -38.845,
+            -39.885
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "balanced",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -35.88,
+              "annualized_pct": -35.1,
+              "max_drawdown_pct": -38.3,
+              "sharpe": -2.18,
+              "trades": 85,
+              "win_rate_pct": 24.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 15.47,
+              "annualized_pct": 15.03,
+              "max_drawdown_pct": -23.61,
+              "sharpe": 0.74,
+              "trades": 83,
+              "win_rate_pct": 41.0,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -1.58,
+              "annualized_pct": -1.54,
+              "max_drawdown_pct": -23.15,
+              "sharpe": 0.05,
+              "trades": 78,
+              "win_rate_pct": 29.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -25.3175,
+            -24.355,
+            -23.4875,
+            -25.54,
+            -21.9625,
+            -24.675,
+            -24.1425,
+            -18.9025,
+            -22.2925,
+            -22.2925,
+            -22.5675
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "aggressive",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -35.88,
+              "annualized_pct": -35.1,
+              "max_drawdown_pct": -38.3,
+              "sharpe": -2.18,
+              "trades": 85,
+              "win_rate_pct": 24.7,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 15.47,
+              "annualized_pct": 15.03,
+              "max_drawdown_pct": -23.61,
+              "sharpe": 0.74,
+              "trades": 83,
+              "win_rate_pct": 41.0,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -1.58,
+              "annualized_pct": -1.54,
+              "max_drawdown_pct": -23.15,
+              "sharpe": 0.05,
+              "trades": 78,
+              "win_rate_pct": 29.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -13.7725,
+            -13.005,
+            -12.2025,
+            -13.94,
+            -10.9275,
+            -13.325,
+            -12.8475,
+            -7.3275,
+            -11.2575,
+            -11.2575,
+            -11.0225
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "conservative",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -38.68,
+              "annualized_pct": -37.87,
+              "max_drawdown_pct": -41.0,
+              "sharpe": -2.38,
+              "trades": 78,
+              "win_rate_pct": 23.1,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 41.17,
+              "annualized_pct": 39.86,
+              "max_drawdown_pct": -20.24,
+              "sharpe": 1.43,
+              "trades": 67,
+              "win_rate_pct": 44.8,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -8.42,
+              "annualized_pct": -8.2,
+              "max_drawdown_pct": -23.07,
+              "sharpe": -0.24,
+              "trades": 69,
+              "win_rate_pct": 27.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -45.535,
+            -43.26,
+            -46.395,
+            -45.535,
+            -43.26,
+            -44.13,
+            -43.26,
+            -42.805,
+            -44.13,
+            -44.13,
+            -42.805
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "balanced",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -38.68,
+              "annualized_pct": -37.87,
+              "max_drawdown_pct": -41.0,
+              "sharpe": -2.38,
+              "trades": 78,
+              "win_rate_pct": 23.1,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 41.17,
+              "annualized_pct": 39.86,
+              "max_drawdown_pct": -20.24,
+              "sharpe": 1.43,
+              "trades": 67,
+              "win_rate_pct": 44.8,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -8.42,
+              "annualized_pct": -8.2,
+              "max_drawdown_pct": -23.07,
+              "sharpe": -0.24,
+              "trades": 69,
+              "win_rate_pct": 27.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -28.2325,
+            -26.565,
+            -29.0925,
+            -28.2325,
+            -26.565,
+            -27.435,
+            -26.565,
+            -25.5025,
+            -27.435,
+            -27.435,
+            -25.5025
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "aggressive",
+          "candidate_index": 7,
+          "weights": [
+            40,
+            25,
+            15,
+            10,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": -38.68,
+              "annualized_pct": -37.87,
+              "max_drawdown_pct": -41.0,
+              "sharpe": -2.38,
+              "trades": 78,
+              "win_rate_pct": 23.1,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": 41.17,
+              "annualized_pct": 39.86,
+              "max_drawdown_pct": -20.24,
+              "sharpe": 1.43,
+              "trades": 67,
+              "win_rate_pct": 44.8,
+              "forced_exits": 5
+            },
+            {
+              "return_pct": -8.42,
+              "annualized_pct": -8.2,
+              "max_drawdown_pct": -23.07,
+              "sharpe": -0.24,
+              "trades": 69,
+              "win_rate_pct": 27.5,
+              "forced_exits": 3
+            }
+          ],
+          "training_objectives": [
+            -16.6975,
+            -15.435,
+            -17.5575,
+            -16.6975,
+            -15.435,
+            -16.305,
+            -15.435,
+            -13.9675,
+            -16.305,
+            -16.305,
+            -13.9675
+          ]
+        }
+      ],
+      "symbols": [
+        "2330.TW",
+        "2454.TW",
+        "3264.TWO",
+        "6257.TW",
+        "2449.TW",
+        "3711.TW",
+        "3265.TWO",
+        "6531.TW",
+        "3081.TWO",
+        "3363.TWO",
+        "2408.TW",
+        "2344.TW",
+        "8299.TWO",
+        "3017.TW",
+        "3324.TWO",
+        "3653.TW",
+        "2308.TW",
+        "2301.TW",
+        "6781.TW",
+        "3211.TWO",
+        "4931.TWO",
+        "2345.TW",
+        "6285.TW",
+        "5388.TW",
+        "3037.TW",
+        "8046.TW",
+        "3189.TW",
+        "2368.TW",
+        "8210.TW",
+        "3013.TW",
+        "6117.TW",
+        "2059.TW",
+        "6584.TWO",
+        "3665.TW",
+        "2233.TW",
+        "1504.TW",
+        "2464.TW",
+        "1597.TW",
+        "2049.TW"
+      ],
+      "validation_end": "2026-09-17"
+    },
+    {
+      "market": "US",
+      "split": "2025-03-18",
+      "train_start": "2021-12-21",
+      "train_end": "2025-03-17",
+      "validation_start": "2025-03-18",
+      "models": [
+        {
+          "holding_days": 5,
+          "profile": "conservative",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.44,
+              "annualized_pct": 7.83,
+              "max_drawdown_pct": -4.19,
+              "sharpe": 1.23,
+              "trades": 19,
+              "win_rate_pct": 57.9,
+              "forced_exits": 0
+            },
+            {
+              "return_pct": 22.4,
+              "annualized_pct": 20.77,
+              "max_drawdown_pct": -6.01,
+              "sharpe": 1.49,
+              "trades": 58,
+              "win_rate_pct": 60.3,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": -19.23,
+              "annualized_pct": -18.07,
+              "max_drawdown_pct": -23.35,
+              "sharpe": -1.14,
+              "trades": 45,
+              "win_rate_pct": 37.8,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545,
+            1.545
+          ]
+        },
+        {
+          "holding_days": 5,
+          "profile": "balanced",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.44,
+              "annualized_pct": 7.83,
+              "max_drawdown_pct": -4.19,
+              "sharpe": 1.23,
+              "trades": 19,
+              "win_rate_pct": 57.9,
+              "forced_exits": 0
+            },
+            {
+              "return_pct": 22.4,
+              "annualized_pct": 20.77,
+              "max_drawdown_pct": -6.01,
+              "sharpe": 1.49,
+              "trades": 58,
+              "win_rate_pct": 60.3,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": -19.23,
+              "annualized_pct": -18.07,
+              "max_drawdown_pct": -23.35,
+              "sharpe": -1.14,
+              "trades": 45,
+              "win_rate_pct": 37.8,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875,
+            4.6875
+          ]
+        },
+        {
+          "holding_days": 5,
+          "profile": "aggressive",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.44,
+              "annualized_pct": 7.83,
+              "max_drawdown_pct": -4.19,
+              "sharpe": 1.23,
+              "trades": 19,
+              "win_rate_pct": 57.9,
+              "forced_exits": 0
+            },
+            {
+              "return_pct": 22.4,
+              "annualized_pct": 20.77,
+              "max_drawdown_pct": -6.01,
+              "sharpe": 1.49,
+              "trades": 58,
+              "win_rate_pct": 60.3,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": -19.23,
+              "annualized_pct": -18.07,
+              "max_drawdown_pct": -23.35,
+              "sharpe": -1.14,
+              "trades": 45,
+              "win_rate_pct": 37.8,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825,
+            6.7825
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "conservative",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.89,
+              "annualized_pct": 8.24,
+              "max_drawdown_pct": -4.62,
+              "sharpe": 0.94,
+              "trades": 17,
+              "win_rate_pct": 64.7,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 37.5,
+              "annualized_pct": 34.62,
+              "max_drawdown_pct": -8.43,
+              "sharpe": 1.74,
+              "trades": 49,
+              "win_rate_pct": 63.3,
+              "forced_exits": 2
+            },
+            {
+              "return_pct": -15.68,
+              "annualized_pct": -14.72,
+              "max_drawdown_pct": -20.04,
+              "sharpe": -0.77,
+              "trades": 43,
+              "win_rate_pct": 39.5,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31,
+            1.31
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "balanced",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.89,
+              "annualized_pct": 8.24,
+              "max_drawdown_pct": -4.62,
+              "sharpe": 0.94,
+              "trades": 17,
+              "win_rate_pct": 64.7,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 37.5,
+              "annualized_pct": 34.62,
+              "max_drawdown_pct": -8.43,
+              "sharpe": 1.74,
+              "trades": 49,
+              "win_rate_pct": 63.3,
+              "forced_exits": 2
+            },
+            {
+              "return_pct": -15.68,
+              "annualized_pct": -14.72,
+              "max_drawdown_pct": -20.04,
+              "sharpe": -0.77,
+              "trades": 43,
+              "win_rate_pct": 39.5,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775,
+            4.775
+          ]
+        },
+        {
+          "holding_days": 10,
+          "profile": "aggressive",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 8.89,
+              "annualized_pct": 8.24,
+              "max_drawdown_pct": -4.62,
+              "sharpe": 0.94,
+              "trades": 17,
+              "win_rate_pct": 64.7,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 37.5,
+              "annualized_pct": 34.62,
+              "max_drawdown_pct": -8.43,
+              "sharpe": 1.74,
+              "trades": 49,
+              "win_rate_pct": 63.3,
+              "forced_exits": 2
+            },
+            {
+              "return_pct": -15.68,
+              "annualized_pct": -14.72,
+              "max_drawdown_pct": -20.04,
+              "sharpe": -0.77,
+              "trades": 43,
+              "win_rate_pct": 39.5,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085,
+            7.085
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "conservative",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 9.98,
+              "annualized_pct": 9.25,
+              "max_drawdown_pct": -4.88,
+              "sharpe": 0.89,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.71,
+              "annualized_pct": 30.23,
+              "max_drawdown_pct": -6.78,
+              "sharpe": 1.39,
+              "trades": 43,
+              "win_rate_pct": 58.1,
+              "forced_exits": 3
+            },
+            {
+              "return_pct": -8.71,
+              "annualized_pct": -8.16,
+              "max_drawdown_pct": -23.64,
+              "sharpe": -0.31,
+              "trades": 40,
+              "win_rate_pct": 35.0,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93,
+            1.93
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "balanced",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 9.98,
+              "annualized_pct": 9.25,
+              "max_drawdown_pct": -4.88,
+              "sharpe": 0.89,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.71,
+              "annualized_pct": 30.23,
+              "max_drawdown_pct": -6.78,
+              "sharpe": 1.39,
+              "trades": 43,
+              "win_rate_pct": 58.1,
+              "forced_exits": 3
+            },
+            {
+              "return_pct": -8.71,
+              "annualized_pct": -8.16,
+              "max_drawdown_pct": -23.64,
+              "sharpe": -0.31,
+              "trades": 40,
+              "win_rate_pct": 35.0,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59,
+            5.59
+          ]
+        },
+        {
+          "holding_days": 20,
+          "profile": "aggressive",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 9.98,
+              "annualized_pct": 9.25,
+              "max_drawdown_pct": -4.88,
+              "sharpe": 0.89,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.71,
+              "annualized_pct": 30.23,
+              "max_drawdown_pct": -6.78,
+              "sharpe": 1.39,
+              "trades": 43,
+              "win_rate_pct": 58.1,
+              "forced_exits": 3
+            },
+            {
+              "return_pct": -8.71,
+              "annualized_pct": -8.16,
+              "max_drawdown_pct": -23.64,
+              "sharpe": -0.31,
+              "trades": 40,
+              "win_rate_pct": 35.0,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03,
+            8.03
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "conservative",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 4.87,
+              "annualized_pct": 4.52,
+              "max_drawdown_pct": -6.25,
+              "sharpe": 0.46,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.72,
+              "annualized_pct": 30.24,
+              "max_drawdown_pct": -7.78,
+              "sharpe": 1.35,
+              "trades": 39,
+              "win_rate_pct": 56.4,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": -10.99,
+              "annualized_pct": -10.29,
+              "max_drawdown_pct": -22.92,
+              "sharpe": -0.39,
+              "trades": 38,
+              "win_rate_pct": 31.6,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855,
+            -4.855
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "balanced",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 4.87,
+              "annualized_pct": 4.52,
+              "max_drawdown_pct": -6.25,
+              "sharpe": 0.46,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.72,
+              "annualized_pct": 30.24,
+              "max_drawdown_pct": -7.78,
+              "sharpe": 1.35,
+              "trades": 39,
+              "win_rate_pct": 56.4,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": -10.99,
+              "annualized_pct": -10.29,
+              "max_drawdown_pct": -22.92,
+              "sharpe": -0.39,
+              "trades": 38,
+              "win_rate_pct": 31.6,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675,
+            -0.1675
+          ]
+        },
+        {
+          "holding_days": 60,
+          "profile": "aggressive",
+          "candidate_index": 0,
+          "weights": [
+            35,
+            20,
+            20,
+            15,
+            10
+          ],
+          "training_folds": [
+            {
+              "return_pct": 4.87,
+              "annualized_pct": 4.52,
+              "max_drawdown_pct": -6.25,
+              "sharpe": 0.46,
+              "trades": 16,
+              "win_rate_pct": 62.5,
+              "forced_exits": 1
+            },
+            {
+              "return_pct": 32.72,
+              "annualized_pct": 30.24,
+              "max_drawdown_pct": -7.78,
+              "sharpe": 1.35,
+              "trades": 39,
+              "win_rate_pct": 56.4,
+              "forced_exits": 4
+            },
+            {
+              "return_pct": -10.99,
+              "annualized_pct": -10.29,
+              "max_drawdown_pct": -22.92,
+              "sharpe": -0.39,
+              "trades": 38,
+              "win_rate_pct": 31.6,
+              "forced_exits": 0
+            }
+          ],
+          "training_objectives": [
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575,
+            2.9575
+          ]
+        }
+      ],
+      "symbols": [
+        "NVDA",
+        "AMD",
+        "AVGO",
+        "MRVL",
+        "GFS",
+        "MU",
+        "VRT",
+        "ETN",
+        "ANET",
+        "CSCO",
+        "TTMI",
+        "APH",
+        "ROK"
+      ],
+      "validation_end": "2026-09-18"
+    }
+  ],
+  "applied": false,
+  "note": "初始有界搜尋，僅訓練期選權重。原35/20/20/15/10及原回測不變。"
+}

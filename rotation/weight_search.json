@@ -1,0 +1,13 @@
+{
+  "version": "momentum-weights-v1",
+  "components": ["relative_strength", "acceleration", "trend", "volume", "breakout"],
+  "baseline": [35, 20, 20, 15, 10],
+  "candidates": [[35,20,20,15,10],[20,20,20,20,20],[45,15,20,10,10],[25,30,20,15,10],[25,15,35,15,10],[25,15,20,30,10],[25,15,20,15,25],[40,25,15,10,10],[30,10,35,15,10],[30,15,25,20,10],[30,25,15,20,10]],
+  "holding_days": [5,10,20,60],
+  "drawdown_penalty": {"conservative":1.5,"balanced":0.75,"aggressive":0.25},
+  "minimum_training_trades": 30,
+  "minimum_fold_trades": 5,
+  "minimum_validation_trades": 20,
+  "max_positions": 5,
+  "selection": "三個不重疊訓練時段的年化報酬減回落懲罰，取中位數；同分保留原權重。只改符合原進場條件股票的排序，不修改進出場門檻。"
+}

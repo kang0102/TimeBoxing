@@ -8,6 +8,9 @@ on:
     branches: [main]
     paths:
       - 'scripts/backtest_rotation.py'
+      - 'scripts/train_rotation_weights.py'
+      - 'rotation/weight_model.json'
+      - 'rotation/weight_search.json'
       - 'scripts/rotation_sync.py'
       - 'scripts/rotation_prices.py'
       - 'scripts/rotation_signals.py'
@@ -49,13 +52,18 @@ jobs:
         id: calculate
         continue-on-error: true
         run: python scripts/backtest_rotation.py
+      - name: Evaluate frozen weight candidates (never refit)
+        id: weights
+        if: steps.calculate.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/train_rotation_weights.py
       - name: Save report and request Pages refresh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/backtest.json rotation/backtest_history.json
+          git add rotation/backtest.json rotation/backtest_history.json rotation/weight_training.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update rotation backtest validation report'
             for attempt in 1 2 3; do
@@ -67,7 +75,7 @@ jobs:
           fi
           gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
       - name: Report calculation failure
-        if: steps.calculate.outcome == 'failure'
+        if: steps.calculate.outcome == 'failure' || steps.weights.outcome == 'failure'
         run: |
           echo '回測未完成；保留上次績效與原始計算日期，網站已標明本次失敗。'
           exit 1
