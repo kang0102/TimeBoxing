@@ -3,6 +3,8 @@ name: Update stock rotation radar
 on:
   workflow_dispatch:
   schedule:
+    - cron: '23 0 * * 1-5'
+    - cron: '13 6 * * 1-5'
     - cron: '43 7 * * 1-5'
     - cron: '43 12 * * 1-5'
     - cron: '43 22 * * 1-5'

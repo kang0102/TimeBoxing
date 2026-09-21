@@ -99,7 +99,7 @@ def main():
     for start in range(0, len(symbols), 8):
         batch = symbols[start:start + 8]
         try:
-            frame = yf.download(batch, period="9mo", interval="1d", auto_adjust=False, actions=True, keepna=True,
+            frame = yf.download(batch, period="1y", interval="1d", auto_adjust=False, actions=True, keepna=True,
                                 group_by="ticker", threads=4, progress=False, timeout=20)
             for symbol in batch:
                 try:
