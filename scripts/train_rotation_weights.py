@@ -49,12 +49,16 @@ def compact(report):
     return {k:v for k,v in report.items() if k not in ('curve','recent_trades')}
 
 
-def dates_and_prices(prices, benchmark, symbols, split):
+def dates_and_prices(prices, benchmark, symbols, split, validation_end=None):
     train = benchmark.index[65:][benchmark.index[65:]<pd.Timestamp(split)]
     validation = benchmark.index[benchmark.index>=pd.Timestamp(split)]
+    if validation_end:
+        validation=validation[validation<=pd.Timestamp(validation_end)]
     coverage = sum(benchmark.index.isin(prices.get(s,pd.DataFrame()).index).astype(int) for s in symbols)
     gaps = validation[coverage[benchmark.index.get_indexer(validation)] < len(symbols)*.8]
-    if len(gaps): validation = benchmark.index[benchmark.index.get_loc(gaps[-1])+66:]
+    if len(gaps):
+        validation = benchmark.index[benchmark.index.get_loc(gaps[-1])+66:]
+        if validation_end: validation=validation[validation<=pd.Timestamp(validation_end)]
     if len(train)<378 or len(validation)<120: raise ValueError('訓練或驗證期間不足')
     valid = {}
     for s in symbols:
@@ -62,15 +66,16 @@ def dates_and_prices(prices, benchmark, symbols, split):
         if f is None or len(f)<150: raise ValueError(f'{s} 歷史不足')
         required = train.union(validation)
         required = required[required>=f.index[0]]
-        if not required.isin(f.index).all() or f.index[-1]!=benchmark.index[-1]: raise ValueError(f'{s} 行情日期缺漏')
-        if f.Open.isna().any() or (f.Open<=0).any(): raise ValueError(f'{s} 開盤價缺漏')
+        latest_required=validation[-1] if validation_end else benchmark.index[-1]
+        if not required.isin(f.index).all() or latest_required not in f.index: raise ValueError(f'{s} 行情日期缺漏')
+        if f.loc[required,'Open'].isna().any() or (f.loc[required,'Open']<=0).any(): raise ValueError(f'{s} 開盤價缺漏')
         valid[s] = f
     return train,validation,valid,[d.date().isoformat() for d in gaps]
 
 
 def evaluate(market, prices, benchmark, symbols, config, settings, lock=None):
     split = lock['split'] if lock else (benchmark.index[-1]-pd.DateOffset(months=18)).date().isoformat()
-    train, validation, valid, gaps = dates_and_prices(prices,benchmark,symbols,split)
+    train, validation, valid, gaps = dates_and_prices(prices,benchmark,symbols,split,lock['validation_end'] if lock else None)
     if lock:
         # The historical holdout is fixed. New observations belong only to forward evaluation.
         validation=validation[(validation>=pd.Timestamp(lock['validation_start'])) & (validation<=pd.Timestamp(lock['validation_end']))]
@@ -106,15 +111,18 @@ def evaluate(market, prices, benchmark, symbols, config, settings, lock=None):
             # Validation describes the frozen choice; never feeds choose().
             enough=chosen['trades']-chosen['forced_exits']>=config['minimum_validation_trades']
             status='insufficient' if not enough else 'no_improvement' if index==0 or chosen['return_pct']<=baseline['return_pct'] else 'tradeoff' if chosen['max_drawdown_pct']<baseline['max_drawdown_pct'] or stress[index]['return_pct']<=0 else 'forward_only'
-            forward=None
+            forward=None;forward_status='pending'
             if lock:
                 future=benchmark.index[benchmark.index>=pd.Timestamp(lock['forward_start'])]
-                if len(future)>=2: forward=compact(simulate(candidates[index],future,holding,cost,config['max_positions']))
+                if len(future)>=2:
+                    complete=all(future.isin(f.index).all() and f.loc[future,['Open','Close']].notna().all().all() and (f.loc[future,['Open','Close']]>0).all().all() for f in valid.values())
+                    forward_status='ok' if complete else 'missing_data'
+                    if complete: forward=compact(simulate(candidates[index],future,holding,cost,config['max_positions']))
             models.append({'holding_days':holding,'profile':profile,'candidate_index':index,'weights':config['candidates'][index],
                            'training_folds':train_info,'training_objectives':objectives})
             result.append({'holding_days':holding,'profile':profile,'weights':config['candidates'][index],
                            'baseline':compact(baseline),'baseline_double_cost':compact(baseline_stress),'candidate':compact(chosen),'double_cost':compact(stress[index]),
-                           'assessment':status,'applied':False,'forward':forward,
+                           'assessment':status,'applied':False,'forward':forward,'forward_status':forward_status,
                            'training_folds':train_info})
         print(market,holding,'days evaluated',flush=True)
     date=lambda x:x.date().isoformat()
