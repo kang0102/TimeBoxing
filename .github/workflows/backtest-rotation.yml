@@ -54,7 +54,6 @@ jobs:
         run: python scripts/backtest_rotation.py
       - name: Evaluate frozen weight candidates (never refit)
         id: weights
-        if: steps.calculate.outcome == 'success'
         continue-on-error: true
         run: python scripts/train_rotation_weights.py
       - name: Save report and request Pages refresh

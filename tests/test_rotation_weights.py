@@ -4,10 +4,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from train_rotation_weights import components,choose
+from train_rotation_weights import components,choose,dates_and_prices
 from rotation_signals import analyze
 
 class WeightTests(unittest.TestCase):
+    def test_missing_new_quote_does_not_redefine_frozen_holdout(self):
+        dates=pd.bdate_range('2022-01-03',periods=800)
+        b=pd.DataFrame({'Open':100.,'Close':100.,'High':101.,'Volume':1000.},index=dates)
+        stale=b.iloc[:-1].copy()
+        train,validation,_,_=dates_and_prices({'A':stale},b,['A'],str(dates[600].date()),str(dates[-4].date()))
+        self.assertEqual(validation[-1],dates[-4])
+        with self.assertRaises(ValueError): dates_and_prices({'A':stale},b,['A'],str(dates[600].date()))
     def test_components_do_not_see_future(self):
         dates=pd.bdate_range('2024-01-01',periods=100)
         f=pd.DataFrame({'Open':100.,'Close':np.arange(100)+100.,'High':np.arange(100)+101.,'Volume':1000.},index=dates)
