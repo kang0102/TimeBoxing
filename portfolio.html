@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#12344a"><title>我的持股與策略研究｜大型股輪動雷達</title>
-<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=3">
-<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=3" defer></script><script src="scripts/portfolio_activity.js?v=2" defer></script><script src="scripts/portfolio_planning.js?v=2" defer></script><script src="scripts/portfolio_research.js?v=3" defer></script><script type="module" src="scripts/portfolio.js?v=3"></script></head>
+<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=4">
+<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=3" defer></script><script src="scripts/portfolio_activity.js?v=2" defer></script><script src="scripts/portfolio_planning.js?v=2" defer></script><script src="scripts/portfolio_research.js?v=4" defer></script><script src="scripts/portfolio_conviction.js?v=4" defer></script><script type="module" src="scripts/portfolio.js?v=4"></script></head>
 <body><header class="topbar"><a href="rotation.html">← 大型股輪動雷達</a><span>MY PLAN / 02</span></header><main>
 <section class="heading"><div><p class="eyebrow">MY PORTFOLIO</p><h1>我的持股，我的計畫</h1><p class="intro">先選持有多久，再看續抱、減碼與下一個確認條件。</p></div><a class="guide-jump" href="#training">看權重訓練結果 ↗</a></section>
 <div id="quote-status" class="notice" role="status">正在讀取公開行情…</div>
@@ -39,4 +39,15 @@
 <div id="activity-preview" class="next-signal" aria-live="polite"></div><p id="activity-error" role="alert"></p><div class="form-actions"><button id="save-activity" type="submit">新增紀錄</button><button id="undo-activity" type="button">撤回最後一筆</button></div>
 <div id="undo-confirmation" class="next-signal" hidden><p>回復最後一筆買賣之前的股數、成本與已實現損益；原紀錄會保留，並新增撤回紀錄。</p><div class="form-actions"><button id="confirm-undo" type="button">確認撤回登錄</button><button id="cancel-undo" type="button">保留原紀錄</button></div></div></form>
 <h3>調整歷程</h3><p class="detail-note">最新紀錄在上方；撤回會保留原紀錄及更正痕跡。</p><div id="activity-history" aria-live="polite"></div></dialog>
+<dialog id="conviction-dialog" aria-labelledby="conviction-title"><button id="close-conviction" class="close" type="button" aria-label="關閉我的研究判斷">×</button><h2 id="conviction-title">我的判斷與驗證</h2><p id="conviction-context"></p>
+<p>先看這檔的材料，再形成自己的論點。星等代表你的主觀信心，不是系統估計的上漲機率。</p>
+<form id="conviction-form"><fieldset class="star-rating"><legend>我對這個論點有多少把握？</legend>
+<label><input type="radio" name="stars" value="1" required>★<small>1 星</small></label><label><input type="radio" name="stars" value="2">★★<small>2 星</small></label><label><input type="radio" name="stars" value="3">★★★<small>3 星</small></label><label><input type="radio" name="stars" value="4">★★★★<small>4 星</small></label><label><input type="radio" name="stars" value="5">★★★★★<small>5 星</small></label></fieldset>
+<div class="position-fields"><label>驗證方式<select name="comparison"><option value="custom">自訂論點（獲利、訂單、產品、估值等）</option><option value="yoy">指定月份營收年增率大於 0</option><option value="mom">指定月份營收月增率大於 0</option></select></label><label>幾個月後複查<select name="months"><option value="1">1 個月</option><option value="2" selected>2 個月</option><option value="3">3 個月</option><option value="6">6 個月</option></select></label>
+<label class="full">我的論點與依據<textarea name="thesis" maxlength="1000" rows="3" required placeholder="哪些材料讓你形成這個看法？哪些仍只是推測？"></textarea></label>
+<label class="full">怎樣才算實現<textarea name="criterion" maxlength="500" rows="2" required placeholder="寫明數字、比較期間或具體事件；不要只寫「表現變好」。"></textarea></label>
+<label class="full">什麼證據會讓我改變想法<textarea name="invalidates" maxlength="500" rows="2" required placeholder="哪個反例出現，就要降低信心或重新考慮部位？"></textarea></label></div>
+<div id="conviction-advice" class="next-signal" aria-live="polite"></div><p class="plan-note">記錄日期由伺服器保存，不可事後修改。改變看法請新增紀錄。只記錄判斷，不會買賣股票。</p><button id="save-conviction" type="submit">記錄這次判斷</button></form><p id="conviction-error" role="alert"></p>
+<section id="outcome-editor" hidden><h3 id="outcome-title">填入公告驗證</h3><form id="outcome-form"><div id="revenue-fields" class="position-fields"><label>目標月份實際營收<input name="actualRevenue" type="number" min="0" step="any"></label><label>比較期營收（相同單位）<input name="baselineRevenue" type="number" min="0.000001" step="any"></label></div><label id="custom-outcome">原定條件是否實現<select name="hit"><option value="true">已實現</option><option value="false">未實現</option></select></label><div class="position-fields"><label class="full">公告來源網址<input name="sourceUrl" type="url" required placeholder="https://..."></label><label class="full">驗證理由／數字與期間<textarea name="note" maxlength="500" required rows="2"></textarea></label></div><button type="submit">新增驗證紀錄</button></form></section>
+<h3>我的星等後來準不準？</h3><div id="conviction-stats"></div><p class="plan-note">僅統計本股，每個驗證月份與相同判準採最早紀錄；新增版本不增加同一樣本。不同論點、重疊期間不一定獨立，不把小樣本命中率當成未來勝率。營運結果由你依公告登錄，系統尚未自動核實來源。</p><div id="conviction-history"></div></dialog>
 </body></html>

@@ -12,6 +12,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/rotation_signals.py'
+      - 'scripts/rotation_forward.py'
       - 'scripts/rotation_research.py'
       - 'scripts/rotation_money.py'
       - 'scripts/rotation_prices.py'
@@ -73,7 +74,7 @@ jobs:
           test -f rotation/data.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add rotation/data.json rotation/institutional.json rotation/observations.json rotation/official_closes.json rotation/top100.json rotation/universe_current.json rotation/active_etf.json
+          git add rotation/forward_prices.json rotation/data.json rotation/institutional.json rotation/observations.json rotation/official_closes.json rotation/top100.json rotation/universe_current.json rotation/active_etf.json
           if test -f rotation/etf_history.json; then git add rotation/etf_history.json; fi
           if ! git diff --cached --quiet; then
             git commit -m 'Update stock rotation observations'
