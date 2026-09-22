@@ -1,10 +1,10 @@
 /* Private holdings stay in the signed-in owner's Firestore collection. */
-const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning;
+const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning, Research=window.PortfolioResearch;
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const num=(n,d=2)=>Number.isFinite(n)?(Object.is(n,-0)?0:n).toLocaleString('zh-TW',{maximumFractionDigits:Math.min(d,2)}):'—';
 const qty=n=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:8}):'—';
 const pct=n=>Number.isFinite(n)?`${n>0?'+':''}${num(n)}%`:'—';
-let data,training,config,user=null,positions=[],preview=null,editing=null,unsubscribe=null,db,auth,F,A,loading=true;
+let data,training,config,fundamentals,catalysts,researchCases,user=null,positions=[],preview=null,editing=null,unsubscribe=null,db,auth,F,A,loading=true;
 let activityTarget=null,activityRows=[],activityUnsubscribe=null,activityLoading=false,activityBusy=false,activityId=null,previewActivity=[];
 const json=async path=>{const r=await fetch(path,{cache:'no-store'});if(!r.ok)throw Error('讀取失敗');return r.json();};
 const errorText=e=>e?.code==='permission-denied'?'Firebase 權限拒絕，未寫入。請確認登入的是自己的 Firebase 帳號。':e?.code?.startsWith('auth/')?'登入未完成，請核對 Email／密碼與網路；Firebase 控制台登入不等於網站帳號登入。':e?.message||'連線失敗，未儲存。';
@@ -18,6 +18,7 @@ function updateAuth(){
 }
 function planningPanel(p,a,demo){
   const plan=Planning.build(p,quote(p),a,data,positions),box=node('section',undefined,'operation-plan');box.append(node('h4','這筆資金，接下來怎麼用？'));
+  box.append(node('p','個股上漲勝率：尚無經驗證的估計。可展開下方研究，看不同持有期間的歷史結果與等待理由。','research-status'));
   const choices=node('div',undefined,'intent-choices');for(const [value,label]of [['hold','持續持有'],['rotate','考慮資金轉換']]){const b=node('button',label);b.type='button';b.setAttribute('aria-pressed',String(plan.intent===value));b.disabled=!demo&&(!user||loading);b.onclick=async()=>{b.disabled=true;try{if(demo){preview={...preview,capitalIntent:value};render();}else{await save({...p,capitalIntent:value},p.id,p.revision);sync('已更新這筆資金的用途偏好。');}}catch(e){sync(errorText(e));b.disabled=false;}};choices.append(b);}box.append(choices);
   if(plan.intent==='undecided')box.append(node('p','先選用途；系統不會因另一檔分數較高就自動建議換股。','plan-note'));
   const flow=node('ol',undefined,'strategy-flow');for(const [label,text]of [['現在',plan.action],['下一次檢查',plan.schedule],['之後',a.status==='exit'||a.status==='reduce'?'等風險解除，再評估新部位':'條件延續 → 續抱；條件失效 → 減碼／重查']]){const item=node('li');item.append(node('small',label),node('strong',text));flow.append(item);}box.append(flow,node('p',plan.horizonNote,'plan-note'));
@@ -27,7 +28,46 @@ function planningPanel(p,a,demo){
     else{const table=node('table',undefined,'rotation-comparison'),head=node('tr');for(const t of ['比較項目','原股',...plan.candidates.map(x=>x.name+' '+x.symbol+(x.held?'（已持有）':''))])head.append(node('th',t));const th=node('thead');th.append(head);const body=node('tbody');for(const values of [['價量條件',`${plan.currentPassed}/4`,...plan.candidates.map(x=>`${x.passed}/4`)],['動能分數',num(quote(p)?.score,1),...plan.candidates.map(x=>num(x.score,1))],['距月線',pct(quote(p)?.ma20_distance),...plan.candidates.map(x=>pct(x.maDistance))],['資金方向',moneyLabel(quote(p)?.smart_money?.bias),...plan.candidates.map(x=>moneyLabel(x.money))]]){const row=node('tr');values.forEach((v,i)=>row.append(node(i?'td':'th',v)));body.append(row);}table.append(th,body);const wrap=node('div',undefined,'comparison-scroll');wrap.append(table);compare.append(wrap,node('p','候選依現有動能分數排序；沒有估計換股後的淨報酬。台股資金欄為法人，美股為量價代理。','plan-note'));}
     box.append(compare);
   }
-  box.append(node('p',plan.limitation,'plan-note'));return box;
+  box.append(researchPanel(p,a,plan),node('p',plan.limitation,'plan-note'));return box;
+}
+function researchLink(source){
+  const a=node('a',source.title||'查看原始資料');
+  try{const url=new URL(source.url);if(url.protocol!=='https:')return node('span','來源網址待檢查');a.href=url.href;}catch{return node('span','來源網址待補');}
+  a.target='_blank';a.rel='noopener noreferrer';return a;
+}
+function researchPanel(p,a,plan){
+  const detail=node('details',undefined,'research-detail');detail.append(node('summary','看詳細研究：勝率、基本面、等待多久'));
+  const controls=node('div',undefined,'research-controls'),stockLabel=node('label','研究對象'),select=node('select');
+  for(const s of [{symbol:p.symbol,name:p.name||p.symbol},...plan.candidates]){const o=node('option',s.name+' '+s.symbol);o.value=s.symbol;select.append(o);}stockLabel.append(select);
+  const waitLabel=node('label','願意等待多久（情境比較）'),wait=node('select');for(const months of [1,2,3,6]){const o=node('option',months+' 個月');o.value=months;if(months===2)o.selected=true;wait.append(o);}waitLabel.append(wait);controls.append(stockLabel,waitLabel);
+  const content=node('div');detail.append(controls,node('p','這裡的時間選擇只供比較，不會改動已儲存的持股期限。換股候選依「考慮資金轉換」的同市場條件產生。','plan-note'),content);
+  function draw(){
+    content.replaceChildren();const symbol=select.value,e=Research.evidence(symbol,fundamentals,catalysts,researchCases),record=e.record,row=rows().find(x=>x.symbol===symbol),h=Research.history(training,p.market,p.profile),months=Number(wait.value);
+    content.append(node('h4',`${row?.name||symbol}：續抱與轉換的依據`),node('p',symbol===p.symbol?Research.scenario(a,plan.candidates.length>0):'以下為候選股票的公開資料，不套用原持股成本。候選仍需完成基本面與估值研究，尚不能認定換股更好。'));
+    const list=(title,items)=>{content.append(node('h4',title));const ul=node('ul');for(const text of items)ul.append(node('li',text));content.append(ul);};
+    content.append(node('h4','基本面證據與公司時程'),node('p',record?.coverage||'尚未完成這檔的完整基本面研究；下列若有題材關係，仍需逐項確認。'));
+    if(record)content.append(node('p',`人工資料核對日 ${record.checked_on}；各公告日期另列。${e.needsReview?'超過複查間隔，請重新核對。':''}`,'plan-note'));
+    if(!fundamentals)content.append(node('p','基本面研究檔讀取失敗，無法確認證據完整度。','notice'));
+    for(const fact of record?.facts||[]){const b=node('article',undefined,'evidence-card');b.append(node('strong',fact.title),node('p',fact.text),node('small','公告／資料日期 '+fact.date));if(fact.source)b.append(researchLink(fact.source));content.append(b);}
+    const events=record?.events||[];
+    if(!events.length)content.append(node('p','可核對的催化時間尚未建立；不能把「基本面好」翻成再等 1～2 個月就會漲。','notice'));
+    for(const event of events){const window=Research.waitWindow(event,months),b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',event.status),node('p',event.text),node('p',`公司時程：${event.time_label}`),node('p',`你的等待範圍：從今天至 ${window.end}`),node('p',window.text,'notice'),node('small',`原公告 ${event.announced_on}；期間起訖僅用於情境比較。`));if(event.source)b.append(researchLink(event.source));content.append(b);}
+    const stages=node('ol',undefined,'evidence-stages');for(const t of ['宣布／核准','建廠／裝機','驗收／投產','出貨／營收','獲利／現金流'])stages.append(node('li',t));content.append(stages,node('p','每一步要不同證據。官方「計畫」不能當成已投產，投產也不等於股價尚未反映。','plan-note'));
+    list('接下來查什麼',record?.next_checks||['核對公司財報、正式訂單或擴產公告及實際完成時間。','核對營收、毛利、現金流和估值是否支持持有理由。','以完整收盤價量確認，並觀察法人／資金是否同向。']);
+    list('什麼情況就不值得繼續等',record?.invalidations||['需求、訂單或交付時程不如原假設。','成長沒有轉成獲利／現金流，或估值已過度反映。','觸及你的風險線，或資金使用期限已改變。']);
+    for(const event of e.related){const b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',`${event.date} · ${event.kind==='confirmed'?'已確認關係（不等於新增訂單）':'產業延伸假設'}`),node('p',event.description),node('p',event.boundary,'plan-note'));for(const s of event.sources)b.append(researchLink(s));content.append(b);}
+    for(const c of e.hypotheses){const b=node('article',undefined,'evidence-card');b.append(node('strong',`${c.wave?'第 '+c.wave+' 波':'另一路'} · ${c.role}（研究假設）`),node('p',c.view),node('p',`${c.date} · ${c.note}`,'plan-note'));content.append(b);}
+    content.append(node('h4','歷史勝率：原策略，不是這檔的預測'),node('p',h.note));
+    if(h.rows.length){
+      content.append(node('p',`${p.market==='TW'?'台股':'美股'}原 ${h.count} 檔名單 · 固定歷史驗證 ${h.start}～${h.end} · 報告產生 ${h.generatedAt?.slice(0,10)||'未提供'}。`,'plan-note'));
+      if(h.failed)content.append(node('p','更新失敗：保留上次報告與原日期，不能當作新驗證。','notice'));
+      const table=node('table',undefined,'rotation-comparison'),thead=node('thead'),tr=node('tr');for(const text of ['最長交易日','歷史勝率','筆數／期末結算','累積報酬','最大回落','成本加倍報酬'])tr.append(node('th',text));thead.append(tr);const body=node('tbody');
+      for(const r of h.rows){const tr=node('tr');for(const text of [r.days+' 日',r.winRate===null?'無有效樣本':num(r.winRate)+'%',`${r.trades}／${r.forced}`,pct(r.returnPct),pct(r.drawdown),pct(r.doubleCost)])tr.append(node('td',text));body.append(tr);}table.append(thead,body);const wrap=node('div',undefined,'comparison-scroll');wrap.append(table);content.append(wrap);
+      list('怎麼讀這張表',['勝率＝扣除模型交易成本後獲利的交易筆數 ÷ 所有已結束交易，含期末強制結算；交易可能互相關聯。','最長持有期不是一定抱滿；跌破策略月線可提前退出。20 個交易日約一個月，60 日約三個月；目前沒有 40 日／兩個月組，不能自行插值。','累積報酬與回落是整體策略資金曲線，並非單筆預期收益。只看勝率會忽略賺小賠大的可能。','名單有事後選股偏差；未加入個人成本、擴廠、估值、長期續抱或換股條件。不能挑表中最高勝率當作這檔最佳持有天數。',`獨立前瞻自 ${h.forwardStart||'未設定'} 起另看；目前不足以校準這檔的未來機率。`]);
+    }
+    if(p.thesis&&symbol===p.symbol)list('你記錄的持有理由（未由系統驗證）',[p.thesis]);
+  }
+  select.onchange=draw;wait.onchange=draw;draw();return detail;
 }
 function moneyLabel(bias){return {buying:'偏買',selling:'偏賣',mixed:'分歧',neutral:'中性'}[bias]||'未齊';}
 function card(p,demo=false){
@@ -135,10 +175,13 @@ function renderTraining(){
   const detail=node('details');detail.append(node('summary','訓練方法、偏好與限制'));detail.append(node('p',`11 組固定候選，三段訓練期的「年化報酬－回落懲罰」中位數選擇。保守／平衡／積極的回落懲罰分別是 1.5／0.75／0.25；只調整同時符合量價條件時的排序，不是資金配置比例。這裡的排序基準與舊頁 RS20 排序回測不同，不能直接混比。`));const ul=node('ul');for(const note of training.limitations)ul.append(node('li',note));detail.append(ul);root.append(detail);
 }
 for(const id of ['train-market','train-profile','train-horizon'])$(id).onchange=renderTraining;
-const loaded=await Promise.allSettled([json('rotation/data.json'),json('rotation/weight_training.json'),json('rotation/portfolio_config.json')]);
+const loaded=await Promise.allSettled([json('rotation/data.json'),json('rotation/weight_training.json'),json('rotation/portfolio_config.json'),json('rotation/fundamental_research.json'),json('rotation/catalysts.json'),json('rotation/research_cases.json')]);
 if(loaded[0].status==='fulfilled'){data=loaded[0].value;$('quote-status').textContent=`完整日線：台股 ${data.markets.TW.as_of}／美股 ${data.markets.US.as_of}。每筆計畫另檢查時效；盤中價格不冒充收盤訊號。`;for(const r of rows()){const opt=node('option',r.name);opt.value=r.symbol;$('symbols').append(opt);}}else $('quote-status').textContent='公開行情讀取失敗，暫不產生持股判斷。';
 if(loaded[1].status==='fulfilled'){training=loaded[1].value;renderTraining();}else $('training-result').textContent='訓練結果暫時無法讀取。';
 if(loaded[2].status==='fulfilled')config=loaded[2].value;
+if(loaded[3].status==='fulfilled')fundamentals=loaded[3].value;
+if(loaded[4].status==='fulfilled')catalysts=loaded[4].value;
+if(loaded[5].status==='fulfilled')researchCases=loaded[5].value;
 render();
 try{
   const App=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
