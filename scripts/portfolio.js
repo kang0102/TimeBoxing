@@ -2,6 +2,7 @@
 const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning;
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const num=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
+const qty=n=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:8}):'—';
 const pct=n=>Number.isFinite(n)?`${n>0?'+':''}${num(n)}%`:'—';
 let data,training,config,user=null,positions=[],preview=null,editing=null,unsubscribe=null,db,auth,F,A,loading=true;
 let activityTarget=null,activityRows=[],activityUnsubscribe=null,activityLoading=false,activityBusy=false,activityId=null,previewActivity=[];
@@ -23,7 +24,7 @@ function planningPanel(p,a,demo){
   if(plan.intent==='rotate'){
     const compare=node('details');compare.open=true;compare.append(node('summary','續抱原股，還是比較其他股票？'),node('p',plan.rotationReason));
     if(!plan.candidates.length)compare.append(node('p','目前沒有資料完整、同市場、四項價量通過且未過熱的換股候選；先保留選擇，不勉強換股。'));
-    else{const table=node('table',undefined,'rotation-comparison'),head=node('tr');for(const t of ['比較項目','原股',...plan.candidates.map(x=>x.name+(x.held?'（已持有）':''))])head.append(node('th',t));const th=node('thead');th.append(head);const body=node('tbody');for(const values of [['價量條件',`${plan.currentPassed}/4`,...plan.candidates.map(x=>`${x.passed}/4`)],['動能分數',num(quote(p)?.score,1),...plan.candidates.map(x=>num(x.score,1))],['距月線',pct(quote(p)?.ma20_distance),...plan.candidates.map(x=>pct(x.maDistance))],['資金方向',moneyLabel(quote(p)?.smart_money?.bias),...plan.candidates.map(x=>moneyLabel(x.money))]]){const row=node('tr');values.forEach((v,i)=>row.append(node(i?'td':'th',v)));body.append(row);}table.append(th,body);const wrap=node('div',undefined,'comparison-scroll');wrap.append(table);compare.append(wrap,node('p','候選依現有動能分數排序；沒有估計換股後的淨報酬。台股資金欄為法人，美股為量價代理。','plan-note'));}
+    else{const table=node('table',undefined,'rotation-comparison'),head=node('tr');for(const t of ['比較項目','原股',...plan.candidates.map(x=>x.name+' '+x.symbol+(x.held?'（已持有）':''))])head.append(node('th',t));const th=node('thead');th.append(head);const body=node('tbody');for(const values of [['價量條件',`${plan.currentPassed}/4`,...plan.candidates.map(x=>`${x.passed}/4`)],['動能分數',num(quote(p)?.score,1),...plan.candidates.map(x=>num(x.score,1))],['距月線',pct(quote(p)?.ma20_distance),...plan.candidates.map(x=>pct(x.maDistance))],['資金方向',moneyLabel(quote(p)?.smart_money?.bias),...plan.candidates.map(x=>moneyLabel(x.money))]]){const row=node('tr');values.forEach((v,i)=>row.append(node(i?'td':'th',v)));body.append(row);}table.append(th,body);const wrap=node('div',undefined,'comparison-scroll');wrap.append(table);compare.append(wrap,node('p','候選依現有動能分數排序；沒有估計換股後的淨報酬。台股資金欄為法人，美股為量價代理。','plan-note'));}
     box.append(compare);
   }
   box.append(node('p',plan.limitation,'plan-note'));return box;
@@ -38,7 +39,7 @@ function card(p,demo=false){
   c.append(node('strong',p.archived?'已移出觀察':a.title,`position-status ${a.status}`),node('p',a.reason));
   const comparison=node('div',undefined,'cost-comparison');for(const [label,value]of [['你的平均成本',num(p.cost)],['最新完整收盤',num(a.price)]]){const cell=node('div');cell.append(node('small',label),node('strong',value));comparison.append(cell);}c.append(comparison);
   const k=node('div',undefined,'position-kpis');for(const [label,value] of [['未實現損益',`${num(a.pnl)} ${p.market==='TW'?'TWD':'USD'}`],['與成本相比',pct(a.pnlPct)],['自訂成本風險線',num(a.lossLine)]]){const cell=node('div');cell.append(node('small',label),node('strong',value));k.append(cell);}c.append(k);
-  c.append(node('p',`目前 ${num(p.quantity,3)} 股${a.asOf?' · 收盤日期 '+a.asOf:''} · 成本已含登錄的加碼費用`,'plan-note'));
+  c.append(node('p',`目前 ${qty(p.quantity)} 股${a.asOf?' · 收盤日期 '+a.asOf:''} · 成本已含登錄的加碼費用`,'plan-note'));
   c.append(planningPanel(p,a,demo));
   const signal=node('section',undefined,'next-signal');signal.append(node('h4',a.nextHeading||'下一個訊號'));const bullets=node('ul');for(const text of a.nextItems||[a.next||'先等完整且同日的行情與指標補齊；資料缺漏不代表安全。'])bullets.append(node('li',text));signal.append(bullets);if(a.nextNote)signal.append(node('p',a.nextNote,'plan-note'));c.append(signal);
   const choices=node('div',undefined,'plan-choices');for(const x of a.alternatives){const box=node('div');box.append(node('strong',x.title),node('p',x.text));choices.append(box);}c.append(choices);
@@ -76,17 +77,17 @@ function updateActivityPreview(){
   const p=selectedPosition();if(!p)return;const input=activityInput();
   $('save-activity').disabled=!activityReady();$('undo-activity').disabled=!activityReady()||!latestActivity()||latestActivity().kind==='reverse';
   if(!input.quantity||!input.price){$('activity-preview').textContent='填寫成交股數與單價，就能先看調整後股數、平均成本與本次已實現損益。';return;}
-  try{const next=Journal.apply(p,input,latestActivity(),activityId,L.day());$('activity-preview').textContent=`${num(p.quantity,8)} → ${num(next.position.quantity,8)} 股 · 平均成本 ${num(p.cost,4)} → ${num(next.position.cost,4)} · 本次已實現損益 ${num(next.entry.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`;}catch(e){$('activity-preview').textContent=errorText(e);$('save-activity').disabled=true;}
+  try{const next=Journal.apply(p,input,latestActivity(),activityId,L.day());$('activity-preview').textContent=`${qty(p.quantity)} → ${qty(next.position.quantity)} 股 · 平均成本 ${num(p.cost,4)} → ${num(next.position.cost,4)} · 本次已實現損益 ${num(next.entry.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`;}catch(e){$('activity-preview').textContent=errorText(e);$('save-activity').disabled=true;}
 }
 function renderActivity(){
   const p=selectedPosition();if(!p){closeActivity();return;}
   $('activity-title').textContent=`${p.name||p.symbol}｜加減碼紀錄`;
-  $('activity-context').textContent=`${activityTarget.demo?'試算，不會儲存 · ':''}${p.symbol} · 目前 ${num(p.quantity,8)} 股 · 平均成本 ${num(p.cost,4)} · 累計已實現損益 ${num(p.realizedPnl||0)} ${p.market==='TW'?'TWD':'USD'}`;
+  $('activity-context').textContent=`${activityTarget.demo?'試算，不會儲存 · ':''}${p.symbol} · 目前 ${qty(p.quantity)} 股 · 平均成本 ${num(p.cost,4)} · 累計已實現損益 ${num(p.realizedPnl||0)} ${p.market==='TW'?'TWD':'USD'}`;
   const list=$('activity-history');list.replaceChildren();
   if(activityLoading)list.append(node('p','正在同步調整紀錄…'));
   else if(!activityRows.length)list.append(node('p','尚無加減碼紀錄。第一次登錄將以目前股數與成本作為追蹤起點。'));
   const reversed=new Set(activityRows.filter(r=>r.kind==='reverse').map(r=>r.reversesId));
-  for(const r of activityRows){const item=node('article',undefined,`activity-entry ${r.kind}`),label=r.kind==='buy'?'加碼':r.kind==='sell'?'減碼':'撤回登錄';item.append(node('strong',`${r.date} · ${label}${reversed.has(r.id)?'（已撤回）':''}`),node('p',`${num(r.quantity,8)} 股 × ${num(r.price,4)} · 費用 ${num(r.fees)}`),node('p',`股數 ${num(r.beforeQuantity,8)} → ${num(r.afterQuantity,8)} · 均價 ${num(r.beforeCost,4)} → ${num(r.afterCost,4)}`),node('p',`本次已實現損益 ${num(r.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`));if(r.note)item.append(node('p',r.note,'plan-note'));list.append(item);}
+  for(const r of activityRows){const item=node('article',undefined,`activity-entry ${r.kind}`),label=r.kind==='buy'?'加碼':r.kind==='sell'?'減碼':'撤回登錄';item.append(node('strong',`${r.date} · ${label}${reversed.has(r.id)?'（已撤回）':''}`),node('p',`${qty(r.quantity)} 股 × ${num(r.price,4)} · 費用 ${num(r.fees)}`),node('p',`股數 ${qty(r.beforeQuantity)} → ${qty(r.afterQuantity)} · 均價 ${num(r.beforeCost,4)} → ${num(r.afterCost,4)}`),node('p',`本次已實現損益 ${num(r.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`));if(r.note)item.append(node('p',r.note,'plan-note'));list.append(item);}
   updateActivityPreview();
 }
 function openActivity(p,demo,kind){
