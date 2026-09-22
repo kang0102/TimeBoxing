@@ -20,3 +20,13 @@ test('financial evidence uses matching periods and missing values cannot become 
  assert.equal(R.financial({financial:{...raw,revenue:null,capex:0}}).length,2);
  assert.equal(R.focus(null,{group_name:'金融保險'}).specific,false);assert.match(R.focus(null,{group_name:'金融保險'}).questions[0],/利差/);
 });
+test('MediaTek uses company-specific measures and an arithmetic guidance remainder, not a growth forecast',()=>{
+ const record=require('../rotation/fundamental_research.json').stocks.find(s=>s.symbol==='2454.TW'),rows=R.financial(record);
+ const find=label=>rows.find(r=>r.label===label);
+ assert.ok(find('Q2 營收年增').value>0);assert.ok(find('Q2 營業利益年增').value<0);
+ assert.equal(find('存貨週轉天數增加').value,36);assert.equal(find('存貨週轉天數增加').unit,'天');
+ assert.equal(find('達到原 Q3 指引下緣所需的九月營收').value,395.42);
+ assert.equal(find('達到原 Q3 指引上緣所需的九月營收').value,471.42);
+ assert.ok(find('上半年營業現金流／合併淨利').value<14);assert.equal(R.financial({metrics:[{calculation:'ratio',current:3,reference:0}]}).length,0);
+ assert.equal(R.coverage(record).facts,4);assert.equal(R.coverage({questions:['Research only']}).facts,0);assert.match(R.coverage().label,/待補/);
+});
