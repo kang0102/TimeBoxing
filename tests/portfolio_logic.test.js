@@ -12,3 +12,32 @@ test('missing long-term average is unknown, no silent fallback',()=>assert.equal
 test('expiry prompts review, never an automatic sell',()=>assert.equal(L.assess({...p,planStart:'2025-01-01'},row,data,now).status,'review'));
 test('aggressive plan needs relative weakness before trend reduction',()=>{assert.equal(L.assess({...p,profile:'aggressive'},{...row,ma60:115},data,now).status,'review');assert.equal(L.assess({...p,profile:'aggressive'},{...row,ma60:115,rs_5d:-1},data,now).status,'reduce');});
 test('missing long average cannot hide a known breached cost limit',()=>assert.equal(L.assess({...p,durationUnit:'years'},{...row,close:85,ma200:null},data,now).status,'exit'));
+
+test('next session advances targets while completed-session checks keep their original baseline',()=>{
+  const a=L.assess(p,{...row,next_session_high20:116,next_session_volume_mean20:1234567},data,now);
+  assert.equal(a.status,'hold');
+  assert.equal(a.checks.find(c=>c.label==='突破前 20 日高點').target,108);
+  assert.equal(a.checks.find(c=>c.label==='突破前 20 日高點').passed,true);
+  assert.match(a.next,/本次收盤四項價量已達標/);
+  assert.match(a.next,/2026-09-21/);
+  assert.match(a.next,/116\.00/);
+  assert.match(a.next,/1,851,851 股/);
+  assert.doesNotMatch(a.next,/108\.00/);
+  assert.match(a.next,/盤中越過不算收盤確認/);
+});
+test('missing next-session references never recycle a completed-session breakout threshold',()=>{
+  for(const change of [{next_session_high20:null},{next_session_volume_mean20:0},{next_session_volume_mean20:NaN}]){
+    const a=L.assess(p,{...row,next_session_high20:116,next_session_volume_mean20:1000,...change},data,now);
+    assert.equal(a.status,'hold');
+    assert.match(a.next,/基準未齊/);
+    assert.doesNotMatch(a.next,/108\.00/);
+  }
+});
+test('risk, weak trend and overheating still take precedence over next-entry preparation',()=>{
+  const current={...row,next_session_high20:116,next_session_volume_mean20:1000};
+  for(const change of [{close:89},{close:94},{return_20d:30}]){
+    const a=L.assess(p,{...current,...change},data,now);
+    assert.ok(['exit','reduce','trim'].includes(a.status));
+    assert.doesNotMatch(a.next,/116\.00/);
+  }
+});

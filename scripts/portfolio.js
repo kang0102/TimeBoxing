@@ -26,7 +26,7 @@ function card(p,demo=false){
   c.append(node('p',`成本 ${num(p.cost)} × ${num(p.quantity,3)} 股${a.asOf?' · 行情日 '+a.asOf:''}`,'plan-note'));
   c.append(node('p',a.next||'先等完整且同日的行情與指標補齊；資料缺漏不代表安全。','next-signal'));
   const choices=node('div',undefined,'plan-choices');for(const x of a.alternatives){const box=node('div');box.append(node('strong',x.title),node('p',x.text));choices.append(box);}c.append(choices);
-  const detail=node('details');detail.append(node('summary','下一個訊號與持有理由'));const checks=node('ul');
+  const detail=node('details');detail.append(node('summary','本次收盤條件與持有理由'));const checks=node('ul');
   for(const check of a.checks)checks.append(node('li',`${check.passed?'✓':'待確認'} ${check.label}${Number.isFinite(check.actual)?'（目前 '+num(check.actual)+'）':''}`));detail.append(checks,node('p',p.thesis||'尚未填寫持有理由。'),node('p','條件更完整，僅代表證據增加；這組持股規則尚未回測，沒有可宣稱的勝率。','plan-note'));c.append(detail);
   const actions=node('div',undefined,'form-actions');const edit=node('button','編輯計畫');edit.onclick=()=>openForm(p,demo);actions.append(edit);
   const archive=node('button',demo?'移除預覽':p.archived?'恢復觀察':'移出觀察');archive.disabled=!demo&&(!user||loading);archive.onclick=async()=>{if(demo){preview=null;render();return;}archive.disabled=true;try{await save({...p,archived:!p.archived},p.id,p.revision);sync('已同步，移出的持股可隨時恢復。');}catch(e){sync(errorText(e));archive.disabled=false;}};actions.append(archive);c.append(actions);return c;
