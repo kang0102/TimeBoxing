@@ -37,3 +37,11 @@ test('research catalog works without positions, resolves names and OTC codes, an
  assert.equal(R.search(stocks,'聯發科')[0].coverage.facts,1);assert.match(R.search(stocks,'欣興')[0].coverage.label,/待補/);
  assert.equal(R.search(stocks,'不存在').length,0);assert.equal(R.search([], '2454').length,0);
 });
+test('TUC uses single-quarter cash flow and preserves contradictory turnover evidence',()=>{
+ const record=require('../rotation/fundamental_research.json').stocks.find(s=>s.symbol==='6274.TWO'),metrics=R.financial(record);
+ assert.equal(metrics.find(m=>m.label==='Q2 自由現金流').value,-1656);
+ assert.ok(metrics.find(m=>m.label==='Q2 營業現金流／淨利').value<0);
+ assert.equal(metrics.find(m=>m.label==='銷貨天數比去年增加').value,29);
+ assert.equal(record.research_tree.length,3);assert.ok(record.counter_views.some(v=>v.includes('季減')));
+ assert.equal(record.events.length,0);
+});
