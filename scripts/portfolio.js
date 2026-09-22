@@ -83,8 +83,9 @@ function setupResearchDesk(){
   const stocks=Research.catalog(rows(),fundamentals),input=$('research-query'),market=$('research-market'),results=$('research-results'),content=$('research-content');
   function open(s){
     const p={symbol:s.symbol,name:s.name,market:s.market,profile:'balanced'};
-    content.replaceChildren(researchPanel(p,null,{candidates:[]},{standalone:true}));
-    $('research-selection').textContent=`正在研究 ${s.name} ${s.symbol}`;
+    const record=fundamentals?.stocks?.find(r=>r.symbol===s.symbol);
+    content.replaceChildren(window.ResearchWorkspace.mount(s,record),researchPanel(p,null,{candidates:[]},{standalone:true}));
+    $('research-selection').textContent=`目前查看 ${s.name} ${s.symbol} · 尚未啟動新 AI 研究`;
     const url=new URL(location.href);url.searchParams.set('research',s.symbol);url.hash='stock-research';history.replaceState(null,'',url);
     content.focus({preventScroll:true});
   }

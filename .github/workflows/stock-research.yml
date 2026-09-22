@@ -1,0 +1,63 @@
+name: Authorized stock research
+run-name: 'AI research issue #${{ github.event.issue.number }}'
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: write
+  issues: write
+  pages: write
+concurrency:
+  group: stock-rotation-update
+  cancel-in-progress: false
+jobs:
+  research:
+    if: github.actor == github.repository_owner && github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[AI 研究授權] ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: git pull --ff-only origin main
+      - name: Claim this one authorization
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/run_stock_research.py prepare
+      - name: Publish real request state before calling AI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add rotation/ai_research.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record one authorized stock research request'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Research one question and synthesize in the same response
+        if: steps.prepare.outputs.ready == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/run_stock_research.py finish
+      - name: Publish report or explicit failure
+        if: always() && steps.prepare.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/run_stock_research.py finalize
+          git add rotation/ai_research.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish authorized stock research result'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
