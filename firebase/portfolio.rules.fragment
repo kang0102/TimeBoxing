@@ -1,20 +1,24 @@
-// Merge inside the existing match /databases/{database}/documents block.
-// Review broad recursive allow rules first: Firestore matches are additive.
+// Only the signed-in owner can read or write a portfolio and its journal.
 match /rotationPortfolios/{uid}/positions/{positionId} {
   function owner() { return request.auth != null && request.auth.uid == uid; }
   function valid() {
     let d = request.resource.data;
-    return d.keys().hasAll(['schemaVersion','symbol','market','name','cost','quantity','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt'])
-      && d.keys().hasOnly(['schemaVersion','symbol','market','name','cost','quantity','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt'])
-      && d.schemaVersion == 1 && d.market in ['TW','US']
+    let core = ['schemaVersion','symbol','market','name','cost','quantity','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt'];
+    let ledger = ['activityCount','lastActivityId','realizedPnl'];
+    return d.keys().hasAll(core) && d.keys().hasOnly(core.concat(ledger).concat(['capitalIntent']))
+      && d.schemaVersion in [1,2] && d.market in ['TW','US']
       && d.symbol is string && d.symbol.size() <= 16
       && d.name is string && d.name.size() <= 80
       && d.cost is number && d.cost > 0 && d.cost <= 10000000
-      && d.quantity is number && d.quantity > 0 && d.quantity <= 1000000000
+      && d.quantity is number && d.quantity >= 0 && d.quantity <= 1000000000
       && (d.market != 'TW' || d.quantity % 1 == 0)
+      && ((d.schemaVersion == 1 && d.quantity > 0 && !d.keys().hasAny(ledger)) ||
+          (d.schemaVersion == 2 && d.keys().hasAll(ledger) && d.activityCount is int && d.activityCount > 0
+          && d.lastActivityId is string && d.lastActivityId.size() > 0 && d.lastActivityId.size() <= 80 && d.realizedPnl is number))
       && d.durationValue is int && d.durationValue > 0
       && ((d.durationUnit == 'days' && d.durationValue <= 3650) || (d.durationUnit == 'months' && d.durationValue <= 120) || (d.durationUnit == 'years' && d.durationValue <= 10))
       && d.profile in ['conservative','balanced','aggressive']
+      && d.get('capitalIntent','undecided') in ['undecided','hold','rotate']
       && d.maxLossPct is number && d.maxLossPct > 0 && d.maxLossPct <= 50
       && d.planStart is string && d.planStart.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
       && d.boughtOn is string && d.boughtOn.size() <= 10
@@ -22,9 +26,64 @@ match /rotationPortfolios/{uid}/positions/{positionId} {
       && d.thesis is string && d.thesis.size() <= 500
       && d.archived is bool && d.revision is int && d.updatedAt == request.time;
   }
+  function journalUpdate() {
+    let d = request.resource.data;
+    let b = resource.data;
+    let e = getAfter(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)/activity/$(d.lastActivityId)).data;
+    return !b.archived && d.schemaVersion == 2
+      && d.diff(b).affectedKeys().hasOnly(['schemaVersion','quantity','cost','activityCount','lastActivityId','realizedPnl','revision','updatedAt'])
+      && d.activityCount == b.get('activityCount',0) + 1 && d.lastActivityId != b.get('lastActivityId','')
+      && e.createdAt == request.time && e.revision == d.revision
+      && e.beforeQuantity == b.quantity && e.beforeCost == b.cost
+      && e.afterQuantity == d.quantity && e.afterCost == d.cost
+      && d.realizedPnl == b.get('realizedPnl',0) + e.realizedPnl;
+  }
+  function planUpdate() {
+    let d = request.resource.data;
+    return d.schemaVersion == resource.data.schemaVersion && (d.schemaVersion == 1 ||
+      d.diff(resource.data).affectedKeys().hasOnly(['capitalIntent','name','durationValue','durationUnit','profile','maxLossPct','planStart','boughtOn','thesis','reviewedOn','archived','revision','updatedAt']));
+  }
   allow read: if owner();
-  allow create: if owner() && valid() && request.resource.data.revision == 1;
-  allow update: if owner() && valid() && request.resource.data.revision == resource.data.revision + 1;
-  // Removal is an archived flag and can be restored; no permanent delete here.
+  allow create: if owner() && valid() && request.resource.data.schemaVersion == 1 && request.resource.data.revision == 1;
+  allow update: if owner() && valid() && request.resource.data.revision == resource.data.revision + 1 && (planUpdate() || journalUpdate());
   allow delete: if false;
+
+  match /activity/{activityId} {
+    function near(a,b) { return a >= b - 0.000001 && a <= b + 0.000001; }
+    function reversal(e,b) {
+      let last = get(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)/activity/$(e.reversesId)).data;
+      return e.reversesId == b.lastActivityId && last.kind in ['buy','sell']
+        && e.date == last.date && e.quantity == last.quantity && e.price == last.price && e.fees == last.fees
+        && e.afterQuantity == last.beforeQuantity && e.afterCost == last.beforeCost
+        && e.realizedPnl == -last.realizedPnl && b.quantity == last.afterQuantity && b.cost == last.afterCost;
+    }
+    function validEntry() {
+      let e = request.resource.data;
+      let path = /databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId);
+      let b = get(path).data;
+      let p = getAfter(path).data;
+      let fields = ['schemaVersion','kind','date','quantity','price','fees','note','beforeQuantity','beforeCost','afterQuantity','afterCost','realizedPnl','reversesId','revision','createdAt'];
+      return e.keys().hasAll(fields) && e.keys().hasOnly(fields) && e.schemaVersion == 1
+        && e.kind in ['buy','sell','reverse'] && e.date is string && e.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && e.quantity is number && e.quantity > 0 && e.quantity <= 1000000000 && (b.market != 'TW' || e.quantity % 1 == 0)
+        && e.price is number && e.price > 0 && e.price <= 10000000
+        && e.fees is number && e.fees >= 0 && e.fees <= e.quantity * e.price
+        && e.note is string && e.note.size() <= 500 && e.reversesId is string
+        && e.beforeQuantity == b.quantity && e.beforeCost == b.cost
+        && e.afterQuantity == p.quantity && e.afterCost == p.cost
+        && e.revision is int && e.revision == b.revision + 1 && p.revision == e.revision
+        && p.schemaVersion == 2 && p.lastActivityId == activityId && p.activityCount == b.get('activityCount',0) + 1
+        && e.createdAt == request.time && p.updatedAt == request.time && !b.archived
+        && (b.boughtOn == '' || e.date >= b.boughtOn)
+        && (b.get('activityCount',0) == 0 || e.date >= get(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)/activity/$(b.lastActivityId)).data.date)
+        && ((e.kind == 'buy' && e.reversesId == '' && near(e.afterQuantity,b.quantity + e.quantity)
+             && near(e.afterCost,(b.quantity * b.cost + e.quantity * e.price + e.fees) * 1.0 / e.afterQuantity) && e.realizedPnl == 0)
+          || (e.kind == 'sell' && e.reversesId == '' && e.quantity <= b.quantity && near(e.afterQuantity,b.quantity - e.quantity)
+             && e.afterCost == b.cost && near(e.realizedPnl,(e.price-b.cost)*e.quantity-e.fees))
+          || (e.kind == 'reverse' && reversal(e,b)));
+    }
+    allow read: if owner();
+    allow create: if owner() && validEntry();
+    allow update, delete: if false;
+  }
 }

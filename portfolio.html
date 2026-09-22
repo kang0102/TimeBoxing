@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#12344a"><title>我的持股與策略研究｜大型股輪動雷達</title>
-<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=1">
-<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=1" defer></script><script type="module" src="scripts/portfolio.js?v=1"></script></head>
+<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=3">
+<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=3" defer></script><script src="scripts/portfolio_activity.js?v=2" defer></script><script src="scripts/portfolio_planning.js?v=2" defer></script><script src="scripts/portfolio_research.js?v=3" defer></script><script type="module" src="scripts/portfolio.js?v=3"></script></head>
 <body><header class="topbar"><a href="rotation.html">← 大型股輪動雷達</a><span>MY PLAN / 02</span></header><main>
 <section class="heading"><div><p class="eyebrow">MY PORTFOLIO</p><h1>我的持股，我的計畫</h1><p class="intro">先選持有多久，再看續抱、減碼與下一個確認條件。</p></div><a class="guide-jump" href="#training">看權重訓練結果 ↗</a></section>
 <div id="quote-status" class="notice" role="status">正在讀取公開行情…</div>
@@ -11,7 +11,7 @@
 <div id="sync-status" class="notice" role="status" aria-live="polite">未登入。你可以先用試算預覽，不會儲存。</div>
 <section class="portfolio-toolbar"><h2>持股計畫</h2><button id="new-position" type="button">＋ 新增／試算持股</button><label><input id="show-archived" type="checkbox"> 顯示已移出的持股</label></section>
 <div id="portfolio-summary" class="portfolio-summary"></div><section id="positions" class="positions" aria-label="我的持股計畫"></section>
-<p class="evidence-boundary">成本損益未扣手續費、交易稅與股息。不同幣別分開統計；不是完整資產配置評估。長期計畫仍需檢查公司基本面，增加持有年限不會自動降低單一股票風險。這些個人進退規則尚未回測，不能換算成個股必漲機率。</p>
+<p class="evidence-boundary">加減碼是你手動登錄的已成交紀錄，不會下單。加碼費用計入平均成本，減碼費用扣自已實現損益；未填費用視為 0，股息、匯率與未來賣出成本未計入。已實現損益只累計開始追蹤後的紀錄。不同幣別分開統計。個人進退規則尚未回測，不能換算成個股必漲機率。</p>
 <section id="training" class="section training-panel" aria-label="權重訓練與驗證"><p class="eyebrow">RESEARCH / FROZEN MODEL</p><h2>權重訓練：有比原版更好嗎？</h2><p>先以三段訓練資料選權重，再比較沒有參與選權重的歷史期間。保留原版，不自動替換。</p>
 <div class="training-controls"><label>市場<select id="train-market"><option value="TW">台股原 39 檔</option><option value="US">美股原 13 檔</option></select></label><label>研究偏好<select id="train-profile"><option value="balanced">平衡</option><option value="conservative">保守</option><option value="aggressive">積極</option></select></label><label>最長持有<select id="train-horizon"><option value="5">5 個交易日</option><option value="10" selected>10 個交易日</option><option value="20">20 個交易日</option><option value="60">60 個交易日</option></select></label></div><div id="training-result" aria-live="polite">正在讀取訓練結果…</div></section>
 <footer>持股計畫僅提供條件觀察；不會連接券商或自動下單。</footer></main>
@@ -22,10 +22,21 @@
 <label>平均成本<input name="cost" type="number" min="0.000001" step="any" required inputmode="decimal"></label><label>持有股數<input name="quantity" type="number" min="0.000001" step="any" required inputmode="decimal"></label>
 <label>持有多久<input name="durationValue" type="number" min="1" max="3650" step="1" value="3" required></label><label>期限單位<select name="durationUnit"><option value="days">日曆天</option><option value="months" selected>月</option><option value="years">年</option></select></label>
 <label>偏好<select name="profile"><option value="balanced">平衡：兼顧回落與趨勢</option><option value="conservative">保守：較早檢查防守</option><option value="aggressive">積極：接受較大波動</option></select></label>
+<label>這筆資金的用途<select name="capitalIntent"><option value="undecided">先比較，再決定</option><option value="hold">持續持有，條件好就續抱</option><option value="rotate">評估資金轉換／換股</option></select></label>
 <label>自訂可接受成本跌幅（%）<input name="maxLossPct" type="number" min="0.1" max="50" step="0.1" value="10" required></label>
 <label>計畫開始日<input name="planStart" type="date" required></label><label>實際買入日（可略）<input name="boughtOn" type="date"></label>
 <label class="full">持有理由／何時失效<textarea name="thesis" maxlength="500" rows="3" placeholder="例如：未來兩季營收持續成長；若訂單展望改變就重查。不要只寫等回本。"></textarea></label>
 <label>最近親自核對基本面日期（可略）<input name="reviewedOn" type="date"></label></div>
+<p id="position-ledger-note" class="detail-note" hidden>已有加減碼紀錄，股票、成本與股數由紀錄更新；這裡可修改期限、偏好和持有理由。</p>
 <p class="detail-note">天／月／年是計畫的日曆期限，與回測的交易日不同。10% 是可修改的風險預算起始值，並非訓練出來的最佳停損。未追蹤股票可保存，但行情不足時不給進退判斷。</p>
 <p id="form-error" role="alert"></p><div class="form-actions"><button id="preview-position" type="button">先試算，不儲存</button><button id="save-position" type="submit" disabled>儲存到 Firebase</button></div></form></dialog>
+<dialog id="activity-dialog" aria-labelledby="activity-title"><button id="close-activity" class="close" type="button" aria-label="關閉加減碼紀錄">×</button><p class="eyebrow">MY ACTIVITY</p><h2 id="activity-title">加減碼紀錄</h2><p id="activity-context"></p>
+<form id="activity-form"><div class="position-fields">
+<label>調整方向<select name="kind"><option value="buy">加碼／買入</option><option value="sell">減碼／賣出</option></select></label><label>實際成交日<input name="date" type="date" required></label>
+<label>成交股數（不是張數）<input name="quantity" type="number" min="0.00000001" step="any" inputmode="decimal" required></label><label>成交單價<input name="price" type="number" min="0.000001" step="any" inputmode="decimal" required></label>
+<label>手續費＋交易稅<input name="fees" type="number" min="0" step="any" inputmode="decimal" value="0" required></label><label class="full">這次調整的原因<textarea name="note" maxlength="500" rows="2" placeholder="例如：突破後分批加碼；或失守支撐先降低部位。"></textarea></label></div>
+<p class="detail-note">以目前持股為起點，按成交日期依序新增。台股 1 張＝1,000 股。費用自行填入，未計入股息及匯率。這是登錄紀錄，不會送出券商委託。</p>
+<div id="activity-preview" class="next-signal" aria-live="polite"></div><p id="activity-error" role="alert"></p><div class="form-actions"><button id="save-activity" type="submit">新增紀錄</button><button id="undo-activity" type="button">撤回最後一筆</button></div>
+<div id="undo-confirmation" class="next-signal" hidden><p>回復最後一筆買賣之前的股數、成本與已實現損益；原紀錄會保留，並新增撤回紀錄。</p><div class="form-actions"><button id="confirm-undo" type="button">確認撤回登錄</button><button id="cancel-undo" type="button">保留原紀錄</button></div></div></form>
+<h3>調整歷程</h3><p class="detail-note">最新紀錄在上方；撤回會保留原紀錄及更正痕跡。</p><div id="activity-history" aria-live="polite"></div></dialog>
 </body></html>

@@ -1,0 +1,10 @@
+const test=require('node:test'),assert=require('node:assert/strict'),P=require('../scripts/portfolio_planning');
+const now=Date.parse('2026-09-22T12:00:00Z'),row={symbol:'2330.TW',market:'TW',status:'ok',as_of:'2026-09-22',close:110,ma20:100,previous_high20:108,volume_ratio:1.6,rs_5d:3,return_20d:10,ma20_distance:10,score:70,smart_money:{status:'ok',as_of:'2026-09-22',bias:'buying'}};
+const candidate={...row,symbol:'2308.TW',name:'Synthetic',score:80};
+const data={generated_at:'2026-09-22T11:00:00Z',markets:{TW:{as_of:'2026-09-22',status:'ok'}},stocks:[row,candidate]};
+const p={market:'TW',symbol:row.symbol,capitalIntent:'rotate'},a={status:'hold',horizon:'short'};
+test('holding preference does not push replacement stocks',()=>assert.equal(P.build({...p,capitalIntent:'hold'},row,a,data,[],now).candidates.length,0));
+test('candidate evidence is compared without claiming higher future return',()=>{const x=P.build(p,row,a,data,[{symbol:candidate.symbol,quantity:10}],now);assert.equal(x.candidates[0].passed,4);assert.equal(x.candidates[0].held,true);assert.equal(x.probability,null);assert.match(x.rotationReason,/沒有足夠證據/);assert.equal(x.reviewDays,5);});
+test('stale prices, hot stocks and missing or selling money flows cannot become rotation candidates',()=>{for(const change of [{as_of:'2026-09-21'},{return_20d:30},{smart_money:{status:'unavailable'}},{smart_money:{...candidate.smart_money,bias:'selling'}},{smart_money:{...candidate.smart_money,as_of:'2026-09-21'}}])assert.equal(P.build(p,row,a,{...data,stocks:[{...candidate,...change}]},[],now).candidates.length,0);});
+test('risk takes precedence over waiting for the review horizon',()=>{const x=P.build(p,row,{status:'exit',horizon:'long'},data,[],now);assert.match(x.schedule,/不等計畫到期/);assert.match(x.action,/減碼/);});
+test('unknown or closed position cannot generate a replacement recommendation',()=>{for(const status of ['unknown','closed'])assert.equal(P.build(p,row,{...a,status},data,[],now).candidates.length,0);});
