@@ -13,6 +13,7 @@ from rotation_prices import adjust_with_verified_close, fetch_official_closes
 from rotation_briefing import build_briefings
 from rotation_sync import build_synchrony
 from rotation_universe import refresh_top100, expand_universe
+from rotation_forward import build_forward_prices
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -149,6 +150,8 @@ def main():
     temp = args.output.with_suffix(".tmp")
     temp.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     temp.replace(args.output)
+    # Only public prices. Private judgments are evaluated in the owner's browser.
+    save_archive(args.output.parent / 'forward_prices.json', build_forward_prices(config, downloads, now))
     # Preserve what was actually visible then, for later forward evaluation.
     # Never rewrite an older session with today's adjusted history.
     log_path = args.output.parent / 'observations.json'

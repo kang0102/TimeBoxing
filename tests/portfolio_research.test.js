@@ -14,3 +14,9 @@ test('waiting budget compares calendar windows without a return forecast',()=>{
 test('elapsed or missing deadlines cannot imply a completed factory',()=>{assert.equal(R.waitWindow({window_start:'2026-01-01',window_end:'2026-06-30'},2,now).state,'past');assert.equal(R.waitWindow({},2,now).state,'unknown');});
 test('only matching stock evidence is attached and hypotheses remain hypotheses',()=>{const e=R.evidence('3037.TW',{stocks:[{symbol:'2308.TW',checked_on:'2026-09-23'}]},{events:[{relationships:[{symbol:'3037.TW',kind:'hypothesis'}]}]},{cases:[]},now);assert.equal(e.record,undefined);assert.equal(e.related[0].kind,'hypothesis');assert.equal(e.probability,null);assert.equal(e.needsReview,true);});
 test('fundamental claims never override a breached risk condition',()=>assert.match(R.scenario({status:'exit'},true),/先處理已觸發的風險/));
+test('financial evidence uses matching periods and missing values cannot become negative growth',()=>{
+ const raw={revenue:120,priorRevenue:100,operatingProfit:30,priorOperatingProfit:20,depreciation:15,priorDepreciation:10,operatingCash:40,capex:100};
+ const values=R.financial({financial:raw}).map(x=>Math.round(x.value));assert.deepEqual(values,[20,50,50,40]);
+ assert.equal(R.financial({financial:{...raw,revenue:null,capex:0}}).length,2);
+ assert.equal(R.focus(null,{group_name:'金融保險'}).specific,false);assert.match(R.focus(null,{group_name:'金融保險'}).questions[0],/利差/);
+});

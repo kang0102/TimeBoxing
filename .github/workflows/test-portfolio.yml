@@ -20,7 +20,7 @@ jobs:
           node-version: '22'
       - run: pip install -r rotation/requirements.txt
       - run: python -m unittest discover -s tests -p 'test_rotation*.py'
-      - run: node --test tests/test_rotation_decisions.js tests/portfolio_logic.test.js tests/portfolio_activity.test.js tests/portfolio_planning.test.js tests/portfolio_research.test.js
+      - run: node --test tests/test_rotation_decisions.js tests/portfolio_logic.test.js tests/portfolio_activity.test.js tests/portfolio_planning.test.js tests/portfolio_research.test.js tests/portfolio_conviction.test.js
       - run: node --check scripts/portfolio.js
   private-journal-rules:
     runs-on: ubuntu-latest

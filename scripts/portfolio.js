@@ -1,11 +1,12 @@
 /* Private holdings stay in the signed-in owner's Firestore collection. */
-const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning, Research=window.PortfolioResearch;
+const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning, Research=window.PortfolioResearch, Conviction=window.PortfolioConviction;
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const num=(n,d=2)=>Number.isFinite(n)?(Object.is(n,-0)?0:n).toLocaleString('zh-TW',{maximumFractionDigits:Math.min(d,2)}):'—';
 const qty=n=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:8}):'—';
 const pct=n=>Number.isFinite(n)?`${n>0?'+':''}${num(n)}%`:'—';
 let data,training,config,fundamentals,catalysts,researchCases,user=null,positions=[],preview=null,editing=null,unsubscribe=null,db,auth,F,A,loading=true;
 let activityTarget=null,activityRows=[],activityUnsubscribe=null,activityLoading=false,activityBusy=false,activityId=null,previewActivity=[];
+let convictionTarget=null,convictionRows=[],convictionBusy=false,convictionId=null,convictionOutcome=null,forwardPrices=null,previewConvictions=[];
 const json=async path=>{const r=await fetch(path,{cache:'no-store'});if(!r.ok)throw Error('讀取失敗');return r.json();};
 const errorText=e=>e?.code==='permission-denied'?'Firebase 權限拒絕，未寫入。請確認登入的是自己的 Firebase 帳號。':e?.code?.startsWith('auth/')?'登入未完成，請核對 Email／密碼與網路；Firebase 控制台登入不等於網站帳號登入。':e?.message||'連線失敗，未儲存。';
 const rows=()=>data?.stocks||[];
@@ -28,7 +29,7 @@ function planningPanel(p,a,demo){
     else{const table=node('table',undefined,'rotation-comparison'),head=node('tr');for(const t of ['比較項目','原股',...plan.candidates.map(x=>x.name+' '+x.symbol+(x.held?'（已持有）':''))])head.append(node('th',t));const th=node('thead');th.append(head);const body=node('tbody');for(const values of [['價量條件',`${plan.currentPassed}/4`,...plan.candidates.map(x=>`${x.passed}/4`)],['動能分數',num(quote(p)?.score,1),...plan.candidates.map(x=>num(x.score,1))],['距月線',pct(quote(p)?.ma20_distance),...plan.candidates.map(x=>pct(x.maDistance))],['資金方向',moneyLabel(quote(p)?.smart_money?.bias),...plan.candidates.map(x=>moneyLabel(x.money))]]){const row=node('tr');values.forEach((v,i)=>row.append(node(i?'td':'th',v)));body.append(row);}table.append(th,body);const wrap=node('div',undefined,'comparison-scroll');wrap.append(table);compare.append(wrap,node('p','候選依現有動能分數排序；沒有估計換股後的淨報酬。台股資金欄為法人，美股為量價代理。','plan-note'));}
     box.append(compare);
   }
-  box.append(researchPanel(p,a,plan),node('p',plan.limitation,'plan-note'));return box;
+  box.append(researchPanel(p,a,plan));const judge=node('button','★ 看完材料，記錄我的判斷／檢查結果');judge.type='button';judge.disabled=!demo&&(!user||loading||!config?.conviction_enabled);judge.onclick=()=>openConviction(p,a,demo);box.append(judge,node('p',plan.limitation,'plan-note'));return box;
 }
 function researchLink(source){
   const a=node('a',source.title||'查看原始資料');
@@ -45,14 +46,19 @@ function researchPanel(p,a,plan){
     content.replaceChildren();const symbol=select.value,e=Research.evidence(symbol,fundamentals,catalysts,researchCases),record=e.record,row=rows().find(x=>x.symbol===symbol),h=Research.history(training,p.market,p.profile),months=Number(wait.value);
     content.append(node('h4',`${row?.name||symbol}：續抱與轉換的依據`),node('p',symbol===p.symbol?Research.scenario(a,plan.candidates.length>0):'以下為候選股票的公開資料，不套用原持股成本。候選仍需完成基本面與估值研究，尚不能認定換股更好。'));
     const list=(title,items)=>{content.append(node('h4',title));const ul=node('ul');for(const text of items)ul.append(node('li',text));content.append(ul);};
+    const focus=Research.focus(record,row);list(focus.specific?'這家公司值得先查的問題':'研究起點（尚未完成公司專屬分析）',focus.questions);
     content.append(node('h4','基本面證據與公司時程'),node('p',record?.coverage||'尚未完成這檔的完整基本面研究；下列若有題材關係，仍需逐項確認。'));
     if(record)content.append(node('p',`人工資料核對日 ${record.checked_on}；各公告日期另列。${e.needsReview?'超過複查間隔，請重新核對。':''}`,'plan-note'));
     if(!fundamentals)content.append(node('p','基本面研究檔讀取失敗，無法確認證據完整度。','notice'));
     for(const fact of record?.facts||[]){const b=node('article',undefined,'evidence-card');b.append(node('strong',fact.title),node('p',fact.text),node('small','公告／資料日期 '+fact.date));if(fact.source)b.append(researchLink(fact.source));content.append(b);}
+    const calculated=Research.financial(record);if(calculated.length){content.append(node('h4','財報交叉核對：可重算的指標'),node('p',`金額單位：${record.financial.unit}。下列百分比由原表計算，解讀屬研究推論。`,'plan-note'));for(const m of calculated){const b=node('article',undefined,'evidence-card');b.append(node('strong',`${m.label}：${num(m.value)}%`),node('p',m.formula,'plan-note'),node('p',m.meaning));content.append(b);}content.append(researchLink(record.financial.source));}
+    if(record?.counter_views?.length)list('換一個角度：有哪些反向解釋？',record.counter_views);
+    if(record?.transmission?.length){content.append(node('h4','上下游連動：逐段核對，不直接跳到個股結論'));const chain=node('ol',undefined,'strategy-flow');for(const step of record.transmission){const item=node('li');item.append(node('strong',`${step.from} → ${step.to}`),node('p',step.evidence),node('p','可能中斷：'+step.breaks,'plan-note'),node('p','下一個證據：'+step.check));chain.append(item);}content.append(chain);}
+    const syncGroup=data?.synchrony?.find(g=>g.id===row?.group&&g.market===p.market);if(syncGroup){const fresh=row?.as_of===syncGroup.as_of&&window.RotationDecisions.dailyFresh(data,p.market);const group=node('article',undefined,'evidence-card');group.append(node('strong','異常同步：'+syncGroup.name),node('p',`${syncGroup.as_of} · 有效代表 ${syncGroup.available}/${syncGroup.total} 檔 · 向上 ${syncGroup.up_count} 檔／向下 ${syncGroup.down_count} 檔`),node('p',!fresh?'資料日期未對齊或已過期，暫停判讀。':syncGroup.status==='insufficient'?'族群代表不足，不把缺資料當成沒有異常。':`系統狀態：${({quiet:'尚未達異常同步門檻',up_anomaly:'異常向上同步',down_anomaly:'異常向下同步',up_sync:'向上同步（未達異常門檻）',down_sync:'向下同步（未達異常門檻）'})[syncGroup.status]||syncGroup.status}`),node('p',`資金確認 ${(syncGroup.money_confirmed||[]).join('、')||'尚無'}；分歧 ${(syncGroup.money_divergence||[]).join('、')||'尚無'}。`),node('p','同步只提供交叉線索，仍可能來自大盤、指數調整或同一新聞；不是內線證據，也尚未證明提高個股勝率。','plan-note'));content.append(group);}
     const events=record?.events||[];
     if(!events.length)content.append(node('p','可核對的催化時間尚未建立；不能把「基本面好」翻成再等 1～2 個月就會漲。','notice'));
     for(const event of events){const window=Research.waitWindow(event,months),b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',event.status),node('p',event.text),node('p',`公司時程：${event.time_label}`),node('p',`你的等待範圍：從今天至 ${window.end}`),node('p',window.text,'notice'),node('small',`原公告 ${event.announced_on}；期間起訖僅用於情境比較。`));if(event.source)b.append(researchLink(event.source));content.append(b);}
-    const stages=node('ol',undefined,'evidence-stages');for(const t of ['宣布／核准','建廠／裝機','驗收／投產','出貨／營收','獲利／現金流'])stages.append(node('li',t));content.append(stages,node('p','每一步要不同證據。官方「計畫」不能當成已投產，投產也不等於股價尚未反映。','plan-note'));
+    if(record?.transmission?.length){const stages=node('ol',undefined,'evidence-stages');for(const t of ['宣布／核准','建廠／裝機','驗收／投產','出貨／營收','獲利／現金流'])stages.append(node('li',t));content.append(stages,node('p','每一步要不同證據。官方「計畫」不能當成已投產，投產也不等於股價尚未反映。','plan-note'));}
     list('接下來查什麼',record?.next_checks||['核對公司財報、正式訂單或擴產公告及實際完成時間。','核對營收、毛利、現金流和估值是否支持持有理由。','以完整收盤價量確認，並觀察法人／資金是否同向。']);
     list('什麼情況就不值得繼續等',record?.invalidations||['需求、訂單或交付時程不如原假設。','成長沒有轉成獲利／現金流，或估值已過度反映。','觸及你的風險線，或資金使用期限已改變。']);
     for(const event of e.related){const b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',`${event.date} · ${event.kind==='confirmed'?'已確認關係（不等於新增訂單）':'產業延伸假設'}`),node('p',event.description),node('p',event.boundary,'plan-note'));for(const s of event.sources)b.append(researchLink(s));content.append(b);}
@@ -70,6 +76,35 @@ function researchPanel(p,a,plan){
   select.onchange=draw;wait.onchange=draw;draw();return detail;
 }
 function moneyLabel(bias){return {buying:'偏買',selling:'偏賣',mixed:'分歧',neutral:'中性'}[bias]||'未齊';}
+function closeConviction(){convictionTarget=null;convictionRows=[];convictionOutcome=null;$('conviction-dialog').close();}
+function convictionInput(){return Object.fromEntries(new FormData($('conviction-form')));}
+function updateConvictionAdvice(){if(!convictionTarget)return;const v=convictionInput(),t=Conviction.target(Number(v.months));$('conviction-advice').textContent=`${Conviction.advice(Number(v.stars),convictionTarget.assessment)} 驗證月份：${t.month}；等該期間公告後再填結果。`;$('save-conviction').disabled=convictionBusy||(!convictionTarget.demo&&(!user||loading||!config?.conviction_enabled));}
+async function loadConvictions(){
+  const target=convictionTarget;if(!target)return;
+  if(target.demo)convictionRows=[...previewConvictions];
+  else{const uid=user?.uid,base=F.collection(db,'rotationPortfolios',uid,'positions',target.position.id,'convictions');const snap=await F.getDocsFromServer(F.query(base,F.orderBy('createdAt','desc')));const rows=await Promise.all(snap.docs.map(async d=>{const results=await F.getDocsFromServer(F.query(F.collection(d.ref,'outcomes'),F.orderBy('createdAt','desc'),F.limit(1)));return {...d.data(),id:d.id,outcome:results.empty?null:results.docs[0].data()};}));if(user?.uid!==uid||convictionTarget!==target)return;convictionRows=rows;}
+  renderConvictions();
+}
+async function openConviction(p,a,demo){
+  convictionTarget={position:p,assessment:a,demo};convictionId=crypto.randomUUID();convictionOutcome=null;convictionRows=[];$('conviction-form').reset();$('outcome-editor').hidden=true;$('conviction-error').textContent='';$('conviction-title').textContent=`${p.name||p.symbol}｜我的判斷與驗證`;$('conviction-context').textContent=demo?'試算資料只留在本頁；重整後清除。':'私人紀錄存於本人 Firebase 路徑；重新評星會新增版本。';$('conviction-dialog').showModal();updateConvictionAdvice();
+  try{forwardPrices=await json('rotation/forward_prices.json');}catch{forwardPrices=null;}
+  try{await loadConvictions();}catch(e){$('conviction-error').textContent=errorText(e);}
+}
+function renderConvictions(){
+  if(!convictionTarget)return;const table=node('table',undefined,'rotation-comparison'),head=node('tr');for(const text of ['星等','原始樣本','論點實現／已驗證','股價獲利／到期樣本'])head.append(node('th',text));table.append(head);
+  for(const s of Conviction.summarize(convictionRows,forwardPrices)){const r=node('tr');for(const text of ['★'.repeat(s.stars),s.forecasts,s.revenueSamples?`${s.revenueHits}／${s.revenueSamples}`:'待驗證',s.priceSamples?`${s.priceWins}／${s.priceSamples}`:'尚未到期／資料未齊'])r.append(node('td',text));table.append(r);}$('conviction-stats').replaceChildren(table);
+  const list=$('conviction-history');list.replaceChildren();if(!convictionRows.length)list.append(node('p','尚無紀錄。先閱讀材料、寫下可驗證的論點，再開始累積。'));
+  for(const f of convictionRows){const b=node('article',undefined,'evidence-card'),created=Conviction.timestamp(f.createdAt),result=Conviction.forward(f,forwardPrices);b.append(node('strong',`${'★'.repeat(f.stars)} · 驗證 ${f.targetMonth}`),node('p',`記錄 ${Number.isFinite(created)?new Date(created).toLocaleString('zh-TW'):'同步中'} · ${f.comparison==='yoy'?'月營收年增':f.comparison==='mom'?'月營收月增':'自訂論點'}`,'plan-note'),node('p','我的依據：'+f.thesis),node('p','實現條件：'+f.criterion),node('p','改變想法的證據：'+f.invalidates),node('p','當時操作參考：'+f.action));
+    if(f.outcome){try{const outcome=Conviction.revenue(f.outcome);b.append(node('p',`論點驗證（人工登錄）：${outcome.hit?'已實現':'未實現'}${outcome.growthPct===null?'':' · 營收增幅 '+pct(outcome.growthPct)}`),node('p',f.outcome.note),researchLink({title:'你提供的驗證來源（尚未自動核實）',url:f.outcome.sourceUrl}));}catch{b.append(node('p','驗證紀錄格式不足，暫不計入。'));}}
+    else b.append(node('p','論點驗證：等待期滿後的正式資料。'));
+    b.append(node('p',result.note));if(result.status==='complete')b.append(node('p',`${result.entry} → ${result.exit} · 扣模型成本報酬 ${pct(result.returnPct)} · 成本加倍 ${pct(result.doubleCost)} · 收盤最大回落 ${pct(result.drawdown)}`));
+    const outcome=node('button',f.outcome?'補充／更正驗證（保留歷史）':'填入公告驗證');outcome.type='button';outcome.disabled=convictionBusy||Date.now()<Conviction.timestamp(f.targetAfter);outcome.onclick=()=>{convictionOutcome=f;$('outcome-form').reset();$('outcome-editor').hidden=false;$('outcome-title').textContent=`驗證 ${f.targetMonth} · ${f.criterion}`;$('revenue-fields').hidden=f.comparison==='custom';$('custom-outcome').hidden=f.comparison!=='custom';for(const field of ['actualRevenue','baselineRevenue'])$('outcome-form').elements[field].required=f.comparison!=='custom';$('outcome-editor').scrollIntoView({behavior:'smooth'});};b.append(outcome);list.append(b);
+  }
+}
+$('conviction-form').oninput=updateConvictionAdvice;
+$('conviction-form').onsubmit=async e=>{e.preventDefault();if(convictionBusy||!convictionTarget)return;const target=convictionTarget,id=convictionId;try{convictionBusy=true;updateConvictionAdvice();const f=Conviction.make(convictionInput(),target.position,target.assessment);if(target.demo)previewConvictions.unshift({...f,id,createdAt:new Date().toISOString()});else{const uid=user.uid,ref=F.doc(db,'rotationPortfolios',uid,'positions',target.position.id,'convictions',id);await F.runTransaction(db,async tx=>{const old=await tx.get(ref);if(auth.currentUser?.uid!==uid)throw Error('登入帳號已變更。');if(!old.exists())tx.set(ref,{...f,targetAfter:F.Timestamp.fromDate(new Date(f.targetAfter)),createdAt:F.serverTimestamp()});});}if(convictionTarget!==target)return;convictionId=crypto.randomUUID();$('conviction-error').textContent=target.demo?'已加入試算，未寫入雲端。':'已保存原始判斷，等待後續驗證。';await loadConvictions();}catch(e){$('conviction-error').textContent=errorText(e);}finally{convictionBusy=false;updateConvictionAdvice();}};
+$('outcome-form').onsubmit=async e=>{e.preventDefault();if(convictionBusy||!convictionOutcome)return;const f=convictionOutcome,v=Object.fromEntries(new FormData($('outcome-form'))),o={kind:f.comparison,actualRevenue:f.comparison==='custom'?0:Number(v.actualRevenue),baselineRevenue:f.comparison==='custom'?1:Number(v.baselineRevenue),hit:v.hit==='true',sourceUrl:v.sourceUrl.trim(),note:v.note.trim()};try{if(Date.now()<Conviction.timestamp(f.targetAfter))throw Error('驗證期間尚未結束。');Conviction.revenue(o);if(!o.note||o.note.length>500||o.sourceUrl.length>1000)throw Error('請填完整驗證理由及來源。');convictionBusy=true;if(convictionTarget.demo){previewConvictions.find(x=>x.id===f.id).outcome={...o,createdAt:new Date().toISOString()};}else{const uid=user.uid,ref=F.doc(F.collection(db,'rotationPortfolios',uid,'positions',convictionTarget.position.id,'convictions',f.id,'outcomes'));await F.setDoc(ref,{...o,createdAt:F.serverTimestamp()});}await loadConvictions();$('outcome-editor').hidden=true;$('conviction-error').textContent='已新增驗證；營運判斷與股價結果分開記錄。';}catch(e){$('conviction-error').textContent=errorText(e);}finally{convictionBusy=false;updateConvictionAdvice();}};
+$('close-conviction').onclick=()=>{if(!convictionBusy)closeConviction();};$('conviction-dialog').addEventListener('cancel',e=>{e.preventDefault();if(!convictionBusy)closeConviction();});
 function card(p,demo=false){
   let a;try{a=L.assess(p,quote(p),data);}catch{a={status:'unknown',title:'計畫資料需要檢查',reason:'欄位格式不完整，請編輯後重新保存。',checks:[],alternatives:[]};}
   const c=node('article',undefined,`position-card${demo?' position-demo':''}`);
@@ -105,7 +140,7 @@ async function save(p,id,revision=0){
   await F.runTransaction(db,async tx=>{const current=await tx.get(ref),old=current.exists()?current.data():null;if((old?.revision||0)!==revision)throw Error('另一個裝置已更新這筆計畫，請關閉表單後重新編輯。');if(auth.currentUser?.uid!==uid)throw Error('登入帳號已改變，請重新操作。');const clean=L.normalize(p,{allowClosed:old?.schemaVersion===2});if(old?.activityCount&&['symbol','market','cost','quantity'].some(k=>clean[k]!==old[k]))throw Error('已有調整紀錄，請透過加碼／減碼更新股數與成本。');tx.set(ref,{...old,...clean,schemaVersion:old?.schemaVersion||1,revision:revision+1,updatedAt:F.serverTimestamp()});});
 }
 $('new-position').onclick=()=>openForm();$('close-position').onclick=()=>$('position-dialog').close();$('show-archived').onchange=render;
-$('preview-position').onclick=()=>{try{const keep=editing?.demo;preview=fromForm();if(!keep)previewActivity=[];$('position-dialog').close();render();$('positions').scrollIntoView({behavior:'smooth'});}catch(e){$('form-error').textContent=errorText(e);}};
+$('preview-position').onclick=()=>{try{const keep=editing?.demo;preview=fromForm();if(!keep){previewActivity=[];previewConvictions=[];}$('position-dialog').close();render();$('positions').scrollIntoView({behavior:'smooth'});}catch(e){$('form-error').textContent=errorText(e);}};
 $('position-form').onsubmit=async e=>{e.preventDefault();const button=$('save-position');button.disabled=true;try{if(editing?.demo&&preview?.activityCount)throw Error('試算已有模擬調整，請另建實際持股起點後再登錄成交紀錄。');await save(fromForm(),editing?.demo?undefined:editing?.id,editing?.demo?0:editing?.revision||0);preview=null;previewActivity=[];$('position-dialog').close();sync('已安全儲存到 Firebase；其他裝置登入同帳號即可同步。');render();}catch(e){$('form-error').textContent=errorText(e);}finally{updateAuth();}};
 function weights(w){const box=node('div',undefined,'weight-bars');['相對強弱','加速度','趨勢','成交量','突破'].forEach((label,i)=>{const r=node('div',undefined,'weight-line'),track=node('div',undefined,'weight-track'),bar=node('span');bar.style.width=`${w[i]}%`;track.append(bar);r.append(node('span',label),track,node('span',`${w[i]}%`));box.append(r);});return box;}
 const selectedPosition=()=>activityTarget?.demo?preview:positions.find(p=>p.id===activityTarget?.id);
@@ -188,7 +223,7 @@ try{
   [A,F]=await Promise.all([import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'),import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js')]);
   const app=App.getApps().length?App.getApp():App.initializeApp({apiKey:'AIzaSyCnHhksuhJs9RdrL7DPnsAvR21ZND7kIOI',authDomain:'stack-diagram-db.firebaseapp.com',projectId:'stack-diagram-db',storageBucket:'stack-diagram-db.firebasestorage.app',messagingSenderId:'67240747982',appId:'1:67240747982:web:1fb065e40e936a7485419f'});
   auth=A.getAuth(app);db=F.getFirestore(app);
-  A.onAuthStateChanged(auth,current=>{unsubscribe?.();unsubscribe=null;closeActivity();user=current;positions=[];preview=null;previewActivity=[];editing=null;$('position-dialog').close();loading=!!current;updateAuth();render();
+  A.onAuthStateChanged(auth,current=>{unsubscribe?.();unsubscribe=null;closeActivity();closeConviction();previewConvictions=[];user=current;positions=[];preview=null;previewActivity=[];editing=null;$('position-dialog').close();loading=!!current;updateAuth();render();
     if(!current){loading=false;sync('未登入。你可以先用試算預覽，不會儲存。');return;}
     if(!config?.cloud_enabled){loading=true;sync('雲端持股規則尚未完成確認，暫停讀寫；仍可先試算。');return;}
     const uid=current.uid;unsubscribe=F.onSnapshot(F.collection(db,'rotationPortfolios',uid,'positions'),{includeMetadataChanges:true},snap=>{if(user?.uid!==uid)return;loading=snap.metadata.fromCache;positions=snap.docs.map(d=>({...d.data(),id:d.id}));sync(loading?'正在等待伺服器確認；暫停修改。':`已與 Firebase 同步 ${positions.length} 筆持股計畫。`);updateAuth();render();},e=>{if(user?.uid!==uid)return;loading=true;positions=[];sync(errorText(e));updateAuth();render();});

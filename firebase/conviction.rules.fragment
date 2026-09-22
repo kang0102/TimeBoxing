@@ -1,0 +1,40 @@
+// Private, immutable subjective forecasts. No other account or public reader.
+match /rotationPortfolios/{uid}/positions/{positionId}/convictions/{forecastId} {
+  function owner() { return request.auth != null && request.auth.uid == uid; }
+  function parent() { return get(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)).data; }
+  function forecastValid() {
+    let d = request.resource.data;
+    let fields = ['schemaVersion','modelVersion','symbol','market','stars','months','comparison','targetMonth','targetAfter','criterion','thesis','invalidates','action','oneWayCost','createdAt'];
+    return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+      && d.schemaVersion == 1 && d.modelVersion == 'revenue-conviction-v1'
+      && d.symbol == parent().symbol && d.market == parent().market && !parent().archived
+      && d.stars is int && d.stars >= 1 && d.stars <= 5 && d.months in [1,2,3,6]
+      && d.comparison in ['yoy','mom','custom'] && d.targetMonth is string && d.targetMonth.matches('^[0-9]{4}-[0-9]{2}$')
+      && d.targetAfter is timestamp && d.targetAfter > request.time && d.targetAfter < request.time + duration.value(220,'d')
+      && d.criterion is string && d.criterion.size() > 0 && d.criterion.size() <= 500
+      && d.thesis is string && d.thesis.size() > 0 && d.thesis.size() <= 1000
+      && d.invalidates is string && d.invalidates.size() > 0 && d.invalidates.size() <= 500
+      && d.action is string && d.action.size() <= 800
+      && d.oneWayCost == (d.market == 'TW' ? 0.003 : 0.001)
+      && d.createdAt == request.time;
+  }
+  allow read: if owner();
+  allow create: if owner() && forecastValid();
+  allow update, delete: if false;
+  match /outcomes/{outcomeId} {
+    function validOutcome() {
+      let d = request.resource.data;
+      let f = get(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)/convictions/$(forecastId)).data;
+      let fields = ['kind','actualRevenue','baselineRevenue','hit','sourceUrl','note','createdAt'];
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields) && request.time >= f.targetAfter
+        && d.kind == f.comparison && d.hit is bool
+        && d.actualRevenue is number && d.actualRevenue >= 0 && d.actualRevenue <= 1000000000000000
+        && d.baselineRevenue is number && d.baselineRevenue > 0 && d.baselineRevenue <= 1000000000000000
+        && d.sourceUrl is string && d.sourceUrl.matches('^https://.+') && d.sourceUrl.size() <= 1000
+        && d.note is string && d.note.size() <= 500 && d.createdAt == request.time;
+    }
+    allow read: if owner();
+    allow create: if owner() && validOutcome();
+    allow update, delete: if false;
+  }
+}
