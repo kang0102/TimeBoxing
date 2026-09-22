@@ -1,10 +1,10 @@
 name: Verify portfolio and fixed weight research
 on:
   pull_request:
-    paths: ['scripts/**', 'tests/**', 'portfolio.html', 'rotation/weight*.json', '.github/workflows/test-portfolio.yml']
+    paths: ['scripts/**', 'tests/**', 'firebase/**', 'portfolio.html', 'rotation/weight*.json', '.github/workflows/test-portfolio.yml']
   push:
     branches: [main]
-    paths: ['scripts/portfolio*', 'scripts/train_rotation_weights.py', 'tests/portfolio*', 'tests/test_rotation_weights.py', '.github/workflows/test-portfolio.yml']
+    paths: ['scripts/portfolio*', 'scripts/train_rotation_weights.py', 'tests/portfolio*', 'tests/test_rotation_weights.py', 'firebase/**', '.github/workflows/test-portfolio.yml']
 permissions:
   contents: read
 jobs:
@@ -20,5 +20,20 @@ jobs:
           node-version: '22'
       - run: pip install -r rotation/requirements.txt
       - run: python -m unittest discover -s tests -p 'test_rotation*.py'
-      - run: node --test tests/test_rotation_decisions.js tests/portfolio_logic.test.js
+      - run: node --test tests/test_rotation_decisions.js tests/portfolio_logic.test.js tests/portfolio_activity.test.js tests/portfolio_planning.test.js
       - run: node --check scripts/portfolio.js
+  private-journal-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm install --ignore-scripts --no-audit --no-fund
+        working-directory: firebase
+      - run: npm test
+        working-directory: firebase
