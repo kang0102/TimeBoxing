@@ -28,3 +28,11 @@ The owner-only journal fragment was published in the same project/database at 00
 The `activity` subcollection is readable only by the position owner. New entries and parent balances must be written atomically and satisfy the same quantity, cost and realized-P/L arithmetic. Historical entries cannot be edited or deleted. Reversal appends a compensating entry for the latest buy/sell. Ordinary plan edits cannot bypass journal balance updates.
 
 GitHub Actions run 35751989407 passed 11 Firestore emulator tests against this exact fragment, including owner isolation, buy/sell/reversal arithmetic, immutable history, replay rejection and plan edits. The JavaScript suite passed 34 tests. Browser checks used synthetic in-memory positions; no actual user holdings were created or changed. Production cross-device saving with the user's website login was not exercised.
+
+## Private research judgments — 2026-09-23
+
+The additional conviction/outcome fragment was published at 00:50 Asia/Taipei in the same database. Console marks that release active. The full editor text and the exact tested fragment were compared before publishing; all previous rules were preserved. A string-copy error in the first draft was rejected by Console, corrected before the successful release, and never became active.
+
+CI run 35756311752 passed 14 Firestore emulator tests, 68 Python tests and 48 JavaScript tests. Rules enforce matching UID, server-created timestamps, bounded future targets, immutable forecasts and append-only outcomes after maturity. Browser tests used a synthetic in-memory position, checked re-rating deduplication and 390px layout, and did not write production holdings. Website-account cross-device saving remains unexercised.
+
+The public daily-price file contains no private positions or judgments. Price evaluation is a fixed holding proxy after recording, separately from the manually sourced business outcome. Current downloads cover approximately one year; an absent entry or session blocks evaluation rather than silently shifting the entry. Corporate-action revisions can affect adjusted results. Company research coverage is partial, with explicit gaps.

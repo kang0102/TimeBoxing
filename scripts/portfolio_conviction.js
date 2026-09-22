@@ -1,4 +1,4 @@
-/* Subjective revenue conviction, immutable forecasts and a separate forward price proxy. */
+/* Subjective research conviction, immutable forecasts and a separate forward price proxy. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./portfolio_logic'));else root.PortfolioConviction=factory(root.PortfolioLogic);})(typeof globalThis!=='undefined'?globalThis:this,function(L){
   const VERSION='revenue-conviction-v1';
   function target(months,now=Date.now()){
@@ -20,10 +20,10 @@
   function make(input,p,a,now=Date.now()){
     const stars=Number(input.stars),months=Number(input.months),t=target(months,now);
     if(!Number.isInteger(stars)||stars<1||stars>5)throw Error('請選 1～5 顆星。');
-    if(!['yoy','mom','custom'].includes(input.comparison))throw Error('請選擇營收比較方式。');
+    if(!['yoy','mom','custom'].includes(input.comparison))throw Error('請選擇驗證方式。');
     const criterion=String(input.criterion||'').trim();if(!criterion||criterion.length>500)throw Error('請寫下明確的驗證條件，最多 500 字。');
     const thesis=String(input.thesis||'').trim(),invalidates=String(input.invalidates||'').trim();
-    if(!thesis||thesis.length>1000||!invalidates||invalidates.length>500)throw Error('請填寫成長依據與看錯條件，分別最多 1,000／500 字。');
+    if(!thesis||thesis.length>1000||!invalidates||invalidates.length>500)throw Error('請填寫論點依據與看錯條件，分別最多 1,000／500 字。');
     return {schemaVersion:1,modelVersion:VERSION,symbol:p.symbol,market:p.market,stars,months,comparison:input.comparison,targetMonth:t.month,targetAfter:t.after,criterion,thesis,invalidates,action:advice(stars,a),oneWayCost:p.market==='TW'?.003:.001};
   }
   function timestamp(value){return typeof value?.toMillis==='function'?value.toMillis():typeof value?.seconds==='number'?value.seconds*1000:Date.parse(value);}
@@ -48,6 +48,7 @@
   }
   function revenue(outcome){
     if(outcome?.kind==='custom'){if(typeof outcome.hit!=='boolean'||!outcome.note?.trim())throw Error('請記錄是否實現和驗證理由。');const u=new URL(outcome.sourceUrl);if(u.protocol!=='https:')throw Error('請使用 HTTPS 來源');return {hit:outcome.hit,growthPct:null};}
+    if(!outcome||[outcome.actualRevenue,outcome.baselineRevenue].some(v=>v===null||v===undefined||String(v).trim()===''))throw Error('請填齊實際與比較期營收；空白不是零。');
     const actual=Number(outcome.actualRevenue),base=Number(outcome.baselineRevenue);
     if(!Number.isFinite(actual)||actual<0||!Number.isFinite(base)||base<=0)throw Error('營收須為有效數字，比較期營收須大於零；兩者使用相同單位。');
     const url=new URL(outcome.sourceUrl);if(url.protocol!=='https:')throw Error('請填入 HTTPS 公告來源。');
