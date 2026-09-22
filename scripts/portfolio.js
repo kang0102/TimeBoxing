@@ -1,7 +1,7 @@
 /* Private holdings stay in the signed-in owner's Firestore collection. */
 const $=id=>document.getElementById(id), L=window.PortfolioLogic, Journal=window.PortfolioActivity, Planning=window.PortfolioPlanning;
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
-const num=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:d,minimumFractionDigits:d}):'—';
+const num=(n,d=2)=>Number.isFinite(n)?(Object.is(n,-0)?0:n).toLocaleString('zh-TW',{maximumFractionDigits:Math.min(d,2)}):'—';
 const qty=n=>Number.isFinite(n)?n.toLocaleString('zh-TW',{maximumFractionDigits:8}):'—';
 const pct=n=>Number.isFinite(n)?`${n>0?'+':''}${num(n)}%`:'—';
 let data,training,config,user=null,positions=[],preview=null,editing=null,unsubscribe=null,db,auth,F,A,loading=true;
@@ -78,17 +78,17 @@ function updateActivityPreview(){
   $('confirm-undo').disabled=!activityReady();
   $('save-activity').disabled=!activityReady();$('undo-activity').disabled=!activityReady()||!latestActivity()||latestActivity().kind==='reverse';
   if(!input.quantity||!input.price){$('activity-preview').textContent='填寫成交股數與單價，就能先看調整後股數、平均成本與本次已實現損益。';return;}
-  try{const next=Journal.apply(p,input,latestActivity(),activityId,L.day());$('activity-preview').textContent=`${qty(p.quantity)} → ${qty(next.position.quantity)} 股 · 平均成本 ${num(p.cost,4)} → ${num(next.position.cost,4)} · 本次已實現損益 ${num(next.entry.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`;}catch(e){$('activity-preview').textContent=errorText(e);$('save-activity').disabled=true;}
+  try{const next=Journal.apply(p,input,latestActivity(),activityId,L.day());$('activity-preview').textContent=`${qty(p.quantity)} → ${qty(next.position.quantity)} 股 · 平均成本 ${num(p.cost)} → ${num(next.position.cost)} · 本次已實現損益 ${num(next.entry.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`;}catch(e){$('activity-preview').textContent=errorText(e);$('save-activity').disabled=true;}
 }
 function renderActivity(){
   const p=selectedPosition();if(!p){closeActivity();return;}
   $('activity-title').textContent=`${p.name||p.symbol}｜加減碼紀錄`;
-  $('activity-context').textContent=`${activityTarget.demo?'試算，不會儲存 · ':''}${p.symbol} · 目前 ${qty(p.quantity)} 股 · 平均成本 ${num(p.cost,4)} · 累計已實現損益 ${num(p.realizedPnl||0)} ${p.market==='TW'?'TWD':'USD'}`;
+  $('activity-context').textContent=`${activityTarget.demo?'試算，不會儲存 · ':''}${p.symbol} · 目前 ${qty(p.quantity)} 股 · 平均成本 ${num(p.cost)} · 累計已實現損益 ${num(p.realizedPnl||0)} ${p.market==='TW'?'TWD':'USD'}`;
   const list=$('activity-history');list.replaceChildren();
   if(activityLoading)list.append(node('p','正在同步調整紀錄…'));
   else if(!activityRows.length)list.append(node('p','尚無加減碼紀錄。第一次登錄將以目前股數與成本作為追蹤起點。'));
   const reversed=new Set(activityRows.filter(r=>r.kind==='reverse').map(r=>r.reversesId));
-  for(const r of activityRows){const item=node('article',undefined,`activity-entry ${r.kind}`),label=r.kind==='buy'?'加碼':r.kind==='sell'?'減碼':'撤回登錄';item.append(node('strong',`${r.date} · ${label}${reversed.has(r.id)?'（已撤回）':''}`),node('p',`${qty(r.quantity)} 股 × ${num(r.price,4)} · 費用 ${num(r.fees)}`),node('p',`股數 ${qty(r.beforeQuantity)} → ${qty(r.afterQuantity)} · 均價 ${num(r.beforeCost,4)} → ${num(r.afterCost,4)}`),node('p',`本次已實現損益 ${num(r.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`));if(r.note)item.append(node('p',r.note,'plan-note'));list.append(item);}
+  for(const r of activityRows){const item=node('article',undefined,`activity-entry ${r.kind}`),label=r.kind==='buy'?'加碼':r.kind==='sell'?'減碼':'撤回登錄';item.append(node('strong',`${r.date} · ${label}${reversed.has(r.id)?'（已撤回）':''}`),node('p',`${qty(r.quantity)} 股 × ${num(r.price)} · 費用 ${num(r.fees)}`),node('p',`股數 ${qty(r.beforeQuantity)} → ${qty(r.afterQuantity)} · 均價 ${num(r.beforeCost)} → ${num(r.afterCost)}`),node('p',`本次已實現損益 ${num(r.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`));if(r.note)item.append(node('p',r.note,'plan-note'));list.append(item);}
   updateActivityPreview();
 }
 function openActivity(p,demo,kind){

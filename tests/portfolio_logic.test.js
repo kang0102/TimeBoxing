@@ -20,9 +20,9 @@ test('next session advances targets while completed-session checks keep their or
   assert.equal(a.checks.find(c=>c.label==='突破前 20 日高點').passed,true);
   assert.match(a.next,/本次收盤四項價量已達標/);
   assert.match(a.next,/2026-09-21/);
-  assert.match(a.next,/116\.00/);
+  assert.match(a.next,/116(?:\D|$)/);
   assert.match(a.next,/1,851,851 股/);
-  assert.doesNotMatch(a.next,/108\.00/);
+  assert.doesNotMatch(a.next,/108(?:\D|$)/);
   assert.match(a.next,/盤中越過不算收盤確認/);
 });
 test('missing next-session references never recycle a completed-session breakout threshold',()=>{
@@ -30,7 +30,7 @@ test('missing next-session references never recycle a completed-session breakout
     const a=L.assess(p,{...row,next_session_high20:116,next_session_volume_mean20:1000,...change},data,now);
     assert.equal(a.status,'hold');
     assert.match(a.next,/基準未齊/);
-    assert.doesNotMatch(a.next,/108\.00/);
+    assert.doesNotMatch(a.next,/108(?:\D|$)/);
   }
 });
 test('risk, weak trend and overheating still take precedence over next-entry preparation',()=>{
@@ -38,6 +38,6 @@ test('risk, weak trend and overheating still take precedence over next-entry pre
   for(const change of [{close:89},{close:94},{return_20d:30}]){
     const a=L.assess(p,{...current,...change},data,now);
     assert.ok(['exit','reduce','trim'].includes(a.status));
-    assert.doesNotMatch(a.next,/116\.00/);
+    assert.doesNotMatch(a.next,/116(?:\D|$)/);
   }
 });
