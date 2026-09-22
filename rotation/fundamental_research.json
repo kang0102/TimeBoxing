@@ -200,6 +200,273 @@
           "check": "交叉比較營收、營業利益、折舊與現金流。"
         }
       ]
+    },
+    {
+      "symbol": "2454.TW",
+      "checked_on": "2026-09-23",
+      "coverage": "已核對 Q2 財務摘要、7/31 法說、7～8 月營收及下一次營收公告日。尚缺 ASIC 個別客戶／訂單拆分、備貨用途與完整估值；公司目標不等於已實現成果。",
+      "facts": [
+        {
+          "title": "手機與智慧裝置平台的方向不同",
+          "date": "2026-07-31（Q2 法說）",
+          "text": "手機占 Q2 營收 41%、年減 20%；智慧裝置平台占 53%、年增 26%。研究須拆開兩條收入來源。",
+          "source": {
+            "title": "聯發科 2026/7/31 官方法說逐字稿",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Transcript.pdf"
+          }
+        },
+        {
+          "title": "營收與獲利尚未同步",
+          "date": "2026-07-31（Q2 業績）",
+          "text": "營收 1,521.83 億元、年增 1.2%；營業利益年減 22.2%，EPS 15.28 元。毛利率 46.2%；公司指出去年有一次性利益，不能把年減全當成競爭力惡化。",
+          "source": {
+            "title": "聯發科 Q2 業績公告（TIFRS）",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Press%20Release.pdf"
+          }
+        },
+        {
+          "title": "七、八月營收已加速，還不是第三季獲利",
+          "date": "2026-09-10（8 月營收公告）",
+          "text": "7 月 484.75 億元、8 月 641.83 億元，兩月合計 1,126.58 億元；9 月尚未公布。月營收未拆分 ASIC 貢獻。",
+          "source": {
+            "title": "聯發科官方月營收（未經會計師查核）",
+            "url": "https://www.mediatek.com/investor-relations/financial-information#monthly-reports"
+          }
+        },
+        {
+          "title": "備貨與回款需要一起觀察",
+          "date": "2026-06-30（報表基準）",
+          "text": "存貨 984.21 億元；存貨週轉 102 天，去年同期 66 天。可能是新品備貨，也可能是去化壓力；僅靠餘額無法判定原因。",
+          "source": {
+            "title": "聯發科 Q2 業績公告（TIFRS）",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Press%20Release.pdf"
+          }
+        }
+      ],
+      "financial": {
+        "unit": "金額為新台幣百萬元；週轉指標為天",
+        "source": {
+          "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+          "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+        }
+      },
+      "metrics": [
+        {
+          "label": "Q2 營收年增",
+          "current": 152183,
+          "reference": 150369,
+          "period": "2026 Q2 對 2025 Q2",
+          "meaning": "先看已發生的營收，與下列營業利益分開核對。",
+          "source": {
+            "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+          },
+          "calculation": "growth",
+          "unit": "%"
+        },
+        {
+          "label": "Q2 營業利益年增",
+          "current": 22868,
+          "reference": 29379,
+          "period": "2026 Q2 對 2025 Q2",
+          "meaning": "營收增加而營業利益下降；需拆解去年基期、毛利與費用，不直接判定未來獲利反轉。",
+          "source": {
+            "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+          },
+          "calculation": "growth",
+          "unit": "%"
+        },
+        {
+          "label": "Q2 研發費用年增",
+          "current": 39361,
+          "reference": 36923,
+          "period": "2026 Q2 對 2025 Q2",
+          "meaning": "投入能否轉成設計導入與出貨，要再驗證；研發增加不等於未來訂單已確定。",
+          "source": {
+            "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+          },
+          "calculation": "growth",
+          "unit": "%"
+        },
+        {
+          "label": "期末存貨年增",
+          "current": 98421,
+          "reference": 55482,
+          "period": "2026/6/30 對 2025/6/30",
+          "meaning": "與營收、週轉及後續出貨一起看，不能單獨當成需求轉弱或轉強的證據。",
+          "source": {
+            "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+          },
+          "calculation": "growth",
+          "unit": "%"
+        },
+        {
+          "label": "存貨週轉天數增加",
+          "current": 102,
+          "reference": 66,
+          "calculation": "difference",
+          "unit": "天",
+          "period": "2026 Q2 對 2025 Q2；採公司公布算法",
+          "meaning": "需要下一季確認去化；不以任意單季餘額重新計算並冒稱官方週轉天數。",
+          "source": {
+            "title": "聯發科 Q2 業績公告（TIFRS）",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Press%20Release.pdf"
+          }
+        },
+        {
+          "label": "上半年營業現金流／合併淨利",
+          "current": 6594,
+          "reference": 48981,
+          "calculation": "ratio",
+          "unit": "%",
+          "period": "2026 上半年，同期間合併口徑",
+          "meaning": "現金轉換偏弱是待查線索；應拆開營運資金、稅與收付時點，不直接指控盈餘有問題。",
+          "source": {
+            "title": "聯發科 Q2 財務報表：損益、資產負債與半年現金流",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Financial%20Statements.pdf"
+          }
+        },
+        {
+          "label": "七、八月合計營收年增",
+          "current": 112658,
+          "reference": 87767,
+          "period": "2026/7～8 對 2025/7～8；48475+64183 對 43220+44547",
+          "meaning": "兩月已加速；仍要看九月、產品組合與毛利，不能直接年化。",
+          "source": {
+            "title": "聯發科官方月營收（未經會計師查核）",
+            "url": "https://www.mediatek.com/investor-relations/financial-information#monthly-reports"
+          },
+          "calculation": "growth",
+          "unit": "%"
+        },
+        {
+          "label": "達到原 Q3 指引下緣所需的九月營收",
+          "current": 152200,
+          "reference": 112658,
+          "calculation": "difference",
+          "scale": 0.01,
+          "unit": "億元",
+          "period": "7/31 指引下緣減 7、8 月已公告營收",
+          "meaning": "這是舊指引的餘額檢查，不是九月預測或買入門檻；應核對其後公司有無更新。",
+          "source": {
+            "title": "聯發科 2026/7/31 官方法說逐字稿",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Transcript.pdf"
+          }
+        },
+        {
+          "label": "達到原 Q3 指引上緣所需的九月營收",
+          "current": 159800,
+          "reference": 112658,
+          "calculation": "difference",
+          "scale": 0.01,
+          "unit": "億元",
+          "period": "7/31 指引上緣減 7、8 月已公告營收",
+          "meaning": "超出此數代表高於原區間，不保證超越市場最新預期或股價會漲；需留意月季資料調整。",
+          "source": {
+            "title": "聯發科官方月營收（未經會計師查核）",
+            "url": "https://www.mediatek.com/investor-relations/financial-information#monthly-reports"
+          }
+        }
+      ],
+      "questions": [
+        "智慧裝置平台的增長，能否持續抵銷手機收入下滑？",
+        "ASIC 是完成設計、準備量產、已出貨，還是已驗收認列？各階段分開查。",
+        "收入增加後，毛利金額與營業利益能否蓋過研發投入？",
+        "存貨及現金流變化來自新品準備，還是客戶需求不如預期？",
+        "市場股價已反映多少 2027～2028 成長？目前未建立完整估值模型。"
+      ],
+      "counter_views": [
+        "8 月成長可以支持加速假設，但單月及總營收不能辨認 ASIC 訂單或獲利。",
+        "公司法說指出 ASIC 規模放大可能有利營益率，但毛利率可能略受稀釋；不能只因毛利率下降就判斷新業務失敗。",
+        "庫存可能提前準備新品；若後續收入沒有跟上、週轉繼續變慢，原備貨解釋就要重查。",
+        "Q2 的弱獲利不能抹掉未來機會；未來目標也不能遮掉目前現金轉換與執行風險。"
+      ],
+      "events": [
+        {
+          "title": "九月營收公告：驗證第三季總額",
+          "announced_on": "行事曆核對 2026-09-23",
+          "time_label": "2026-10-08，官方目前排程",
+          "window_start": "2026-10-08",
+          "window_end": "2026-10-08",
+          "status": "已列入公司行事曆；日期仍可能調整",
+          "text": "核對第三季實際營收與原指引；月營收本身不含毛利與營益資訊。",
+          "source": {
+            "title": "聯發科官方投資人行事曆",
+            "url": "https://www.mediatek.com/investor-relations/ir-events"
+          }
+        },
+        {
+          "title": "首款 AI ASIC 量產規劃",
+          "announced_on": "2026-07-31",
+          "time_label": "2026 第四季；未確認精確日期",
+          "window_start": "2026-10-01",
+          "window_end": "2026-12-31",
+          "status": "公司規劃，尚未核對實際量產／驗收",
+          "text": "後續要看交付、收入認列與營業利益；不能把整段規劃當作已到手的利潤。",
+          "source": {
+            "title": "聯發科 2026/7/31 官方法說逐字稿",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Transcript.pdf"
+          }
+        },
+        {
+          "title": "第二款 AI ASIC 量產目標",
+          "announced_on": "2026-07-31",
+          "time_label": "2028 年，公司長期目標",
+          "window_start": "2028-01-01",
+          "window_end": "2028-12-31",
+          "status": "研發及量產時程目標",
+          "text": "較長期的觀察事項，不能用來承諾一、兩個月的股價表現。",
+          "source": {
+            "title": "聯發科 2026/7/31 官方法說逐字稿",
+            "url": "https://www.mediatek.com/hubfs/MediaTek%20Assets/Pdfs/Quarterly%20Earnings%20Release/2026/Quarterly%20Earnings%20Release-2026Q2/Transcript.pdf"
+          }
+        }
+      ],
+      "next_checks": [
+        "先等 10/8 九月營收，對照原 Q3 指引及七、八月加速是否延續。",
+        "下一次財報看營業利益率、研發費用、存貨天數與現金流；不只看 EPS。",
+        "追蹤 Q4 ASIC 的實際量產、交付與驗收；公告量產後還需核對營收與獲利貢獻。",
+        "價格仍依完整收盤的趨勢、前高、量能、相對大盤及資金條件；營運論點不自動覆蓋風險線。"
+      ],
+      "invalidations": [
+        "ASIC 量產／驗收時程後延，或客戶需求與原目標不同。",
+        "手機下滑擴大，新業務未能抵銷，且費用壓力持續。",
+        "庫存去化未改善，現金轉換持續偏弱，備貨論點缺少實際出貨支持。",
+        "成長已超額反映於估值，或觸及自訂風險線；高星等不能替代重新評估。"
+      ],
+      "transmission": [
+        {
+          "from": "雲端運算需求",
+          "to": "聯發科 ASIC 交付",
+          "evidence": "公司已說明 AI ASIC 合作與量產規劃；個別新增訂單金額仍未完整揭露。",
+          "breaks": "客戶排程、驗證、良率與封裝／記憶體供給。",
+          "check": "取得實際量產、交付及驗收證據。"
+        },
+        {
+          "from": "ASIC 與智慧裝置收入",
+          "to": "整體營業利益",
+          "evidence": "財報先看手機業務抵銷、毛利與研發；收入成長不是單一來源。",
+          "breaks": "產品組合、成本轉嫁不足、研發及供應鏈投入。",
+          "check": "比較毛利金額、營益率、費用與現金流。"
+        },
+        {
+          "from": "ASIC 量產放大",
+          "to": "下游封裝／測試工作量",
+          "evidence": "合理產業假設；尚無本案分配給特定測試公司的直接證據。",
+          "breaks": "委外比例、測試流程、指定供應商及產能分配不同。",
+          "check": "核對測試廠官方訂單、產能利用率與收入，不能直接指定欣銓受惠。"
+        }
+      ],
+      "stages": [
+        "設計／流片",
+        "驗證／良率",
+        "量產／交付",
+        "驗收／營收",
+        "營益／現金流"
+      ]
     }
   ]
 }

@@ -31,6 +31,15 @@
     return hasCandidates?'可以比較原股與候選的觸發條件，但尚未驗證轉換後淨報酬。時間較短或分數較高，都不足以證明更划算。':'目前沒有已通過條件的替代候選；時間成本先列入複查，沒有證據就不勉強換股。';
   }
   function financial(record){
+    if(record?.metrics?.length)return record.metrics.flatMap(m=>{
+      if(!Number.isFinite(m.current)||!Number.isFinite(m.reference))return [];
+      const scale=m.scale??1;if(!Number.isFinite(scale)||scale<=0)return [];
+      let value,formula;
+      if(['growth','ratio'].includes(m.calculation)&&m.reference>0){value=(m.current/m.reference-(m.calculation==='growth'?1:0))*100;formula=`(${m.current} ÷ ${m.reference}${m.calculation==='growth'?' − 1':''}) × 100`;}
+      else if(m.calculation==='difference'){value=(m.current-m.reference)*scale;formula=`(${m.current} − ${m.reference}) × ${scale}`;}
+      else return [];
+      return Number.isFinite(value)?[{...m,value,formula}]:[];
+    });
     const f=record?.financial;if(!f)return [];
     const ratio=(current,previous)=>Number.isFinite(current)&&Number.isFinite(previous)&&previous>0?current/previous:NaN;
     const growth=(current,previous)=>(ratio(current,previous)-1)*100;
@@ -47,5 +56,9 @@
     const questions=/金融|保險/.test(group)?['利差與手續費收入如何變化？不能套用製造業擴產模型。','信用成本、資產品質、資本適足與配息是否可持續？','投資評價或匯兌是否造成一次性損益？']:/記憶體/.test(group)?['價格、庫存與位元出貨量各自如何變化？','獲利回升來自漲價、成本改善，還是一次性因素？','供給擴張會否改變目前供需？']:['先確認這家公司收入、獲利和現金流的主要驅動因素。','拆開經常性成長、景氣循環與一次性損益。','列出市場已反映的預期，與仍需證明的差異。'];
     return {specific:false,questions};
   }
-  return {history,evidence,waitWindow,scenario,financial,focus};
+  function coverage(record){
+    const facts=(record?.facts||[]).filter(f=>f.source?.url?.startsWith('https:')).length;
+    return {facts,label:facts?'部分官方材料已核對':'公司專屬證據待補',note:facts?`${facts} 則來源資料；仍屬部分研究，請看缺口與各公告日期。`:'目前只有研究起點或待查假設，不能據此判定基本面強弱。'};
+  }
+  return {history,evidence,waitWindow,scenario,financial,focus,coverage};
 });
