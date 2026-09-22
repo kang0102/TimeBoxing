@@ -1,15 +1,19 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#12344a"><title>我的持股與策略研究｜大型股輪動雷達</title>
-<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=4">
-<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=3" defer></script><script src="scripts/portfolio_activity.js?v=2" defer></script><script src="scripts/portfolio_planning.js?v=2" defer></script><script src="scripts/portfolio_research.js?v=5" defer></script><script src="scripts/portfolio_conviction.js?v=4" defer></script><script type="module" src="scripts/portfolio.js?v=5"></script></head>
+<link rel="stylesheet" href="styles/rotation.css?v=10"><link rel="stylesheet" href="styles/portfolio.css?v=5">
+<script src="scripts/rotation_decisions.js?v=10" defer></script><script src="scripts/portfolio_logic.js?v=3" defer></script><script src="scripts/portfolio_activity.js?v=2" defer></script><script src="scripts/portfolio_planning.js?v=2" defer></script><script src="scripts/portfolio_research.js?v=6" defer></script><script src="scripts/portfolio_conviction.js?v=4" defer></script><script type="module" src="scripts/portfolio.js?v=6"></script></head>
 <body><header class="topbar"><a href="rotation.html">← 大型股輪動雷達</a><span>MY PLAN / 02</span></header><main>
 <section class="heading"><div><p class="eyebrow">MY PORTFOLIO</p><h1>我的持股，我的計畫</h1><p class="intro">先選持有多久，再看續抱、減碼與下一個確認條件。</p></div><a class="guide-jump" href="#training">看權重訓練結果 ↗</a></section>
+<nav class="radar-jumps" aria-label="持股與研究導覽"><a href="#stock-research">股票研究</a><a href="#holdings">我的持股</a><a href="#training">策略驗證</a></nav>
 <div id="quote-status" class="notice" role="status">正在讀取公開行情…</div>
+<section id="stock-research" class="research-desk" aria-labelledby="research-title"><p class="eyebrow">STOCK RESEARCH</p><h2 id="research-title">想了解一檔股票？從這裡研究</h2><p>不用先持有，也不用登入。搜尋名稱或代號，看財報證據、反向觀點、產業連動與下一個驗證時點。</p>
+<form id="research-search" class="research-search"><label>搜尋股票<input id="research-query" type="search" placeholder="例如：聯發科、2454、欣銓、NVDA" autocomplete="off" maxlength="80"></label><label>研究市場<select id="research-market"><option value="all">全部市場</option><option value="TW">台股</option><option value="US">美股</option></select></label><button type="submit">查看研究</button></form>
+<p class="plan-note">行情依雲端排程更新；公司專屬材料逐檔查證。搜尋會開啟目前已整理的材料，不會即時生成新分析。</p><p id="research-search-status" role="status">正在載入研究目錄…</p><div id="research-results" class="research-results" aria-label="研究搜尋結果"></div><p id="research-selection" role="status"></p><div id="research-content" tabindex="-1"><p class="research-empty">先選一檔股票 → 核對證據與反例 → 列出下一個要等的訊號。</p></div></section>
 <section class="portfolio-auth"><div><h2>Firebase 私人持股</h2><p id="auth-state">正在連線…</p><p class="detail-note">沿用疊構圖的 Email／密碼帳號；首頁 PIN 不等於 Firebase 帳號。持股由 Firebase 同步，不寫入公開 GitHub。</p></div>
 <form id="login-form"><label>Email<input id="login-email" type="email" autocomplete="username" required></label><label>密碼<input id="login-password" type="password" autocomplete="current-password" required></label><button type="submit">登入同步</button></form><button id="logout" type="button" hidden>登出</button></section>
 <div id="sync-status" class="notice" role="status" aria-live="polite">未登入。你可以先用試算預覽，不會儲存。</div>
-<section class="portfolio-toolbar"><h2>持股計畫</h2><button id="new-position" type="button">＋ 新增／試算持股</button><label><input id="show-archived" type="checkbox"> 顯示已移出的持股</label></section>
+<section id="holdings" class="portfolio-toolbar"><h2>持股計畫</h2><button id="new-position" type="button">＋ 新增／試算持股</button><label><input id="show-archived" type="checkbox"> 顯示已移出的持股</label></section>
 <div id="portfolio-summary" class="portfolio-summary"></div><section id="positions" class="positions" aria-label="我的持股計畫"></section>
 <p class="evidence-boundary">加減碼是你手動登錄的已成交紀錄，不會下單。加碼費用計入平均成本，減碼費用扣自已實現損益；未填費用視為 0，股息、匯率與未來賣出成本未計入。已實現損益只累計開始追蹤後的紀錄。不同幣別分開統計。個人進退規則尚未回測，不能換算成個股必漲機率。</p>
 <section id="training" class="section training-panel" aria-label="權重訓練與驗證"><p class="eyebrow">RESEARCH / FROZEN MODEL</p><h2>權重訓練：有比原版更好嗎？</h2><p>先以三段訓練資料選權重，再比較沒有參與選權重的歷史期間。保留原版，不自動替換。</p>

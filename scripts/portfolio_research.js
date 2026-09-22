@@ -60,5 +60,19 @@
     const facts=(record?.facts||[]).filter(f=>f.source?.url?.startsWith('https:')).length;
     return {facts,label:facts?'部分官方材料已核對':'公司專屬證據待補',note:facts?`${facts} 則來源資料；仍屬部分研究，請看缺口與各公告日期。`:'目前只有研究起點或待查假設，不能據此判定基本面強弱。'};
   }
-  return {history,evidence,waitWindow,scenario,financial,focus,coverage};
+  function catalog(rows,fundamentals){
+    const stocks=new Map();
+    for(const s of [...(fundamentals?.stocks||[]),...(rows||[])]){
+      if(!s.symbol)continue;
+      const previous=stocks.get(s.symbol),market=s.market||(/\.(TW|TWO)$/.test(s.symbol)?'TW':'US');
+      stocks.set(s.symbol,{symbol:s.symbol,name:s.name||previous?.name||s.symbol,market});
+    }
+    return [...stocks.values()].map(s=>({...s,coverage:coverage(fundamentals?.stocks?.find(r=>r.symbol===s.symbol))}));
+  }
+  function search(stocks,query,market='all'){
+    const q=String(query||'').trim().toUpperCase();
+    return stocks.filter(s=>(market==='all'||s.market===market)&&(!q||s.symbol.toUpperCase().includes(q)||s.name.toUpperCase().includes(q)))
+      .sort((a,b)=>Number(b.symbol===q||b.symbol.split('.')[0]===q||b.name.toUpperCase()===q)-Number(a.symbol===q||a.symbol.split('.')[0]===q||a.name.toUpperCase()===q)||b.coverage.facts-a.coverage.facts||a.symbol.localeCompare(b.symbol));
+  }
+  return {history,evidence,waitWindow,scenario,financial,focus,coverage,catalog,search};
 });
