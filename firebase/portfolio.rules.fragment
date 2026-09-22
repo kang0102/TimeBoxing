@@ -77,7 +77,7 @@ match /rotationPortfolios/{uid}/positions/{positionId} {
         && (b.boughtOn == '' || e.date >= b.boughtOn)
         && (b.get('activityCount',0) == 0 || e.date >= get(/databases/$(database)/documents/rotationPortfolios/$(uid)/positions/$(positionId)/activity/$(b.lastActivityId)).data.date)
         && ((e.kind == 'buy' && e.reversesId == '' && near(e.afterQuantity,b.quantity + e.quantity)
-             && near(e.afterCost,(b.quantity * b.cost + e.quantity * e.price + e.fees) / e.afterQuantity) && e.realizedPnl == 0)
+             && near(e.afterCost,(b.quantity * b.cost + e.quantity * e.price + e.fees) * 1.0 / e.afterQuantity) && e.realizedPnl == 0)
           || (e.kind == 'sell' && e.reversesId == '' && e.quantity <= b.quantity && near(e.afterQuantity,b.quantity - e.quantity)
              && e.afterCost == b.cost && near(e.realizedPnl,(e.price-b.cost)*e.quantity-e.fees))
           || (e.kind == 'reverse' && reversal(e,b)));

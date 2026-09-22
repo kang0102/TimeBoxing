@@ -75,6 +75,7 @@ function activityInput(){return Object.fromEntries(new FormData($('activity-form
 function activityReady(){const p=selectedPosition();return !!p&&!activityBusy&&!activityLoading&&!p.archived&&(!p.activityCount||!!latestActivity())&&(activityTarget.demo||user&&!loading&&config?.activity_enabled);}
 function updateActivityPreview(){
   const p=selectedPosition();if(!p)return;const input=activityInput();
+  $('confirm-undo').disabled=!activityReady();
   $('save-activity').disabled=!activityReady();$('undo-activity').disabled=!activityReady()||!latestActivity()||latestActivity().kind==='reverse';
   if(!input.quantity||!input.price){$('activity-preview').textContent='填寫成交股數與單價，就能先看調整後股數、平均成本與本次已實現損益。';return;}
   try{const next=Journal.apply(p,input,latestActivity(),activityId,L.day());$('activity-preview').textContent=`${qty(p.quantity)} → ${qty(next.position.quantity)} 股 · 平均成本 ${num(p.cost,4)} → ${num(next.position.cost,4)} · 本次已實現損益 ${num(next.entry.realizedPnl)} ${p.market==='TW'?'TWD':'USD'}`;}catch(e){$('activity-preview').textContent=errorText(e);$('save-activity').disabled=true;}
@@ -92,7 +93,7 @@ function renderActivity(){
 }
 function openActivity(p,demo,kind){
   activityUnsubscribe?.();activityUnsubscribe=null;activityTarget={id:p.id,demo};activityRows=demo?[...previewActivity].reverse():[];activityLoading=!demo;activityId=crypto.randomUUID();
-  const form=$('activity-form');form.reset();form.elements.date.value=L.day();form.elements.date.max=L.day();form.elements.kind.value=kind==='sell'?'sell':'buy';$('activity-error').textContent='';$('activity-dialog').showModal();renderActivity();
+  const form=$('activity-form');form.reset();form.elements.date.value=L.day();form.elements.date.max=L.day();form.elements.kind.value=kind==='sell'?'sell':'buy';$('activity-error').textContent='';$('undo-confirmation').hidden=true;$('activity-dialog').showModal();renderActivity();
   if(demo)return;
   const uid=user.uid,positionId=p.id;
   activityUnsubscribe=F.onSnapshot(F.query(F.collection(db,'rotationPortfolios',uid,'positions',positionId,'activity'),F.orderBy('revision','desc')),{includeMetadataChanges:true},snap=>{if(user?.uid!==uid||activityTarget?.id!==positionId)return;activityLoading=snap.metadata.fromCache;activityRows=snap.docs.map(d=>({...d.data(),id:d.id}));renderActivity();},e=>{activityLoading=true;$('activity-error').textContent=errorText(e);updateActivityPreview();});
@@ -118,7 +119,9 @@ async function writeActivity(input){
 }
 $('activity-form').oninput=updateActivityPreview;
 $('activity-form').onsubmit=async e=>{e.preventDefault();try{await writeActivity(activityInput());}catch(error){$('activity-error').textContent=errorText(error);}};
-$('undo-activity').onclick=async()=>{if(!confirm('撤回最後一筆買賣登錄，回復調整前的股數、成本與已實現損益？原紀錄仍會保留。'))return;try{await writeActivity({kind:'reverse'});}catch(error){$('activity-error').textContent=errorText(error);}};
+$('undo-activity').onclick=()=>{$('undo-confirmation').hidden=false;};
+$('cancel-undo').onclick=()=>{$('undo-confirmation').hidden=true;};
+$('confirm-undo').onclick=async()=>{try{await writeActivity({kind:'reverse'});$('undo-confirmation').hidden=true;}catch(error){$('activity-error').textContent=errorText(error);}};
 $('close-activity').onclick=()=>{if(!activityBusy)closeActivity();};
 $('activity-dialog').addEventListener('cancel',e=>{e.preventDefault();if(!activityBusy)closeActivity();});
 function renderTraining(){

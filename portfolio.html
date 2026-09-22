@@ -36,6 +36,7 @@
 <label>成交股數（不是張數）<input name="quantity" type="number" min="0.00000001" step="any" inputmode="decimal" required></label><label>成交單價<input name="price" type="number" min="0.000001" step="any" inputmode="decimal" required></label>
 <label>手續費＋交易稅<input name="fees" type="number" min="0" step="any" inputmode="decimal" value="0" required></label><label class="full">這次調整的原因<textarea name="note" maxlength="500" rows="2" placeholder="例如：突破後分批加碼；或失守支撐先降低部位。"></textarea></label></div>
 <p class="detail-note">以目前持股為起點，按成交日期依序新增。台股 1 張＝1,000 股。費用自行填入，未計入股息及匯率。這是登錄紀錄，不會送出券商委託。</p>
-<div id="activity-preview" class="next-signal" aria-live="polite"></div><p id="activity-error" role="alert"></p><div class="form-actions"><button id="save-activity" type="submit">新增紀錄</button><button id="undo-activity" type="button">撤回最後一筆</button></div></form>
+<div id="activity-preview" class="next-signal" aria-live="polite"></div><p id="activity-error" role="alert"></p><div class="form-actions"><button id="save-activity" type="submit">新增紀錄</button><button id="undo-activity" type="button">撤回最後一筆</button></div>
+<div id="undo-confirmation" class="next-signal" hidden><p>回復最後一筆買賣之前的股數、成本與已實現損益；原紀錄會保留，並新增撤回紀錄。</p><div class="form-actions"><button id="confirm-undo" type="button">確認撤回登錄</button><button id="cancel-undo" type="button">保留原紀錄</button></div></div></form>
 <h3>調整歷程</h3><p class="detail-note">最新紀錄在上方；撤回會保留原紀錄及更正痕跡。</p><div id="activity-history" aria-live="polite"></div></dialog>
 </body></html>
