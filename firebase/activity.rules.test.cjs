@@ -47,4 +47,6 @@ test('archiving preserves journal and stops new adjustments',async()=>{
   const x=change(base,buy,'one');await assertSucceeds(x.commit());await assertSucceeds(setDoc(doc(db,path),{...x.position,archived:true,revision:3,updatedAt:serverTimestamp()}));
   const fake={...x.position,revision:3};await assertFails(change(fake,buy,'two',{...x.entry,id:'one'}).commit());await assertSucceeds(getDocs(collection(db,path,'activity')));
 });
-test('replaying an event id cannot append it twice',async()=>{const x=change(base,buy,'one');await assertSucceeds(x.commit());await assertFails(x.commit());});
+test('replaying an event id cannot append it twice',async()=>{const x=change(base,buy,'one');await assertSucceeds(x.commit());await assertFails(change(base,buy,'one').commit());});
+
+test('intent preference can change without altering the immutable journal balances',async()=>{const x=change(base,buy,'one');await assertSucceeds(x.commit());await assertSucceeds(setDoc(doc(db,path),{...x.position,capitalIntent:'rotate',revision:3,updatedAt:serverTimestamp()}));});

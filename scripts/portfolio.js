@@ -49,7 +49,7 @@ function card(p,demo=false){
   const actions=node('div',undefined,'form-actions');
   for(const [label,kind] of [['＋ 加碼','buy'],['－ 減碼','sell'],['查看加減碼紀錄','history']]){const b=node('button',label);b.disabled=(!demo&&(!user||loading||!config?.activity_enabled))||(kind!=='history'&&p.archived)||(kind==='sell'&&p.quantity===0);b.onclick=()=>openActivity(p,demo,kind);actions.append(b);}
   const edit=node('button','編輯計畫');edit.onclick=()=>openForm(p,demo);actions.append(edit);
-  const archive=node('button',demo?'移除預覽':p.archived?'恢復觀察':'移出觀察');archive.disabled=!demo&&(!user||loading);archive.onclick=async()=>{if(demo){preview=null;render();return;}archive.disabled=true;try{await save({...p,archived:!p.archived},p.id,p.revision);sync('已同步，移出的持股可隨時恢復。');}catch(e){sync(errorText(e));archive.disabled=false;}};actions.append(archive);c.append(actions);return c;
+  const archive=node('button',demo?'移除預覽':p.archived?'恢復觀察':'移出觀察');archive.disabled=!demo&&(!user||loading);archive.onclick=async()=>{if(demo){preview=null;render();return;}archive.disabled=true;try{await save({...p,archived:!p.archived},p.id,p.revision);sync('已同步，移出的持股可隨時恢復。');}catch(e){sync(errorText(e));archive.disabled=false;}};actions.append(archive);c.insertBefore(actions,c.querySelector('.operation-plan'));return c;
 }
 function render(){
   const root=$('positions');root.replaceChildren();const visible=positions.filter(p=>!p.archived||$('show-archived').checked);if(preview)root.append(card(preview,true));for(const p of visible)root.append(card(p));
