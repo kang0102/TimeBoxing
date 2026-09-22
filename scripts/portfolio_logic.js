@@ -48,7 +48,9 @@
     else if(hot){status='trim';title='走勢偏熱，先不追買';reason='趨勢尚未失守；可比較保留部位與部分落袋，漲多本身不代表立刻反轉。';}
     const moneyReady=row.smart_money?.status==='ok'&&row.smart_money?.as_of===row.as_of, moneySelling=moneyReady&&row.smart_money.bias==='selling';
     result.checks=[{label:`守住${label}`,target:line,actual:row.close,passed:row.close>=line},{label:'突破前 20 日高點',target:row.previous_high20,actual:row.close,passed:row.close>row.previous_high20},{label:'收盤量比 ≥ 1.5',target:1.5,actual:row.volume_ratio,passed:row.volume_ratio>=1.5},{label:'近 5 日強於大盤',target:0,actual:row.rs_5d,passed:row.rs_5d>0},{label:'法人／資金指標已齊且非偏賣',target:null,actual:null,passed:moneyReady&&!moneySelling}];
-    const next=risk?`先處理自訂風險線 ${lossLine.toFixed(2)}；不要把等反彈當作已驗證的退出策略。`:weak?`先等收盤重新站回 ${label} ${line.toFixed(2)}，再看相對大盤轉強。`:hot?'先等漲幅／乖離降溫且支撐維持，再評估是否增加部位。':`接著等前高 ${row.previous_high20.toFixed(2)}、量比 1.5 與相對大盤條件同時確認；長期計畫還要核對基本面。`;
+    const nextHigh=row.next_session_high20,nextMeanVolume=row.next_session_volume_mean20;
+    const nextEntry=positive(nextHigh)&&positive(nextMeanVolume)?`${price.phase==='ready'?'本次收盤四項價量已達標。':''}下一交易日以 ${row.as_of} 日線準備：等收盤突破 ${nextHigh.toFixed(2)}、全日成交量至少 ${Math.ceil(nextMeanVolume*1.5).toLocaleString('zh-TW')} 股（基準均量 1.5 倍），並守住趨勢線、近 5 日強於大盤；當日法人／資金資料也須補齊且非偏賣。盤中越過不算收盤確認，長期計畫另需核對基本面。`:'下一交易日的前高或均量基準未齊；先等更新，不沿用本次收盤的舊突破門檻。';
+    const next=risk?`先處理自訂風險線 ${lossLine.toFixed(2)}；不要把等反彈當作已驗證的退出策略。`:weak?`先等收盤重新站回 ${label} ${line.toFixed(2)}，再看相對大盤轉強。`:hot?'先等漲幅／乖離降溫且支撐維持，再評估是否增加部位。':nextEntry;
     result.alternatives=[{title:'續抱',text:!risk&&!weak?'保留部位，持續核對趨勢線、自訂風險線與計畫到期日。':'續抱條件已受損；若保留部位，先寫明可接受的額外風險。'},
       {title:'部分減碼',text:risk||weak||hot?'可降低曝險，剩餘部位沿用明確失效條件；不預設固定賣出比例。':'目前沒有單靠價格必須減碼的訊號；若部位過度集中，仍需另行調整。'},
       {title:'退出／重新檢查',text:risk?'自訂風險線已觸發，優先評估退出。實際成交可能有跳空及成本。':`若收盤失守 ${line.toFixed(2)}、觸及成本風險線，或持有理由失效，重新評估退出。`}];
