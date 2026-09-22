@@ -30,3 +30,10 @@ test('MediaTek uses company-specific measures and an arithmetic guidance remaind
  assert.ok(find('上半年營業現金流／合併淨利').value<14);assert.equal(R.financial({metrics:[{calculation:'ratio',current:3,reference:0}]}).length,0);
  assert.equal(R.coverage(record).facts,4);assert.equal(R.coverage({questions:['Research only']}).facts,0);assert.match(R.coverage().label,/待補/);
 });
+test('research catalog works without positions, resolves names and OTC codes, and keeps missing evidence visible',()=>{
+ const stocks=R.catalog([{symbol:'3264.TWO',name:'欣銓',market:'TW'},{symbol:'2454.TW',name:'聯發科',market:'TW'},{symbol:'NVDA',name:'NVIDIA',market:'US'}],{stocks:[{symbol:'2454.TW',name:'聯發科',facts:[{source:{url:'https://example.com/report'}}]},{symbol:'3037.TW',name:'欣興'}]});
+ assert.equal(stocks.length,4);assert.equal(R.search(stocks,'欣銓')[0].symbol,'3264.TWO');assert.equal(R.search(stocks,'2454')[0].name,'聯發科');
+ assert.equal(R.search(stocks,'nvd','US')[0].symbol,'NVDA');assert.equal(R.search(stocks,'聯發科','US').length,0);
+ assert.equal(R.search(stocks,'聯發科')[0].coverage.facts,1);assert.match(R.search(stocks,'欣興')[0].coverage.label,/待補/);
+ assert.equal(R.search(stocks,'不存在').length,0);assert.equal(R.search([], '2454').length,0);
+});

@@ -37,15 +37,17 @@ function researchLink(source){
   try{const url=new URL(source.url);if(url.protocol!=='https:')return node('span','來源網址待檢查');a.href=url.href;}catch{return node('span','來源網址待補');}
   a.target='_blank';a.rel='noopener noreferrer';return a;
 }
-function researchPanel(p,a,plan){
-  const detail=node('details',undefined,'research-detail');detail.append(node('summary','看詳細研究：勝率、基本面、等待多久'));
+function researchPanel(p,a,plan,{standalone=false}={}){
+  const detail=node(standalone?'section':'details',undefined,'research-detail');
+  if(!standalone)detail.append(node('summary','看詳細研究：勝率、基本面、等待多久'));
   const controls=node('div',undefined,'research-controls'),stockLabel=node('label','研究對象'),select=node('select');
   for(const s of [{symbol:p.symbol,name:p.name||p.symbol},...plan.candidates]){const o=node('option',s.name+' '+s.symbol+' · '+Research.coverage(fundamentals?.stocks?.find(r=>r.symbol===s.symbol)).label);o.value=s.symbol;select.append(o);}stockLabel.append(select);
-  const waitLabel=node('label','願意等待多久（情境比較）'),wait=node('select');for(const months of [1,2,3,6]){const o=node('option',months+' 個月');o.value=months;if(months===2)o.selected=true;wait.append(o);}waitLabel.append(wait);controls.append(stockLabel,waitLabel);
-  const content=node('div');detail.append(controls,node('p','這裡的時間選擇只供比較，不會改動已儲存的持股期限。換股候選依「考慮資金轉換」的同市場條件產生。','plan-note'),content);
+  const waitLabel=node('label','願意等待多久（情境比較）'),wait=node('select');for(const months of [1,2,3,6]){const o=node('option',months+' 個月');o.value=months;if(months===2)o.selected=true;wait.append(o);}waitLabel.append(wait);if(!standalone)controls.append(stockLabel);controls.append(waitLabel);
+  const content=node('div');detail.append(controls,node('p',standalone?'等待範圍用於對照公司公告時程，不是預估上漲日期。':'這裡的時間選擇只供比較，不會改動已儲存的持股期限。換股候選依「考慮資金轉換」的同市場條件產生。','plan-note'),content);
   function draw(){
     content.replaceChildren();const symbol=select.value,e=Research.evidence(symbol,fundamentals,catalysts,researchCases),record=e.record,row=rows().find(x=>x.symbol===symbol),h=Research.history(training,p.market,p.profile),months=Number(wait.value);
-    content.append(node('h4',`${row?.name||symbol}：續抱與轉換的依據`),node('p',symbol===p.symbol?Research.scenario(a,plan.candidates.length>0):'以下為候選股票的公開資料，不套用原持股成本。候選仍需完成基本面與估值研究，尚不能認定換股更好。'));
+    content.append(node('h3',`${row?.name||record?.name||p.name||symbol} ${symbol}：${standalone?'研究材料':'續抱與轉換的依據'}`),node('p',standalone?'先核對證據與反例，再形成自己的看法。此區不需要持股成本，也不會新增持股。':symbol===p.symbol?Research.scenario(a,plan.candidates.length>0):'以下為候選股票的公開資料，不套用原持股成本。候選仍需完成基本面與估值研究，尚不能認定換股更好。'));
+    if(standalone)content.append(node('p',row?.status==='ok'?`行情日期 ${row.as_of} · 最近完整收盤 ${num(row.close)} · ${window.RotationDecisions.dailyFresh(data,p.market)&&row.as_of===data?.markets?.[p.market]?.as_of?'已對齊市場日線':'行情待更新，暫停價格判讀'}`:'行情未齊；仍可閱讀已列出的研究材料。','plan-note'));
     const list=(title,items)=>{content.append(node('h4',title));const ul=node('ul');for(const text of items)ul.append(node('li',text));content.append(ul);};
     const coverage=Research.coverage(record);content.append(node('p',coverage.label+'：'+coverage.note,'notice'));
     const focus=Research.focus(record,row);list(focus.specific?'這家公司值得先查的問題':'研究起點（尚未完成公司專屬分析）',focus.questions);
@@ -61,8 +63,8 @@ function researchPanel(p,a,plan){
     if(!events.length)content.append(node('p','可核對的催化時間尚未建立；不能把「基本面好」翻成再等 1～2 個月就會漲。','notice'));
     for(const event of events){const window=Research.waitWindow(event,months),b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',event.status),node('p',event.text),node('p',`公司時程：${event.time_label}`),node('p',`你的等待範圍：從今天至 ${window.end}`),node('p',window.text,'notice'),node('small',`原公告 ${event.announced_on}；期間起訖僅用於情境比較。`));if(event.source)b.append(researchLink(event.source));content.append(b);}
     if(record?.transmission?.length){const stages=node('ol',undefined,'evidence-stages');for(const t of record?.stages||['宣布／核准','建廠／裝機','驗收／投產','出貨／營收','獲利／現金流'])stages.append(node('li',t));content.append(stages,node('p','每一步要不同證據。官方「計畫」不能當成已投產，投產也不等於股價尚未反映。','plan-note'));}
-    list('接下來查什麼',record?.next_checks||['核對公司財報、正式訂單或擴產公告及實際完成時間。','核對營收、毛利、現金流和估值是否支持持有理由。','以完整收盤價量確認，並觀察法人／資金是否同向。']);
-    list('什麼情況就不值得繼續等',record?.invalidations||['需求、訂單或交付時程不如原假設。','成長沒有轉成獲利／現金流，或估值已過度反映。','觸及你的風險線，或資金使用期限已改變。']);
+    list('接下來查什麼',record?.next_checks||['依上方研究問題，找出公司最新財報與公告中的對應數字。','核對比較期間、一次性因素與估值，寫下可被後續公告驗證的條件。','以完整收盤價量確認，並觀察法人／資金是否同向。']);
+    list('什麼情況就不值得繼續等',record?.invalidations||['核心收入、獲利品質或財務狀況不如原假設。','成長沒有轉成可持續獲利，或估值已過度反映。','觸及你的風險線，或資金使用期限已改變。']);
     for(const event of e.related){const b=node('article',undefined,'evidence-card');b.append(node('strong',event.title),node('p',`${event.date} · ${event.kind==='confirmed'?'已確認關係（不等於新增訂單）':'產業延伸假設'}`),node('p',event.description),node('p',event.boundary,'plan-note'));for(const s of event.sources)b.append(researchLink(s));content.append(b);}
     for(const c of e.hypotheses){const b=node('article',undefined,'evidence-card');b.append(node('strong',`${c.wave?'第 '+c.wave+' 波':'另一路'} · ${c.role}（研究假設）`),node('p',c.view),node('p',`${c.date} · ${c.note}`,'plan-note'));content.append(b);}
     content.append(node('h4','歷史勝率：原策略，不是這檔的預測'),node('p',h.note));
@@ -76,6 +78,26 @@ function researchPanel(p,a,plan){
     if(p.thesis&&symbol===p.symbol)list('你記錄的持有理由（未由系統驗證）',[p.thesis]);
   }
   select.onchange=draw;wait.onchange=draw;draw();return detail;
+}
+function setupResearchDesk(){
+  const stocks=Research.catalog(rows(),fundamentals),input=$('research-query'),market=$('research-market'),results=$('research-results'),content=$('research-content');
+  function open(s){
+    const p={symbol:s.symbol,name:s.name,market:s.market,profile:'balanced'};
+    content.replaceChildren(researchPanel(p,null,{candidates:[]},{standalone:true}));
+    $('research-selection').textContent=`正在研究 ${s.name} ${s.symbol}`;
+    const url=new URL(location.href);url.searchParams.set('research',s.symbol);url.hash='stock-research';history.replaceState(null,'',url);
+    content.focus({preventScroll:true});
+  }
+  function draw(){
+    results.replaceChildren();const q=input.value.trim(),found=Research.search(stocks,q,market.value),visible=(q?found:found.filter(s=>s.coverage.facts)).slice(0,20);
+    $('research-search-status').textContent=q?`找到 ${found.length} 檔${found.length>20?'，先顯示前 20 檔；可輸入更完整代號':''}。`:`可搜尋 ${found.length} 檔；先列出已有來源材料的股票。`;
+    for(const s of visible){const b=node('button',undefined,'research-result');b.type='button';b.append(node('strong',s.name+' '+s.symbol),node('small',s.coverage.label));b.onclick=()=>open(s);results.append(b);}
+    if(!visible.length)results.append(node('p',q?'目前研究目錄找不到符合的股票。請檢查市場或代號；未納入的股票需要先補行情與研究材料。':'此市場尚無已核對的公司專屬材料；可輸入名稱或代號查看研究起點。','notice'));
+  }
+  function resetSelection(){content.replaceChildren(node('p','選擇下方搜尋結果，開啟這檔股票的研究材料。','research-empty'));$('research-selection').textContent='';const url=new URL(location.href);url.searchParams.delete('research');history.replaceState(null,'',url);draw();}
+  input.oninput=resetSelection;market.onchange=resetSelection;
+  $('research-search').onsubmit=e=>{e.preventDefault();const found=Research.search(stocks,input.value,market.value);if(input.value.trim()&&found.length===1)open(found[0]);else draw();};
+  draw();const requested=new URL(location.href).searchParams.get('research'),selected=stocks.find(s=>s.symbol===requested);if(selected){input.value=selected.symbol;draw();open(selected);}
 }
 function moneyLabel(bias){return {buying:'偏買',selling:'偏賣',mixed:'分歧',neutral:'中性'}[bias]||'未齊';}
 function closeConviction(){convictionTarget=null;convictionRows=[];convictionOutcome=null;$('conviction-dialog').close();}
@@ -219,6 +241,7 @@ if(loaded[2].status==='fulfilled')config=loaded[2].value;
 if(loaded[3].status==='fulfilled')fundamentals=loaded[3].value;
 if(loaded[4].status==='fulfilled')catalysts=loaded[4].value;
 if(loaded[5].status==='fulfilled')researchCases=loaded[5].value;
+setupResearchDesk();
 render();
 try{
   const App=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
