@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-25T12:59:18.098169+00:00",
-  "last_success_at": "2026-09-25T12:59:18.098169+00:00",
+  "generated_at": "2026-09-25T17:32:16.220908+00:00",
+  "last_success_at": "2026-09-25T17:32:16.220908+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,31 +20,10 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-09-25T12:59:18.098169+00:00",
+    "checked_at": "2026-09-25T17:32:16.220908+00:00",
     "expected_tw_date": "2026-09-24",
-    "errors": [
-      "TPEX 官方收盤價核對失敗"
-    ],
-    "cached_symbols": [
-      "3081.TWO",
-      "3105.TWO",
-      "3211.TWO",
-      "3264.TWO",
-      "3265.TWO",
-      "3293.TWO",
-      "3324.TWO",
-      "3363.TWO",
-      "3529.TWO",
-      "4931.TWO",
-      "5274.TWO",
-      "5347.TWO",
-      "6223.TWO",
-      "6274.TWO",
-      "6488.TWO",
-      "6584.TWO",
-      "8069.TWO",
-      "8299.TWO"
-    ],
+    "errors": [],
+    "cached_symbols": [],
     "repairs": {}
   },
   "coverage": {
@@ -31692,14 +31671,12 @@
       "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [
-    "TPEX 2026-09-24 法人資料未更新"
-  ],
+  "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-09-24",
-    "generated_at": "2026-09-25T12:58:10.781884+00:00",
+    "generated_at": "2026-09-25T17:31:42.773722+00:00",
     "market_size": 1965,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
