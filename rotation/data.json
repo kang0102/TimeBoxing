@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-25T17:32:16.220908+00:00",
-  "last_success_at": "2026-09-25T17:32:16.220908+00:00",
-  "status": "ok",
+  "generated_at": "2026-09-26T00:51:35.792974+00:00",
+  "last_success_at": "2026-09-26T00:51:35.792974+00:00",
+  "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
   "markets": {
@@ -14,20 +14,20 @@
     },
     "US": {
       "symbol": "^GSPC",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "ok",
       "expected_as_of": null
     }
   },
   "price_check": {
-    "checked_at": "2026-09-25T17:32:16.220908+00:00",
+    "checked_at": "2026-09-26T00:51:35.792974+00:00",
     "expected_tw_date": "2026-09-24",
     "errors": [],
     "cached_symbols": [],
     "repairs": {}
   },
   "coverage": {
-    "available": 133,
+    "available": 120,
     "total": 133
   },
   "stocks": [
@@ -504,8 +504,8 @@
       "group": "chips",
       "group_name": "AI 晶片／晶圓",
       "currency": "USD",
-      "laggard": true,
-      "laggard_watch": true,
+      "laggard": false,
+      "laggard_watch": false,
       "as_of": "2026-09-24",
       "close": 224.58,
       "change_1d": -0.4124,
@@ -633,7 +633,7 @@
           "value": 6.84
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -663,19 +663,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0178,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "AMD",
@@ -814,7 +814,7 @@
           "value": 30.359
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -844,19 +844,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "buying",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.4028,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "AVGO",
@@ -866,7 +866,7 @@
       "group_name": "AI 晶片／晶圓",
       "currency": "USD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-09-24",
       "close": 350.36,
       "change_1d": -1.3043,
@@ -995,7 +995,7 @@
           "value": -1.656
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -1025,19 +1025,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "buying",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0688,
-        "price_confirmed": false
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "3264.TWO",
@@ -3041,7 +3041,7 @@
           "value": 5.257
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -3071,19 +3071,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "selling",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0582,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "GFS",
@@ -3221,7 +3221,7 @@
           "value": 2.899
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -3251,19 +3251,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0009,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2408.TW",
@@ -4102,7 +4102,7 @@
           "value": 14.721
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -4132,19 +4132,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "buying",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.2319,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "3017.TW",
@@ -4984,7 +4984,7 @@
           "value": -7.337
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -5014,19 +5014,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0382,
-        "price_confirmed": false
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2308.TW",
@@ -6332,7 +6332,7 @@
           "value": 4.515
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -6362,19 +6362,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0046,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2345.TW",
@@ -7213,7 +7213,7 @@
           "value": 1.33
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -7243,19 +7243,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "selling",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0802,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "CSCO",
@@ -7394,7 +7394,7 @@
           "value": -5.148
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -7424,19 +7424,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0185,
-        "price_confirmed": false
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "3037.TW",
@@ -8507,7 +8507,7 @@
           "value": 3.954
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -8537,19 +8537,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0458,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "8210.TW",
@@ -10090,7 +10090,7 @@
           "value": 2.767
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -10120,19 +10120,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0037,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2233.TW",
@@ -11439,7 +11439,7 @@
           "value": -0.097
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -11469,19 +11469,19 @@
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "ok",
-        "bias": "mixed",
+        "status": "unavailable",
+        "bias": "unknown",
         "as_of": "2026-09-24",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0431,
-        "price_confirmed": true
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2317.TW",
@@ -29981,13 +29981,13 @@
       "name": "AI 晶片／晶圓",
       "market": "US",
       "count": 3,
-      "usable": 3,
-      "coverage": 100,
-      "status": "ok",
-      "score": 66.9,
-      "breadth": 67,
-      "rs_5d": 5.38,
-      "return_20d": 12.26
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "testing",
@@ -30020,13 +30020,13 @@
       "name": "光通訊／CPO",
       "market": "US",
       "count": 2,
-      "usable": 2,
-      "coverage": 100,
-      "status": "ok",
-      "score": 64.0,
-      "breadth": 100,
-      "rs_5d": 4.32,
-      "return_20d": 4.46
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "memory",
@@ -30046,13 +30046,13 @@
       "name": "記憶體",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 86.5,
-      "breadth": 100,
-      "rs_5d": 9.59,
-      "return_20d": 15.15
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "cooling",
@@ -30072,13 +30072,13 @@
       "name": "散熱",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 25.2,
-      "breadth": 0,
-      "rs_5d": 0.7,
-      "return_20d": -6.99
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "power",
@@ -30098,13 +30098,13 @@
       "name": "電源／BBU",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 66.0,
-      "breadth": 100,
-      "rs_5d": 6.53,
-      "return_20d": 4.9
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "network",
@@ -30124,13 +30124,13 @@
       "name": "網通／交換器",
       "market": "US",
       "count": 2,
-      "usable": 2,
-      "coverage": 100,
-      "status": "ok",
-      "score": 41.5,
-      "breadth": 50,
-      "rs_5d": -0.8,
-      "return_20d": -1.55
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "pcb",
@@ -30150,13 +30150,13 @@
       "name": "PCB／載板",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 63.8,
-      "breadth": 100,
-      "rs_5d": 9.69,
-      "return_20d": 4.34
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "components",
@@ -30176,13 +30176,13 @@
       "name": "機殼／滑軌／連接",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 75.5,
-      "breadth": 100,
-      "rs_5d": 5.26,
-      "return_20d": 3.15
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "robotics",
@@ -30202,13 +30202,13 @@
       "name": "機器人／自動化",
       "market": "US",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 57.0,
-      "breadth": 100,
-      "rs_5d": 4.67,
-      "return_20d": 0.27
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "industry-其他電子業",
@@ -31036,17 +31036,17 @@
       "id": "chips",
       "name": "AI 晶片／晶圓",
       "market": "US",
-      "as_of": "2026-09-24",
-      "status": "quiet",
+      "as_of": "2026-09-25",
+      "status": "insufficient",
       "total": 3,
-      "available": 3,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 8.3
+      "baseline_pct": null
     },
     {
       "id": "testing",
@@ -31084,10 +31084,10 @@
       "id": "optical",
       "name": "光通訊／CPO",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 2,
-      "available": 2,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31116,10 +31116,10 @@
       "id": "memory",
       "name": "記憶體",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31150,10 +31150,10 @@
       "id": "cooling",
       "name": "散熱",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31182,10 +31182,10 @@
       "id": "power",
       "name": "電源／BBU",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31214,10 +31214,10 @@
       "id": "network",
       "name": "網通／交換器",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 2,
-      "available": 2,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31250,10 +31250,10 @@
       "id": "pcb",
       "name": "PCB／載板",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31282,10 +31282,10 @@
       "id": "components",
       "name": "機殼／滑軌／連接",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31314,10 +31314,10 @@
       "id": "robotics",
       "name": "機器人／自動化",
       "market": "US",
-      "as_of": "2026-09-24",
+      "as_of": "2026-09-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -31674,7 +31674,7 @@
   "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
-    "status": "ok",
+    "status": "stale",
     "as_of": "2026-09-24",
     "generated_at": "2026-09-25T17:31:42.773722+00:00",
     "market_size": 1965,
@@ -31683,6 +31683,8 @@
       "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
-    ]
+    ],
+    "last_attempt_at": "2026-09-26T00:51:01.228109+00:00",
+    "error": "全市場市值資料不足或代號重複，保留原百大名單"
   }
 }
