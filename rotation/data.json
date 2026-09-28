@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-28T15:59:51.044448+00:00",
-  "last_success_at": "2026-09-28T15:59:51.044448+00:00",
+  "generated_at": "2026-09-28T19:50:06.276870+00:00",
+  "last_success_at": "2026-09-28T19:50:06.276870+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -10,7 +10,7 @@
       "symbol": "^TWII",
       "as_of": "2026-09-24",
       "status": "ok",
-      "expected_as_of": "2026-09-24"
+      "expected_as_of": null
     },
     "US": {
       "symbol": "^GSPC",
@@ -20,10 +20,11 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-09-28T15:59:51.044448+00:00",
-    "expected_tw_date": "2026-09-24",
-    "errors": [],
-    "cached_symbols": [],
+    "checked_at": "2026-09-28T19:50:06.276870+00:00",
+    "expected_tw_date": null,
+    "errors": [
+      "官方交易日期核對暫時無法完成"
+    ],
     "repairs": {}
   },
   "coverage": {
@@ -31735,7 +31736,9 @@
       "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [],
+  "institutional_refresh_errors": [
+    "TWSE 2026-09-24 法人資料未更新"
+  ],
   "top100": {
     "schema_version": 1,
     "status": "stale",
@@ -31748,7 +31751,7 @@
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
     ],
-    "last_attempt_at": "2026-09-28T15:57:53.036629+00:00",
-    "error": "全市場市值資料不足或代號重複，保留原百大名單"
+    "last_attempt_at": "2026-09-28T19:49:47.957216+00:00",
+    "error": "官方完整交易日期未取得"
   }
 }
