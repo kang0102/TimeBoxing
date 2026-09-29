@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-29T14:23:05.967884+00:00",
-  "last_success_at": "2026-09-29T14:23:05.967884+00:00",
+  "generated_at": "2026-09-29T18:15:02.187048+00:00",
+  "last_success_at": "2026-09-29T18:15:02.187048+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,11 +20,17 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-09-29T14:23:05.967884+00:00",
+    "checked_at": "2026-09-29T18:15:02.187048+00:00",
     "expected_tw_date": "2026-09-29",
     "errors": [],
     "cached_symbols": [],
-    "repairs": {}
+    "repairs": {
+      "^TWII": {
+        "date": "2026-09-29",
+        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      }
+    }
   },
   "coverage": {
     "available": 133,
@@ -2523,7 +2529,7 @@
       "return_20d": -19.8185,
       "rs_5d": -8.8577,
       "rs_20d": -22.0077,
-      "rs_acceleration": -9.1855,
+      "rs_acceleration": -9.1854,
       "volume_ratio": 0.3663,
       "ma20_distance": -9.5872,
       "ma20": 2931.0,
@@ -3379,7 +3385,7 @@
       "change_1d": 0.5964,
       "return_5d": -3.619,
       "return_20d": -6.2963,
-      "rs_5d": -4.5321,
+      "rs_5d": -4.532,
       "rs_20d": -8.8547,
       "rs_acceleration": -8.7751,
       "volume_ratio": 0.4075,
@@ -7671,7 +7677,7 @@
       "return_20d": 4.955,
       "rs_5d": 17.6314,
       "rs_20d": 2.0893,
-      "rs_acceleration": 19.3414,
+      "rs_acceleration": 19.3415,
       "volume_ratio": 0.5017,
       "ma20_distance": 15.9896,
       "ma20": 1004.4,
@@ -10008,7 +10014,7 @@
       "return_20d": 8.1858,
       "rs_5d": 9.5855,
       "rs_20d": 5.232,
-      "rs_acceleration": -5.7933,
+      "rs_acceleration": -5.7932,
       "volume_ratio": 1.4749,
       "ma20_distance": 15.0453,
       "ma20": 2125.25,
@@ -20339,7 +20345,7 @@
         },
         {
           "date": "2026-09-29",
-          "value": 9.234
+          "value": 9.235
         }
       ],
       "status": "ok",
@@ -22790,7 +22796,7 @@
       "return_20d": 7.2495,
       "rs_5d": 8.548,
       "rs_20d": 4.3212,
-      "rs_acceleration": 4.0569,
+      "rs_acceleration": 4.057,
       "volume_ratio": 0.7116,
       "ma20_distance": 11.2094,
       "ma20": 2261.5,
@@ -32415,7 +32421,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-09-29",
-    "generated_at": "2026-09-29T14:21:07.086829+00:00",
+    "generated_at": "2026-09-29T18:14:30.845053+00:00",
     "market_size": 1970,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
