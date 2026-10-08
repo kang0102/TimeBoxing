@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-07T19:08:40.139824+00:00",
-  "last_success_at": "2026-10-07T19:08:40.139824+00:00",
+  "generated_at": "2026-10-08T02:19:41.896706+00:00",
+  "last_success_at": "2026-10-08T02:19:41.896706+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -14,23 +14,17 @@
     },
     "US": {
       "symbol": "^GSPC",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "ok",
       "expected_as_of": null
     }
   },
   "price_check": {
-    "checked_at": "2026-10-07T19:08:40.139824+00:00",
+    "checked_at": "2026-10-08T02:19:41.896706+00:00",
     "expected_tw_date": "2026-10-07",
     "errors": [],
     "cached_symbols": [],
-    "repairs": {
-      "^TWII": {
-        "date": "2026-10-07",
-        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      }
-    }
+    "repairs": {}
   },
   "coverage": {
     "available": 133,
@@ -303,7 +297,7 @@
       "market_cap_rank": 1,
       "market_cap": 67035176623195,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2454.TW",
@@ -572,7 +566,7 @@
       "market_cap_rank": 2,
       "market_cap": 7759945883855,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "NVDA",
@@ -581,133 +575,133 @@
       "group": "chips",
       "group_name": "AI 晶片／晶圓",
       "currency": "USD",
-      "laggard": true,
-      "laggard_watch": true,
-      "as_of": "2026-10-06",
-      "close": 239.24,
-      "change_1d": 0.1423,
-      "return_5d": 5.2947,
-      "return_20d": 6.1036,
-      "rs_5d": 3.3004,
-      "rs_20d": 4.1304,
-      "rs_acceleration": 2.8117,
-      "volume_ratio": 0.9207,
-      "ma20_distance": 6.3875,
-      "ma20": 224.876,
-      "ma60": 217.4689,
-      "ma200": 201.0306,
-      "ma60_slope20": 3.69,
+      "laggard": false,
+      "laggard_watch": false,
+      "as_of": "2026-10-07",
+      "close": 237.47,
+      "change_1d": -0.7398,
+      "return_5d": 3.9802,
+      "return_20d": 6.2886,
+      "rs_5d": 1.978,
+      "rs_20d": 4.0351,
+      "rs_acceleration": -0.0159,
+      "volume_ratio": 0.7511,
+      "ma20_distance": 5.2716,
+      "ma20": 225.5785,
+      "ma60": 217.9006,
+      "ma200": 201.3492,
+      "ma60_slope20": 3.7437,
       "above_ma20": true,
       "breakout_20d": false,
-      "previous_high20": 240.1,
-      "volume_mean20": 109556910.0,
-      "volume": 100868800.0,
+      "previous_high20": 243.37,
+      "volume_mean20": 108493725.0,
+      "volume": 81485100.0,
       "next_session_high20": 243.37,
-      "next_session_volume_mean20": 108452070.0,
+      "next_session_volume_mean20": 108420205.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 238.89999389648438,
-        "ma20": 224.18788452148436,
-        "high20": 240.10000610351562,
-        "volume_mean20": 109556910.0
+        "as_of": "2026-10-06",
+        "close": 239.24000549316406,
+        "ma20": 224.87600021362306,
+        "high20": 243.3699951171875,
+        "volume_mean20": 108493725.0
       },
-      "score": 74.2,
-      "stage": "improving",
+      "score": 64.6,
+      "stage": "watch",
       "reasons": [
-        "5 日相對大盤 +3.30%",
-        "成交量為前 20 日均量 0.92 倍"
+        "5 日相對大盤 +1.98%",
+        "成交量為前 20 日均量 0.75 倍"
       ],
       "components": {
-        "relative_strength": 24.73,
-        "acceleration": 15.62,
+        "relative_strength": 24.56,
+        "acceleration": 9.97,
         "trend": 20,
-        "volume": 4.21,
-        "breakout": 9.64
+        "volume": 2.51,
+        "breakout": 7.58
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -0.43
-        },
-        {
           "date": "2026-09-10",
-          "value": -2.113
+          "value": -1.69
         },
         {
           "date": "2026-09-11",
-          "value": -2.979
+          "value": -2.559
         },
         {
           "date": "2026-09-14",
-          "value": -5.781
+          "value": -5.374
         },
         {
           "date": "2026-09-15",
-          "value": -4.813
+          "value": -4.402
         },
         {
           "date": "2026-09-16",
-          "value": -3.606
+          "value": -3.189
         },
         {
           "date": "2026-09-17",
-          "value": -2.267
+          "value": -1.844
         },
         {
           "date": "2026-09-18",
-          "value": -1.126
+          "value": -0.699
         },
         {
           "date": "2026-09-21",
-          "value": -0.341
+          "value": 0.09
         },
         {
           "date": "2026-09-22",
-          "value": 0.313
+          "value": 0.747
         },
         {
           "date": "2026-09-23",
-          "value": -0.408
+          "value": 0.023
         },
         {
           "date": "2026-09-24",
-          "value": -0.794
+          "value": -0.365
         },
         {
           "date": "2026-09-25",
-          "value": -1.082
+          "value": -0.654
         },
         {
           "date": "2026-09-28",
-          "value": 1.366
+          "value": 1.804
         },
         {
           "date": "2026-09-29",
-          "value": 0.803
+          "value": 1.239
         },
         {
           "date": "2026-09-30",
-          "value": 1.578
+          "value": 2.017
         },
         {
           "date": "2026-10-01",
-          "value": 2.481
+          "value": 2.924
         },
         {
           "date": "2026-10-02",
-          "value": 3.096
+          "value": 3.542
         },
         {
           "date": "2026-10-05",
-          "value": 4.584
+          "value": 5.036
         },
         {
           "date": "2026-10-06",
-          "value": 4.13
+          "value": 4.581
+        },
+        {
+          "date": "2026-10-07",
+          "value": 4.035
         }
       ],
       "status": "ok",
@@ -776,17 +770,22 @@
           "date": "2026-10-06",
           "score": 74.2,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 64.6,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "selling",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1396,
+        "cmf_20d": -0.1148,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -803,132 +802,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 649.42,
-      "change_1d": 2.797,
-      "return_5d": 6.8881,
-      "return_20d": 28.4099,
-      "rs_5d": 4.8636,
-      "rs_20d": 26.0218,
-      "rs_acceleration": 6.2697,
-      "volume_ratio": 1.0801,
-      "ma20_distance": 11.7027,
-      "ma20": 581.3825,
-      "ma60": 519.5312,
-      "ma200": 379.0931,
-      "ma60_slope20": 3.1866,
+      "as_of": "2026-10-07",
+      "close": 645.86,
+      "change_1d": -0.5482,
+      "return_5d": 5.5741,
+      "return_20d": 23.9417,
+      "rs_5d": 3.5412,
+      "rs_20d": 21.3139,
+      "rs_acceleration": 3.296,
+      "volume_ratio": 0.8338,
+      "ma20_distance": 9.9111,
+      "ma20": 587.6205,
+      "ma60": 521.16,
+      "ma200": 381.3171,
+      "ma60_slope20": 3.4774,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 645.46,
-      "volume_mean20": 22405755.0,
-      "volume": 24200600.0,
+      "breakout_20d": false,
+      "previous_high20": 658.52,
+      "volume_mean20": 22209725.0,
+      "volume": 18519000.0,
       "next_session_high20": 658.52,
-      "next_session_volume_mean20": 22207460.0,
+      "next_session_volume_mean20": 22028055.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 631.75,
-        "ma20": 574.1985015869141,
-        "high20": 645.4600219726562,
-        "volume_mean20": 22405755.0
+        "as_of": "2026-10-06",
+        "close": 649.4199829101562,
+        "ma20": 581.3825012207031,
+        "high20": 658.52001953125,
+        "volume_mean20": 22209725.0
       },
-      "score": 90.8,
-      "stage": "extended",
+      "score": 83.0,
+      "stage": "improving",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +4.86%",
-        "成交量為前 20 日均量 1.08 倍"
+        "5 日相對大盤 +3.54%",
+        "成交量為前 20 日均量 0.83 倍"
       ],
       "components": {
         "relative_strength": 35,
-        "acceleration": 20,
+        "acceleration": 16.59,
         "trend": 20,
-        "volume": 5.8,
-        "breakout": 10
+        "volume": 3.34,
+        "breakout": 8.08
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": 3.539
-        },
-        {
           "date": "2026-09-10",
-          "value": 0.65
+          "value": -2.79
         },
         {
           "date": "2026-09-11",
-          "value": 2.275
+          "value": -1.22
         },
         {
           "date": "2026-09-14",
-          "value": -1.753
+          "value": -5.11
         },
         {
           "date": "2026-09-15",
-          "value": 0.849
+          "value": -2.597
         },
         {
           "date": "2026-09-16",
-          "value": 2.97
+          "value": -0.549
         },
         {
           "date": "2026-09-17",
-          "value": 8.285
+          "value": 4.585
         },
         {
           "date": "2026-09-18",
-          "value": 11.026
+          "value": 7.232
         },
         {
           "date": "2026-09-21",
-          "value": 20.278
+          "value": 16.167
         },
         {
           "date": "2026-09-22",
-          "value": 21.891
+          "value": 17.725
         },
         {
           "date": "2026-09-23",
-          "value": 21.014
+          "value": 16.878
         },
         {
           "date": "2026-09-24",
-          "value": 23.929
+          "value": 19.694
         },
         {
           "date": "2026-09-25",
-          "value": 23.569
+          "value": 19.346
         },
         {
           "date": "2026-09-28",
-          "value": 20.035
+          "value": 15.933
         },
         {
           "date": "2026-09-29",
-          "value": 20.177
+          "value": 16.07
         },
         {
           "date": "2026-09-30",
-          "value": 21.311
+          "value": 17.165
         },
         {
           "date": "2026-10-01",
-          "value": 21.861
+          "value": 17.696
         },
         {
           "date": "2026-10-02",
-          "value": 24.545
+          "value": 20.288
         },
         {
           "date": "2026-10-05",
-          "value": 23.302
+          "value": 19.088
         },
         {
           "date": "2026-10-06",
-          "value": 26.022
+          "value": 21.715
+        },
+        {
+          "date": "2026-10-07",
+          "value": 21.314
         }
       ],
       "status": "ok",
@@ -997,17 +995,22 @@
           "date": "2026-10-06",
           "score": 90.8,
           "stage": "extended"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 83.0,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "buying",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.3266,
+        "cmf_20d": 0.3347,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -1024,132 +1027,131 @@
       "currency": "USD",
       "laggard": true,
       "laggard_watch": true,
-      "as_of": "2026-10-06",
-      "close": 375.81,
-      "change_1d": 3.6689,
-      "return_5d": 5.8322,
-      "return_20d": 2.1528,
-      "rs_5d": 3.8277,
-      "rs_20d": 0.253,
-      "rs_acceleration": 5.2261,
-      "volume_ratio": 1.2584,
-      "ma20_distance": 6.029,
-      "ma20": 354.4406,
-      "ma60": 374.1495,
-      "ma200": 366.639,
-      "ma60_slope20": -2.3826,
+      "as_of": "2026-10-07",
+      "close": 376.51,
+      "change_1d": 0.1863,
+      "return_5d": 7.2098,
+      "return_20d": 3.5171,
+      "rs_5d": 5.1454,
+      "rs_20d": 1.3224,
+      "rs_acceleration": 5.5113,
+      "volume_ratio": 0.7348,
+      "ma20_distance": 6.0352,
+      "ma20": 355.0802,
+      "ma60": 373.9513,
+      "ma200": 366.8843,
+      "ma60_slope20": -2.3619,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 372.0226,
-      "volume_mean20": 24469010.0,
-      "volume": 30791100.0,
+      "breakout_20d": false,
+      "previous_high20": 380.84,
+      "volume_mean20": 24487480.0,
+      "volume": 17993800.0,
       "next_session_high20": 380.84,
-      "next_session_volume_mean20": 24485320.0,
+      "next_session_volume_mean20": 24091260.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 362.510009765625,
-        "ma20": 354.04461669921875,
-        "high20": 372.02256513560684,
-        "volume_mean20": 24469010.0
+        "as_of": "2026-10-06",
+        "close": 375.80999755859375,
+        "ma20": 354.44061279296875,
+        "high20": 380.8399963378906,
+        "volume_mean20": 24487480.0
       },
-      "score": 65.5,
+      "score": 61.0,
       "stage": "improving",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +3.83%",
-        "成交量為前 20 日均量 1.26 倍"
+        "5 日相對大盤 +5.15%",
+        "成交量為前 20 日均量 0.73 倍"
       ],
       "components": {
-        "relative_strength": 17.94,
+        "relative_strength": 19.81,
         "acceleration": 20,
         "trend": 10,
-        "volume": 7.58,
-        "breakout": 10
+        "volume": 2.35,
+        "breakout": 8.86
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -0.653
-        },
-        {
           "date": "2026-09-10",
-          "value": -1.042
+          "value": -0.392
         },
         {
           "date": "2026-09-11",
-          "value": -1.57
+          "value": -0.923
         },
         {
           "date": "2026-09-14",
-          "value": -5.811
+          "value": -5.192
         },
         {
           "date": "2026-09-15",
-          "value": -6.882
+          "value": -6.27
         },
         {
           "date": "2026-09-16",
-          "value": -6.397
+          "value": -5.782
         },
         {
           "date": "2026-09-17",
-          "value": -5.327
+          "value": -4.705
         },
         {
           "date": "2026-09-18",
-          "value": -2.679
+          "value": -2.039
         },
         {
           "date": "2026-09-21",
-          "value": -2.579
+          "value": -1.939
         },
         {
           "date": "2026-09-22",
-          "value": -2.073
+          "value": -1.43
         },
         {
           "date": "2026-09-23",
-          "value": -3.914
+          "value": -3.282
         },
         {
           "date": "2026-09-24",
-          "value": -5.143
+          "value": -4.52
         },
         {
           "date": "2026-09-25",
-          "value": -4.965
+          "value": -4.34
         },
         {
           "date": "2026-09-28",
-          "value": -5.106
+          "value": -4.482
         },
         {
           "date": "2026-09-29",
-          "value": -3.443
+          "value": -2.808
         },
         {
           "date": "2026-09-30",
-          "value": -4.265
+          "value": -3.636
         },
         {
           "date": "2026-10-01",
-          "value": -6.506
+          "value": -5.891
         },
         {
           "date": "2026-10-02",
-          "value": -4.081
+          "value": -3.45
         },
         {
           "date": "2026-10-05",
-          "value": -2.735
+          "value": -2.096
         },
         {
           "date": "2026-10-06",
-          "value": 0.253
+          "value": 0.912
+        },
+        {
+          "date": "2026-10-07",
+          "value": 1.322
         }
       ],
       "status": "ok",
@@ -1218,17 +1220,22 @@
           "date": "2026-10-06",
           "score": 65.5,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 61.0,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "selling",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1309,
+        "cmf_20d": -0.1092,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -2038,7 +2045,7 @@
       "market_cap_rank": 58,
       "market_cap": 384522754241,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3711.TW",
@@ -2306,7 +2313,7 @@
       "market_cap_rank": 5,
       "market_cap": 3272458910424,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3265.TWO",
@@ -3390,132 +3397,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 287.01,
-      "change_1d": 5.8101,
-      "return_5d": 9.0174,
-      "return_20d": 27.328,
-      "rs_5d": 6.9526,
-      "rs_20d": 24.96,
-      "rs_acceleration": 5.3787,
-      "volume_ratio": 2.9611,
-      "ma20_distance": 14.0547,
-      "ma20": 251.6425,
-      "ma60": 225.3915,
-      "ma200": 168.8304,
-      "ma60_slope20": -2.4961,
+      "as_of": "2026-10-07",
+      "close": 284.68,
+      "change_1d": -0.8118,
+      "return_5d": 7.7476,
+      "return_20d": 21.1353,
+      "rs_5d": 5.6728,
+      "rs_20d": 18.567,
+      "rs_acceleration": 3.683,
+      "volume_ratio": 1.2621,
+      "ma20_distance": 12.0232,
+      "ma20": 254.126,
+      "ma60": 226.4288,
+      "ma200": 169.8321,
+      "ma60_slope20": -1.7312,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 280.0,
-      "volume_mean20": 17277560.0,
-      "volume": 51160800.0,
+      "breakout_20d": false,
+      "previous_high20": 301.27,
+      "volume_mean20": 18810925.0,
+      "volume": 23742000.0,
       "next_session_high20": 301.27,
-      "next_session_volume_mean20": 18804690.0,
+      "next_session_volume_mean20": 18974130.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 271.25,
-        "ma20": 248.56249923706054,
-        "high20": 280.0,
-        "volume_mean20": 17277560.0
+        "as_of": "2026-10-06",
+        "close": 287.010009765625,
+        "ma20": 251.64249954223632,
+        "high20": 301.2699890136719,
+        "volume_mean20": 18810925.0
       },
-      "score": 100,
-      "stage": "extended",
+      "score": 84.5,
+      "stage": "improving",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +6.95%",
-        "成交量為前 20 日均量 2.96 倍"
+        "5 日相對大盤 +5.67%",
+        "成交量為前 20 日均量 1.26 倍"
       ],
       "components": {
         "relative_strength": 35,
-        "acceleration": 20,
+        "acceleration": 17.37,
         "trend": 20,
-        "volume": 15,
-        "breakout": 10
+        "volume": 7.62,
+        "breakout": 4.49
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": 4.766
-        },
-        {
           "date": "2026-09-10",
-          "value": 1.773
+          "value": -2.857
         },
         {
           "date": "2026-09-11",
-          "value": 4.969
+          "value": 0.193
         },
         {
           "date": "2026-09-14",
-          "value": -2.241
+          "value": -6.689
         },
         {
           "date": "2026-09-15",
-          "value": -0.508
+          "value": -5.034
         },
         {
           "date": "2026-09-16",
-          "value": 3.55
+          "value": -1.161
         },
         {
           "date": "2026-09-17",
-          "value": 7.31
+          "value": 2.428
         },
         {
           "date": "2026-09-18",
-          "value": 8.684
+          "value": 3.74
         },
         {
           "date": "2026-09-21",
-          "value": 12.842
+          "value": 7.709
         },
         {
           "date": "2026-09-22",
-          "value": 15.026
+          "value": 9.793
         },
         {
           "date": "2026-09-23",
-          "value": 15.256
+          "value": 10.013
         },
         {
           "date": "2026-09-24",
-          "value": 14.423
+          "value": 9.218
         },
         {
           "date": "2026-09-25",
-          "value": 15.157
+          "value": 9.918
         },
         {
           "date": "2026-09-28",
-          "value": 11.604
+          "value": 6.527
         },
         {
           "date": "2026-09-29",
-          "value": 16.837
+          "value": 11.521
         },
         {
           "date": "2026-09-30",
-          "value": 17.55
+          "value": 12.202
         },
         {
           "date": "2026-10-01",
-          "value": 19.04
+          "value": 13.624
         },
         {
           "date": "2026-10-02",
-          "value": 20.028
+          "value": 14.568
         },
         {
           "date": "2026-10-05",
-          "value": 18.782
+          "value": 13.378
         },
         {
           "date": "2026-10-06",
-          "value": 24.96
+          "value": 19.275
+        },
+        {
+          "date": "2026-10-07",
+          "value": 18.567
         }
       ],
       "status": "ok",
@@ -3584,17 +3590,22 @@
           "date": "2026-10-06",
           "score": 100,
           "stage": "extended"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 84.5,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "buying",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0906,
+        "cmf_20d": 0.1111,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -3611,131 +3622,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": true,
-      "as_of": "2026-10-06",
-      "close": 48.63,
-      "change_1d": 0.1442,
-      "return_5d": 1.6089,
-      "return_20d": 8.1216,
-      "rs_5d": -0.3156,
-      "rs_20d": 6.1108,
-      "rs_acceleration": -1.6019,
-      "volume_ratio": 0.6135,
-      "ma20_distance": 3.5471,
-      "ma20": 46.9641,
-      "ma60": 49.4908,
-      "ma200": 54.1889,
-      "ma60_slope20": -16.9542,
+      "as_of": "2026-10-07",
+      "close": 48.07,
+      "change_1d": -1.1516,
+      "return_5d": 0.313,
+      "return_20d": 4.8762,
+      "rs_5d": -1.6186,
+      "rs_20d": 2.6526,
+      "rs_acceleration": -5.5851,
+      "volume_ratio": 0.7865,
+      "ma20_distance": 2.1117,
+      "ma20": 47.0759,
+      "ma60": 49.2381,
+      "ma200": 54.2491,
+      "ma60_slope20": -16.5562,
       "above_ma20": true,
       "breakout_20d": false,
       "previous_high20": 50.99,
-      "volume_mean20": 3933995.0,
-      "volume": 2413500.0,
+      "volume_mean20": 3781100.0,
+      "volume": 2973900.0,
       "next_session_high20": 50.99,
-      "next_session_volume_mean20": 3781100.0,
+      "next_session_volume_mean20": 3765710.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 48.560001373291016,
-        "ma20": 46.781502914428714,
+        "as_of": "2026-10-06",
+        "close": 48.630001068115234,
+        "ma20": 46.9641450881958,
         "high20": 50.9900016784668,
-        "volume_mean20": 3933995.0
+        "volume_mean20": 3781100.0
       },
-      "score": 51.5,
+      "score": 39.3,
       "stage": "watch",
       "reasons": [
-        "5 日相對大盤 -0.32%",
-        "成交量為前 20 日均量 0.61 倍"
+        "5 日相對大盤 -1.62%",
+        "成交量為前 20 日均量 0.79 倍"
       ],
       "components": {
-        "relative_strength": 28.19,
-        "acceleration": 6.8,
+        "relative_strength": 22.14,
+        "acceleration": 0,
         "trend": 10,
-        "volume": 1.13,
-        "breakout": 5.37
+        "volume": 2.87,
+        "breakout": 4.27
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": 2.403
-        },
-        {
           "date": "2026-09-10",
-          "value": 3.028
+          "value": 0.61
         },
         {
           "date": "2026-09-11",
-          "value": 4.35
+          "value": 1.901
         },
         {
           "date": "2026-09-14",
-          "value": -2.759
+          "value": -5.041
         },
         {
           "date": "2026-09-15",
-          "value": -4.092
+          "value": -6.343
         },
         {
           "date": "2026-09-16",
-          "value": -3.031
+          "value": -5.306
         },
         {
           "date": "2026-09-17",
-          "value": 2.139
+          "value": -0.258
         },
         {
           "date": "2026-09-18",
-          "value": 6.374
+          "value": 3.877
         },
         {
           "date": "2026-09-21",
-          "value": 6.453
+          "value": 3.955
         },
         {
           "date": "2026-09-22",
-          "value": 5.095
+          "value": 2.629
         },
         {
           "date": "2026-09-23",
-          "value": 2.773
+          "value": 0.361
         },
         {
           "date": "2026-09-24",
-          "value": 4.193
+          "value": 1.748
         },
         {
           "date": "2026-09-25",
-          "value": 7.961
+          "value": 5.427
         },
         {
           "date": "2026-09-28",
-          "value": 6.091
+          "value": 3.601
         },
         {
           "date": "2026-09-29",
-          "value": 6.447
+          "value": 3.949
         },
         {
           "date": "2026-09-30",
-          "value": 6.849
+          "value": 4.341
         },
         {
           "date": "2026-10-01",
-          "value": 8.333
+          "value": 5.79
         },
         {
           "date": "2026-10-02",
-          "value": 10.835
+          "value": 8.234
         },
         {
           "date": "2026-10-05",
-          "value": 6.571
+          "value": 4.07
         },
         {
           "date": "2026-10-06",
-          "value": 6.111
+          "value": 3.621
+        },
+        {
+          "date": "2026-10-07",
+          "value": 2.653
         }
       ],
       "status": "ok",
@@ -3804,17 +3815,22 @@
           "date": "2026-10-06",
           "score": 51.5,
           "stage": "watch"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 39.3,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "mixed",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0378,
+        "cmf_20d": 0.0485,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -4088,7 +4104,7 @@
       "market_cap_rank": 11,
       "market_cap": 1773405829516,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2344.TW",
@@ -4356,7 +4372,7 @@
       "market_cap_rank": 31,
       "market_cap": 807750034644,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "8299.TWO",
@@ -4636,131 +4652,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 1045.5601,
-      "change_1d": -1.7294,
-      "return_5d": -1.8327,
-      "return_20d": 4.5288,
-      "rs_5d": -3.692,
-      "rs_20d": 2.5849,
-      "rs_acceleration": -2.0448,
-      "volume_ratio": 0.8496,
-      "ma20_distance": 1.5467,
-      "ma20": 1029.635,
-      "ma60": 954.7888,
-      "ma200": 689.7568,
-      "ma60_slope20": -0.7232,
+      "as_of": "2026-10-07",
+      "close": 1088.0,
+      "change_1d": 4.0591,
+      "return_5d": 2.1491,
+      "return_20d": 5.8603,
+      "rs_5d": 0.1821,
+      "rs_20d": 3.6158,
+      "rs_acceleration": 0.1061,
+      "volume_ratio": 1.2104,
+      "ma20_distance": 5.3604,
+      "ma20": 1032.6465,
+      "ma60": 956.5368,
+      "ma200": 693.9553,
+      "ma60_slope20": -0.6212,
       "above_ma20": true,
       "breakout_20d": false,
       "previous_high20": 1108.72,
-      "volume_mean20": 25520755.0,
-      "volume": 21681800.0,
+      "volume_mean20": 25279570.0,
+      "volume": 30597300.0,
       "next_session_high20": 1108.72,
-      "next_session_volume_mean20": 25274600.0,
+      "next_session_volume_mean20": 25618835.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 1063.9599609375,
-        "ma20": 1027.3699981689454,
+        "as_of": "2026-10-06",
+        "close": 1045.56005859375,
+        "ma20": 1029.6350006103517,
         "high20": 1108.719970703125,
-        "volume_mean20": 25520755.0
+        "volume_mean20": 25279570.0
       },
-      "score": 55.7,
-      "stage": "watch",
+      "score": 69.3,
+      "stage": "improving",
       "reasons": [
-        "5 日相對大盤 -3.69%",
-        "成交量為前 20 日均量 0.85 倍"
+        "5 日相對大盤 +0.18%",
+        "成交量為前 20 日均量 1.21 倍"
       ],
       "components": {
-        "relative_strength": 22.02,
-        "acceleration": 5.91,
+        "relative_strength": 23.83,
+        "acceleration": 10.21,
         "trend": 20,
-        "volume": 3.5,
-        "breakout": 4.3
+        "volume": 7.1,
+        "breakout": 8.13
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": 3.25
-        },
-        {
           "date": "2026-09-10",
-          "value": -1.231
+          "value": -4.34
         },
         {
           "date": "2026-09-11",
-          "value": -2.289
+          "value": -5.365
         },
         {
           "date": "2026-09-14",
-          "value": -6.972
+          "value": -9.9
         },
         {
           "date": "2026-09-15",
-          "value": -6.191
+          "value": -9.144
         },
         {
           "date": "2026-09-16",
-          "value": -5.876
+          "value": -8.839
         },
         {
           "date": "2026-09-17",
-          "value": -1.818
+          "value": -4.909
         },
         {
           "date": "2026-09-18",
-          "value": 1.859
+          "value": -1.347
         },
         {
           "date": "2026-09-21",
-          "value": 3.143
+          "value": -0.104
         },
         {
           "date": "2026-09-22",
-          "value": 8.301
+          "value": 4.892
         },
         {
           "date": "2026-09-23",
-          "value": 6.708
+          "value": 3.349
         },
         {
           "date": "2026-09-24",
-          "value": 7.596
+          "value": 4.209
         },
         {
           "date": "2026-09-25",
-          "value": 7.223
+          "value": 3.848
         },
         {
           "date": "2026-09-28",
-          "value": 5.231
+          "value": 1.918
         },
         {
           "date": "2026-09-29",
-          "value": 6.518
+          "value": 3.164
         },
         {
           "date": "2026-09-30",
-          "value": 6.789
+          "value": 3.428
         },
         {
           "date": "2026-10-01",
-          "value": 9.812
+          "value": 6.355
         },
         {
           "date": "2026-10-02",
-          "value": 6.776
+          "value": 3.415
         },
         {
           "date": "2026-10-05",
-          "value": 4.994
+          "value": 1.689
         },
         {
           "date": "2026-10-06",
-          "value": 2.585
+          "value": -0.644
+        },
+        {
+          "date": "2026-10-07",
+          "value": 3.616
         }
       ],
       "status": "ok",
@@ -4829,18 +4845,23 @@
           "date": "2026-10-06",
           "score": 55.7,
           "stage": "watch"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 69.3,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-10-06",
+        "bias": "buying",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0187,
-        "price_confirmed": false
+        "cmf_20d": 0.0568,
+        "price_confirmed": true
       },
       "market_cap_rank": null,
       "market_cap": null,
@@ -5113,7 +5134,7 @@
       "market_cap_rank": 13,
       "market_cap": 1392015529315,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3324.TWO",
@@ -5649,7 +5670,7 @@
       "market_cap_rank": 26,
       "market_cap": 1001722389790,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "VRT",
@@ -5660,131 +5681,132 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 253.14,
-      "change_1d": -0.1893,
-      "return_5d": 1.9328,
-      "return_20d": -12.9381,
-      "rs_5d": 0.0022,
-      "rs_20d": -14.5572,
-      "rs_acceleration": 0.8242,
-      "volume_ratio": 0.7891,
-      "ma20_distance": 2.06,
-      "ma20": 248.0306,
-      "ma60": 265.5905,
-      "ma200": 265.4856,
-      "ma60_slope20": -7.9128,
-      "above_ma20": true,
+      "as_of": "2026-10-07",
+      "close": 246.49,
+      "change_1d": -2.627,
+      "return_5d": 2.1466,
+      "return_20d": -6.2154,
+      "rs_5d": 0.1797,
+      "rs_20d": -8.2038,
+      "rs_acceleration": 2.4916,
+      "volume_ratio": 1.0237,
+      "ma20_distance": -0.2928,
+      "ma20": 247.2138,
+      "ma60": 264.6403,
+      "ma200": 265.9466,
+      "ma60_slope20": -8.0302,
+      "above_ma20": false,
       "breakout_20d": false,
-      "previous_high20": 295.2676,
-      "volume_mean20": 5370825.0,
-      "volume": 4238300.0,
-      "next_session_high20": 290.1589,
-      "next_session_volume_mean20": 5345190.0,
+      "previous_high20": 290.1589,
+      "volume_mean20": 5345190.0,
+      "volume": 5472100.0,
+      "next_session_high20": 261.9358,
+      "next_session_volume_mean20": 5128855.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 253.6199951171875,
-        "ma20": 249.9115219116211,
-        "high20": 295.2676017691399,
-        "volume_mean20": 5370825.0
+        "as_of": "2026-10-06",
+        "close": 253.13999938964844,
+        "ma20": 248.03058700561525,
+        "high20": 290.1588885662361,
+        "volume_mean20": 5345190.0
       },
-      "score": 24.5,
-      "stage": "improving",
+      "score": 23.4,
+      "stage": "watch",
       "reasons": [
-        "5 日相對大盤 +0.00%",
-        "成交量為前 20 日均量 0.79 倍"
+        "5 日相對大盤 +0.18%",
+        "成交量為前 20 日均量 1.02 倍",
+        "收盤低於 20 日均線"
       ],
       "components": {
-        "relative_strength": 0,
-        "acceleration": 11.65,
-        "trend": 10,
-        "volume": 2.89,
+        "relative_strength": 3.14,
+        "acceleration": 14.98,
+        "trend": 0,
+        "volume": 5.24,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -9.167
-        },
-        {
           "date": "2026-09-10",
-          "value": -13.763
+          "value": -5.059
         },
         {
           "date": "2026-09-11",
-          "value": -11.421
+          "value": -2.481
         },
         {
           "date": "2026-09-14",
-          "value": -17.781
+          "value": -9.484
         },
         {
           "date": "2026-09-15",
-          "value": -18.377
+          "value": -10.14
         },
         {
           "date": "2026-09-16",
-          "value": -16.333
+          "value": -7.889
         },
         {
           "date": "2026-09-17",
-          "value": -16.556
+          "value": -8.135
         },
         {
           "date": "2026-09-18",
-          "value": -13.97
+          "value": -5.287
         },
         {
           "date": "2026-09-21",
-          "value": -14.735
+          "value": -6.13
         },
         {
           "date": "2026-09-22",
-          "value": -13.851
+          "value": -5.157
         },
         {
           "date": "2026-09-23",
-          "value": -14.799
+          "value": -6.2
         },
         {
           "date": "2026-09-24",
-          "value": -15.97
+          "value": -7.489
         },
         {
           "date": "2026-09-25",
-          "value": -13.676
+          "value": -4.964
         },
         {
           "date": "2026-09-28",
-          "value": -16.179
+          "value": -7.72
         },
         {
           "date": "2026-09-29",
-          "value": -14.559
+          "value": -5.936
         },
         {
           "date": "2026-09-30",
-          "value": -16.768
+          "value": -8.368
         },
         {
           "date": "2026-10-01",
-          "value": -15.274
+          "value": -6.724
         },
         {
           "date": "2026-10-02",
-          "value": -13.821
+          "value": -5.123
         },
         {
           "date": "2026-10-05",
-          "value": -13.9
+          "value": -5.21
         },
         {
           "date": "2026-10-06",
-          "value": -14.557
+          "value": -5.934
+        },
+        {
+          "date": "2026-10-07",
+          "value": -8.204
         }
       ],
       "status": "ok",
@@ -5853,18 +5875,23 @@
           "date": "2026-10-06",
           "score": 24.5,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 23.4,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-10-06",
+        "bias": "mixed",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1662,
-        "price_confirmed": true
+        "cmf_20d": -0.0483,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
@@ -6137,7 +6164,7 @@
       "market_cap_rank": 3,
       "market_cap": 5169111224710,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2301.TW",
@@ -6405,7 +6432,7 @@
       "market_cap_rank": 35,
       "market_cap": 694832328900,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6781.TW",
@@ -6691,7 +6718,7 @@
       "return_20d": 1.4323,
       "rs_5d": -5.9208,
       "rs_20d": -3.6185,
-      "rs_acceleration": -8.2848,
+      "rs_acceleration": -8.2849,
       "volume_ratio": 1.1298,
       "ma20_distance": 2.6283,
       "ma20": 379.525,
@@ -7220,131 +7247,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 445.09,
-      "change_1d": 2.8872,
-      "return_5d": 2.7281,
-      "return_20d": 5.4391,
-      "rs_5d": 0.7824,
-      "rs_20d": 3.4782,
-      "rs_acceleration": 1.6688,
-      "volume_ratio": 0.7617,
-      "ma20_distance": 4.6106,
-      "ma20": 425.473,
-      "ma60": 420.118,
-      "ma200": 388.7632,
-      "ma60_slope20": 1.4241,
+      "as_of": "2026-10-07",
+      "close": 431.33,
+      "change_1d": -3.0915,
+      "return_5d": 0.377,
+      "return_20d": 3.8799,
+      "rs_5d": -1.5559,
+      "rs_20d": 1.6774,
+      "rs_acceleration": -0.1907,
+      "volume_ratio": 0.8361,
+      "ma20_distance": 1.185,
+      "ma20": 426.2785,
+      "ma60": 420.3985,
+      "ma200": 389.3533,
+      "ma60_slope20": 1.3906,
       "above_ma20": true,
       "breakout_20d": false,
       "previous_high20": 452.0,
-      "volume_mean20": 2091130.0,
-      "volume": 1592900.0,
+      "volume_mean20": 2069015.0,
+      "volume": 1730000.0,
       "next_session_high20": 452.0,
-      "next_session_volume_mean20": 2069015.0,
+      "next_session_volume_mean20": 2066760.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 432.6000061035156,
-        "ma20": 424.3249969482422,
+        "as_of": "2026-10-06",
+        "close": 445.0899963378906,
+        "ma20": 425.4729965209961,
         "high20": 452.0,
-        "volume_mean20": 2091130.0
+        "volume_mean20": 2069015.0
       },
-      "score": 68.0,
-      "stage": "improving",
+      "score": 58.8,
+      "stage": "watch",
       "reasons": [
-        "5 日相對大盤 +0.78%",
-        "成交量為前 20 日均量 0.76 倍"
+        "5 日相對大盤 -1.56%",
+        "成交量為前 20 日均量 0.84 倍"
       ],
       "components": {
-        "relative_strength": 23.59,
-        "acceleration": 13.34,
+        "relative_strength": 20.44,
+        "acceleration": 9.62,
         "trend": 20,
-        "volume": 2.62,
-        "breakout": 8.47
+        "volume": 3.36,
+        "breakout": 5.43
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -1.158
-        },
-        {
           "date": "2026-09-10",
-          "value": -2.03
+          "value": -0.882
         },
         {
           "date": "2026-09-11",
-          "value": 0.985
+          "value": 2.169
         },
         {
           "date": "2026-09-14",
-          "value": -6.208
+          "value": -5.109
         },
         {
           "date": "2026-09-15",
-          "value": -5.967
+          "value": -4.865
         },
         {
           "date": "2026-09-16",
-          "value": -4.245
+          "value": -3.123
         },
         {
           "date": "2026-09-17",
-          "value": -2.547
+          "value": -1.405
         },
         {
           "date": "2026-09-18",
-          "value": 0.928
+          "value": 2.111
         },
         {
           "date": "2026-09-21",
-          "value": 1.939
+          "value": 3.134
         },
         {
           "date": "2026-09-22",
-          "value": 3.593
+          "value": 4.807
         },
         {
           "date": "2026-09-23",
-          "value": 3.501
+          "value": 4.714
         },
         {
           "date": "2026-09-24",
-          "value": 3.819
+          "value": 5.036
         },
         {
           "date": "2026-09-25",
-          "value": 3.288
+          "value": 4.498
         },
         {
           "date": "2026-09-28",
-          "value": 2.063
+          "value": 3.259
         },
         {
           "date": "2026-09-29",
-          "value": 2.675
+          "value": 3.878
         },
         {
           "date": "2026-09-30",
-          "value": 2.088
+          "value": 3.284
         },
         {
           "date": "2026-10-01",
-          "value": 3.684
+          "value": 4.899
         },
         {
           "date": "2026-10-02",
-          "value": 2.654
+          "value": 3.857
         },
         {
           "date": "2026-10-05",
-          "value": 1.156
+          "value": 2.342
         },
         {
           "date": "2026-10-06",
-          "value": 3.478
+          "value": 4.691
+        },
+        {
+          "date": "2026-10-07",
+          "value": 1.677
         }
       ],
       "status": "ok",
@@ -7413,18 +7440,23 @@
           "date": "2026-10-06",
           "score": 68.0,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 58.8,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "mixed",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.0076,
-        "price_confirmed": true
+        "cmf_20d": 0.0482,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
@@ -7697,7 +7729,7 @@
       "market_cap_rank": 19,
       "market_cap": 1130652562455,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6285.TW",
@@ -7982,7 +8014,7 @@
       "return_5d": 3.4965,
       "return_20d": -1.7264,
       "rs_5d": -0.3815,
-      "rs_20d": -6.6199,
+      "rs_20d": -6.62,
       "rs_acceleration": 1.9917,
       "volume_ratio": 2.5837,
       "ma20_distance": 2.2664,
@@ -8244,132 +8276,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 215.36,
-      "change_1d": 4.0889,
-      "return_5d": 6.1619,
-      "return_20d": 10.4637,
-      "rs_5d": 4.1512,
-      "rs_20d": 8.4094,
-      "rs_acceleration": 4.0778,
-      "volume_ratio": 1.467,
-      "ma20_distance": 6.8673,
-      "ma20": 201.521,
-      "ma60": 191.3362,
-      "ma200": 159.7868,
-      "ma60_slope20": 5.9015,
+      "as_of": "2026-10-07",
+      "close": 215.83,
+      "change_1d": 0.2182,
+      "return_5d": 6.0121,
+      "return_20d": 11.8696,
+      "rs_5d": 3.9707,
+      "rs_20d": 9.4978,
+      "rs_acceleration": 3.1992,
+      "volume_ratio": 1.0275,
+      "ma20_distance": 6.4954,
+      "ma20": 202.666,
+      "ma60": 191.8905,
+      "ma200": 160.2428,
+      "ma60_slope20": 5.9182,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 212.0,
-      "volume_mean20": 4750815.0,
-      "volume": 6969400.0,
-      "next_session_high20": 216.07,
-      "next_session_volume_mean20": 4862205.0,
+      "breakout_20d": false,
+      "previous_high20": 216.07,
+      "volume_mean20": 4862205.0,
+      "volume": 4995900.0,
+      "next_session_high20": 217.318,
+      "next_session_volume_mean20": 4928305.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 206.89999389648438,
-        "ma20": 200.5009994506836,
-        "high20": 212.0,
-        "volume_mean20": 4750815.0
+        "as_of": "2026-10-06",
+        "close": 215.36000061035156,
+        "ma20": 201.5209991455078,
+        "high20": 216.07000732421875,
+        "volume_mean20": 4862205.0
       },
-      "score": 90.0,
+      "score": 85.7,
       "stage": "improving",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +4.15%",
-        "成交量為前 20 日均量 1.47 倍"
+        "5 日相對大盤 +3.97%",
+        "成交量為前 20 日均量 1.03 倍"
       ],
       "components": {
-        "relative_strength": 32.22,
-        "acceleration": 18.16,
+        "relative_strength": 34.12,
+        "acceleration": 16.4,
         "trend": 20,
-        "volume": 9.67,
-        "breakout": 10
+        "volume": 5.27,
+        "breakout": 9.89
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -0.56
-        },
-        {
           "date": "2026-09-10",
-          "value": -2.017
+          "value": -1.466
         },
         {
           "date": "2026-09-11",
-          "value": 2.596
+          "value": 3.173
         },
         {
           "date": "2026-09-14",
-          "value": -2.991
+          "value": -2.445
         },
         {
           "date": "2026-09-15",
-          "value": 0.057
+          "value": 0.62
         },
         {
           "date": "2026-09-16",
-          "value": 2.956
+          "value": 3.536
         },
         {
           "date": "2026-09-17",
-          "value": 2.823
+          "value": 3.402
         },
         {
           "date": "2026-09-18",
-          "value": 2.58
+          "value": 3.157
         },
         {
           "date": "2026-09-21",
-          "value": 4.128
+          "value": 4.714
         },
         {
           "date": "2026-09-22",
-          "value": 4.012
+          "value": 4.598
         },
         {
           "date": "2026-09-23",
-          "value": 3.925
+          "value": 4.51
         },
         {
           "date": "2026-09-24",
-          "value": 5.09
+          "value": 5.681
         },
         {
           "date": "2026-09-25",
-          "value": 4.989
+          "value": 5.579
         },
         {
           "date": "2026-09-28",
-          "value": 4.97
+          "value": 5.56
         },
         {
           "date": "2026-09-29",
-          "value": 4.088
+          "value": 4.674
         },
         {
           "date": "2026-09-30",
-          "value": 4.727
+          "value": 5.316
         },
         {
           "date": "2026-10-01",
-          "value": 4.985
+          "value": 5.576
         },
         {
           "date": "2026-10-02",
-          "value": 5.678
+          "value": 6.272
         },
         {
           "date": "2026-10-05",
-          "value": 4.753
+          "value": 5.343
         },
         {
           "date": "2026-10-06",
-          "value": 8.409
+          "value": 9.02
+        },
+        {
+          "date": "2026-10-07",
+          "value": 9.498
         }
       ],
       "status": "ok",
@@ -8438,17 +8469,22 @@
           "date": "2026-10-06",
           "score": 90.0,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 85.7,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-10-06",
+        "bias": "buying",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.015,
+        "cmf_20d": 0.071,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -8465,132 +8501,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 117.94,
-      "change_1d": 4.5382,
-      "return_5d": 10.7137,
-      "return_20d": 8.4522,
-      "rs_5d": 8.6168,
-      "rs_20d": 6.4353,
-      "rs_acceleration": 6.9185,
-      "volume_ratio": 1.1252,
-      "ma20_distance": 8.1757,
-      "ma20": 109.0263,
-      "ma60": 111.8202,
-      "ma200": 97.3396,
-      "ma60_slope20": -2.3349,
+      "as_of": "2026-10-07",
+      "close": 117.39,
+      "change_1d": -0.4663,
+      "return_5d": 9.4909,
+      "return_20d": 7.6899,
+      "rs_5d": 7.3826,
+      "rs_20d": 5.4067,
+      "rs_acceleration": 5.5349,
+      "volume_ratio": 0.9083,
+      "ma20_distance": 7.2589,
+      "ma20": 109.4454,
+      "ma60": 111.8327,
+      "ma200": 97.5488,
+      "ma60_slope20": -2.1648,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 113.19,
-      "volume_mean20": 18683210.0,
-      "volume": 21021600.0,
+      "breakout_20d": false,
+      "previous_high20": 118.4,
+      "volume_mean20": 19000930.0,
+      "volume": 17258600.0,
       "next_session_high20": 118.4,
-      "next_session_volume_mean20": 19000115.0,
+      "next_session_volume_mean20": 19322150.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 112.81999969482422,
-        "ma20": 108.56673660278321,
-        "high20": 113.19000244140625,
-        "volume_mean20": 18683210.0
+        "as_of": "2026-10-06",
+        "close": 117.94000244140625,
+        "ma20": 109.02631607055665,
+        "high20": 118.4000015258789,
+        "volume_mean20": 19000930.0
       },
-      "score": 75.0,
+      "score": 70.2,
       "stage": "improving",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +8.62%",
-        "成交量為前 20 日均量 1.13 倍"
+        "5 日相對大盤 +7.38%",
+        "成交量為前 20 日均量 0.91 倍"
       ],
       "components": {
-        "relative_strength": 28.76,
+        "relative_strength": 26.96,
         "acceleration": 20,
         "trend": 10,
-        "volume": 6.25,
-        "breakout": 10
+        "volume": 4.08,
+        "breakout": 9.15
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": 0.726
-        },
-        {
           "date": "2026-09-10",
-          "value": -0.524
+          "value": -1.241
         },
         {
           "date": "2026-09-11",
-          "value": 2.933
+          "value": 2.191
         },
         {
           "date": "2026-09-14",
-          "value": 1.524
+          "value": 0.792
         },
         {
           "date": "2026-09-15",
-          "value": 1.991
+          "value": 1.256
         },
         {
           "date": "2026-09-16",
-          "value": 0.281
+          "value": -0.442
         },
         {
           "date": "2026-09-17",
-          "value": 1.453
+          "value": 0.722
         },
         {
           "date": "2026-09-18",
-          "value": 0.613
+          "value": -0.112
         },
         {
           "date": "2026-09-21",
-          "value": 0.899
+          "value": 0.172
         },
         {
           "date": "2026-09-22",
-          "value": -3.645
+          "value": -4.339
         },
         {
           "date": "2026-09-23",
-          "value": -2.921
+          "value": -3.621
         },
         {
           "date": "2026-09-24",
-          "value": -2.405
+          "value": -3.108
         },
         {
           "date": "2026-09-25",
-          "value": -3.145
+          "value": -3.843
         },
         {
           "date": "2026-09-28",
-          "value": -2.355
+          "value": -3.059
         },
         {
           "date": "2026-09-29",
-          "value": -2.008
+          "value": -2.715
         },
         {
           "date": "2026-09-30",
-          "value": -1.127
+          "value": -1.84
         },
         {
           "date": "2026-10-01",
-          "value": -0.284
+          "value": -1.002
         },
         {
           "date": "2026-10-02",
-          "value": 2.517
+          "value": 1.778
         },
         {
           "date": "2026-10-05",
-          "value": 2.404
+          "value": 1.666
         },
         {
           "date": "2026-10-06",
-          "value": 6.435
+          "value": 5.668
+        },
+        {
+          "date": "2026-10-07",
+          "value": 5.407
         }
       ],
       "status": "ok",
@@ -8659,17 +8694,22 @@
           "date": "2026-10-06",
           "score": 75.0,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 70.2,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "buying",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.117,
+        "cmf_20d": 0.1211,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -8943,7 +8983,7 @@
       "market_cap_rank": 8,
       "market_cap": 2141885532780,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "8046.TW",
@@ -9211,7 +9251,7 @@
       "market_cap_rank": 28,
       "market_cap": 956324920760,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3189.TW",
@@ -9479,7 +9519,7 @@
       "market_cap_rank": 44,
       "market_cap": 579601396000,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2368.TW",
@@ -9747,7 +9787,7 @@
       "market_cap_rank": 37,
       "market_cap": 660590740140,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "TTMI",
@@ -9758,131 +9798,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 132.71,
-      "change_1d": -0.323,
-      "return_5d": 8.07,
-      "return_20d": 2.5976,
-      "rs_5d": 6.0232,
-      "rs_20d": 0.6896,
-      "rs_acceleration": 8.5088,
-      "volume_ratio": 0.7577,
-      "ma20_distance": 7.3289,
-      "ma20": 123.648,
-      "ma60": 125.6015,
-      "ma200": 125.918,
-      "ma60_slope20": -13.4778,
+      "as_of": "2026-10-07",
+      "close": 128.2,
+      "change_1d": -3.3984,
+      "return_5d": 4.3634,
+      "return_20d": 3.1791,
+      "rs_5d": 2.3538,
+      "rs_20d": 0.9915,
+      "rs_acceleration": 4.027,
+      "volume_ratio": 0.9407,
+      "ma20_distance": 3.5161,
+      "ma20": 123.8455,
+      "ma60": 125.372,
+      "ma200": 126.2235,
+      "ma60_slope20": -12.9382,
       "above_ma20": true,
       "breakout_20d": false,
       "previous_high20": 137.88,
-      "volume_mean20": 1893210.0,
-      "volume": 1434500.0,
+      "volume_mean20": 1867020.0,
+      "volume": 1756300.0,
       "next_session_high20": 137.88,
-      "next_session_volume_mean20": 1867020.0,
+      "next_session_volume_mean20": 1875980.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 133.13999938964844,
-        "ma20": 123.47999992370606,
+        "as_of": "2026-10-06",
+        "close": 132.7100067138672,
+        "ma20": 123.64799995422364,
         "high20": 137.8800048828125,
-        "volume_mean20": 1893210.0
+        "volume_mean20": 1867020.0
       },
-      "score": 57.5,
+      "score": 54.7,
       "stage": "improving",
       "reasons": [
-        "5 日相對大盤 +6.02%",
-        "成交量為前 20 日均量 0.76 倍"
+        "5 日相對大盤 +2.35%",
+        "成交量為前 20 日均量 0.94 倍"
       ],
       "components": {
-        "relative_strength": 18.71,
-        "acceleration": 20,
+        "relative_strength": 19.24,
+        "acceleration": 18.05,
         "trend": 10,
-        "volume": 2.58,
-        "breakout": 6.25
+        "volume": 4.41,
+        "breakout": 2.98
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -3.475
-        },
-        {
           "date": "2026-09-10",
-          "value": -4.4
+          "value": -0.958
         },
         {
           "date": "2026-09-11",
-          "value": -2.039
+          "value": 1.489
         },
         {
           "date": "2026-09-14",
-          "value": -11.855
+          "value": -8.681
         },
         {
           "date": "2026-09-15",
-          "value": -12.051
+          "value": -8.885
         },
         {
           "date": "2026-09-16",
-          "value": -10.447
+          "value": -7.222
         },
         {
           "date": "2026-09-17",
-          "value": -10.856
+          "value": -7.647
         },
         {
           "date": "2026-09-18",
-          "value": -8.523
+          "value": -5.23
         },
         {
           "date": "2026-09-21",
-          "value": -5.247
+          "value": -1.835
         },
         {
           "date": "2026-09-22",
-          "value": -2.61
+          "value": 0.897
         },
         {
           "date": "2026-09-23",
-          "value": -3.139
+          "value": 0.348
         },
         {
           "date": "2026-09-24",
-          "value": -2.222
+          "value": 1.298
         },
         {
           "date": "2026-09-25",
-          "value": -1.04
+          "value": 2.523
         },
         {
           "date": "2026-09-28",
-          "value": -4.116
+          "value": -0.664
         },
         {
           "date": "2026-09-29",
-          "value": -5.031
+          "value": -1.611
         },
         {
           "date": "2026-09-30",
-          "value": -4.76
+          "value": -1.331
         },
         {
           "date": "2026-10-01",
-          "value": -2.113
+          "value": 1.411
         },
         {
           "date": "2026-10-02",
-          "value": 1.299
+          "value": 4.946
         },
         {
           "date": "2026-10-05",
-          "value": 1.6
+          "value": 5.258
         },
         {
           "date": "2026-10-06",
-          "value": 0.69
+          "value": 4.315
+        },
+        {
+          "date": "2026-10-07",
+          "value": 0.992
         }
       ],
       "status": "ok",
@@ -9951,17 +9991,22 @@
           "date": "2026-10-06",
           "score": 57.5,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 54.7,
+          "stage": "improving"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-10-06",
+        "bias": "buying",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0013,
+        "cmf_20d": 0.0563,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -11041,7 +11086,7 @@
       "market_cap_rank": 21,
       "market_cap": 1123552478880,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6584.TWO",
@@ -11578,7 +11623,7 @@
       "market_cap_rank": 51,
       "market_cap": 462024007575,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "APH",
@@ -11589,132 +11634,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 88.62,
-      "change_1d": 1.5469,
-      "return_5d": 5.0747,
-      "return_20d": 8.5585,
-      "rs_5d": 3.0846,
-      "rs_20d": 6.5396,
-      "rs_acceleration": 0.0289,
-      "volume_ratio": 0.766,
-      "ma20_distance": 7.5171,
-      "ma20": 82.4241,
-      "ma60": 80.8129,
-      "ma200": 74.1631,
-      "ma60_slope20": 0.5223,
+      "as_of": "2026-10-07",
+      "close": 87.55,
+      "change_1d": -1.2074,
+      "return_5d": 3.8553,
+      "return_20d": 7.8016,
+      "rs_5d": 1.8555,
+      "rs_20d": 5.516,
+      "rs_acceleration": -1.4422,
+      "volume_ratio": 0.755,
+      "ma20_distance": 5.8123,
+      "ma20": 82.7409,
+      "ma60": 80.9543,
+      "ma200": 74.2785,
+      "ma60_slope20": 0.6034,
       "above_ma20": true,
-      "breakout_20d": true,
-      "previous_high20": 88.02,
-      "volume_mean20": 12211010.0,
-      "volume": 9353700.0,
+      "breakout_20d": false,
+      "previous_high20": 89.93,
+      "volume_mean20": 12173795.0,
+      "volume": 9190900.0,
       "next_session_high20": 89.93,
-      "next_session_volume_mean20": 12173795.0,
+      "next_session_volume_mean20": 12155145.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 87.2699966430664,
-        "ma20": 82.07476043701172,
-        "high20": 88.0199966430664,
-        "volume_mean20": 12211010.0
+        "as_of": "2026-10-06",
+        "close": 88.62000274658203,
+        "ma20": 82.4240909576416,
+        "high20": 89.93000030517578,
+        "volume_mean20": 12173795.0
       },
-      "score": 71.7,
-      "stage": "improving",
+      "score": 64.2,
+      "stage": "watch",
       "reasons": [
-        "收盤突破前 20 日最高價",
-        "5 日相對大盤 +3.08%",
-        "成交量為前 20 日均量 0.77 倍"
+        "5 日相對大盤 +1.86%",
+        "成交量為前 20 日均量 0.75 倍"
       ],
       "components": {
-        "relative_strength": 28.94,
-        "acceleration": 10.06,
+        "relative_strength": 27.15,
+        "acceleration": 7.12,
         "trend": 20,
-        "volume": 2.66,
-        "breakout": 10
+        "volume": 2.55,
+        "breakout": 7.35
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -0.03
-        },
-        {
           "date": "2026-09-10",
-          "value": -0.789
+          "value": -0.76
         },
         {
           "date": "2026-09-11",
-          "value": 2.864
+          "value": 2.894
         },
         {
           "date": "2026-09-14",
-          "value": -3.251
+          "value": -3.222
         },
         {
           "date": "2026-09-15",
-          "value": -3.928
+          "value": -3.899
         },
         {
           "date": "2026-09-16",
-          "value": -3.981
+          "value": -3.953
         },
         {
           "date": "2026-09-17",
-          "value": -3.697
+          "value": -3.669
         },
         {
           "date": "2026-09-18",
-          "value": -4.864
+          "value": -4.836
         },
         {
           "date": "2026-09-21",
-          "value": -2.431
+          "value": -2.402
         },
         {
           "date": "2026-09-22",
-          "value": 0.287
+          "value": 0.317
         },
         {
           "date": "2026-09-23",
-          "value": 0.257
+          "value": 0.287
         },
         {
           "date": "2026-09-24",
-          "value": 1.368
+          "value": 1.398
         },
         {
           "date": "2026-09-25",
-          "value": 2.08
+          "value": 2.11
         },
         {
           "date": "2026-09-28",
-          "value": 3.521
+          "value": 3.552
         },
         {
           "date": "2026-09-29",
-          "value": 3.352
+          "value": 3.382
         },
         {
           "date": "2026-09-30",
-          "value": 3.563
+          "value": 3.594
         },
         {
           "date": "2026-10-01",
-          "value": 5.042
+          "value": 5.073
         },
         {
           "date": "2026-10-02",
-          "value": 5.846
+          "value": 5.878
         },
         {
           "date": "2026-10-05",
-          "value": 5.524
+          "value": 5.555
         },
         {
           "date": "2026-10-06",
-          "value": 6.54
+          "value": 6.571
+        },
+        {
+          "date": "2026-10-07",
+          "value": 5.516
         }
       ],
       "status": "ok",
@@ -11783,17 +11827,22 @@
           "date": "2026-10-06",
           "score": 71.7,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 64.2,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "selling",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1026,
+        "cmf_20d": -0.0819,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -13151,131 +13200,131 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-10-06",
-      "close": 450.74,
-      "change_1d": -0.9754,
-      "return_5d": 4.4516,
-      "return_20d": 5.0358,
-      "rs_5d": 2.4733,
-      "rs_20d": 3.0824,
-      "rs_acceleration": 0.2221,
-      "volume_ratio": 0.8237,
-      "ma20_distance": 4.7608,
-      "ma20": 430.2565,
-      "ma60": 441.1107,
-      "ma200": 422.3894,
-      "ma60_slope20": -2.8842,
+      "as_of": "2026-10-07",
+      "close": 441.9,
+      "change_1d": -1.9612,
+      "return_5d": 1.5092,
+      "return_20d": 3.7129,
+      "rs_5d": -0.4454,
+      "rs_20d": 1.514,
+      "rs_acceleration": -1.7252,
+      "volume_ratio": 1.1266,
+      "ma20_distance": 2.5177,
+      "ma20": 431.0475,
+      "ma60": 440.6703,
+      "ma200": 422.6596,
+      "ma60_slope20": -2.8677,
       "above_ma20": true,
       "breakout_20d": false,
-      "previous_high20": 460.0,
-      "volume_mean20": 697585.0,
-      "volume": 574600.0,
+      "previous_high20": 460.2,
+      "volume_mean20": 695115.0,
+      "volume": 783100.0,
       "next_session_high20": 460.2,
-      "next_session_volume_mean20": 695115.0,
+      "next_session_volume_mean20": 704225.0,
       "prior_session": {
-        "as_of": "2026-10-05",
-        "close": 455.17999267578125,
-        "ma20": 429.1760009765625,
-        "high20": 460.0,
-        "volume_mean20": 697585.0
+        "as_of": "2026-10-06",
+        "close": 450.739990234375,
+        "ma20": 430.2565002441406,
+        "high20": 460.20001220703125,
+        "volume_mean20": 695115.0
       },
-      "score": 54.6,
-      "stage": "improving",
+      "score": 49.0,
+      "stage": "watch",
       "reasons": [
-        "5 日相對大盤 +2.47%",
-        "成交量為前 20 日均量 0.82 倍"
+        "5 日相對大盤 -0.45%",
+        "成交量為前 20 日均量 1.13 倍"
       ],
       "components": {
-        "relative_strength": 22.89,
-        "acceleration": 10.44,
+        "relative_strength": 20.15,
+        "acceleration": 6.55,
         "trend": 10,
-        "volume": 3.24,
-        "breakout": 7.99
+        "volume": 6.27,
+        "breakout": 6.02
       },
       "series": [
         {
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "value": 0.0
         },
         {
-          "date": "2026-09-09",
-          "value": -0.228
-        },
-        {
           "date": "2026-09-10",
-          "value": -0.75
+          "value": -0.524
         },
         {
           "date": "2026-09-11",
-          "value": 0.043
+          "value": 0.271
         },
         {
           "date": "2026-09-14",
-          "value": -1.71
+          "value": -1.486
         },
         {
           "date": "2026-09-15",
-          "value": -1.702
+          "value": -1.478
         },
         {
           "date": "2026-09-16",
-          "value": -1.753
+          "value": -1.529
         },
         {
           "date": "2026-09-17",
-          "value": -3.999
+          "value": -3.78
         },
         {
           "date": "2026-09-18",
-          "value": -2.857
+          "value": -2.635
         },
         {
           "date": "2026-09-21",
-          "value": -2.151
+          "value": -1.928
         },
         {
           "date": "2026-09-22",
-          "value": -1.62
+          "value": -1.396
         },
         {
           "date": "2026-09-23",
-          "value": 0.451
+          "value": 0.68
         },
         {
           "date": "2026-09-24",
-          "value": 0.485
+          "value": 0.714
         },
         {
           "date": "2026-09-25",
-          "value": 0.257
+          "value": 0.485
         },
         {
           "date": "2026-09-28",
-          "value": 0.354
+          "value": 0.583
         },
         {
           "date": "2026-09-29",
-          "value": 0.594
+          "value": 0.824
         },
         {
           "date": "2026-09-30",
-          "value": 1.736
+          "value": 1.968
         },
         {
           "date": "2026-10-01",
-          "value": 3.199
+          "value": 3.434
         },
         {
           "date": "2026-10-02",
-          "value": 5.202
+          "value": 5.442
         },
         {
           "date": "2026-10-05",
-          "value": 4.7
+          "value": 4.939
         },
         {
           "date": "2026-10-06",
-          "value": 3.082
+          "value": 3.318
+        },
+        {
+          "date": "2026-10-07",
+          "value": 1.514
         }
       ],
       "status": "ok",
@@ -13344,18 +13393,23 @@
           "date": "2026-10-06",
           "score": 54.6,
           "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 49.0,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
         "status": "ok",
         "bias": "buying",
-        "as_of": "2026-10-06",
+        "as_of": "2026-10-07",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": 0.1549,
-        "price_confirmed": true
+        "cmf_20d": 0.168,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
@@ -13623,7 +13677,7 @@
       "market_cap_rank": 4,
       "market_cap": 3547088117244,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2360.TW",
@@ -13886,7 +13940,7 @@
       "market_cap_rank": 24,
       "market_cap": 1020589780800,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2404.TW",
@@ -14149,7 +14203,7 @@
       "market_cap_rank": 75,
       "market_cap": 253480308340,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6139.TW",
@@ -14412,7 +14466,7 @@
       "market_cap_rank": 97,
       "market_cap": 185398094788,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1303.TW",
@@ -14676,7 +14730,7 @@
       "market_cap_rank": 6,
       "market_cap": 2490277978946,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1301.TW",
@@ -14694,7 +14748,7 @@
       "return_20d": 13.2132,
       "rs_5d": 6.5709,
       "rs_20d": 7.5758,
-      "rs_acceleration": 2.6052,
+      "rs_acceleration": 2.6051,
       "volume_ratio": 4.803,
       "ma20_distance": 14.5723,
       "ma20": 65.81,
@@ -14940,7 +14994,7 @@
       "market_cap_rank": 50,
       "market_cap": 479976854887,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1326.TW",
@@ -15204,7 +15258,7 @@
       "market_cap_rank": 54,
       "market_cap": 444277920858,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2881.TW",
@@ -15467,7 +15521,7 @@
       "market_cap_rank": 7,
       "market_cap": 2178145250036,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2882.TW",
@@ -15730,7 +15784,7 @@
       "market_cap_rank": 12,
       "market_cap": 1657620744464,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2891.TW",
@@ -15993,7 +16047,7 @@
       "market_cap_rank": 15,
       "market_cap": 1351736583772,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2887.TW",
@@ -16257,7 +16311,7 @@
       "market_cap_rank": 23,
       "market_cap": 1058599863174,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2885.TW",
@@ -16520,7 +16574,7 @@
       "market_cap_rank": 27,
       "market_cap": 970507716080,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2884.TW",
@@ -16783,7 +16837,7 @@
       "market_cap_rank": 30,
       "market_cap": 810850604048,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2886.TW",
@@ -17047,7 +17101,7 @@
       "market_cap_rank": 32,
       "market_cap": 738702238444,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2890.TW",
@@ -17310,7 +17364,7 @@
       "market_cap_rank": 38,
       "market_cap": 660023833393,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2880.TW",
@@ -17573,7 +17627,7 @@
       "market_cap_rank": 39,
       "market_cap": 659232719259,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2883.TW",
@@ -17836,7 +17890,7 @@
       "market_cap_rank": 40,
       "market_cap": 653522580288,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2892.TW",
@@ -18100,7 +18154,7 @@
       "market_cap_rank": 45,
       "market_cap": 559361330485,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "5880.TW",
@@ -18364,7 +18418,7 @@
       "market_cap_rank": 56,
       "market_cap": 426737096947,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2801.TW",
@@ -18628,7 +18682,7 @@
       "market_cap_rank": 64,
       "market_cap": 334670478100,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "5876.TW",
@@ -18891,7 +18945,7 @@
       "market_cap_rank": 80,
       "market_cap": 243055848964,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2834.TW",
@@ -19155,7 +19209,7 @@
       "market_cap_rank": 99,
       "market_cap": 182490624441,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2383.TW",
@@ -19418,7 +19472,7 @@
       "market_cap_rank": 9,
       "market_cap": 2132010628300,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2327.TW",
@@ -19679,9 +19733,9 @@
         "price_confirmed": true
       },
       "market_cap_rank": 16,
-      "market_cap": 1331998755136,
+      "market_cap": 1334844114914,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "4958.TW",
@@ -19944,7 +19998,7 @@
       "market_cap_rank": 36,
       "market_cap": 674371319125,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6274.TWO",
@@ -20470,7 +20524,7 @@
       "market_cap_rank": 68,
       "market_cap": 305902632636,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2313.TW",
@@ -20733,7 +20787,7 @@
       "market_cap_rank": 69,
       "market_cap": 303519864894,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6213.TW",
@@ -20996,7 +21050,7 @@
       "market_cap_rank": 72,
       "market_cap": 289423385528,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2492.TW",
@@ -21220,7 +21274,7 @@
       "market_cap_rank": 90,
       "market_cap": 207667643272,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3533.TW",
@@ -21483,7 +21537,7 @@
       "market_cap_rank": 92,
       "market_cap": 205375811075,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2303.TW",
@@ -21500,7 +21554,7 @@
       "return_5d": -3.8835,
       "return_20d": 3.8462,
       "rs_5d": -7.485,
-      "rs_20d": -1.3248,
+      "rs_20d": -1.3249,
       "rs_acceleration": -5.4384,
       "volume_ratio": 0.7663,
       "ma20_distance": -0.9505,
@@ -21747,7 +21801,7 @@
       "market_cap_rank": 10,
       "market_cap": 1866658944002,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3443.TW",
@@ -22010,7 +22064,7 @@
       "market_cap_rank": 18,
       "market_cap": 1133740767060,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "7769.TW",
@@ -22274,7 +22328,7 @@
       "market_cap_rank": 22,
       "market_cap": 1058888050000,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "5274.TWO",
@@ -22819,7 +22873,7 @@
       "return_20d": 0.7286,
       "rs_5d": 3.8593,
       "rs_20d": -4.2872,
-      "rs_acceleration": 11.0233,
+      "rs_acceleration": 11.0232,
       "volume_ratio": 0.866,
       "ma20_distance": 0.7011,
       "ma20": 5491.5,
@@ -23327,7 +23381,7 @@
       "market_cap_rank": 60,
       "market_cap": 381994866981,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3661.TW",
@@ -23343,7 +23397,7 @@
       "change_1d": 0.2392,
       "return_5d": 12.0321,
       "return_20d": 3.7129,
-      "rs_5d": 7.8343,
+      "rs_5d": 7.8342,
       "rs_20d": -1.4515,
       "rs_acceleration": 6.2589,
       "volume_ratio": 1.4002,
@@ -23590,7 +23644,7 @@
       "market_cap_rank": 61,
       "market_cap": 361618427660,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "5347.TWO",
@@ -23871,7 +23925,7 @@
       "return_20d": -0.4115,
       "rs_5d": -7.1983,
       "rs_20d": -5.3705,
-      "rs_acceleration": -10.2965,
+      "rs_acceleration": -10.2966,
       "volume_ratio": 0.7324,
       "ma20_distance": -0.0413,
       "ma20": 72.63,
@@ -24117,7 +24171,7 @@
       "market_cap_rank": 63,
       "market_cap": 342097070146,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3034.TW",
@@ -24381,7 +24435,7 @@
       "market_cap_rank": 65,
       "market_cap": 321902567101,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3105.TWO",
@@ -24399,7 +24453,7 @@
       "return_20d": 30.5216,
       "rs_5d": 4.4221,
       "rs_20d": 24.0223,
-      "rs_acceleration": -5.5673,
+      "rs_acceleration": -5.5674,
       "volume_ratio": 0.8064,
       "ma20_distance": 16.4875,
       "ma20": 504.775,
@@ -24908,7 +24962,7 @@
       "market_cap_rank": 82,
       "market_cap": 233859083284,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6239.TW",
@@ -24924,9 +24978,9 @@
       "change_1d": -0.9662,
       "return_5d": 6.2176,
       "return_20d": 9.8214,
-      "rs_5d": 2.2377,
+      "rs_5d": 2.2376,
       "rs_20d": 4.3529,
-      "rs_acceleration": 3.7202,
+      "rs_acceleration": 3.7201,
       "volume_ratio": 1.0157,
       "ma20_distance": 7.3298,
       "ma20": 286.5,
@@ -25171,7 +25225,7 @@
       "market_cap_rank": 83,
       "market_cap": 233437589955,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3529.TWO",
@@ -25698,7 +25752,7 @@
       "market_cap_rank": 93,
       "market_cap": 201175196640,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3532.TW",
@@ -25962,7 +26016,7 @@
       "market_cap_rank": 94,
       "market_cap": 198966177900,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6415.TW",
@@ -26181,7 +26235,7 @@
       "market_cap_rank": 100,
       "market_cap": 178200677088,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2382.TW",
@@ -26445,7 +26499,7 @@
       "market_cap_rank": 14,
       "market_cap": 1376055189720,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6669.TW",
@@ -26708,7 +26762,7 @@
       "market_cap_rank": 17,
       "market_cap": 1254847489280,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2357.TW",
@@ -26971,7 +27025,7 @@
       "market_cap_rank": 34,
       "market_cap": 734589916920,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2395.TW",
@@ -27234,7 +27288,7 @@
       "market_cap_rank": 42,
       "market_cap": 637010723864,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3231.TW",
@@ -27498,7 +27552,7 @@
       "market_cap_rank": 43,
       "market_cap": 634520816250,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2376.TW",
@@ -27761,7 +27815,7 @@
       "market_cap_rank": 78,
       "market_cap": 244844387833,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "4938.TW",
@@ -28025,7 +28079,7 @@
       "market_cap_rank": 81,
       "market_cap": 240813783270,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2356.TW",
@@ -28289,7 +28343,7 @@
       "market_cap_rank": 89,
       "market_cap": 208432301335,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2412.TW",
@@ -28552,7 +28606,7 @@
       "market_cap_rank": 20,
       "market_cap": 1128708472298,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3045.TW",
@@ -28815,7 +28869,7 @@
       "market_cap_rank": 52,
       "market_cap": 456120299338,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "4904.TW",
@@ -29078,7 +29132,7 @@
       "market_cap_rank": 59,
       "market_cap": 382416767842,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6505.TW",
@@ -29342,7 +29396,7 @@
       "market_cap_rank": 25,
       "market_cap": 1019277682764,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3008.TW",
@@ -29605,7 +29659,7 @@
       "market_cap_rank": 29,
       "market_cap": 895313658465,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3481.TW",
@@ -29868,7 +29922,7 @@
       "market_cap_rank": 57,
       "market_cap": 419432860192,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2409.TW",
@@ -30131,7 +30185,7 @@
       "market_cap_rank": 73,
       "market_cap": 286412405987,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "6446.TW",
@@ -30395,7 +30449,7 @@
       "market_cap_rank": 48,
       "market_cap": 509033736380,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2603.TW",
@@ -30413,7 +30467,7 @@
       "return_20d": -0.2146,
       "rs_5d": -6.5602,
       "rs_20d": -5.1834,
-      "rs_acceleration": -5.0703,
+      "rs_acceleration": -5.0704,
       "volume_ratio": 1.1255,
       "ma20_distance": -2.1156,
       "ma20": 237.525,
@@ -30659,7 +30713,7 @@
       "market_cap_rank": 49,
       "market_cap": 503372496570,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2615.TW",
@@ -30923,7 +30977,7 @@
       "market_cap_rank": 67,
       "market_cap": 312885311670,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2618.TW",
@@ -31187,7 +31241,7 @@
       "market_cap_rank": 84,
       "market_cap": 226548639853,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2609.TW",
@@ -31451,7 +31505,7 @@
       "market_cap_rank": 91,
       "market_cap": 206383362357,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1216.TW",
@@ -31714,7 +31768,7 @@
       "market_cap_rank": 55,
       "market_cap": 428992164286,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2002.TW",
@@ -31977,7 +32031,7 @@
       "market_cap_rank": 70,
       "market_cap": 298175615893,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2207.TW",
@@ -32240,7 +32294,7 @@
       "market_cap_rank": 71,
       "market_cap": 293036055968,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3036.TW",
@@ -32256,7 +32310,7 @@
       "change_1d": 0.2326,
       "return_5d": 4.8662,
       "return_20d": 11.9481,
-      "rs_5d": 0.9369,
+      "rs_5d": 0.9368,
       "rs_20d": 6.3736,
       "rs_acceleration": 1.8805,
       "volume_ratio": 0.9891,
@@ -32503,7 +32557,7 @@
       "market_cap_rank": 74,
       "market_cap": 273806262066,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3702.TW",
@@ -32766,7 +32820,7 @@
       "market_cap_rank": 88,
       "market_cap": 210164916840,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1590.TW",
@@ -33030,7 +33084,7 @@
       "market_cap_rank": 77,
       "market_cap": 245999997540,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1519.TW",
@@ -33294,7 +33348,7 @@
       "market_cap_rank": 79,
       "market_cap": 243923188158,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "2912.TW",
@@ -33558,7 +33612,7 @@
       "market_cap_rank": 86,
       "market_cap": 221959351442,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "3293.TWO",
@@ -34084,7 +34138,7 @@
       "market_cap_rank": 95,
       "market_cap": 191841134421,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "1802.TW",
@@ -34348,7 +34402,7 @@
       "market_cap_rank": 96,
       "market_cap": 191059594560,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     },
     {
       "symbol": "5871.TW",
@@ -34612,7 +34666,7 @@
       "market_cap_rank": 98,
       "market_cap": 185038855904,
       "market_cap_as_of": "2026-10-07",
-      "shares_as_of": "2026-10-06"
+      "shares_as_of": "2026-10-07"
     }
   ],
   "groups": [
@@ -34637,10 +34691,10 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 76.8,
+      "score": 69.5,
       "breadth": 100,
-      "rs_5d": 4.0,
-      "return_20d": 12.22
+      "rs_5d": 3.55,
+      "return_20d": 11.25
     },
     {
       "id": "testing",
@@ -34676,10 +34730,10 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 75.8,
+      "score": 61.9,
       "breadth": 100,
-      "rs_5d": 3.32,
-      "return_20d": 17.72
+      "rs_5d": 2.03,
+      "return_20d": 13.01
     },
     {
       "id": "memory",
@@ -34702,10 +34756,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 55.7,
+      "score": 69.3,
       "breadth": 100,
-      "rs_5d": -3.69,
-      "return_20d": 4.53
+      "rs_5d": 0.18,
+      "return_20d": 5.86
     },
     {
       "id": "cooling",
@@ -34728,10 +34782,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 24.5,
-      "breadth": 100,
-      "rs_5d": 0.0,
-      "return_20d": -12.94
+      "score": 23.4,
+      "breadth": 0,
+      "rs_5d": 0.18,
+      "return_20d": -6.22
     },
     {
       "id": "power",
@@ -34754,10 +34808,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 68.0,
+      "score": 58.8,
       "breadth": 100,
-      "rs_5d": 0.78,
-      "return_20d": 5.44
+      "rs_5d": -1.56,
+      "return_20d": 3.88
     },
     {
       "id": "network",
@@ -34780,10 +34834,10 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 82.5,
+      "score": 78.0,
       "breadth": 100,
-      "rs_5d": 6.38,
-      "return_20d": 9.46
+      "rs_5d": 5.68,
+      "return_20d": 9.78
     },
     {
       "id": "pcb",
@@ -34806,10 +34860,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 57.5,
+      "score": 54.7,
       "breadth": 100,
-      "rs_5d": 6.02,
-      "return_20d": 2.6
+      "rs_5d": 2.35,
+      "return_20d": 3.18
     },
     {
       "id": "components",
@@ -34832,10 +34886,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 71.7,
+      "score": 64.2,
       "breadth": 100,
-      "rs_5d": 3.08,
-      "return_20d": 8.56
+      "rs_5d": 1.86,
+      "return_20d": 7.8
     },
     {
       "id": "robotics",
@@ -34858,10 +34912,10 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 54.6,
+      "score": 49.0,
       "breadth": 100,
-      "rs_5d": 2.47,
-      "return_20d": 5.04
+      "rs_5d": -0.45,
+      "return_20d": 3.71
     },
     {
       "id": "industry-其他電子業",
@@ -35404,7 +35458,7 @@
       "id": "chips",
       "name": "AI 晶片／晶圓",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "quiet",
       "total": 3,
       "available": 3,
@@ -35414,7 +35468,7 @@
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 6.7
+      "baseline_pct": 5.0
     },
     {
       "id": "testing",
@@ -35458,19 +35512,15 @@
       "id": "optical",
       "name": "光通訊／CPO",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 2,
       "available": 2,
-      "up_count": 1,
+      "up_count": 0,
       "down_count": 0,
-      "up_symbols": [
-        "MRVL"
-      ],
+      "up_symbols": [],
       "down_symbols": [],
-      "money_confirmed": [
-        "MRVL"
-      ],
+      "money_confirmed": [],
       "money_divergence": [],
       "baseline_pct": null
     },
@@ -35494,7 +35544,7 @@
       "id": "memory",
       "name": "記憶體",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -35526,7 +35576,7 @@
       "id": "cooling",
       "name": "散熱",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -35558,7 +35608,7 @@
       "id": "power",
       "name": "電源／BBU",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -35592,7 +35642,7 @@
       "id": "network",
       "name": "網通／交換器",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 2,
       "available": 2,
@@ -35624,7 +35674,7 @@
       "id": "pcb",
       "name": "PCB／載板",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -35662,7 +35712,7 @@
       "id": "components",
       "name": "機殼／滑軌／連接",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -35698,7 +35748,7 @@
       "id": "robotics",
       "name": "機器人／自動化",
       "market": "US",
-      "as_of": "2026-10-06",
+      "as_of": "2026-10-07",
       "status": "insufficient",
       "total": 1,
       "available": 1,
@@ -36077,7 +36127,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-10-07",
-    "generated_at": "2026-10-07T19:04:25.707401+00:00",
+    "generated_at": "2026-10-08T02:14:54.962491+00:00",
     "market_size": 1964,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
