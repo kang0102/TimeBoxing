@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-08T14:58:57.082288+00:00",
-  "last_success_at": "2026-10-08T14:58:57.082288+00:00",
+  "generated_at": "2026-10-08T19:04:44.057723+00:00",
+  "last_success_at": "2026-10-08T19:04:44.057723+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,11 +20,17 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-08T14:58:57.082288+00:00",
+    "checked_at": "2026-10-08T19:04:44.057723+00:00",
     "expected_tw_date": "2026-10-08",
     "errors": [],
     "cached_symbols": [],
-    "repairs": {}
+    "repairs": {
+      "^TWII": {
+        "date": "2026-10-08",
+        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      }
+    }
   },
   "coverage": {
     "available": 133,
@@ -48,7 +54,7 @@
       "rs_5d": -0.384,
       "rs_20d": -1.0926,
       "rs_acceleration": -1.249,
-      "volume_ratio": 1.1531,
+      "volume_ratio": 1.0424,
       "ma20_distance": 3.0417,
       "ma20": 2474.7258,
       "ma60": 2408.414,
@@ -58,9 +64,9 @@
       "breakout_20d": false,
       "previous_high20": 2590.0,
       "volume_mean20": 19498641.7,
-      "volume": 22484073.0,
+      "volume": 20325120.0,
       "next_session_high20": 2590.0,
-      "next_session_volume_mean20": 19331681.45,
+      "next_session_volume_mean20": 19223733.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2585.0,
@@ -68,17 +74,17 @@
         "high20": 2590.0,
         "volume_mean20": 19498641.7
       },
-      "score": 58.1,
+      "score": 57.0,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.38%",
-        "成交量為前 20 日均量 1.15 倍"
+        "成交量為前 20 日均量 1.04 倍"
       ],
       "components": {
         "relative_strength": 15.59,
         "acceleration": 7.5,
         "trend": 20,
-        "volume": 6.53,
+        "volume": 5.42,
         "breakout": 8.46
       },
       "series": [
@@ -236,7 +242,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 58.1,
+          "score": 57.0,
           "stage": "watch"
         }
       ],
@@ -321,7 +327,7 @@
       "rs_5d": -7.6566,
       "rs_20d": -4.8824,
       "rs_acceleration": -2.6954,
-      "volume_ratio": 1.2808,
+      "volume_ratio": 0.9439,
       "ma20_distance": -2.9889,
       "ma20": 4834.5,
       "ma60": 4204.1667,
@@ -331,9 +337,9 @@
       "breakout_20d": false,
       "previous_high20": 5480.0,
       "volume_mean20": 6798210.0,
-      "volume": 8706851.0,
+      "volume": 6416655.0,
       "next_session_high20": 5480.0,
-      "next_session_volume_mean20": 6940507.8,
+      "next_session_volume_mean20": 6825998.0,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 4835.0,
@@ -341,18 +347,18 @@
         "high20": 5480.0,
         "volume_mean20": 6798210.0
       },
-      "score": 31.4,
+      "score": 28.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -7.66%",
-        "成交量為前 20 日均量 1.28 倍",
+        "成交量為前 20 日均量 0.94 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 8.96,
         "acceleration": 4.61,
         "trend": 10,
-        "volume": 7.81,
+        "volume": 4.44,
         "breakout": 0
       },
       "series": [
@@ -510,7 +516,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 31.4,
+          "score": 28.0,
           "stage": "weakening"
         }
       ],
@@ -1270,7 +1276,7 @@
       "rs_5d": 2.2471,
       "rs_20d": 8.6842,
       "rs_acceleration": 14.4747,
-      "volume_ratio": 1.0684,
+      "volume_ratio": 1.0505,
       "ma20_distance": 4.1603,
       "ma20": 245.775,
       "ma60": 223.3083,
@@ -1280,9 +1286,9 @@
       "breakout_20d": false,
       "previous_high20": 289.5,
       "volume_mean20": 15066518.95,
-      "volume": 16097624.0,
+      "volume": 15828004.0,
       "next_session_high20": 289.5,
-      "next_session_volume_mean20": 15554022.45,
+      "next_session_volume_mean20": 15540541.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 250.0,
@@ -1290,17 +1296,17 @@
         "high20": 289.5,
         "volume_mean20": 15066518.95
       },
-      "score": 78.4,
+      "score": 78.2,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +2.25%",
-        "成交量為前 20 日均量 1.07 倍"
+        "成交量為前 20 日均量 1.05 倍"
       ],
       "components": {
         "relative_strength": 32.7,
         "acceleration": 20,
         "trend": 20,
-        "volume": 5.68,
+        "volume": 5.51,
         "breakout": 0
       },
       "series": [
@@ -1458,7 +1464,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 78.4,
+          "score": 78.2,
           "stage": "improving"
         }
       ],
@@ -1543,7 +1549,7 @@
       "rs_5d": 8.1836,
       "rs_20d": 29.3448,
       "rs_acceleration": 6.3504,
-      "volume_ratio": 1.5797,
+      "volume_ratio": 1.5603,
       "ma20_distance": 17.0147,
       "ma20": 241.85,
       "ma60": 218.9583,
@@ -1553,9 +1559,9 @@
       "breakout_20d": false,
       "previous_high20": 293.5,
       "volume_mean20": 16386350.5,
-      "volume": 25885918.0,
+      "volume": 25566942.0,
       "next_session_high20": 293.5,
-      "next_session_volume_mean20": 17334491.8,
+      "next_session_volume_mean20": 17318543.0,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 278.0,
@@ -1563,17 +1569,17 @@
         "high20": 293.5,
         "volume_mean20": 16386350.5
       },
-      "score": 92.2,
+      "score": 92.0,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +8.18%",
-        "成交量為前 20 日均量 1.58 倍"
+        "成交量為前 20 日均量 1.56 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 10.8,
+        "volume": 10.6,
         "breakout": 6.42
       },
       "series": [
@@ -1731,7 +1737,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 92.2,
+          "score": 92.0,
           "stage": "extended"
         }
       ],
@@ -1816,7 +1822,7 @@
       "rs_5d": 0.8691,
       "rs_20d": 8.3308,
       "rs_acceleration": 8.5622,
-      "volume_ratio": 2.147,
+      "volume_ratio": 2.0932,
       "ma20_distance": 5.8946,
       "ma20": 287.55,
       "ma60": 264.1889,
@@ -1826,9 +1832,9 @@
       "breakout_20d": false,
       "previous_high20": 330.0,
       "volume_mean20": 24219877.55,
-      "volume": 52000825.0,
+      "volume": 50698074.0,
       "next_session_high20": 330.0,
-      "next_session_volume_mean20": 26047950.6,
+      "next_session_volume_mean20": 25982813.05,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 299.5,
@@ -1840,7 +1846,7 @@
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +0.87%",
-        "成交量為前 20 日均量 2.15 倍"
+        "成交量為前 20 日均量 2.09 倍"
       ],
       "components": {
         "relative_strength": 32.08,
@@ -2089,7 +2095,7 @@
       "rs_5d": 2.7489,
       "rs_20d": 14.9988,
       "rs_acceleration": 1.4682,
-      "volume_ratio": 1.1081,
+      "volume_ratio": 1.0699,
       "ma20_distance": 10.2876,
       "ma20": 674.6,
       "ma60": 626.8167,
@@ -2099,9 +2105,9 @@
       "breakout_20d": false,
       "previous_high20": 758.0,
       "volume_mean20": 14138470.1,
-      "volume": 15666989.0,
+      "volume": 15126846.0,
       "next_session_high20": 758.0,
-      "next_session_volume_mean20": 14280764.45,
+      "next_session_volume_mean20": 14253757.3,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 732.0,
@@ -2109,17 +2115,17 @@
         "high20": 758.0,
         "volume_mean20": 14138470.1
       },
-      "score": 82.2,
+      "score": 81.8,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +2.75%",
-        "成交量為前 20 日均量 1.11 倍"
+        "成交量為前 20 日均量 1.07 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 12.94,
         "trend": 20,
-        "volume": 6.08,
+        "volume": 5.7,
         "breakout": 8.15
       },
       "series": [
@@ -2277,7 +2283,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 82.2,
+          "score": 81.8,
           "stage": "improving"
         }
       ],
@@ -2361,8 +2367,8 @@
       "return_20d": 43.2432,
       "rs_5d": 26.4093,
       "rs_20d": 36.8305,
-      "rs_acceleration": 29.9011,
-      "volume_ratio": 2.5587,
+      "rs_acceleration": 29.9012,
+      "volume_ratio": 2.5246,
       "ma20_distance": 30.6491,
       "ma20": 182.55,
       "ma60": 171.15,
@@ -2372,9 +2378,9 @@
       "breakout_20d": true,
       "previous_high20": 217.0,
       "volume_mean20": 1792934.25,
-      "volume": 4587558.0,
+      "volume": 4526366.0,
       "next_session_high20": 238.5,
-      "next_session_volume_mean20": 1931057.1,
+      "next_session_volume_mean20": 1927997.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 217.0,
@@ -2387,7 +2393,7 @@
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +26.41%",
-        "成交量為前 20 日均量 2.56 倍"
+        "成交量為前 20 日均量 2.52 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -2636,7 +2642,7 @@
       "rs_5d": 2.9928,
       "rs_20d": 0.5507,
       "rs_acceleration": 4.243,
-      "volume_ratio": 0.9474,
+      "volume_ratio": 0.923,
       "ma20_distance": 0.8386,
       "ma20": 971.85,
       "ma60": 896.7167,
@@ -2646,9 +2652,9 @@
       "breakout_20d": false,
       "previous_high20": 1090.0,
       "volume_mean20": 3451876.6,
-      "volume": 3270367.0,
+      "volume": 3186098.0,
       "next_session_high20": 1090.0,
-      "next_session_volume_mean20": 3499851.4,
+      "next_session_volume_mean20": 3495637.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1000.0,
@@ -2656,17 +2662,17 @@
         "high20": 1090.0,
         "volume_mean20": 3451876.6
       },
-      "score": 61.4,
+      "score": 61.2,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +2.99%",
-        "成交量為前 20 日均量 0.95 倍"
+        "成交量為前 20 日均量 0.92 倍"
       ],
       "components": {
         "relative_strength": 18.46,
         "acceleration": 18.49,
         "trend": 20,
-        "volume": 4.47,
+        "volume": 4.23,
         "breakout": 0
       },
       "series": [
@@ -2824,7 +2830,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 61.4,
+          "score": 61.2,
           "stage": "improving"
         }
       ],
@@ -2909,7 +2915,7 @@
       "rs_5d": 9.112,
       "rs_20d": -1.3094,
       "rs_acceleration": 16.0302,
-      "volume_ratio": 0.9327,
+      "volume_ratio": 0.8512,
       "ma20_distance": 5.067,
       "ma20": 2817.25,
       "ma60": 2557.3333,
@@ -2919,9 +2925,9 @@
       "breakout_20d": false,
       "previous_high20": 3210.0,
       "volume_mean20": 3254632.1,
-      "volume": 3035695.0,
+      "volume": 2770226.0,
       "next_session_high20": 3210.0,
-      "next_session_volume_mean20": 3217865.4,
+      "next_session_volume_mean20": 3204591.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 3140.0,
@@ -2929,17 +2935,17 @@
         "high20": 3210.0,
         "volume_mean20": 3254632.1
       },
-      "score": 61.7,
+      "score": 60.9,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +9.11%",
-        "成交量為前 20 日均量 0.93 倍"
+        "成交量為前 20 日均量 0.85 倍"
       ],
       "components": {
         "relative_strength": 15.21,
         "acceleration": 20,
         "trend": 20,
-        "volume": 4.33,
+        "volume": 3.51,
         "breakout": 2.21
       },
       "series": [
@@ -3097,7 +3103,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 61.7,
+          "score": 60.9,
           "stage": "improving"
         }
       ],
@@ -3182,7 +3188,7 @@
       "rs_5d": 2.0306,
       "rs_20d": -10.3882,
       "rs_acceleration": 6.0207,
-      "volume_ratio": 0.5794,
+      "volume_ratio": 0.5475,
       "ma20_distance": 0.0225,
       "ma20": 666.85,
       "ma60": 628.95,
@@ -3192,9 +3198,9 @@
       "breakout_20d": false,
       "previous_high20": 756.0,
       "volume_mean20": 2900069.7,
-      "volume": 1680373.0,
+      "volume": 1587700.0,
       "next_session_high20": 756.0,
-      "next_session_volume_mean20": 2778915.25,
+      "next_session_volume_mean20": 2774281.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 679.0,
@@ -3202,17 +3208,17 @@
         "high20": 756.0,
         "volume_mean20": 2900069.7
       },
-      "score": 40.8,
+      "score": 40.5,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +2.03%",
-        "成交量為前 20 日均量 0.58 倍"
+        "成交量為前 20 日均量 0.55 倍"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 20,
         "trend": 20,
-        "volume": 0.79,
+        "volume": 0.47,
         "breakout": 0
       },
       "series": [
@@ -3370,7 +3376,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 40.8,
+          "score": 40.5,
           "stage": "improving"
         }
       ],
@@ -3905,7 +3911,7 @@
       "rs_5d": 0.5094,
       "rs_20d": -4.2969,
       "rs_acceleration": -2.7222,
-      "volume_ratio": 1.5259,
+      "volume_ratio": 1.4836,
       "ma20_distance": 4.5495,
       "ma20": 508.85,
       "ma60": 481.4833,
@@ -3915,9 +3921,9 @@
       "breakout_20d": false,
       "previous_high20": 540.0,
       "volume_mean20": 42230870.65,
-      "volume": 64437976.0,
+      "volume": 62652164.0,
       "next_session_high20": 537.0,
-      "next_session_volume_mean20": 41775485.1,
+      "next_session_volume_mean20": 41686194.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 514.0,
@@ -3925,17 +3931,17 @@
         "high20": 540.0,
         "volume_mean20": 42230870.65
       },
-      "score": 53.3,
+      "score": 52.9,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +0.51%",
-        "成交量為前 20 日均量 1.53 倍"
+        "成交量為前 20 日均量 1.48 倍"
       ],
       "components": {
         "relative_strength": 9.98,
         "acceleration": 4.56,
         "trend": 20,
-        "volume": 10.26,
+        "volume": 9.84,
         "breakout": 8.52
       },
       "series": [
@@ -4093,7 +4099,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 53.3,
+          "score": 52.9,
           "stage": "watch"
         }
       ],
@@ -4178,7 +4184,7 @@
       "rs_5d": -3.5809,
       "rs_20d": -10.0659,
       "rs_acceleration": -7.6395,
-      "volume_ratio": 0.7852,
+      "volume_ratio": 0.779,
       "ma20_distance": 1.4763,
       "ma20": 174.425,
       "ma60": 170.1167,
@@ -4188,9 +4194,9 @@
       "breakout_20d": false,
       "previous_high20": 192.0,
       "volume_mean20": 89229434.45,
-      "volume": 70059736.0,
+      "volume": 69511476.0,
       "next_session_high20": 190.5,
-      "next_session_volume_mean20": 81840763.4,
+      "next_session_volume_mean20": 81813350.4,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 179.5,
@@ -4202,13 +4208,13 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.58%",
-        "成交量為前 20 日均量 0.79 倍"
+        "成交量為前 20 日均量 0.78 倍"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 20,
-        "volume": 2.85,
+        "volume": 2.79,
         "breakout": 2.19
       },
       "series": [
@@ -4451,7 +4457,7 @@
       "rs_5d": -4.2702,
       "rs_20d": -5.6222,
       "rs_acceleration": 0.2674,
-      "volume_ratio": 0.7315,
+      "volume_ratio": 0.6806,
       "ma20_distance": -0.8304,
       "ma20": 2077.25,
       "ma60": 2004.5833,
@@ -4461,9 +4467,9 @@
       "breakout_20d": false,
       "previous_high20": 2350.0,
       "volume_mean20": 3039089.05,
-      "volume": 2223205.0,
+      "volume": 2068534.0,
       "next_session_high20": 2350.0,
-      "next_session_volume_mean20": 3022246.45,
+      "next_session_volume_mean20": 3014512.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2060.0,
@@ -4471,18 +4477,18 @@
         "high20": 2350.0,
         "volume_mean20": 3039089.05
       },
-      "score": 30.5,
+      "score": 30.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.27%",
-        "成交量為前 20 日均量 0.73 倍",
+        "成交量為前 20 日均量 0.68 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 7.66,
         "acceleration": 10.53,
         "trend": 10,
-        "volume": 2.32,
+        "volume": 1.81,
         "breakout": 0
       },
       "series": [
@@ -4640,7 +4646,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 30.5,
+          "score": 30.0,
           "stage": "weakening"
         }
       ],
@@ -4950,7 +4956,7 @@
       "rs_5d": -3.9021,
       "rs_20d": 0.0304,
       "rs_acceleration": -6.2571,
-      "volume_ratio": 1.1305,
+      "volume_ratio": 1.0655,
       "ma20_distance": 0.7394,
       "ma20": 3414.75,
       "ma60": 3003.2973,
@@ -4960,9 +4966,9 @@
       "breakout_20d": false,
       "previous_high20": 3700.0,
       "volume_mean20": 2791509.75,
-      "volume": 3155899.0,
+      "volume": 2974272.0,
       "next_session_high20": 3700.0,
-      "next_session_volume_mean20": 2792595.65,
+      "next_session_volume_mean20": 2783514.3,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 3545.0,
@@ -4970,17 +4976,17 @@
         "high20": 3700.0,
         "volume_mean20": 2791509.75
       },
-      "score": 46.8,
+      "score": 46.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.90%",
-        "成交量為前 20 日均量 1.13 倍"
+        "成交量為前 20 日均量 1.07 倍"
       ],
       "components": {
         "relative_strength": 17.55,
         "acceleration": 0,
         "trend": 20,
-        "volume": 6.31,
+        "volume": 5.65,
         "breakout": 2.97
       },
       "series": [
@@ -5138,7 +5144,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 46.8,
+          "score": 46.2,
           "stage": "watch"
         }
       ],
@@ -5223,7 +5229,7 @@
       "rs_5d": -2.2681,
       "rs_20d": 8.3547,
       "rs_acceleration": 3.5101,
-      "volume_ratio": 1.6956,
+      "volume_ratio": 1.6574,
       "ma20_distance": 2.3052,
       "ma20": 1485.75,
       "ma60": 1190.05,
@@ -5233,9 +5239,9 @@
       "breakout_20d": false,
       "previous_high20": 1750.0,
       "volume_mean20": 3593014.8,
-      "volume": 6092371.0,
+      "volume": 5954945.0,
       "next_session_high20": 1750.0,
-      "next_session_volume_mean20": 3791212.35,
+      "next_session_volume_mean20": 3784341.05,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1525.0,
@@ -5243,17 +5249,17 @@
         "high20": 1750.0,
         "volume_mean20": 3593014.8
       },
-      "score": 81.1,
+      "score": 80.7,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -2.27%",
-        "成交量為前 20 日均量 1.70 倍"
+        "成交量為前 20 日均量 1.66 倍"
       ],
       "components": {
         "relative_strength": 32.12,
         "acceleration": 17.02,
         "trend": 20,
-        "volume": 11.96,
+        "volume": 11.57,
         "breakout": 0
       },
       "series": [
@@ -5411,7 +5417,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 81.1,
+          "score": 80.7,
           "stage": "watch"
         }
       ],
@@ -5496,7 +5502,7 @@
       "rs_5d": 2.1894,
       "rs_20d": 23.3196,
       "rs_acceleration": -14.3857,
-      "volume_ratio": 1.4246,
+      "volume_ratio": 1.3581,
       "ma20_distance": 14.5117,
       "ma20": 6257.0,
       "ma60": 5118.5423,
@@ -5506,9 +5512,9 @@
       "breakout_20d": false,
       "previous_high20": 7440.0,
       "volume_mean20": 1143054.55,
-      "volume": 1628395.0,
+      "volume": 1552383.0,
       "next_session_high20": 7440.0,
-      "next_session_volume_mean20": 1177256.3,
+      "next_session_volume_mean20": 1173455.7,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 6805.0,
@@ -5516,17 +5522,17 @@
         "high20": 7440.0,
         "volume_mean20": 1143054.55
       },
-      "score": 70.5,
+      "score": 69.9,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +2.19%",
-        "成交量為前 20 日均量 1.42 倍"
+        "成交量為前 20 日均量 1.36 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 0,
         "trend": 20,
-        "volume": 9.25,
+        "volume": 8.58,
         "breakout": 6.3
       },
       "series": [
@@ -5684,7 +5690,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 70.5,
+          "score": 69.9,
           "stage": "extended"
         }
       ],
@@ -5995,7 +6001,7 @@
       "rs_5d": 1.1417,
       "rs_20d": 3.9906,
       "rs_acceleration": 2.0258,
-      "volume_ratio": 0.4803,
+      "volume_ratio": 0.442,
       "ma20_distance": 7.3184,
       "ma20": 1831.0,
       "ma60": 1783.9167,
@@ -6005,9 +6011,9 @@
       "breakout_20d": false,
       "previous_high20": 2115.0,
       "volume_mean20": 10985525.3,
-      "volume": 5276302.0,
+      "volume": 4855304.0,
       "next_session_high20": 2115.0,
-      "next_session_volume_mean20": 10959422.45,
+      "next_session_volume_mean20": 10938372.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1990.0,
@@ -6019,7 +6025,7 @@
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +1.14%",
-        "成交量為前 20 日均量 0.48 倍"
+        "成交量為前 20 日均量 0.44 倍"
       ],
       "components": {
         "relative_strength": 24.48,
@@ -6267,8 +6273,8 @@
       "return_20d": 2.2337,
       "rs_5d": 2.5338,
       "rs_20d": -2.3431,
-      "rs_acceleration": 3.6781,
-      "volume_ratio": 0.8846,
+      "rs_acceleration": 3.6782,
+      "volume_ratio": 0.8653,
       "ma20_distance": 4.1393,
       "ma20": 285.675,
       "ma60": 264.3786,
@@ -6278,9 +6284,9 @@
       "breakout_20d": false,
       "previous_high20": 304.5,
       "volume_mean20": 15349650.05,
-      "volume": 13577943.0,
+      "volume": 13281874.0,
       "next_session_high20": 304.5,
-      "next_session_volume_mean20": 15116213.75,
+      "next_session_volume_mean20": 15101410.3,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 300.0,
@@ -6288,17 +6294,17 @@
         "high20": 304.5,
         "volume_mean20": 15349650.05
       },
-      "score": 62.3,
+      "score": 62.1,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +2.53%",
-        "成交量為前 20 日均量 0.88 倍"
+        "成交量為前 20 日均量 0.87 倍"
       ],
       "components": {
         "relative_strength": 13.4,
         "acceleration": 17.36,
         "trend": 20,
-        "volume": 3.85,
+        "volume": 3.65,
         "breakout": 7.7
       },
       "series": [
@@ -6456,7 +6462,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 62.3,
+          "score": 62.1,
           "stage": "improving"
         }
       ],
@@ -6541,7 +6547,7 @@
       "rs_5d": -2.4249,
       "rs_20d": -8.513,
       "rs_acceleration": -2.2546,
-      "volume_ratio": 1.2102,
+      "volume_ratio": 1.1186,
       "ma20_distance": 0.3147,
       "ma20": 1016.8,
       "ma60": 1038.95,
@@ -6551,9 +6557,9 @@
       "breakout_20d": false,
       "previous_high20": 1090.0,
       "volume_mean20": 266786.7,
-      "volume": 322877.0,
+      "volume": 298429.0,
       "next_session_high20": 1085.0,
-      "next_session_volume_mean20": 267951.2,
+      "next_session_volume_mean20": 266728.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1025.0,
@@ -6561,17 +6567,17 @@
         "high20": 1090.0,
         "volume_mean20": 266786.7
       },
-      "score": 28.8,
+      "score": 27.9,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -2.42%",
-        "成交量為前 20 日均量 1.21 倍"
+        "成交量為前 20 日均量 1.12 倍"
       ],
       "components": {
         "relative_strength": 2.6,
         "acceleration": 5.49,
         "trend": 10,
-        "volume": 7.1,
+        "volume": 6.19,
         "breakout": 3.58
       },
       "series": [
@@ -6729,7 +6735,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 28.8,
+          "score": 27.9,
           "stage": "watch"
         }
       ],
@@ -6814,7 +6820,7 @@
       "rs_5d": -3.4398,
       "rs_20d": -1.2969,
       "rs_acceleration": -4.6064,
-      "volume_ratio": 0.751,
+      "volume_ratio": 0.7281,
       "ma20_distance": 2.065,
       "ma20": 380.15,
       "ma60": 372.425,
@@ -6824,9 +6830,9 @@
       "breakout_20d": false,
       "previous_high20": 406.5,
       "volume_mean20": 3913567.75,
-      "volume": 2939053.0,
+      "volume": 2849542.0,
       "next_session_high20": 406.5,
-      "next_session_volume_mean20": 3945720.05,
+      "next_session_volume_mean20": 3941244.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 389.5,
@@ -6834,17 +6840,17 @@
         "high20": 406.5,
         "volume_mean20": 3913567.75
       },
-      "score": 44.0,
+      "score": 43.7,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.44%",
-        "成交量為前 20 日均量 0.75 倍"
+        "成交量為前 20 日均量 0.73 倍"
       ],
       "components": {
         "relative_strength": 15.23,
         "acceleration": 0.79,
         "trend": 20,
-        "volume": 2.51,
+        "volume": 2.28,
         "breakout": 5.45
       },
       "series": [
@@ -7002,7 +7008,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 44.0,
+          "score": 43.7,
           "stage": "watch"
         }
       ],
@@ -7087,7 +7093,7 @@
       "rs_5d": -3.525,
       "rs_20d": -3.2902,
       "rs_acceleration": -5.669,
-      "volume_ratio": 1.1016,
+      "volume_ratio": 1.0772,
       "ma20_distance": 0.6691,
       "ma20": 242.875,
       "ma60": 235.5667,
@@ -7097,9 +7103,9 @@
       "breakout_20d": false,
       "previous_high20": 264.0,
       "volume_mean20": 4025392.65,
-      "volume": 4434402.0,
+      "volume": 4336147.0,
       "next_session_high20": 264.0,
-      "next_session_volume_mean20": 4053916.85,
+      "next_session_volume_mean20": 4049004.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 252.5,
@@ -7107,17 +7113,17 @@
         "high20": 264.0,
         "volume_mean20": 4025392.65
       },
-      "score": 40.4,
+      "score": 40.1,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.52%",
-        "成交量為前 20 日均量 1.10 倍"
+        "成交量為前 20 日均量 1.08 倍"
       ],
       "components": {
         "relative_strength": 11.74,
         "acceleration": 0,
         "trend": 20,
-        "volume": 6.02,
+        "volume": 5.77,
         "breakout": 2.61
       },
       "series": [
@@ -7275,7 +7281,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 40.4,
+          "score": 40.1,
           "stage": "watch"
         }
       ],
@@ -7585,7 +7591,7 @@
       "rs_5d": 6.8266,
       "rs_20d": 1.1422,
       "rs_acceleration": 8.7452,
-      "volume_ratio": 1.1155,
+      "volume_ratio": 1.0536,
       "ma20_distance": 8.1646,
       "ma20": 1913.75,
       "ma60": 2079.1815,
@@ -7595,9 +7601,9 @@
       "breakout_20d": false,
       "previous_high20": 2140.0,
       "volume_mean20": 4001173.1,
-      "volume": 4463341.0,
+      "volume": 4215519.0,
       "next_session_high20": 2140.0,
-      "next_session_volume_mean20": 3945094.5,
+      "next_session_volume_mean20": 3932703.4,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2015.0,
@@ -7605,17 +7611,17 @@
         "high20": 2140.0,
         "volume_mean20": 4001173.1
       },
-      "score": 62.4,
+      "score": 61.8,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +6.83%",
-        "成交量為前 20 日均量 1.12 倍"
+        "成交量為前 20 日均量 1.05 倍"
       ],
       "components": {
         "relative_strength": 19.5,
         "acceleration": 20,
         "trend": 10,
-        "volume": 6.16,
+        "volume": 5.54,
         "breakout": 6.73
       },
       "series": [
@@ -7773,7 +7779,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 62.4,
+          "score": 61.8,
           "stage": "improving"
         }
       ],
@@ -7858,7 +7864,7 @@
       "rs_5d": 6.797,
       "rs_20d": 3.8208,
       "rs_acceleration": 7.0946,
-      "volume_ratio": 0.7922,
+      "volume_ratio": 0.7658,
       "ma20_distance": 9.2187,
       "ma20": 234.85,
       "ma60": 239.6417,
@@ -7868,9 +7874,9 @@
       "breakout_20d": false,
       "previous_high20": 270.0,
       "volume_mean20": 4390889.9,
-      "volume": 3478284.0,
+      "volume": 3362452.0,
       "next_session_high20": 270.0,
-      "next_session_volume_mean20": 4451829.0,
+      "next_session_volume_mean20": 4446037.4,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 257.5,
@@ -7878,17 +7884,17 @@
         "high20": 270.0,
         "volume_mean20": 4390889.9
       },
-      "score": 62.1,
+      "score": 61.8,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +6.80%",
-        "成交量為前 20 日均量 0.79 倍"
+        "成交量為前 20 日均量 0.77 倍"
       ],
       "components": {
         "relative_strength": 24.19,
         "acceleration": 20,
         "trend": 10,
-        "volume": 2.92,
+        "volume": 2.66,
         "breakout": 5.0
       },
       "series": [
@@ -8046,7 +8052,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 62.1,
+          "score": 61.8,
           "stage": "improving"
         }
       ],
@@ -8131,7 +8137,7 @@
       "rs_5d": 0.3912,
       "rs_20d": -5.1266,
       "rs_acceleration": 2.9029,
-      "volume_ratio": 0.9268,
+      "volume_ratio": 0.9179,
       "ma20_distance": 0.9193,
       "ma20": 72.335,
       "ma60": 79.1217,
@@ -8141,9 +8147,9 @@
       "breakout_20d": false,
       "previous_high20": 75.8,
       "volume_mean20": 2013277.6,
-      "volume": 1865861.0,
+      "volume": 1848035.0,
       "next_session_high20": 75.3,
-      "next_session_volume_mean20": 1908206.8,
+      "next_session_volume_mean20": 1907315.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 74.0,
@@ -8151,17 +8157,17 @@
         "high20": 75.80000305175781,
         "volume_mean20": 2013277.6
       },
-      "score": 44.9,
+      "score": 44.8,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +0.39%",
-        "成交量為前 20 日均量 0.93 倍"
+        "成交量為前 20 日均量 0.92 倍"
       ],
       "components": {
         "relative_strength": 8.53,
         "acceleration": 15.81,
         "trend": 10,
-        "volume": 4.27,
+        "volume": 4.18,
         "breakout": 6.31
       },
       "series": [
@@ -8319,7 +8325,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 44.9,
+          "score": 44.8,
           "stage": "improving"
         }
       ],
@@ -8854,7 +8860,7 @@
       "rs_5d": 2.492,
       "rs_20d": 27.164,
       "rs_acceleration": -4.7488,
-      "volume_ratio": 0.5857,
+      "volume_ratio": 0.5577,
       "ma20_distance": 13.7891,
       "ma20": 1116.1,
       "ma60": 1009.25,
@@ -8864,9 +8870,9 @@
       "breakout_20d": false,
       "previous_high20": 1420.0,
       "volume_mean20": 14690316.25,
-      "volume": 8604045.0,
+      "volume": 8192303.0,
       "next_session_high20": 1420.0,
-      "next_session_volume_mean20": 14267099.95,
+      "next_session_volume_mean20": 14246512.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1305.0,
@@ -8874,17 +8880,17 @@
         "high20": 1420.0,
         "volume_mean20": 14690316.25
       },
-      "score": 56.4,
+      "score": 56.1,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +2.49%",
-        "成交量為前 20 日均量 0.59 倍"
+        "成交量為前 20 日均量 0.56 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 0.5,
         "trend": 20,
-        "volume": 0.86,
+        "volume": 0.58,
         "breakout": 0
       },
       "series": [
@@ -9042,7 +9048,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 56.4,
+          "score": 56.1,
           "stage": "extended"
         }
       ],
@@ -9127,7 +9133,7 @@
       "rs_5d": 1.8512,
       "rs_20d": 37.4602,
       "rs_acceleration": -18.6424,
-      "volume_ratio": 0.4929,
+      "volume_ratio": 0.4777,
       "ma20_distance": 18.9996,
       "ma20": 1239.5,
       "ma60": 1174.8333,
@@ -9137,9 +9143,9 @@
       "breakout_20d": false,
       "previous_high20": 1560.0,
       "volume_mean20": 10856601.15,
-      "volume": 5351046.0,
+      "volume": 5186570.0,
       "next_session_high20": 1560.0,
-      "next_session_volume_mean20": 10819092.8,
+      "next_session_volume_mean20": 10810869.0,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1480.0,
@@ -9151,7 +9157,7 @@
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +1.85%",
-        "成交量為前 20 日均量 0.49 倍"
+        "成交量為前 20 日均量 0.48 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -9400,7 +9406,7 @@
       "rs_5d": 4.3637,
       "rs_20d": 28.3593,
       "rs_acceleration": -5.4759,
-      "volume_ratio": 0.3976,
+      "volume_ratio": 0.3864,
       "ma20_distance": 16.5944,
       "ma20": 922.0,
       "ma60": 836.2,
@@ -9410,9 +9416,9 @@
       "breakout_20d": false,
       "previous_high20": 1150.0,
       "volume_mean20": 18186660.6,
-      "volume": 7231726.0,
+      "volume": 7026647.0,
       "next_session_high20": 1150.0,
-      "next_session_volume_mean20": 18021740.05,
+      "next_session_volume_mean20": 18011486.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1100.0,
@@ -9424,7 +9430,7 @@
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +4.36%",
-        "成交量為前 20 日均量 0.40 倍"
+        "成交量為前 20 日均量 0.39 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -9673,7 +9679,7 @@
       "rs_5d": 15.0672,
       "rs_20d": 14.1836,
       "rs_acceleration": 10.9836,
-      "volume_ratio": 1.0549,
+      "volume_ratio": 1.0192,
       "ma20_distance": 17.3302,
       "ma20": 1095.2,
       "ma60": 1020.3667,
@@ -9683,9 +9689,9 @@
       "breakout_20d": false,
       "previous_high20": 1310.0,
       "volume_mean20": 9191283.45,
-      "volume": 9696058.0,
+      "volume": 9367345.0,
       "next_session_high20": 1310.0,
-      "next_session_volume_mean20": 9437864.3,
+      "next_session_volume_mean20": 9421428.65,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1245.0,
@@ -9693,17 +9699,17 @@
         "high20": 1310.0,
         "volume_mean20": 9191283.45
       },
-      "score": 88.6,
+      "score": 88.3,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +15.07%",
-        "成交量為前 20 日均量 1.05 倍"
+        "成交量為前 20 日均量 1.02 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 5.55,
+        "volume": 5.19,
         "breakout": 8.09
       },
       "series": [
@@ -9861,7 +9867,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 88.6,
+          "score": 88.3,
           "stage": "extended"
         }
       ],
@@ -10171,7 +10177,7 @@
       "rs_5d": 1.4185,
       "rs_20d": -7.9523,
       "rs_acceleration": 8.3973,
-      "volume_ratio": 0.9929,
+      "volume_ratio": 0.9046,
       "ma20_distance": -1.0697,
       "ma20": 883.45,
       "ma60": 986.8333,
@@ -10181,9 +10187,9 @@
       "breakout_20d": false,
       "previous_high20": 938.0,
       "volume_mean20": 1550398.35,
-      "volume": 1539456.0,
+      "volume": 1402512.0,
       "next_session_high20": 931.0,
-      "next_session_volume_mean20": 1512399.75,
+      "next_session_volume_mean20": 1505552.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 872.0,
@@ -10191,18 +10197,18 @@
         "high20": 938.0,
         "volume_mean20": 1550398.35
       },
-      "score": 31.7,
+      "score": 30.8,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +1.42%",
-        "成交量為前 20 日均量 0.99 倍",
+        "成交量為前 20 日均量 0.90 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 3.58,
         "acceleration": 20,
         "trend": 0,
-        "volume": 4.93,
+        "volume": 4.05,
         "breakout": 3.18
       },
       "series": [
@@ -10360,7 +10366,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 31.7,
+          "score": 30.8,
           "stage": "watch"
         }
       ],
@@ -10445,7 +10451,7 @@
       "rs_5d": 2.1215,
       "rs_20d": 11.5957,
       "rs_acceleration": -9.7008,
-      "volume_ratio": 3.4692,
+      "volume_ratio": 3.4087,
       "ma20_distance": 12.1292,
       "ma20": 87.31,
       "ma60": 84.2563,
@@ -10455,9 +10461,9 @@
       "breakout_20d": false,
       "previous_high20": 97.9,
       "volume_mean20": 1834227.15,
-      "volume": 6363228.0,
+      "volume": 6252359.0,
       "next_session_high20": 98.8,
-      "next_session_volume_mean20": 2107422.5,
+      "next_session_volume_mean20": 2101879.05,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 96.30000305175781,
@@ -10469,7 +10475,7 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +2.12%",
-        "成交量為前 20 日均量 3.47 倍"
+        "成交量為前 20 日均量 3.41 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -10718,7 +10724,7 @@
       "rs_5d": 4.3489,
       "rs_20d": 1.1692,
       "rs_acceleration": 5.4932,
-      "volume_ratio": 1.5074,
+      "volume_ratio": 1.4888,
       "ma20_distance": 6.0206,
       "ma20": 62.535,
       "ma60": 63.2543,
@@ -10728,9 +10734,9 @@
       "breakout_20d": false,
       "previous_high20": 72.0,
       "volume_mean20": 345915.05,
-      "volume": 521416.0,
+      "volume": 515000.0,
       "next_session_high20": 72.0,
-      "next_session_volume_mean20": 364735.75,
+      "next_session_volume_mean20": 364414.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 68.0,
@@ -10738,17 +10744,17 @@
         "high20": 72.0,
         "volume_mean20": 345915.05
       },
-      "score": 61.7,
+      "score": 61.5,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +4.35%",
-        "成交量為前 20 日均量 1.51 倍"
+        "成交量為前 20 日均量 1.49 倍"
       ],
       "components": {
         "relative_strength": 19.55,
         "acceleration": 20,
         "trend": 10,
-        "volume": 10.07,
+        "volume": 9.89,
         "breakout": 2.08
       },
       "series": [
@@ -10906,7 +10912,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 61.7,
+          "score": 61.5,
           "stage": "improving"
         }
       ],
@@ -10991,7 +10997,7 @@
       "rs_5d": -12.0544,
       "rs_20d": -19.0113,
       "rs_acceleration": -4.3951,
-      "volume_ratio": 4.8021,
+      "volume_ratio": 4.1813,
       "ma20_distance": -13.2903,
       "ma20": 12242.0,
       "ma60": 11558.2812,
@@ -11001,9 +11007,9 @@
       "breakout_20d": false,
       "previous_high20": 14200.0,
       "volume_mean20": 416785.8,
-      "volume": 2001427.0,
+      "volume": 1742688.0,
       "next_session_high20": 13500.0,
-      "next_session_volume_mean20": 460449.65,
+      "next_session_volume_mean20": 447512.7,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 11790.0,
@@ -11015,7 +11021,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -12.05%",
-        "成交量為前 20 日均量 4.80 倍",
+        "成交量為前 20 日均量 4.18 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -11265,7 +11271,7 @@
       "rs_5d": -1.9466,
       "rs_20d": -15.7428,
       "rs_acceleration": 3.1305,
-      "volume_ratio": 0.4347,
+      "volume_ratio": 0.4016,
       "ma20_distance": -3.2346,
       "ma20": 548.75,
       "ma60": 558.9263,
@@ -11275,9 +11281,9 @@
       "breakout_20d": false,
       "previous_high20": 623.0,
       "volume_mean20": 428832.35,
-      "volume": 186412.0,
+      "volume": 172200.0,
       "next_session_high20": 600.0,
-      "next_session_volume_mean20": 418615.45,
+      "next_session_volume_mean20": 417904.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 538.0,
@@ -11289,7 +11295,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.95%",
-        "成交量為前 20 日均量 0.43 倍",
+        "成交量為前 20 日均量 0.40 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -11539,7 +11545,7 @@
       "rs_5d": -9.4302,
       "rs_20d": 16.5038,
       "rs_acceleration": -21.9363,
-      "volume_ratio": 1.0257,
+      "volume_ratio": 0.9949,
       "ma20_distance": 5.416,
       "ma20": 2238.75,
       "ma60": 2166.9167,
@@ -11549,9 +11555,9 @@
       "breakout_20d": false,
       "previous_high20": 2685.0,
       "volume_mean20": 3534811.2,
-      "volume": 3625818.0,
+      "volume": 3516661.0,
       "next_session_high20": 2685.0,
-      "next_session_volume_mean20": 3579918.55,
+      "next_session_volume_mean20": 3574460.7,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2315.0,
@@ -11559,17 +11565,17 @@
         "high20": 2685.0,
         "volume_mean20": 3534811.2
       },
-      "score": 60.3,
+      "score": 59.9,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -9.43%",
-        "成交量為前 20 日均量 1.03 倍"
+        "成交量為前 20 日均量 0.99 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 0,
         "trend": 20,
-        "volume": 5.26,
+        "volume": 4.95,
         "breakout": 0
       },
       "series": [
@@ -11727,7 +11733,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 60.3,
+          "score": 59.9,
           "stage": "watch"
         }
       ],
@@ -12037,7 +12043,7 @@
       "rs_5d": -4.5653,
       "rs_20d": -2.6969,
       "rs_acceleration": -5.5179,
-      "volume_ratio": 0.7114,
+      "volume_ratio": 0.6851,
       "ma20_distance": 0.1221,
       "ma20": 163.8,
       "ma60": 182.1099,
@@ -12047,9 +12053,9 @@
       "breakout_20d": false,
       "previous_high20": 173.0,
       "volume_mean20": 391285.8,
-      "volume": 278349.0,
+      "volume": 268057.0,
       "next_session_high20": 173.0,
-      "next_session_volume_mean20": 378674.45,
+      "next_session_volume_mean20": 378159.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 168.0,
@@ -12057,17 +12063,17 @@
         "high20": 173.0,
         "volume_mean20": 391285.8
       },
-      "score": 29.7,
+      "score": 29.4,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -4.57%",
-        "成交量為前 20 日均量 0.71 倍"
+        "成交量為前 20 日均量 0.69 倍"
       ],
       "components": {
         "relative_strength": 12.78,
         "acceleration": 0,
         "trend": 10,
-        "volume": 2.11,
+        "volume": 1.85,
         "breakout": 4.8
       },
       "series": [
@@ -12225,7 +12231,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 29.7,
+          "score": 29.4,
           "stage": "watch"
         }
       ],
@@ -12310,7 +12316,7 @@
       "rs_5d": 1.7428,
       "rs_20d": -2.7129,
       "rs_acceleration": 2.1666,
-      "volume_ratio": 1.8077,
+      "volume_ratio": 1.7867,
       "ma20_distance": 2.6338,
       "ma20": 69.86,
       "ma60": 69.2017,
@@ -12320,9 +12326,9 @@
       "breakout_20d": false,
       "previous_high20": 73.9,
       "volume_mean20": 5862004.15,
-      "volume": 10597031.0,
+      "volume": 10473850.0,
       "next_session_high20": 73.9,
-      "next_session_volume_mean20": 6115293.55,
+      "next_session_volume_mean20": 6109134.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 73.30000305175781,
@@ -12330,17 +12336,17 @@
         "high20": 73.9000015258789,
         "volume_mean20": 5862004.15
       },
-      "score": 67.2,
+      "score": 67.0,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +1.74%",
-        "成交量為前 20 日均量 1.81 倍"
+        "成交量為前 20 日均量 1.79 倍"
       ],
       "components": {
         "relative_strength": 12.75,
         "acceleration": 14.33,
         "trend": 20,
-        "volume": 13.08,
+        "volume": 12.87,
         "breakout": 7.02
       },
       "series": [
@@ -12498,7 +12504,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 67.2,
+          "score": 67.0,
           "stage": "improving"
         }
       ],
@@ -12583,7 +12589,7 @@
       "rs_5d": -5.2404,
       "rs_20d": -8.1602,
       "rs_acceleration": -5.6529,
-      "volume_ratio": 0.5095,
+      "volume_ratio": 0.4977,
       "ma20_distance": -1.3453,
       "ma20": 189.55,
       "ma60": 177.8088,
@@ -12593,9 +12599,9 @@
       "breakout_20d": false,
       "previous_high20": 210.0,
       "volume_mean20": 11939746.95,
-      "volume": 6083396.0,
+      "volume": 5942683.0,
       "next_session_high20": 209.5,
-      "next_session_volume_mean20": 11427845.4,
+      "next_session_volume_mean20": 11420809.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 193.0,
@@ -12603,18 +12609,18 @@
         "high20": 210.0,
         "volume_mean20": 11939746.95
       },
-      "score": 13.3,
+      "score": 13.2,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -5.24%",
-        "成交量為前 20 日均量 0.51 倍",
+        "成交量為前 20 日均量 0.50 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 3.22,
         "acceleration": 0,
         "trend": 10,
-        "volume": 0.1,
+        "volume": 0,
         "breakout": 0
       },
       "series": [
@@ -12772,7 +12778,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 13.3,
+          "score": 13.2,
           "stage": "weakening"
         }
       ],
@@ -12857,7 +12863,7 @@
       "rs_5d": -9.5624,
       "rs_20d": -4.8108,
       "rs_acceleration": -22.6973,
-      "volume_ratio": 0.367,
+      "volume_ratio": 0.3568,
       "ma20_distance": 0.123,
       "ma20": 142.325,
       "ma60": 137.8184,
@@ -12867,9 +12873,9 @@
       "breakout_20d": false,
       "previous_high20": 158.5,
       "volume_mean20": 1741354.2,
-      "volume": 639066.0,
+      "volume": 621400.0,
       "next_session_high20": 158.5,
-      "next_session_volume_mean20": 1657152.75,
+      "next_session_volume_mean20": 1656269.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 145.0,
@@ -12881,7 +12887,7 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -9.56%",
-        "成交量為前 20 日均量 0.37 倍"
+        "成交量為前 20 日均量 0.36 倍"
       ],
       "components": {
         "relative_strength": 9.08,
@@ -13128,9 +13134,9 @@
       "return_5d": -0.7463,
       "return_20d": -5.0,
       "rs_5d": -2.6784,
-      "rs_20d": -9.253,
+      "rs_20d": -9.2529,
       "rs_acceleration": -2.7287,
-      "volume_ratio": 0.7147,
+      "volume_ratio": 0.6869,
       "ma20_distance": -1.6127,
       "ma20": 337.95,
       "ma60": 341.7417,
@@ -13140,9 +13146,9 @@
       "breakout_20d": false,
       "previous_high20": 381.5,
       "volume_mean20": 3418980.45,
-      "volume": 2443493.0,
+      "volume": 2348531.0,
       "next_session_high20": 381.5,
-      "next_session_volume_mean20": 3398347.35,
+      "next_session_volume_mean20": 3393599.25,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 342.5,
@@ -13150,18 +13156,18 @@
         "high20": 381.5,
         "volume_mean20": 3418980.45
       },
-      "score": 8.0,
+      "score": 7.7,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.68%",
-        "成交量為前 20 日均量 0.71 倍",
+        "成交量為前 20 日均量 0.69 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 1.31,
         "acceleration": 4.54,
         "trend": 0,
-        "volume": 2.15,
+        "volume": 1.87,
         "breakout": 0
       },
       "series": [
@@ -13319,7 +13325,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 8.0,
+          "score": 7.7,
           "stage": "weakening"
         }
       ],
@@ -13629,7 +13635,7 @@
       "rs_5d": -3.8768,
       "rs_20d": -5.4263,
       "rs_acceleration": -3.1232,
-      "volume_ratio": 1.2249,
+      "volume_ratio": 1.1783,
       "ma20_distance": -0.8462,
       "ma20": 251.125,
       "ma60": 250.6667,
@@ -13639,9 +13645,9 @@
       "breakout_20d": false,
       "previous_high20": 266.5,
       "volume_mean20": 32698419.35,
-      "volume": 40050776.0,
+      "volume": 38527797.0,
       "next_session_high20": 266.5,
-      "next_session_volume_mean20": 32757120.5,
+      "next_session_volume_mean20": 32680971.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 252.0,
@@ -13649,18 +13655,18 @@
         "high20": 266.5,
         "volume_mean20": 32698419.35
       },
-      "score": 32.4,
+      "score": 32.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -3.88%",
-        "成交量為前 20 日均量 1.22 倍",
+        "成交量為前 20 日均量 1.18 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 8.0,
         "acceleration": 3.75,
         "trend": 10,
-        "volume": 7.25,
+        "volume": 6.78,
         "breakout": 3.43
       },
       "series": [
@@ -13813,7 +13819,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 32.4,
+          "score": 32.0,
           "stage": "weakening"
         }
       ],
@@ -13898,7 +13904,7 @@
       "rs_5d": 9.8386,
       "rs_20d": -1.7355,
       "rs_acceleration": 25.5682,
-      "volume_ratio": 0.6857,
+      "volume_ratio": 0.6498,
       "ma20_distance": 4.0411,
       "ma20": 2239.5,
       "ma60": 2114.25,
@@ -13908,9 +13914,9 @@
       "breakout_20d": false,
       "previous_high20": 2560.0,
       "volume_mean20": 2571301.95,
-      "volume": 1763030.0,
+      "volume": 1670735.0,
       "next_session_high20": 2560.0,
-      "next_session_volume_mean20": 2422866.05,
+      "next_session_volume_mean20": 2418251.3,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2400.0,
@@ -13918,17 +13924,17 @@
         "high20": 2560.0,
         "volume_mean20": 2571301.95
       },
-      "score": 57.3,
+      "score": 57.0,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +9.84%",
-        "成交量為前 20 日均量 0.69 倍"
+        "成交量為前 20 日均量 0.65 倍"
       ],
       "components": {
         "relative_strength": 14.46,
         "acceleration": 20,
         "trend": 20,
-        "volume": 1.86,
+        "volume": 1.5,
         "breakout": 1.02
       },
       "series": [
@@ -14081,7 +14087,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 57.3,
+          "score": 57.0,
           "stage": "improving"
         }
       ],
@@ -14166,7 +14172,7 @@
       "rs_5d": -1.9466,
       "rs_20d": 18.159,
       "rs_acceleration": -15.1104,
-      "volume_ratio": 0.6273,
+      "volume_ratio": 0.5899,
       "ma20_distance": 10.8045,
       "ma20": 1177.75,
       "ma60": 1130.5833,
@@ -14176,9 +14182,9 @@
       "breakout_20d": false,
       "previous_high20": 1355.0,
       "volume_mean20": 1749613.1,
-      "volume": 1097495.0,
+      "volume": 1032112.0,
       "next_session_high20": 1355.0,
-      "next_session_volume_mean20": 1774601.95,
+      "next_session_volume_mean20": 1771332.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1330.0,
@@ -14186,17 +14192,17 @@
         "high20": 1355.0,
         "volume_mean20": 1749613.1
       },
-      "score": 62.6,
+      "score": 62.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -1.95%",
-        "成交量為前 20 日均量 0.63 倍"
+        "成交量為前 20 日均量 0.59 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 0,
         "trend": 20,
-        "volume": 1.27,
+        "volume": 0.9,
         "breakout": 6.31
       },
       "series": [
@@ -14349,7 +14355,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 62.6,
+          "score": 62.2,
           "stage": "watch"
         }
       ],
@@ -14434,7 +14440,7 @@
       "rs_5d": 0.5079,
       "rs_20d": 0.1578,
       "rs_acceleration": -4.4312,
-      "volume_ratio": 0.7121,
+      "volume_ratio": 0.6591,
       "ma20_distance": 4.7247,
       "ma20": 742.9,
       "ma60": 753.0633,
@@ -14444,9 +14450,9 @@
       "breakout_20d": false,
       "previous_high20": 805.0,
       "volume_mean20": 2419994.05,
-      "volume": 1723337.0,
+      "volume": 1595063.0,
       "next_session_high20": 805.0,
-      "next_session_volume_mean20": 2451460.3,
+      "next_session_volume_mean20": 2445046.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 787.0,
@@ -14454,17 +14460,17 @@
         "high20": 805.0,
         "volume_mean20": 2419994.05
       },
-      "score": 37.7,
+      "score": 37.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +0.51%",
-        "成交量為前 20 日均量 0.71 倍"
+        "成交量為前 20 日均量 0.66 倍"
       ],
       "components": {
         "relative_strength": 17.78,
         "acceleration": 1.14,
         "trend": 10,
-        "volume": 2.12,
+        "volume": 1.59,
         "breakout": 6.65
       },
       "series": [
@@ -14617,7 +14623,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 37.7,
+          "score": 37.2,
           "stage": "watch"
         }
       ],
@@ -14702,7 +14708,7 @@
       "rs_5d": 19.6714,
       "rs_20d": 26.0093,
       "rs_acceleration": 11.2077,
-      "volume_ratio": 1.0282,
+      "volume_ratio": 1.012,
       "ma20_distance": 23.3954,
       "ma20": 251.225,
       "ma60": 214.4833,
@@ -14712,9 +14718,9 @@
       "breakout_20d": false,
       "previous_high20": 322.0,
       "volume_mean20": 71186502.0,
-      "volume": 73192408.0,
+      "volume": 72040382.0,
       "next_session_high20": 322.0,
-      "next_session_volume_mean20": 71624134.4,
+      "next_session_volume_mean20": 71566533.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 314.0,
@@ -14722,17 +14728,17 @@
         "high20": 322.0,
         "volume_mean20": 71186502.0
       },
-      "score": 86.6,
+      "score": 86.4,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +19.67%",
-        "成交量為前 20 日均量 1.03 倍"
+        "成交量為前 20 日均量 1.01 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 5.28,
+        "volume": 5.12,
         "breakout": 6.27
       },
       "series": [
@@ -14885,7 +14891,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 86.6,
+          "score": 86.4,
           "stage": "extended"
         }
       ],
@@ -14970,7 +14976,7 @@
       "rs_5d": 19.3374,
       "rs_20d": 19.294,
       "rs_acceleration": 17.1151,
-      "volume_ratio": 8.6096,
+      "volume_ratio": 8.5801,
       "ma20_distance": 22.0354,
       "ma20": 66.62,
       "ma60": 62.4117,
@@ -14980,9 +14986,9 @@
       "breakout_20d": true,
       "previous_high20": 75.4,
       "volume_mean20": 28463541.2,
-      "volume": 245059431.0,
+      "volume": 244219378.0,
       "next_session_high20": 82.4,
-      "next_session_volume_mean20": 39316910.5,
+      "next_session_volume_mean20": 39274907.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 75.4000015258789,
@@ -14995,7 +15001,7 @@
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +19.34%",
-        "成交量為前 20 日均量 8.61 倍"
+        "成交量為前 20 日均量 8.58 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -15237,9 +15243,9 @@
       "return_5d": 14.6233,
       "return_20d": 9.915,
       "rs_5d": 12.392,
-      "rs_20d": 4.9943,
+      "rs_20d": 4.9944,
       "rs_acceleration": 11.7525,
-      "volume_ratio": 3.1184,
+      "volume_ratio": 3.1054,
       "ma20_distance": 11.6145,
       "ma20": 69.525,
       "ma60": 65.2633,
@@ -15249,9 +15255,9 @@
       "breakout_20d": true,
       "previous_high20": 77.1,
       "volume_mean20": 26373832.2,
-      "volume": 82244579.0,
+      "volume": 81901882.0,
       "next_session_high20": 79.1,
-      "next_session_volume_mean20": 29287771.3,
+      "next_session_volume_mean20": 29270636.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 75.80000305175781,
@@ -15264,7 +15270,7 @@
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +12.39%",
-        "成交量為前 20 日均量 3.12 倍"
+        "成交量為前 20 日均量 3.11 倍"
       ],
       "components": {
         "relative_strength": 26.24,
@@ -15506,9 +15512,9 @@
       "return_5d": 20.603,
       "return_20d": 12.3596,
       "rs_5d": 18.2553,
-      "rs_20d": 7.3294,
+      "rs_20d": 7.3295,
       "rs_acceleration": 17.0605,
-      "volume_ratio": 0.9054,
+      "volume_ratio": 0.8148,
       "ma20_distance": 14.5803,
       "ma20": 5236.5,
       "ma60": 5259.2735,
@@ -15518,9 +15524,9 @@
       "breakout_20d": false,
       "previous_high20": 6325.0,
       "volume_mean20": 2044706.15,
-      "volume": 1851258.0,
+      "volume": 1665965.0,
       "next_session_high20": 6325.0,
-      "next_session_volume_mean20": 2071287.95,
+      "next_session_volume_mean20": 2062023.3,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 5950.0,
@@ -15528,17 +15534,17 @@
         "high20": 6325.0,
         "volume_mean20": 2044706.15
       },
-      "score": 69.2,
+      "score": 68.3,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +18.26%",
-        "成交量為前 20 日均量 0.91 倍"
+        "成交量為前 20 日均量 0.81 倍"
       ],
       "components": {
         "relative_strength": 30.33,
         "acceleration": 20,
         "trend": 10,
-        "volume": 4.05,
+        "volume": 3.15,
         "breakout": 4.86
       },
       "series": [
@@ -15691,7 +15697,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 69.2,
+          "score": 68.3,
           "stage": "improving"
         }
       ],
@@ -15776,7 +15782,7 @@
       "rs_5d": 3.4284,
       "rs_20d": 6.9793,
       "rs_acceleration": -0.7942,
-      "volume_ratio": 1.1666,
+      "volume_ratio": 1.1251,
       "ma20_distance": 10.2813,
       "ma20": 575.8,
       "ma60": 586.7917,
@@ -15786,9 +15792,9 @@
       "breakout_20d": false,
       "previous_high20": 686.0,
       "volume_mean20": 40372532.55,
-      "volume": 47097780.0,
+      "volume": 45424113.0,
       "next_session_high20": 686.0,
-      "next_session_volume_mean20": 40834922.8,
+      "next_session_volume_mean20": 40751239.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 647.0,
@@ -15796,17 +15802,17 @@
         "high20": 686.0,
         "volume_mean20": 40372532.55
       },
-      "score": 57.4,
+      "score": 56.9,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +3.43%",
-        "成交量為前 20 日均量 1.17 倍"
+        "成交量為前 20 日均量 1.13 倍"
       ],
       "components": {
         "relative_strength": 29.71,
         "acceleration": 8.41,
         "trend": 10,
-        "volume": 6.67,
+        "volume": 6.25,
         "breakout": 2.57
       },
       "series": [
@@ -15959,7 +15965,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 57.4,
+          "score": 56.9,
           "stage": "watch"
         }
       ],
@@ -16044,7 +16050,7 @@
       "rs_5d": 13.8188,
       "rs_20d": 11.9797,
       "rs_acceleration": 10.7178,
-      "volume_ratio": 1.0883,
+      "volume_ratio": 1.0569,
       "ma20_distance": 15.8286,
       "ma20": 511.1,
       "ma60": 489.6,
@@ -16054,9 +16060,9 @@
       "breakout_20d": false,
       "previous_high20": 604.0,
       "volume_mean20": 30908756.3,
-      "volume": 33637232.0,
+      "volume": 32667276.0,
       "next_session_high20": 613.0,
-      "next_session_volume_mean20": 30961102.25,
+      "next_session_volume_mean20": 30912604.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 595.0,
@@ -16064,17 +16070,17 @@
         "high20": 604.0,
         "volume_mean20": 30908756.3
       },
-      "score": 88.9,
+      "score": 88.6,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +13.82%",
-        "成交量為前 20 日均量 1.09 倍"
+        "成交量為前 20 日均量 1.06 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 5.88,
+        "volume": 5.57,
         "breakout": 8.01
       },
       "series": [
@@ -16227,7 +16233,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 88.9,
+          "score": 88.6,
           "stage": "extended"
         }
       ],
@@ -16312,7 +16318,7 @@
       "rs_5d": 11.1484,
       "rs_20d": 23.5765,
       "rs_acceleration": 5.771,
-      "volume_ratio": 0.8768,
+      "volume_ratio": 0.8373,
       "ma20_distance": 16.0967,
       "ma20": 1498.75,
       "ma60": 1424.6667,
@@ -16322,9 +16328,9 @@
       "breakout_20d": false,
       "previous_high20": 1835.0,
       "volume_mean20": 9019042.0,
-      "volume": 7908087.0,
+      "volume": 7551964.0,
       "next_session_high20": 1835.0,
-      "next_session_volume_mean20": 9177727.05,
+      "next_session_volume_mean20": 9159920.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1720.0,
@@ -16332,17 +16338,17 @@
         "high20": 1835.0,
         "volume_mean20": 9019042.0
       },
-      "score": 83.6,
+      "score": 83.2,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +11.15%",
-        "成交量為前 20 日均量 0.88 倍"
+        "成交量為前 20 日均量 0.84 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 3.77,
+        "volume": 3.37,
         "breakout": 4.82
       },
       "series": [
@@ -16495,7 +16501,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 83.6,
+          "score": 83.2,
           "stage": "extended"
         }
       ],
@@ -16580,7 +16586,7 @@
       "rs_5d": 8.3173,
       "rs_20d": 2.5531,
       "rs_acceleration": 8.3484,
-      "volume_ratio": 0.9883,
+      "volume_ratio": 0.9724,
       "ma20_distance": 8.4272,
       "ma20": 228.725,
       "ma60": 219.5917,
@@ -16590,9 +16596,9 @@
       "breakout_20d": false,
       "previous_high20": 261.0,
       "volume_mean20": 23845772.15,
-      "volume": 23566905.0,
+      "volume": 23188404.0,
       "next_session_high20": 261.0,
-      "next_session_volume_mean20": 23080606.0,
+      "next_session_volume_mean20": 23061680.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 246.0,
@@ -16600,17 +16606,17 @@
         "high20": 261.0,
         "volume_mean20": 23845772.15
       },
-      "score": 71.9,
+      "score": 71.7,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +8.32%",
-        "成交量為前 20 日均量 0.99 倍"
+        "成交量為前 20 日均量 0.97 倍"
       ],
       "components": {
         "relative_strength": 21.97,
         "acceleration": 20,
         "trend": 20,
-        "volume": 4.88,
+        "volume": 4.72,
         "breakout": 5.02
       },
       "series": [
@@ -16763,7 +16769,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 71.9,
+          "score": 71.7,
           "stage": "improving"
         }
       ],
@@ -16848,7 +16854,7 @@
       "rs_5d": 7.8772,
       "rs_20d": 14.8647,
       "rs_acceleration": 10.8556,
-      "volume_ratio": 0.7222,
+      "volume_ratio": 0.6908,
       "ma20_distance": 9.7544,
       "ma20": 530.275,
       "ma60": 469.0667,
@@ -16858,9 +16864,9 @@
       "breakout_20d": false,
       "previous_high20": 590.0,
       "volume_mean20": 2756202.5,
-      "volume": 1990601.0,
+      "volume": 1904005.0,
       "next_session_high20": 594.0,
-      "next_session_volume_mean20": 2795222.9,
+      "next_session_volume_mean20": 2790893.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 582.0,
@@ -16868,17 +16874,17 @@
         "high20": 590.0,
         "volume_mean20": 2756202.5
       },
-      "score": 85.9,
+      "score": 85.6,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +7.88%",
-        "成交量為前 20 日均量 0.72 倍"
+        "成交量為前 20 日均量 0.69 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 2.22,
+        "volume": 1.91,
         "breakout": 8.64
       },
       "series": [
@@ -17031,7 +17037,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 85.9,
+          "score": 85.6,
           "stage": "improving"
         }
       ],
@@ -17116,7 +17122,7 @@
       "rs_5d": 23.1013,
       "rs_20d": 50.9641,
       "rs_acceleration": 6.2222,
-      "volume_ratio": 0.2757,
+      "volume_ratio": 0.2654,
       "ma20_distance": 33.6207,
       "ma20": 603.2,
       "ma60": 482.9,
@@ -17126,9 +17132,9 @@
       "breakout_20d": false,
       "previous_high20": 818.0,
       "volume_mean20": 18821647.35,
-      "volume": 5189880.0,
+      "volume": 4994591.0,
       "next_session_high20": 818.0,
-      "next_session_volume_mean20": 18296247.5,
+      "next_session_volume_mean20": 18286483.05,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 796.0,
@@ -17140,7 +17146,7 @@
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +23.10%",
-        "成交量為前 20 日均量 0.28 倍"
+        "成交量為前 20 日均量 0.27 倍"
       ],
       "components": {
         "relative_strength": 35,
@@ -17384,7 +17390,7 @@
       "rs_5d": 1.2249,
       "rs_20d": 12.9179,
       "rs_acceleration": -3.8624,
-      "volume_ratio": 1.9472,
+      "volume_ratio": 1.7725,
       "ma20_distance": 12.8961,
       "ma20": 1696.25,
       "ma60": 1764.5978,
@@ -17394,9 +17400,9 @@
       "breakout_20d": false,
       "previous_high20": 1925.0,
       "volume_mean20": 1189406.6,
-      "volume": 2315995.0,
+      "volume": 2108242.0,
       "next_session_high20": 1935.0,
-      "next_session_volume_mean20": 1275805.5,
+      "next_session_volume_mean20": 1265417.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1825.0,
@@ -17404,17 +17410,17 @@
         "high20": 1925.0,
         "volume_mean20": 1189406.6
       },
-      "score": 71.2,
+      "score": 69.5,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +1.22%",
-        "成交量為前 20 日均量 1.95 倍"
+        "成交量為前 20 日均量 1.77 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 2.28,
         "trend": 10,
-        "volume": 14.47,
+        "volume": 12.73,
         "breakout": 9.48
       },
       "series": [
@@ -17567,7 +17573,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 71.2,
+          "score": 69.5,
           "stage": "watch"
         }
       ],
@@ -17652,7 +17658,7 @@
       "rs_5d": 25.1745,
       "rs_20d": 25.9647,
       "rs_acceleration": 20.5973,
-      "volume_ratio": 1.8934,
+      "volume_ratio": 1.8606,
       "ma20_distance": 26.8978,
       "ma20": 330.975,
       "ma60": 298.0917,
@@ -17662,9 +17668,9 @@
       "breakout_20d": false,
       "previous_high20": 428.0,
       "volume_mean20": 34094152.95,
-      "volume": 64554204.0,
+      "volume": 63435921.0,
       "next_session_high20": 431.5,
-      "next_session_volume_mean20": 36074305.1,
+      "next_session_volume_mean20": 36018390.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 428.0,
@@ -17672,17 +17678,17 @@
         "high20": 428.0,
         "volume_mean20": 34094152.95
       },
-      "score": 97.1,
+      "score": 96.7,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +25.17%",
-        "成交量為前 20 日均量 1.89 倍"
+        "成交量為前 20 日均量 1.86 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 13.93,
+        "volume": 13.61,
         "breakout": 8.13
       },
       "series": [
@@ -17795,7 +17801,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 97.1,
+          "score": 96.7,
           "stage": "extended"
         }
       ],
@@ -17880,7 +17886,7 @@
       "rs_5d": -0.3178,
       "rs_20d": -1.9124,
       "rs_acceleration": 3.3858,
-      "volume_ratio": 0.9613,
+      "volume_ratio": 0.9533,
       "ma20_distance": 0.8403,
       "ma20": 151.725,
       "ma60": 138.8083,
@@ -17890,9 +17896,9 @@
       "breakout_20d": false,
       "previous_high20": 156.5,
       "volume_mean20": 14686185.4,
-      "volume": 14118033.0,
+      "volume": 14000206.0,
       "next_session_high20": 156.5,
-      "next_session_volume_mean20": 14794743.4,
+      "next_session_volume_mean20": 14788852.05,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 155.5,
@@ -17900,17 +17906,17 @@
         "high20": 156.5,
         "volume_mean20": 14686185.4
       },
-      "score": 63.3,
+      "score": 63.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.32%",
-        "成交量為前 20 日均量 0.96 倍"
+        "成交量為前 20 日均量 0.95 倍"
       ],
       "components": {
         "relative_strength": 14.15,
         "acceleration": 16.77,
         "trend": 20,
-        "volume": 4.61,
+        "volume": 4.53,
         "breakout": 7.76
       },
       "series": [
@@ -18063,7 +18069,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 63.3,
+          "score": 63.2,
           "stage": "watch"
         }
       ],
@@ -18148,7 +18154,7 @@
       "rs_5d": -2.3903,
       "rs_20d": -7.4224,
       "rs_acceleration": 0.078,
-      "volume_ratio": 1.0065,
+      "volume_ratio": 1.0008,
       "ma20_distance": -1.2124,
       "ma20": 111.35,
       "ma60": 104.5233,
@@ -18158,9 +18164,9 @@
       "breakout_20d": false,
       "previous_high20": 115.5,
       "volume_mean20": 19194169.85,
-      "volume": 19318895.0,
+      "volume": 19209100.0,
       "next_session_high20": 114.5,
-      "next_session_volume_mean20": 19174940.65,
+      "next_session_volume_mean20": 19169450.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 113.0,
@@ -18168,18 +18174,18 @@
         "high20": 115.5,
         "volume_mean20": 19194169.85
       },
-      "score": 35.0,
+      "score": 34.9,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.39%",
-        "成交量為前 20 日均量 1.01 倍",
+        "成交量為前 20 日均量 1.00 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 4.51,
         "acceleration": 10.16,
         "trend": 10,
-        "volume": 5.06,
+        "volume": 5.01,
         "breakout": 5.24
       },
       "series": [
@@ -18332,7 +18338,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 35.0,
+          "score": 34.9,
           "stage": "weakening"
         }
       ],
@@ -18417,7 +18423,7 @@
       "rs_5d": -2.8131,
       "rs_20d": -5.7374,
       "rs_acceleration": 0.7458,
-      "volume_ratio": 0.8044,
+      "volume_ratio": 0.7863,
       "ma20_distance": -1.8807,
       "ma20": 68.59,
       "ma60": 66.0783,
@@ -18427,9 +18433,9 @@
       "breakout_20d": false,
       "previous_high20": 72.0,
       "volume_mean20": 29345367.05,
-      "volume": 23606755.0,
+      "volume": 23072803.0,
       "next_session_high20": 72.0,
-      "next_session_volume_mean20": 29145577.0,
+      "next_session_volume_mean20": 29118879.4,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 68.69999694824219,
@@ -18437,18 +18443,18 @@
         "high20": 72.0,
         "volume_mean20": 29345367.05
       },
-      "score": 35.5,
+      "score": 35.3,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.81%",
-        "成交量為前 20 日均量 0.80 倍",
+        "成交量為前 20 日均量 0.79 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 7.46,
         "acceleration": 11.49,
         "trend": 10,
-        "volume": 3.04,
+        "volume": 2.86,
         "breakout": 3.47
       },
       "series": [
@@ -18601,7 +18607,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 35.5,
+          "score": 35.3,
           "stage": "weakening"
         }
       ],
@@ -18686,7 +18692,7 @@
       "rs_5d": -2.5409,
       "rs_20d": -8.4941,
       "rs_acceleration": 2.4056,
-      "volume_ratio": 0.9094,
+      "volume_ratio": 0.9014,
       "ma20_distance": -3.5464,
       "ma20": 42.5075,
       "ma60": 38.4994,
@@ -18696,9 +18702,9 @@
       "breakout_20d": false,
       "previous_high20": 44.8,
       "volume_mean20": 51271255.65,
-      "volume": 46624702.0,
+      "volume": 46214474.0,
       "next_session_high20": 44.8,
-      "next_session_volume_mean20": 50399389.6,
+      "next_session_volume_mean20": 50378878.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 42.150001525878906,
@@ -18706,18 +18712,18 @@
         "high20": 44.79999923706055,
         "volume_mean20": 51271255.65
       },
-      "score": 33.1,
+      "score": 33.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.54%",
-        "成交量為前 20 日均量 0.91 倍",
+        "成交量為前 20 日均量 0.90 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 2.64,
         "acceleration": 14.81,
         "trend": 10,
-        "volume": 4.09,
+        "volume": 4.01,
         "breakout": 1.52
       },
       "series": [
@@ -18870,7 +18876,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 33.1,
+          "score": 33.0,
           "stage": "weakening"
         }
       ],
@@ -18955,7 +18961,7 @@
       "rs_5d": -0.6373,
       "rs_20d": -7.5887,
       "rs_acceleration": 4.9877,
-      "volume_ratio": 1.067,
+      "volume_ratio": 1.0525,
       "ma20_distance": -1.2934,
       "ma20": 69.195,
       "ma60": 65.817,
@@ -18965,9 +18971,9 @@
       "breakout_20d": false,
       "previous_high20": 71.7,
       "volume_mean20": 18902599.35,
-      "volume": 20169533.0,
+      "volume": 19895454.0,
       "next_session_high20": 71.7,
-      "next_session_volume_mean20": 19145040.7,
+      "next_session_volume_mean20": 19131336.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 70.0,
@@ -18975,18 +18981,18 @@
         "high20": 71.69999694824219,
         "volume_mean20": 18902599.35
       },
-      "score": 45.1,
+      "score": 45.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.64%",
-        "成交量為前 20 日均量 1.07 倍",
+        "成交量為前 20 日均量 1.05 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 4.22,
         "acceleration": 19.98,
         "trend": 10,
-        "volume": 5.67,
+        "volume": 5.53,
         "breakout": 5.26
       },
       "series": [
@@ -19139,7 +19145,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 45.1,
+          "score": 45.0,
           "stage": "weakening"
         }
       ],
@@ -19224,7 +19230,7 @@
       "rs_5d": -2.7034,
       "rs_20d": -5.6302,
       "rs_acceleration": -0.0564,
-      "volume_ratio": 0.4254,
+      "volume_ratio": 0.419,
       "ma20_distance": -1.3753,
       "ma20": 45.6275,
       "ma60": 40.6358,
@@ -19234,9 +19240,9 @@
       "breakout_20d": false,
       "previous_high20": 47.35,
       "volume_mean20": 36224928.2,
-      "volume": 15410839.0,
+      "volume": 15178786.0,
       "next_session_high20": 47.35,
-      "next_session_volume_mean20": 33703630.2,
+      "next_session_volume_mean20": 33692027.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 45.75,
@@ -19248,7 +19254,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.70%",
-        "成交量為前 20 日均量 0.43 倍",
+        "成交量為前 20 日均量 0.42 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -19493,7 +19499,7 @@
       "rs_5d": -1.0434,
       "rs_20d": -6.9309,
       "rs_acceleration": 3.3309,
-      "volume_ratio": 1.0844,
+      "volume_ratio": 1.0781,
       "ma20_distance": -1.8124,
       "ma20": 50.21,
       "ma60": 48.5753,
@@ -19503,9 +19509,9 @@
       "breakout_20d": false,
       "previous_high20": 52.9,
       "volume_mean20": 22016406.65,
-      "volume": 23875602.0,
+      "volume": 23736085.0,
       "next_session_high20": 52.9,
-      "next_session_volume_mean20": 22002635.5,
+      "next_session_volume_mean20": 21995659.65,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 49.79999923706055,
@@ -19513,7 +19519,7 @@
         "high20": 52.900001525878906,
         "volume_mean20": 22016406.65
       },
-      "score": 41.1,
+      "score": 41.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.04%",
@@ -19524,7 +19530,7 @@
         "relative_strength": 5.37,
         "acceleration": 16.66,
         "trend": 10,
-        "volume": 5.84,
+        "volume": 5.78,
         "breakout": 3.19
       },
       "series": [
@@ -19677,7 +19683,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 41.1,
+          "score": 41.0,
           "stage": "weakening"
         }
       ],
@@ -19762,7 +19768,7 @@
       "rs_5d": -0.295,
       "rs_20d": -3.1577,
       "rs_acceleration": 5.3777,
-      "volume_ratio": 0.8131,
+      "volume_ratio": 0.8047,
       "ma20_distance": -0.8939,
       "ma20": 44.4473,
       "ma60": 41.2733,
@@ -19772,9 +19778,9 @@
       "breakout_20d": false,
       "previous_high20": 46.35,
       "volume_mean20": 24807775.35,
-      "volume": 20172214.0,
+      "volume": 19963500.0,
       "next_session_high20": 46.35,
-      "next_session_volume_mean20": 24328171.15,
+      "next_session_volume_mean20": 24317735.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 44.650001525878906,
@@ -19786,14 +19792,14 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.30%",
-        "成交量為前 20 日均量 0.81 倍",
+        "成交量為前 20 日均量 0.80 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 11.97,
         "acceleration": 20,
         "trend": 10,
-        "volume": 3.13,
+        "volume": 3.05,
         "breakout": 5.04
       },
       "series": [
@@ -20031,7 +20037,7 @@
       "rs_5d": -0.7548,
       "rs_20d": -3.1016,
       "rs_acceleration": 3.1502,
-      "volume_ratio": 0.6915,
+      "volume_ratio": 0.6814,
       "ma20_distance": -0.321,
       "ma20": 45.9475,
       "ma60": 42.3521,
@@ -20041,9 +20047,9 @@
       "breakout_20d": false,
       "previous_high20": 48.3,
       "volume_mean20": 12875837.75,
-      "volume": 8904196.0,
+      "volume": 8773966.0,
       "next_session_high20": 48.3,
-      "next_session_volume_mean20": 12668709.4,
+      "next_session_volume_mean20": 12662197.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 46.900001525878906,
@@ -20051,18 +20057,18 @@
         "high20": 48.29999923706055,
         "volume_mean20": 12875837.75
       },
-      "score": 45.1,
+      "score": 45.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.75%",
-        "成交量為前 20 日均量 0.69 倍",
+        "成交量為前 20 日均量 0.68 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 12.07,
         "acceleration": 16.3,
         "trend": 10,
-        "volume": 1.92,
+        "volume": 1.81,
         "breakout": 4.82
       },
       "series": [
@@ -20215,7 +20221,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 45.1,
+          "score": 45.0,
           "stage": "weakening"
         }
       ],
@@ -20300,7 +20306,7 @@
       "rs_5d": -0.2194,
       "rs_20d": -3.8366,
       "rs_acceleration": 6.9619,
-      "volume_ratio": 1.0124,
+      "volume_ratio": 1.0067,
       "ma20_distance": -2.2072,
       "ma20": 38.3975,
       "ma60": 33.9208,
@@ -20310,9 +20316,9 @@
       "breakout_20d": false,
       "previous_high20": 40.8,
       "volume_mean20": 47409406.05,
-      "volume": 47998775.0,
+      "volume": 47728693.0,
       "next_session_high20": 40.8,
-      "next_session_volume_mean20": 48094577.8,
+      "next_session_volume_mean20": 48081073.7,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 38.5,
@@ -20331,7 +20337,7 @@
         "relative_strength": 10.79,
         "acceleration": 20,
         "trend": 10,
-        "volume": 5.12,
+        "volume": 5.07,
         "breakout": 2.03
       },
       "series": [
@@ -20569,7 +20575,7 @@
       "rs_5d": -2.0733,
       "rs_20d": -2.4578,
       "rs_acceleration": 2.0441,
-      "volume_ratio": 0.6039,
+      "volume_ratio": 0.5998,
       "ma20_distance": -1.1888,
       "ma20": 39.115,
       "ma60": 35.752,
@@ -20579,9 +20585,9 @@
       "breakout_20d": false,
       "previous_high20": 40.95,
       "volume_mean20": 24333912.95,
-      "volume": 14695032.0,
+      "volume": 14596568.0,
       "next_session_high20": 40.95,
-      "next_session_volume_mean20": 23700206.95,
+      "next_session_volume_mean20": 23695283.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 38.900001525878906,
@@ -20600,7 +20606,7 @@
         "relative_strength": 13.2,
         "acceleration": 14.09,
         "trend": 10,
-        "volume": 1.04,
+        "volume": 1.0,
         "breakout": 4.38
       },
       "series": [
@@ -20838,7 +20844,7 @@
       "rs_5d": -0.2496,
       "rs_20d": -5.8999,
       "rs_acceleration": 4.732,
-      "volume_ratio": 0.596,
+      "volume_ratio": 0.5912,
       "ma20_distance": -0.9641,
       "ma20": 26.7075,
       "ma60": 25.5448,
@@ -20848,9 +20854,9 @@
       "breakout_20d": false,
       "previous_high20": 27.6,
       "volume_mean20": 17138767.95,
-      "volume": 10214586.0,
+      "volume": 10132249.0,
       "next_session_high20": 27.6,
-      "next_session_volume_mean20": 16656352.95,
+      "next_session_volume_mean20": 16652236.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 26.549999237060547,
@@ -20862,14 +20868,14 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.25%",
-        "成交量為前 20 日均量 0.60 倍",
+        "成交量為前 20 日均量 0.59 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 7.18,
         "acceleration": 19.46,
         "trend": 10,
-        "volume": 0.96,
+        "volume": 0.91,
         "breakout": 5.83
       },
       "series": [
@@ -21107,7 +21113,7 @@
       "rs_5d": -0.523,
       "rs_20d": -2.023,
       "rs_acceleration": 3.4109,
-      "volume_ratio": 0.6782,
+      "volume_ratio": 0.6757,
       "ma20_distance": 0.0806,
       "ma20": 27.9275,
       "ma60": 25.2664,
@@ -21117,9 +21123,9 @@
       "breakout_20d": false,
       "previous_high20": 29.75,
       "volume_mean20": 27984479.15,
-      "volume": 18977876.0,
+      "volume": 18909714.0,
       "next_session_high20": 29.75,
-      "next_session_volume_mean20": 27206217.45,
+      "next_session_volume_mean20": 27202809.35,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 27.75,
@@ -21137,7 +21143,7 @@
         "relative_strength": 13.96,
         "acceleration": 16.82,
         "trend": 20,
-        "volume": 1.78,
+        "volume": 1.76,
         "breakout": 3.95
       },
       "series": [
@@ -21375,7 +21381,7 @@
       "rs_5d": 0.5857,
       "rs_20d": -2.7133,
       "rs_acceleration": 4.3158,
-      "volume_ratio": 0.7586,
+      "volume_ratio": 0.7563,
       "ma20_distance": 1.1202,
       "ma20": 49.1,
       "ma60": 45.6257,
@@ -21385,9 +21391,9 @@
       "breakout_20d": false,
       "previous_high20": 50.0,
       "volume_mean20": 6551642.65,
-      "volume": 4970065.0,
+      "volume": 4955211.0,
       "next_session_high20": 50.0,
-      "next_session_volume_mean20": 5852431.55,
+      "next_session_volume_mean20": 5851688.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 49.5,
@@ -21395,7 +21401,7 @@
         "high20": 50.0,
         "volume_mean20": 6551642.65
       },
-      "score": 63.3,
+      "score": 63.2,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +0.59%",
@@ -21405,7 +21411,7 @@
         "relative_strength": 12.75,
         "acceleration": 18.63,
         "trend": 20,
-        "volume": 2.59,
+        "volume": 2.56,
         "breakout": 9.3
       },
       "series": [
@@ -21558,7 +21564,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 63.3,
+          "score": 63.2,
           "stage": "improving"
         }
       ],
@@ -21643,7 +21649,7 @@
       "rs_5d": -2.2268,
       "rs_20d": -5.826,
       "rs_acceleration": 2.9801,
-      "volume_ratio": 0.4797,
+      "volume_ratio": 0.4758,
       "ma20_distance": -2.4595,
       "ma20": 17.89,
       "ma60": 17.0549,
@@ -21653,9 +21659,9 @@
       "breakout_20d": false,
       "previous_high20": 18.8,
       "volume_mean20": 37605354.15,
-      "volume": 18040930.0,
+      "volume": 17891976.0,
       "next_session_high20": 18.8,
-      "next_session_volume_mean20": 35285172.05,
+      "next_session_volume_mean20": 35277724.35,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 17.549999237060547,
@@ -21912,7 +21918,7 @@
       "rs_5d": -10.4466,
       "rs_20d": 2.8443,
       "rs_acceleration": -10.2291,
-      "volume_ratio": 0.4573,
+      "volume_ratio": 0.4484,
       "ma20_distance": -1.9608,
       "ma20": 150.45,
       "ma60": 134.3917,
@@ -21922,9 +21928,9 @@
       "breakout_20d": false,
       "previous_high20": 168.5,
       "volume_mean20": 180966003.8,
-      "volume": 82754521.0,
+      "volume": 81139424.0,
       "next_session_high20": 168.5,
-      "next_session_volume_mean20": 174322848.2,
+      "next_session_volume_mean20": 174242093.35,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 148.5,
@@ -21936,7 +21942,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -10.45%",
-        "成交量為前 20 日均量 0.46 倍",
+        "成交量為前 20 日均量 0.45 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -22181,7 +22187,7 @@
       "rs_5d": 3.7628,
       "rs_20d": 33.9889,
       "rs_acceleration": 10.5139,
-      "volume_ratio": 0.8136,
+      "volume_ratio": 0.7748,
       "ma20_distance": 12.2261,
       "ma20": 7449.25,
       "ma60": 5764.0,
@@ -22191,9 +22197,9 @@
       "breakout_20d": false,
       "previous_high20": 8750.0,
       "volume_mean20": 1496221.15,
-      "volume": 1217308.0,
+      "volume": 1159259.0,
       "next_session_high20": 8750.0,
-      "next_session_volume_mean20": 1480159.65,
+      "next_session_volume_mean20": 1477257.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 8460.0,
@@ -22201,17 +22207,17 @@
         "high20": 8750.0,
         "volume_mean20": 1496221.15
       },
-      "score": 83.7,
+      "score": 83.3,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +3.76%",
-        "成交量為前 20 日均量 0.81 倍"
+        "成交量為前 20 日均量 0.77 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 3.14,
+        "volume": 2.75,
         "breakout": 5.54
       },
       "series": [
@@ -22364,7 +22370,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 83.7,
+          "score": 83.3,
           "stage": "extended"
         }
       ],
@@ -22449,7 +22455,7 @@
       "rs_5d": 5.8226,
       "rs_20d": -18.7984,
       "rs_acceleration": 17.6475,
-      "volume_ratio": 0.6593,
+      "volume_ratio": 0.5978,
       "ma20_distance": -1.443,
       "ma20": 6011.75,
       "ma60": 6176.3608,
@@ -22459,9 +22465,9 @@
       "breakout_20d": false,
       "previous_high20": 7160.0,
       "volume_mean20": 878846.3,
-      "volume": 579438.0,
+      "volume": 525353.0,
       "next_session_high20": 7150.0,
-      "next_session_volume_mean20": 822631.4,
+      "next_session_volume_mean20": 819927.15,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 5885.0,
@@ -22469,18 +22475,18 @@
         "high20": 7160.0,
         "volume_mean20": 878846.3
       },
-      "score": 21.6,
+      "score": 21.0,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +5.82%",
-        "成交量為前 20 日均量 0.66 倍",
+        "成交量為前 20 日均量 0.60 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 20,
         "trend": 0,
-        "volume": 1.59,
+        "volume": 0.98,
         "breakout": 0
       },
       "series": [
@@ -22633,7 +22639,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 21.6,
+          "score": 21.0,
           "stage": "watch"
         }
       ],
@@ -22718,7 +22724,7 @@
       "rs_5d": -9.9547,
       "rs_20d": -13.0997,
       "rs_acceleration": 0.0089,
-      "volume_ratio": 5.5141,
+      "volume_ratio": 5.0015,
       "ma20_distance": -7.2684,
       "ma20": 18855.5,
       "ma60": 16802.5833,
@@ -22728,9 +22734,9 @@
       "breakout_20d": false,
       "previous_high20": 21800.0,
       "volume_mean20": 215852.8,
-      "volume": 1190237.0,
+      "volume": 1079583.0,
       "next_session_high20": 21800.0,
-      "next_session_volume_mean20": 254147.2,
+      "next_session_volume_mean20": 248614.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 17750.0,
@@ -22742,7 +22748,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -9.95%",
-        "成交量為前 20 日均量 5.51 倍",
+        "成交量為前 20 日均量 5.00 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -22987,7 +22993,7 @@
       "rs_5d": 2.1201,
       "rs_20d": 13.0275,
       "rs_acceleration": -8.3417,
-      "volume_ratio": 1.7005,
+      "volume_ratio": 1.6193,
       "ma20_distance": 12.0698,
       "ma20": 1008.3,
       "ma60": 1005.155,
@@ -22997,9 +23003,9 @@
       "breakout_20d": false,
       "previous_high20": 1260.0,
       "volume_mean20": 12024608.8,
-      "volume": 20447776.0,
+      "volume": 19470973.0,
       "next_session_high20": 1260.0,
-      "next_session_volume_mean20": 12590121.85,
+      "next_session_volume_mean20": 12541281.7,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1215.0,
@@ -23007,17 +23013,17 @@
         "high20": 1260.0,
         "volume_mean20": 12024608.8
       },
-      "score": 67.0,
+      "score": 66.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +2.12%",
-        "成交量為前 20 日均量 1.70 倍"
+        "成交量為前 20 日均量 1.62 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 0,
         "trend": 20,
-        "volume": 12.0,
+        "volume": 11.19,
         "breakout": 0
       },
       "series": [
@@ -23170,7 +23176,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 67.0,
+          "score": 66.2,
           "stage": "watch"
         }
       ],
@@ -23255,7 +23261,7 @@
       "rs_5d": 8.6774,
       "rs_20d": -8.1032,
       "rs_acceleration": 15.6477,
-      "volume_ratio": 0.6019,
+      "volume_ratio": 0.5232,
       "ma20_distance": 1.7243,
       "ma20": 5480.5,
       "ma60": 5605.0833,
@@ -23265,9 +23271,9 @@
       "breakout_20d": false,
       "previous_high20": 6060.0,
       "volume_mean20": 901241.95,
-      "volume": 542431.0,
+      "volume": 471574.0,
       "next_session_high20": 6060.0,
-      "next_session_volume_mean20": 843934.65,
+      "next_session_volume_mean20": 840391.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 5530.0,
@@ -23275,17 +23281,17 @@
         "high20": 6060.0,
         "volume_mean20": 901241.95
       },
-      "score": 36.3,
+      "score": 35.5,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +8.68%",
-        "成交量為前 20 日均量 0.60 倍"
+        "成交量為前 20 日均量 0.52 倍"
       ],
       "components": {
         "relative_strength": 3.32,
         "acceleration": 20,
         "trend": 10,
-        "volume": 1.02,
+        "volume": 0.23,
         "breakout": 2.0
       },
       "series": [
@@ -23438,7 +23444,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 36.3,
+          "score": 35.5,
           "stage": "improving"
         }
       ],
@@ -23521,9 +23527,9 @@
       "return_5d": -1.706,
       "return_20d": 8.237,
       "rs_5d": -3.6195,
-      "rs_20d": 3.3914,
+      "rs_20d": 3.3915,
       "rs_acceleration": -3.3917,
-      "volume_ratio": 0.4421,
+      "volume_ratio": 0.4292,
       "ma20_distance": 1.7387,
       "ma20": 736.2,
       "ma60": 715.7083,
@@ -23533,9 +23539,9 @@
       "breakout_20d": false,
       "previous_high20": 794.0,
       "volume_mean20": 2656630.55,
-      "volume": 1174423.0,
+      "volume": 1140198.0,
       "next_session_high20": 794.0,
-      "next_session_volume_mean20": 2482893.2,
+      "next_session_volume_mean20": 2481181.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 741.0,
@@ -23547,7 +23553,7 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.62%",
-        "成交量為前 20 日均量 0.44 倍"
+        "成交量為前 20 日均量 0.43 倍"
       ],
       "components": {
         "relative_strength": 23.44,
@@ -23791,7 +23797,7 @@
       "rs_5d": 13.1585,
       "rs_20d": 2.9897,
       "rs_acceleration": 12.9724,
-      "volume_ratio": 2.1229,
+      "volume_ratio": 1.8861,
       "ma20_distance": 15.3897,
       "ma20": 3765.5,
       "ma60": 3715.4819,
@@ -23801,9 +23807,9 @@
       "breakout_20d": true,
       "previous_high20": 4295.0,
       "volume_mean20": 2314769.2,
-      "volume": 4914129.0,
+      "volume": 4365838.0,
       "next_session_high20": 4480.0,
-      "next_session_volume_mean20": 2483961.3,
+      "next_session_volume_mean20": 2456546.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 4190.0,
@@ -23811,18 +23817,18 @@
         "high20": 4295.0,
         "volume_mean20": 2314769.2
       },
-      "score": 87.7,
+      "score": 86.6,
       "stage": "extended",
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +13.16%",
-        "成交量為前 20 日均量 2.12 倍"
+        "成交量為前 20 日均量 1.89 倍"
       ],
       "components": {
         "relative_strength": 22.73,
         "acceleration": 20,
         "trend": 20,
-        "volume": 15,
+        "volume": 13.86,
         "breakout": 10
       },
       "series": [
@@ -23975,7 +23981,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 87.7,
+          "score": 86.6,
           "stage": "extended"
         }
       ],
@@ -24060,7 +24066,7 @@
       "rs_5d": -0.8837,
       "rs_20d": 17.2045,
       "rs_acceleration": -6.3107,
-      "volume_ratio": 0.5648,
+      "volume_ratio": 0.5564,
       "ma20_distance": 7.9595,
       "ma20": 172.75,
       "ma60": 161.2667,
@@ -24070,9 +24076,9 @@
       "breakout_20d": false,
       "previous_high20": 195.0,
       "volume_mean20": 18645120.9,
-      "volume": 10531654.0,
+      "volume": 10373801.0,
       "next_session_high20": 195.0,
-      "next_session_volume_mean20": 18545112.85,
+      "next_session_volume_mean20": 18537220.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 190.0,
@@ -24080,7 +24086,7 @@
         "high20": 195.0,
         "volume_mean20": 18645120.9
       },
-      "score": 61.3,
+      "score": 61.2,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.88%",
@@ -24090,7 +24096,7 @@
         "relative_strength": 35,
         "acceleration": 0,
         "trend": 20,
-        "volume": 0.65,
+        "volume": 0.56,
         "breakout": 5.64
       },
       "series": [
@@ -24243,7 +24249,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 61.3,
+          "score": 61.2,
           "stage": "watch"
         }
       ],
@@ -24328,7 +24334,7 @@
       "rs_5d": -4.9738,
       "rs_20d": -4.7407,
       "rs_acceleration": -7.5469,
-      "volume_ratio": 0.9736,
+      "volume_ratio": 0.9682,
       "ma20_distance": -0.5784,
       "ma20": 72.62,
       "ma60": 68.8256,
@@ -24338,9 +24344,9 @@
       "breakout_20d": false,
       "previous_high20": 78.1,
       "volume_mean20": 117126571.15,
-      "volume": 114030911.0,
+      "volume": 113407340.0,
       "next_session_high20": 78.1,
-      "next_session_volume_mean20": 114230360.15,
+      "next_session_volume_mean20": 114199181.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 72.5999984741211,
@@ -24348,7 +24354,7 @@
         "high20": 78.0999984741211,
         "volume_mean20": 117126571.15
       },
-      "score": 26.4,
+      "score": 26.3,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.97%",
@@ -24359,7 +24365,7 @@
         "relative_strength": 9.2,
         "acceleration": 0,
         "trend": 10,
-        "volume": 4.74,
+        "volume": 4.68,
         "breakout": 2.45
       },
       "series": [
@@ -24512,7 +24518,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 26.4,
+          "score": 26.3,
           "stage": "weakening"
         }
       ],
@@ -24597,7 +24603,7 @@
       "rs_5d": -4.8147,
       "rs_20d": -5.0134,
       "rs_acceleration": -1.8956,
-      "volume_ratio": 0.7826,
+      "volume_ratio": 0.7703,
       "ma20_distance": -2.4435,
       "ma20": 544.3,
       "ma60": 528.6583,
@@ -24607,9 +24613,9 @@
       "breakout_20d": false,
       "previous_high20": 567.0,
       "volume_mean20": 2904427.05,
-      "volume": 2272922.0,
+      "volume": 2237409.0,
       "next_session_high20": 567.0,
-      "next_session_volume_mean20": 2918564.15,
+      "next_session_volume_mean20": 2916788.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 529.0,
@@ -24617,18 +24623,18 @@
         "high20": 567.0,
         "volume_mean20": 2904427.05
       },
-      "score": 31.4,
+      "score": 31.3,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.81%",
-        "成交量為前 20 日均量 0.78 倍",
+        "成交量為前 20 日均量 0.77 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 8.73,
         "acceleration": 6.21,
         "trend": 10,
-        "volume": 2.83,
+        "volume": 2.7,
         "breakout": 3.65
       },
       "series": [
@@ -24781,7 +24787,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 31.4,
+          "score": 31.3,
           "stage": "weakening"
         }
       ],
@@ -24866,7 +24872,7 @@
       "rs_5d": 5.8903,
       "rs_20d": 25.7055,
       "rs_acceleration": -0.2661,
-      "volume_ratio": 0.5945,
+      "volume_ratio": 0.584,
       "ma20_distance": 13.532,
       "ma20": 511.75,
       "ma60": 422.9833,
@@ -24876,9 +24882,9 @@
       "breakout_20d": false,
       "previous_high20": 630.0,
       "volume_mean20": 27682603.0,
-      "volume": 16456823.0,
+      "volume": 16166560.0,
       "next_session_high20": 630.0,
-      "next_session_volume_mean20": 27650292.9,
+      "next_session_volume_mean20": 27635779.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 588.0,
@@ -24886,17 +24892,17 @@
         "high20": 630.0,
         "volume_mean20": 27682603.0
       },
-      "score": 67.6,
+      "score": 67.5,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +5.89%",
-        "成交量為前 20 日均量 0.59 倍"
+        "成交量為前 20 日均量 0.58 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 9.47,
         "trend": 20,
-        "volume": 0.94,
+        "volume": 0.84,
         "breakout": 2.22
       },
       "series": [
@@ -25049,7 +25055,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 67.6,
+          "score": 67.5,
           "stage": "extended"
         }
       ],
@@ -25134,7 +25140,7 @@
       "rs_5d": 3.2494,
       "rs_20d": 6.7918,
       "rs_acceleration": 4.2244,
-      "volume_ratio": 1.0998,
+      "volume_ratio": 1.0718,
       "ma20_distance": 6.898,
       "ma20": 288.125,
       "ma60": 276.981,
@@ -25144,9 +25150,9 @@
       "breakout_20d": false,
       "previous_high20": 316.0,
       "volume_mean20": 14475306.05,
-      "volume": 15919435.0,
+      "volume": 15514394.0,
       "next_session_high20": 316.0,
-      "next_session_volume_mean20": 14563227.55,
+      "next_session_volume_mean20": 14542975.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 307.5,
@@ -25154,17 +25160,17 @@
         "high20": 316.0,
         "volume_mean20": 14475306.05
       },
-      "score": 81.3,
+      "score": 81.0,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +3.25%",
-        "成交量為前 20 日均量 1.10 倍"
+        "成交量為前 20 日均量 1.07 倍"
       ],
       "components": {
         "relative_strength": 29.39,
         "acceleration": 18.45,
         "trend": 20,
-        "volume": 6.0,
+        "volume": 5.72,
         "breakout": 7.47
       },
       "series": [
@@ -25317,7 +25323,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 81.3,
+          "score": 81.0,
           "stage": "improving"
         }
       ],
@@ -25402,7 +25408,7 @@
       "rs_5d": -5.9984,
       "rs_20d": -12.058,
       "rs_acceleration": -7.3674,
-      "volume_ratio": 1.4601,
+      "volume_ratio": 1.4425,
       "ma20_distance": -2.8476,
       "ma20": 119.4,
       "ma60": 122.255,
@@ -25412,9 +25418,9 @@
       "breakout_20d": false,
       "previous_high20": 130.0,
       "volume_mean20": 25352512.4,
-      "volume": 37016818.0,
+      "volume": 36571457.0,
       "next_session_high20": 130.0,
-      "next_session_volume_mean20": 24285548.7,
+      "next_session_volume_mean20": 24263280.65,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 118.0,
@@ -25422,18 +25428,18 @@
         "high20": 130.0,
         "volume_mean20": 25352512.4
       },
-      "score": 9.6,
+      "score": 9.4,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -6.00%",
-        "成交量為前 20 日均量 1.46 倍",
+        "成交量為前 20 日均量 1.44 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 0,
-        "volume": 9.6,
+        "volume": 9.43,
         "breakout": 0
       },
       "series": [
@@ -25586,7 +25592,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 9.6,
+          "score": 9.4,
           "stage": "weakening"
         }
       ],
@@ -25671,7 +25677,7 @@
       "rs_5d": -11.9182,
       "rs_20d": -1.4336,
       "rs_acceleration": -15.065,
-      "volume_ratio": 0.6309,
+      "volume_ratio": 0.5661,
       "ma20_distance": -1.8519,
       "ma20": 2970.0,
       "ma60": 2631.9167,
@@ -25681,9 +25687,9 @@
       "breakout_20d": false,
       "previous_high20": 3635.0,
       "volume_mean20": 1390569.8,
-      "volume": 877241.0,
+      "volume": 787215.0,
       "next_session_high20": 3635.0,
-      "next_session_volume_mean20": 1328706.4,
+      "next_session_volume_mean20": 1324205.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 3015.0,
@@ -25691,18 +25697,18 @@
         "high20": 3635.0,
         "volume_mean20": 1390569.8
       },
-      "score": 26.3,
+      "score": 25.7,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -11.92%",
-        "成交量為前 20 日均量 0.63 倍",
+        "成交量為前 20 日均量 0.57 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 14.99,
         "acceleration": 0,
         "trend": 10,
-        "volume": 1.31,
+        "volume": 0.66,
         "breakout": 0
       },
       "series": [
@@ -25855,7 +25861,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 26.3,
+          "score": 25.7,
           "stage": "weakening"
         }
       ],
@@ -25937,10 +25943,10 @@
       "change_1d": 1.721,
       "return_5d": -2.6863,
       "return_20d": -27.0779,
-      "rs_5d": -4.5807,
+      "rs_5d": -4.5806,
       "rs_20d": -30.3425,
       "rs_acceleration": -3.5221,
-      "volume_ratio": 1.7864,
+      "volume_ratio": 1.656,
       "ma20_distance": -8.9656,
       "ma20": 6168.0,
       "ma60": 6396.6218,
@@ -25950,9 +25956,9 @@
       "breakout_20d": false,
       "previous_high20": 8260.0,
       "volume_mean20": 613975.8,
-      "volume": 1096804.0,
+      "volume": 1016758.0,
       "next_session_high20": 8260.0,
-      "next_session_volume_mean20": 632899.1,
+      "next_session_volume_mean20": 628896.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 5520.0,
@@ -25960,18 +25966,18 @@
         "high20": 8260.0,
         "volume_mean20": 613975.8
       },
-      "score": 15.8,
+      "score": 14.5,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.58%",
-        "成交量為前 20 日均量 1.79 倍",
+        "成交量為前 20 日均量 1.66 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 2.96,
         "trend": 0,
-        "volume": 12.86,
+        "volume": 11.56,
         "breakout": 0
       },
       "series": [
@@ -26124,7 +26130,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 15.8,
+          "score": 14.5,
           "stage": "weakening"
         }
       ],
@@ -26209,7 +26215,7 @@
       "rs_5d": 5.2936,
       "rs_20d": 22.1641,
       "rs_acceleration": -2.549,
-      "volume_ratio": 1.6524,
+      "volume_ratio": 1.6278,
       "ma20_distance": 12.9354,
       "ma20": 450.7,
       "ma60": 395.2583,
@@ -26219,9 +26225,9 @@
       "breakout_20d": false,
       "previous_high20": 513.0,
       "volume_mean20": 7796905.85,
-      "volume": 12883428.0,
+      "volume": 12691522.0,
       "next_session_high20": 518.0,
-      "next_session_volume_mean20": 7981880.75,
+      "next_session_volume_mean20": 7972285.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 513.0,
@@ -26229,17 +26235,17 @@
         "high20": 513.0,
         "volume_mean20": 7796905.85
       },
-      "score": 80.6,
+      "score": 80.4,
       "stage": "extended",
       "reasons": [
         "5 日相對大盤 +5.29%",
-        "成交量為前 20 日均量 1.65 倍"
+        "成交量為前 20 日均量 1.63 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 4.9,
         "trend": 20,
-        "volume": 11.52,
+        "volume": 11.28,
         "breakout": 9.22
       },
       "series": [
@@ -26392,7 +26398,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 80.6,
+          "score": 80.4,
           "stage": "extended"
         }
       ],
@@ -26477,7 +26483,7 @@
       "rs_5d": 9.8055,
       "rs_20d": 7.7548,
       "rs_acceleration": 14.8581,
-      "volume_ratio": 1.9549,
+      "volume_ratio": 1.9243,
       "ma20_distance": 9.0095,
       "ma20": 424.275,
       "ma60": 436.5167,
@@ -26487,9 +26493,9 @@
       "breakout_20d": true,
       "previous_high20": 461.0,
       "volume_mean20": 2237636.85,
-      "volume": 4374305.0,
+      "volume": 4305912.0,
       "next_session_high20": 475.0,
-      "next_session_volume_mean20": 2320442.45,
+      "next_session_volume_mean20": 2317022.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 456.5,
@@ -26497,18 +26503,18 @@
         "high20": 461.0,
         "volume_mean20": 2237636.85
       },
-      "score": 85.6,
+      "score": 85.3,
       "stage": "breakout",
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +9.81%",
-        "成交量為前 20 日均量 1.95 倍"
+        "成交量為前 20 日均量 1.92 倍"
       ],
       "components": {
         "relative_strength": 31.07,
         "acceleration": 20,
         "trend": 10,
-        "volume": 14.55,
+        "volume": 14.24,
         "breakout": 10
       },
       "series": [
@@ -26616,7 +26622,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 85.6,
+          "score": 85.3,
           "stage": "breakout"
         }
       ],
@@ -26701,7 +26707,7 @@
       "rs_5d": -4.442,
       "rs_20d": -5.2049,
       "rs_acceleration": -0.9853,
-      "volume_ratio": 1.2998,
+      "volume_ratio": 1.2487,
       "ma20_distance": -3.3408,
       "ma20": 336.75,
       "ma60": 328.3233,
@@ -26711,9 +26717,9 @@
       "breakout_20d": false,
       "previous_high20": 349.0,
       "volume_mean20": 13453337.6,
-      "volume": 17487175.0,
+      "volume": 16798850.0,
       "next_session_high20": 349.0,
-      "next_session_volume_mean20": 12634560.7,
+      "next_session_volume_mean20": 12600144.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 335.0,
@@ -26721,18 +26727,18 @@
         "high20": 349.0,
         "volume_mean20": 13453337.6
       },
-      "score": 37.7,
+      "score": 37.2,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.44%",
-        "成交量為前 20 日均量 1.30 倍",
+        "成交量為前 20 日均量 1.25 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 8.39,
         "acceleration": 8.03,
         "trend": 10,
-        "volume": 8.0,
+        "volume": 7.49,
         "breakout": 3.27
       },
       "series": [
@@ -26885,7 +26891,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 37.7,
+          "score": 37.2,
           "stage": "weakening"
         }
       ],
@@ -26970,7 +26976,7 @@
       "rs_5d": 4.0946,
       "rs_20d": -8.559,
       "rs_acceleration": 5.4726,
-      "volume_ratio": 0.6807,
+      "volume_ratio": 0.6464,
       "ma20_distance": 2.2948,
       "ma20": 2189.75,
       "ma60": 2107.1222,
@@ -26980,9 +26986,9 @@
       "breakout_20d": false,
       "previous_high20": 2485.0,
       "volume_mean20": 3101337.2,
-      "volume": 2110932.0,
+      "volume": 2004552.0,
       "next_session_high20": 2425.0,
-      "next_session_volume_mean20": 3011557.9,
+      "next_session_volume_mean20": 3006238.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 2240.0,
@@ -26990,17 +26996,17 @@
         "high20": 2485.0,
         "volume_mean20": 3101337.2
       },
-      "score": 44.5,
+      "score": 44.1,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +4.09%",
-        "成交量為前 20 日均量 0.68 倍"
+        "成交量為前 20 日均量 0.65 倍"
       ],
       "components": {
         "relative_strength": 2.52,
         "acceleration": 20,
         "trend": 20,
-        "volume": 1.81,
+        "volume": 1.46,
         "breakout": 0.14
       },
       "series": [
@@ -27153,7 +27159,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 44.5,
+          "score": 44.1,
           "stage": "improving"
         }
       ],
@@ -27238,7 +27244,7 @@
       "rs_5d": 1.2033,
       "rs_20d": -1.7137,
       "rs_acceleration": 1.1028,
-      "volume_ratio": 0.7509,
+      "volume_ratio": 0.7111,
       "ma20_distance": 3.5235,
       "ma20": 962.1,
       "ma60": 895.9,
@@ -27248,9 +27254,9 @@
       "breakout_20d": false,
       "previous_high20": 1010.0,
       "volume_mean20": 2387679.75,
-      "volume": 1792862.0,
+      "volume": 1697921.0,
       "next_session_high20": 1010.0,
-      "next_session_volume_mean20": 2241729.25,
+      "next_session_volume_mean20": 2236982.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 989.0,
@@ -27258,17 +27264,17 @@
         "high20": 1010.0,
         "volume_mean20": 2387679.75
       },
-      "score": 57.8,
+      "score": 57.4,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +1.20%",
-        "成交量為前 20 日均量 0.75 倍"
+        "成交量為前 20 日均量 0.71 倍"
       ],
       "components": {
         "relative_strength": 14.5,
         "acceleration": 12.21,
         "trend": 20,
-        "volume": 2.51,
+        "volume": 2.11,
         "breakout": 8.61
       },
       "series": [
@@ -27421,7 +27427,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 57.8,
+          "score": 57.4,
           "stage": "improving"
         }
       ],
@@ -27506,7 +27512,7 @@
       "rs_5d": -2.9761,
       "rs_20d": -3.4524,
       "rs_acceleration": -7.3085,
-      "volume_ratio": 1.0546,
+      "volume_ratio": 1.0475,
       "ma20_distance": 1.6173,
       "ma20": 185.5,
       "ma60": 180.5417,
@@ -27516,9 +27522,9 @@
       "breakout_20d": false,
       "previous_high20": 194.5,
       "volume_mean20": 43166413.8,
-      "volume": 45524226.0,
+      "volume": 45216038.0,
       "next_session_high20": 194.5,
-      "next_session_volume_mean20": 39339805.3,
+      "next_session_volume_mean20": 39324395.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 185.0,
@@ -27526,7 +27532,7 @@
         "high20": 194.5,
         "volume_mean20": 43166413.8
       },
-      "score": 43.9,
+      "score": 43.8,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -2.98%",
@@ -27536,7 +27542,7 @@
         "relative_strength": 11.46,
         "acceleration": 0,
         "trend": 20,
-        "volume": 5.55,
+        "volume": 5.47,
         "breakout": 6.92
       },
       "series": [
@@ -27689,7 +27695,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 43.9,
+          "score": 43.8,
           "stage": "watch"
         }
       ],
@@ -27774,7 +27780,7 @@
       "rs_5d": -1.4042,
       "rs_20d": 5.7007,
       "rs_acceleration": -3.0722,
-      "volume_ratio": 0.7385,
+      "volume_ratio": 0.7209,
       "ma20_distance": 3.2891,
       "ma20": 703.85,
       "ma60": 654.177,
@@ -27784,9 +27790,9 @@
       "breakout_20d": false,
       "previous_high20": 754.0,
       "volume_mean20": 2508495.95,
-      "volume": 1852636.0,
+      "volume": 1808493.0,
       "next_session_high20": 754.0,
-      "next_session_volume_mean20": 2408970.25,
+      "next_session_volume_mean20": 2406763.1,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 733.0,
@@ -27794,17 +27800,17 @@
         "high20": 754.0,
         "volume_mean20": 2508495.95
       },
-      "score": 60.1,
+      "score": 60.0,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -1.40%",
-        "成交量為前 20 日均量 0.74 倍"
+        "成交量為前 20 日均量 0.72 倍"
       ],
       "components": {
         "relative_strength": 27.48,
         "acceleration": 3.86,
         "trend": 20,
-        "volume": 2.39,
+        "volume": 2.21,
         "breakout": 6.42
       },
       "series": [
@@ -27957,7 +27963,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 60.1,
+          "score": 60.0,
           "stage": "watch"
         }
       ],
@@ -28042,7 +28048,7 @@
       "rs_5d": -3.4101,
       "rs_20d": -2.8714,
       "rs_acceleration": -2.8053,
-      "volume_ratio": 0.6442,
+      "volume_ratio": 0.6276,
       "ma20_distance": 0.5749,
       "ma20": 360.925,
       "ma60": 349.7753,
@@ -28052,9 +28058,9 @@
       "breakout_20d": false,
       "previous_high20": 396.5,
       "volume_mean20": 5935351.8,
-      "volume": 3823464.0,
+      "volume": 3724840.0,
       "next_session_high20": 396.5,
-      "next_session_volume_mean20": 5814225.55,
+      "next_session_volume_mean20": 5809294.35,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 365.5,
@@ -28062,17 +28068,17 @@
         "high20": 396.5,
         "volume_mean20": 5935351.8
       },
-      "score": 39.9,
+      "score": 39.7,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.41%",
-        "成交量為前 20 日均量 0.64 倍"
+        "成交量為前 20 日均量 0.63 倍"
       ],
       "components": {
         "relative_strength": 12.48,
         "acceleration": 4.39,
         "trend": 20,
-        "volume": 1.44,
+        "volume": 1.28,
         "breakout": 1.55
       },
       "series": [
@@ -28225,7 +28231,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 39.9,
+          "score": 39.7,
           "stage": "watch"
         }
       ],
@@ -28310,7 +28316,7 @@
       "rs_5d": -2.4902,
       "rs_20d": -6.5602,
       "rs_acceleration": -1.5655,
-      "volume_ratio": 0.6833,
+      "volume_ratio": 0.6805,
       "ma20_distance": -0.5047,
       "ma20": 90.155,
       "ma60": 88.83,
@@ -28320,9 +28326,9 @@
       "breakout_20d": false,
       "previous_high20": 95.0,
       "volume_mean20": 7218595.0,
-      "volume": 4932645.0,
+      "volume": 4911903.0,
       "next_session_high20": 95.0,
-      "next_session_volume_mean20": 6880663.0,
+      "next_session_volume_mean20": 6879625.9,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 90.0,
@@ -28341,7 +28347,7 @@
         "relative_strength": 6.02,
         "acceleration": 6.87,
         "trend": 10,
-        "volume": 1.83,
+        "volume": 1.8,
         "breakout": 4.42
       },
       "series": [
@@ -28579,7 +28585,7 @@
       "rs_5d": -5.56,
       "rs_20d": -14.1784,
       "rs_acceleration": -1.9927,
-      "volume_ratio": 0.8692,
+      "volume_ratio": 0.8575,
       "ma20_distance": -4.943,
       "ma20": 60.49,
       "ma60": 63.0167,
@@ -28589,9 +28595,9 @@
       "breakout_20d": false,
       "previous_high20": 65.5,
       "volume_mean20": 12385805.85,
-      "volume": 10765161.0,
+      "volume": 10620995.0,
       "next_session_high20": 65.1,
-      "next_session_volume_mean20": 11114429.9,
+      "next_session_volume_mean20": 11107221.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 58.099998474121094,
@@ -28599,18 +28605,18 @@
         "high20": 65.5,
         "volume_mean20": 12385805.85
       },
-      "score": 9.7,
+      "score": 9.6,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -5.56%",
-        "成交量為前 20 日均量 0.87 倍",
+        "成交量為前 20 日均量 0.86 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 6.01,
         "trend": 0,
-        "volume": 3.69,
+        "volume": 3.58,
         "breakout": 0
       },
       "series": [
@@ -28763,7 +28769,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 9.7,
+          "score": 9.6,
           "stage": "weakening"
         }
       ],
@@ -28848,7 +28854,7 @@
       "rs_5d": -1.2727,
       "rs_20d": 0.6773,
       "rs_acceleration": -0.4693,
-      "volume_ratio": 0.8109,
+      "volume_ratio": 0.8054,
       "ma20_distance": 1.6832,
       "ma20": 144.075,
       "ma60": 139.575,
@@ -28858,9 +28864,9 @@
       "breakout_20d": false,
       "previous_high20": 147.0,
       "volume_mean20": 11287446.6,
-      "volume": 9153351.0,
+      "volume": 9090930.0,
       "next_session_high20": 147.0,
-      "next_session_volume_mean20": 11193027.6,
+      "next_session_volume_mean20": 11189906.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 145.5,
@@ -28878,7 +28884,7 @@
         "relative_strength": 18.69,
         "acceleration": 9.06,
         "trend": 20,
-        "volume": 3.11,
+        "volume": 3.05,
         "breakout": 9.66
       },
       "series": [
@@ -29116,7 +29122,7 @@
       "rs_5d": -0.3392,
       "rs_20d": 0.3803,
       "rs_acceleration": 1.6088,
-      "volume_ratio": 0.8356,
+      "volume_ratio": 0.8329,
       "ma20_distance": 1.3072,
       "ma20": 122.4,
       "ma60": 116.175,
@@ -29126,9 +29132,9 @@
       "breakout_20d": false,
       "previous_high20": 125.5,
       "volume_mean20": 7157304.5,
-      "volume": 5980439.0,
+      "volume": 5961535.0,
       "next_session_high20": 125.5,
-      "next_session_volume_mean20": 7234476.8,
+      "next_session_volume_mean20": 7233531.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 122.5,
@@ -29140,13 +29146,13 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.34%",
-        "成交量為前 20 日均量 0.84 倍"
+        "成交量為前 20 日均量 0.83 倍"
       ],
       "components": {
         "relative_strength": 18.17,
         "acceleration": 13.22,
         "trend": 20,
-        "volume": 3.36,
+        "volume": 3.33,
         "breakout": 8.8
       },
       "series": [
@@ -29384,7 +29390,7 @@
       "rs_5d": -1.0128,
       "rs_20d": -2.6398,
       "rs_acceleration": 0.6,
-      "volume_ratio": 1.34,
+      "volume_ratio": 1.3366,
       "ma20_distance": 0.5454,
       "ma20": 105.425,
       "ma60": 103.3717,
@@ -29394,9 +29400,9 @@
       "breakout_20d": false,
       "previous_high20": 107.5,
       "volume_mean20": 4438512.15,
-      "volume": 5947425.0,
+      "volume": 5932500.0,
       "next_session_high20": 107.5,
-      "next_session_volume_mean20": 4540611.4,
+      "next_session_volume_mean20": 4539865.15,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 106.0,
@@ -29414,7 +29420,7 @@
         "relative_strength": 12.88,
         "acceleration": 11.2,
         "trend": 20,
-        "volume": 8.4,
+        "volume": 8.37,
         "breakout": 8.6
       },
       "series": [
@@ -29652,7 +29658,7 @@
       "rs_5d": 15.0201,
       "rs_20d": 32.6045,
       "rs_acceleration": 8.2288,
-      "volume_ratio": 1.4958,
+      "volume_ratio": 1.489,
       "ma20_distance": 20.7782,
       "ma20": 91.49,
       "ma60": 80.2283,
@@ -29662,9 +29668,9 @@
       "breakout_20d": true,
       "previous_high20": 110.0,
       "volume_mean20": 27595832.25,
-      "volume": 41277546.0,
+      "volume": 41090136.0,
       "next_session_high20": 114.0,
-      "next_session_volume_mean20": 29096195.45,
+      "next_session_volume_mean20": 29086824.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 107.0,
@@ -29672,18 +29678,18 @@
         "high20": 110.0,
         "volume_mean20": 27595832.25
       },
-      "score": 95.0,
+      "score": 94.9,
       "stage": "extended",
       "reasons": [
         "收盤突破前 20 日最高價",
         "5 日相對大盤 +15.02%",
-        "成交量為前 20 日均量 1.50 倍"
+        "成交量為前 20 日均量 1.49 倍"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 20,
         "trend": 20,
-        "volume": 9.96,
+        "volume": 9.89,
         "breakout": 10
       },
       "series": [
@@ -29836,7 +29842,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 95.0,
+          "score": 94.9,
           "stage": "extended"
         }
       ],
@@ -29919,9 +29925,9 @@
       "return_5d": 7.3328,
       "return_20d": 2.4615,
       "rs_5d": 5.2434,
-      "rs_20d": -2.1255,
+      "rs_20d": -2.1254,
       "rs_acceleration": 9.4746,
-      "volume_ratio": 1.0032,
+      "volume_ratio": 0.8968,
       "ma20_distance": 4.2539,
       "ma20": 6388.25,
       "ma60": 5541.1166,
@@ -29931,9 +29937,9 @@
       "breakout_20d": false,
       "previous_high20": 6970.0,
       "volume_mean20": 1905801.55,
-      "volume": 1911896.0,
+      "volume": 1709053.0,
       "next_session_high20": 6970.0,
-      "next_session_volume_mean20": 1915409.6,
+      "next_session_volume_mean20": 1905267.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 6845.0,
@@ -29941,17 +29947,17 @@
         "high20": 6970.0,
         "volume_mean20": 1905801.55
       },
-      "score": 64.4,
+      "score": 63.3,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +5.24%",
-        "成交量為前 20 日均量 1.00 倍"
+        "成交量為前 20 日均量 0.90 倍"
       ],
       "components": {
         "relative_strength": 13.78,
         "acceleration": 20,
         "trend": 20,
-        "volume": 5.03,
+        "volume": 3.97,
         "breakout": 5.55
       },
       "series": [
@@ -30104,7 +30110,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 64.4,
+          "score": 63.3,
           "stage": "improving"
         }
       ],
@@ -30189,7 +30195,7 @@
       "rs_5d": -4.3839,
       "rs_20d": -0.1704,
       "rs_acceleration": -6.7632,
-      "volume_ratio": 0.3729,
+      "volume_ratio": 0.3715,
       "ma20_distance": 1.6392,
       "ma20": 50.1775,
       "ma60": 49.2633,
@@ -30199,9 +30205,9 @@
       "breakout_20d": false,
       "previous_high20": 56.2,
       "volume_mean20": 213511152.95,
-      "volume": 79618711.0,
+      "volume": 79319321.0,
       "next_session_high20": 56.2,
-      "next_session_volume_mean20": 208137217.65,
+      "next_session_volume_mean20": 208122248.15,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 52.5,
@@ -30455,9 +30461,9 @@
       "return_5d": -4.4386,
       "return_20d": 23.6486,
       "rs_5d": -6.2989,
-      "rs_20d": 18.1131,
+      "rs_20d": 18.1132,
       "rs_acceleration": -9.6051,
-      "volume_ratio": 0.4717,
+      "volume_ratio": 0.4707,
       "ma20_distance": 7.5601,
       "ma20": 34.0275,
       "ma60": 28.4414,
@@ -30467,9 +30473,9 @@
       "breakout_20d": false,
       "previous_high20": 43.55,
       "volume_mean20": 580553378.2,
-      "volume": 273873214.0,
+      "volume": 273278676.0,
       "next_session_high20": 43.55,
-      "next_session_volume_mean20": 563143447.85,
+      "next_session_volume_mean20": 563113720.95,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 37.95000076293945,
@@ -30725,7 +30731,7 @@
       "rs_5d": 0.1485,
       "rs_20d": -18.7543,
       "rs_acceleration": 0.4406,
-      "volume_ratio": 0.6251,
+      "volume_ratio": 0.5966,
       "ma20_distance": -0.7063,
       "ma20": 1203.5,
       "ma60": 1276.5833,
@@ -30735,9 +30741,9 @@
       "breakout_20d": false,
       "previous_high20": 1450.0,
       "volume_mean20": 2934970.9,
-      "volume": 1834611.0,
+      "volume": 1751059.0,
       "next_session_high20": 1405.0,
-      "next_session_volume_mean20": 2795598.4,
+      "next_session_volume_mean20": 2791420.8,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1205.0,
@@ -30745,18 +30751,18 @@
         "high20": 1450.0,
         "volume_mean20": 2934970.9
       },
-      "score": 12.1,
+      "score": 11.8,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +0.15%",
-        "成交量為前 20 日均量 0.63 倍",
+        "成交量為前 20 日均量 0.60 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 10.88,
         "trend": 0,
-        "volume": 1.25,
+        "volume": 0.97,
         "breakout": 0
       },
       "series": [
@@ -30909,7 +30915,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 12.1,
+          "score": 11.8,
           "stage": "watch"
         }
       ],
@@ -30994,7 +31000,7 @@
       "rs_5d": -4.2126,
       "rs_20d": -3.0168,
       "rs_acceleration": -1.2338,
-      "volume_ratio": 0.9208,
+      "volume_ratio": 0.91,
       "ma20_distance": -2.1876,
       "ma20": 237.7,
       "ma60": 225.4333,
@@ -31004,9 +31010,9 @@
       "breakout_20d": false,
       "previous_high20": 245.5,
       "volume_mean20": 7323816.15,
-      "volume": 6743686.0,
+      "volume": 6664451.0,
       "next_session_high20": 245.5,
-      "next_session_volume_mean20": 7352548.6,
+      "next_session_volume_mean20": 7348586.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 232.5,
@@ -31014,18 +31020,18 @@
         "high20": 245.5,
         "volume_mean20": 7323816.15
       },
-      "score": 38.7,
+      "score": 38.6,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -4.21%",
-        "成交量為前 20 日均量 0.92 倍",
+        "成交量為前 20 日均量 0.91 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 12.22,
         "acceleration": 7.53,
         "trend": 10,
-        "volume": 4.21,
+        "volume": 4.1,
         "breakout": 4.7
       },
       "series": [
@@ -31178,7 +31184,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 38.7,
+          "score": 38.6,
           "stage": "weakening"
         }
       ],
@@ -31263,7 +31269,7 @@
       "rs_5d": -2.8182,
       "rs_20d": -4.9032,
       "rs_acceleration": 1.7203,
-      "volume_ratio": 0.5694,
+      "volume_ratio": 0.5652,
       "ma20_distance": -2.0856,
       "ma20": 113.875,
       "ma60": 102.7933,
@@ -31273,9 +31279,9 @@
       "breakout_20d": false,
       "previous_high20": 125.0,
       "volume_mean20": 13826474.4,
-      "volume": 7872610.0,
+      "volume": 7814242.0,
       "next_session_high20": 125.0,
-      "next_session_volume_mean20": 13656565.6,
+      "next_session_volume_mean20": 13653647.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 111.5,
@@ -31283,7 +31289,7 @@
         "high20": 125.0,
         "volume_mean20": 13826474.4
       },
-      "score": 33.1,
+      "score": 33.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -2.82%",
@@ -31294,7 +31300,7 @@
         "relative_strength": 8.92,
         "acceleration": 13.44,
         "trend": 10,
-        "volume": 0.69,
+        "volume": 0.65,
         "breakout": 0
       },
       "series": [
@@ -31447,7 +31453,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 33.1,
+          "score": 33.0,
           "stage": "weakening"
         }
       ],
@@ -31532,7 +31538,7 @@
       "rs_5d": -3.8055,
       "rs_20d": -6.8396,
       "rs_acceleration": -1.9633,
-      "volume_ratio": 0.6585,
+      "volume_ratio": 0.6632,
       "ma20_distance": -1.4344,
       "ma20": 42.0025,
       "ma60": 42.15,
@@ -31542,9 +31548,9 @@
       "breakout_20d": false,
       "previous_high20": 43.2,
       "volume_mean20": 16212697.6,
-      "volume": 10675561.0,
+      "volume": 10752009.0,
       "next_session_high20": 43.2,
-      "next_session_volume_mean20": 16236472.85,
+      "next_session_volume_mean20": 16240295.25,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 41.95000076293945,
@@ -31552,7 +31558,7 @@
         "high20": 43.20000076293945,
         "volume_mean20": 16212697.6
       },
-      "score": 19.0,
+      "score": 19.1,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -3.81%",
@@ -31563,7 +31569,7 @@
         "relative_strength": 5.53,
         "acceleration": 6.07,
         "trend": 0,
-        "volume": 1.58,
+        "volume": 1.63,
         "breakout": 5.83
       },
       "series": [
@@ -31716,7 +31722,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 19.0,
+          "score": 19.1,
           "stage": "weakening"
         }
       ],
@@ -31801,7 +31807,7 @@
       "rs_5d": -0.4458,
       "rs_20d": -0.4758,
       "rs_acceleration": 3.9503,
-      "volume_ratio": 0.6851,
+      "volume_ratio": 0.6804,
       "ma20_distance": 0.2014,
       "ma20": 59.58,
       "ma60": 55.98,
@@ -31811,9 +31817,9 @@
       "breakout_20d": false,
       "previous_high20": 63.1,
       "volume_mean20": 26287344.1,
-      "volume": 18010593.0,
+      "volume": 17886689.0,
       "next_session_high20": 63.1,
-      "next_session_volume_mean20": 26417419.2,
+      "next_session_volume_mean20": 26411224.0,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 59.099998474121094,
@@ -31825,13 +31831,13 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.45%",
-        "成交量為前 20 日均量 0.69 倍"
+        "成交量為前 20 日均量 0.68 倍"
       ],
       "components": {
         "relative_strength": 16.67,
         "acceleration": 17.9,
         "trend": 20,
-        "volume": 1.85,
+        "volume": 1.8,
         "breakout": 4.61
       },
       "series": [
@@ -32069,7 +32075,7 @@
       "rs_5d": 0.309,
       "rs_20d": -5.8467,
       "rs_acceleration": 2.3809,
-      "volume_ratio": 1.0888,
+      "volume_ratio": 1.0778,
       "ma20_distance": 1.3337,
       "ma20": 74.605,
       "ma60": 75.3492,
@@ -32079,9 +32085,9 @@
       "breakout_20d": false,
       "previous_high20": 76.7,
       "volume_mean20": 9373960.2,
-      "volume": 10206015.0,
+      "volume": 10103438.0,
       "next_session_high20": 76.7,
-      "next_session_volume_mean20": 9257019.45,
+      "next_session_volume_mean20": 9251890.6,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 75.5,
@@ -32089,17 +32095,17 @@
         "high20": 76.69999694824219,
         "volume_mean20": 9373960.2
       },
-      "score": 46.5,
+      "score": 46.4,
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +0.31%",
-        "成交量為前 20 日均量 1.09 倍"
+        "成交量為前 20 日均量 1.08 倍"
       ],
       "components": {
         "relative_strength": 7.27,
         "acceleration": 14.76,
         "trend": 10,
-        "volume": 5.89,
+        "volume": 5.78,
         "breakout": 8.57
       },
       "series": [
@@ -32252,7 +32258,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 46.5,
+          "score": 46.4,
           "stage": "improving"
         }
       ],
@@ -32337,7 +32343,7 @@
       "rs_5d": -1.9466,
       "rs_20d": -5.227,
       "rs_acceleration": -2.3925,
-      "volume_ratio": 0.9171,
+      "volume_ratio": 0.9161,
       "ma20_distance": 0.5038,
       "ma20": 18.855,
       "ma60": 18.972,
@@ -32347,9 +32353,9 @@
       "breakout_20d": false,
       "previous_high20": 19.3,
       "volume_mean20": 29062274.75,
-      "volume": 26654257.0,
+      "volume": 26622757.0,
       "next_session_high20": 19.3,
-      "next_session_volume_mean20": 29357554.75,
+      "next_session_volume_mean20": 29355979.75,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 18.950000762939453,
@@ -32367,7 +32373,7 @@
         "relative_strength": 8.35,
         "acceleration": 5.22,
         "trend": 10,
-        "volume": 4.17,
+        "volume": 4.16,
         "breakout": 8.19
       },
       "series": [
@@ -32602,10 +32608,10 @@
       "change_1d": -1.5209,
       "return_5d": 0.5825,
       "return_20d": -3.1776,
-      "rs_5d": -1.3755,
+      "rs_5d": -1.3754,
       "rs_20d": -7.5121,
       "rs_acceleration": 0.9073,
-      "volume_ratio": 0.9102,
+      "volume_ratio": 0.8932,
       "ma20_distance": -0.6807,
       "ma20": 521.55,
       "ma60": 516.2417,
@@ -32615,9 +32621,9 @@
       "breakout_20d": false,
       "previous_high20": 541.0,
       "volume_mean20": 252190.1,
-      "volume": 229542.0,
+      "volume": 225253.0,
       "next_session_high20": 541.0,
-      "next_session_volume_mean20": 254017.1,
+      "next_session_volume_mean20": 253802.65,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 526.0,
@@ -32625,18 +32631,18 @@
         "high20": 541.0,
         "volume_mean20": 252190.1
       },
-      "score": 36.0,
+      "score": 35.8,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.38%",
-        "成交量為前 20 日均量 0.91 倍",
+        "成交量為前 20 日均量 0.89 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 4.35,
         "acceleration": 11.81,
         "trend": 10,
-        "volume": 4.1,
+        "volume": 3.93,
         "breakout": 5.75
       },
       "series": [
@@ -32789,7 +32795,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 36.0,
+          "score": 35.8,
           "stage": "weakening"
         }
       ],
@@ -32874,7 +32880,7 @@
       "rs_5d": -0.5624,
       "rs_20d": 8.6293,
       "rs_acceleration": -3.0347,
-      "volume_ratio": 0.7972,
+      "volume_ratio": 0.7867,
       "ma20_distance": 5.5596,
       "ma20": 204.15,
       "ma60": 202.425,
@@ -32884,9 +32890,9 @@
       "breakout_20d": false,
       "previous_high20": 218.0,
       "volume_mean20": 6665847.6,
-      "volume": 5313998.0,
+      "volume": 5243997.0,
       "next_session_high20": 218.0,
-      "next_session_volume_mean20": 6659090.5,
+      "next_session_volume_mean20": 6655590.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 215.5,
@@ -32894,17 +32900,17 @@
         "high20": 218.0,
         "volume_mean20": 6665847.6
       },
-      "score": 68.4,
+      "score": 68.3,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -0.56%",
-        "成交量為前 20 日均量 0.80 倍"
+        "成交量為前 20 日均量 0.79 倍"
       ],
       "components": {
         "relative_strength": 32.6,
         "acceleration": 3.93,
         "trend": 20,
-        "volume": 2.97,
+        "volume": 2.87,
         "breakout": 8.85
       },
       "series": [
@@ -33057,7 +33063,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 68.4,
+          "score": 68.3,
           "stage": "watch"
         }
       ],
@@ -33142,7 +33148,7 @@
       "rs_5d": -3.1826,
       "rs_20d": 7.4065,
       "rs_acceleration": -7.2873,
-      "volume_ratio": 1.2781,
+      "volume_ratio": 1.2692,
       "ma20_distance": 3.707,
       "ma20": 113.3,
       "ma60": 110.4168,
@@ -33152,9 +33158,9 @@
       "breakout_20d": false,
       "previous_high20": 121.0,
       "volume_mean20": 7579777.85,
-      "volume": 9687626.0,
+      "volume": 9620630.0,
       "next_session_high20": 121.0,
-      "next_session_volume_mean20": 7877998.15,
+      "next_session_volume_mean20": 7874648.35,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 120.0,
@@ -33166,13 +33172,13 @@
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -3.18%",
-        "成交量為前 20 日均量 1.28 倍"
+        "成交量為前 20 日均量 1.27 倍"
       ],
       "components": {
         "relative_strength": 30.46,
         "acceleration": 0,
         "trend": 20,
-        "volume": 7.78,
+        "volume": 7.69,
         "breakout": 7.11
       },
       "series": [
@@ -33410,7 +33416,7 @@
       "rs_5d": -0.2917,
       "rs_20d": -13.7787,
       "rs_acceleration": 6.7369,
-      "volume_ratio": 2.5018,
+      "volume_ratio": 2.2021,
       "ma20_distance": -2.4291,
       "ma20": 1235.0,
       "ma60": 1360.415,
@@ -33420,9 +33426,9 @@
       "breakout_20d": false,
       "previous_high20": 1385.0,
       "volume_mean20": 813389.15,
-      "volume": 2034898.0,
+      "volume": 1791155.0,
       "next_session_high20": 1330.0,
-      "next_session_volume_mean20": 897816.35,
+      "next_session_volume_mean20": 885629.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 1230.0,
@@ -33434,7 +33440,7 @@
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.29%",
-        "成交量為前 20 日均量 2.50 倍",
+        "成交量為前 20 日均量 2.20 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
@@ -33679,7 +33685,7 @@
       "rs_5d": -1.3766,
       "rs_20d": -9.2005,
       "rs_acceleration": 3.1,
-      "volume_ratio": 1.0614,
+      "volume_ratio": 0.9892,
       "ma20_distance": -1.5857,
       "ma20": 703.15,
       "ma60": 687.8399,
@@ -33689,9 +33695,9 @@
       "breakout_20d": false,
       "previous_high20": 748.0,
       "volume_mean20": 971018.65,
-      "volume": 1030592.0,
+      "volume": 960539.0,
       "next_session_high20": 745.0,
-      "next_session_volume_mean20": 972730.85,
+      "next_session_volume_mean20": 969228.2,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 702.0,
@@ -33699,18 +33705,18 @@
         "high20": 748.0,
         "volume_mean20": 971018.65
       },
-      "score": 35.7,
+      "score": 35.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.38%",
-        "成交量為前 20 日均量 1.06 倍",
+        "成交量為前 20 日均量 0.99 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 1.4,
         "acceleration": 16.2,
         "trend": 10,
-        "volume": 5.61,
+        "volume": 4.89,
         "breakout": 2.51
       },
       "series": [
@@ -33863,7 +33869,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 35.7,
+          "score": 35.0,
           "stage": "weakening"
         }
       ],
@@ -33948,7 +33954,7 @@
       "rs_5d": -5.0786,
       "rs_20d": 6.3168,
       "rs_acceleration": -15.7643,
-      "volume_ratio": 0.5655,
+      "volume_ratio": 0.532,
       "ma20_distance": 5.6513,
       "ma20": 745.85,
       "ma60": 738.45,
@@ -33958,9 +33964,9 @@
       "breakout_20d": false,
       "previous_high20": 819.0,
       "volume_mean20": 1882164.5,
-      "volume": 1064359.0,
+      "volume": 1001336.0,
       "next_session_high20": 819.0,
-      "next_session_volume_mean20": 1884745.7,
+      "next_session_volume_mean20": 1881594.55,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 780.0,
@@ -33968,17 +33974,17 @@
         "high20": 819.0,
         "volume_mean20": 1882164.5
       },
-      "score": 55.4,
+      "score": 55.1,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 -5.08%",
-        "成交量為前 20 日均量 0.57 倍"
+        "成交量為前 20 日均量 0.53 倍"
       ],
       "components": {
         "relative_strength": 28.55,
         "acceleration": 0,
         "trend": 20,
-        "volume": 0.65,
+        "volume": 0.32,
         "breakout": 6.21
       },
       "series": [
@@ -34131,7 +34137,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 55.4,
+          "score": 55.1,
           "stage": "watch"
         }
       ],
@@ -34216,7 +34222,7 @@
       "rs_5d": -1.7159,
       "rs_20d": -6.2376,
       "rs_acceleration": 0.1213,
-      "volume_ratio": 1.2143,
+      "volume_ratio": 1.1856,
       "ma20_distance": -0.5486,
       "ma20": 214.175,
       "ma60": 220.0142,
@@ -34226,9 +34232,9 @@
       "breakout_20d": false,
       "previous_high20": 219.0,
       "volume_mean20": 1573914.7,
-      "volume": 1911236.0,
+      "volume": 1865995.0,
       "next_session_high20": 219.0,
-      "next_session_volume_mean20": 1573581.9,
+      "next_session_volume_mean20": 1571319.85,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 213.5,
@@ -34236,18 +34242,18 @@
         "high20": 219.0,
         "volume_mean20": 1573914.7
       },
-      "score": 31.2,
+      "score": 30.9,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.72%",
-        "成交量為前 20 日均量 1.21 倍",
+        "成交量為前 20 日均量 1.19 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 6.58,
         "acceleration": 10.24,
         "trend": 0,
-        "volume": 7.14,
+        "volume": 6.86,
         "breakout": 7.26
       },
       "series": [
@@ -34400,7 +34406,7 @@
         },
         {
           "date": "2026-10-08",
-          "score": 31.2,
+          "score": 30.9,
           "stage": "weakening"
         }
       ],
@@ -34485,7 +34491,7 @@
       "rs_5d": -1.371,
       "rs_20d": 1.0266,
       "rs_acceleration": -4.2534,
-      "volume_ratio": 0.9204,
+      "volume_ratio": 0.9194,
       "ma20_distance": 3.1921,
       "ma20": 24.905,
       "ma60": 24.4783,
@@ -34495,9 +34501,9 @@
       "breakout_20d": false,
       "previous_high20": 26.7,
       "volume_mean20": 35803622.0,
-      "volume": 32955388.0,
+      "volume": 32916226.0,
       "next_session_high20": 26.7,
-      "next_session_volume_mean20": 36619583.6,
+      "next_session_volume_mean20": 36617625.5,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 25.5,
@@ -34515,7 +34521,7 @@
         "relative_strength": 19.3,
         "acceleration": 1.49,
         "trend": 20,
-        "volume": 4.2,
+        "volume": 4.19,
         "breakout": 6.25
       },
       "series": [
@@ -34753,7 +34759,7 @@
       "rs_5d": 6.558,
       "rs_20d": 1.9021,
       "rs_acceleration": 7.7023,
-      "volume_ratio": 7.5908,
+      "volume_ratio": 7.5605,
       "ma20_distance": 7.6664,
       "ma20": 59.35,
       "ma60": 56.9625,
@@ -34763,9 +34769,9 @@
       "breakout_20d": false,
       "previous_high20": 65.7,
       "volume_mean20": 21093068.1,
-      "volume": 160114222.0,
+      "volume": 159473119.0,
       "next_session_high20": 66.8,
-      "next_session_volume_mean20": 28220159.6,
+      "next_session_volume_mean20": 28188104.45,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 65.69999694824219,
@@ -34777,7 +34783,7 @@
       "stage": "improving",
       "reasons": [
         "5 日相對大盤 +6.56%",
-        "成交量為前 20 日均量 7.59 倍"
+        "成交量為前 20 日均量 7.56 倍"
       ],
       "components": {
         "relative_strength": 20.83,
@@ -35021,7 +35027,7 @@
       "rs_5d": -3.7709,
       "rs_20d": -12.3678,
       "rs_acceleration": -2.1689,
-      "volume_ratio": 0.4938,
+      "volume_ratio": 0.4861,
       "ma20_distance": -3.2332,
       "ma20": 109.025,
       "ma60": 111.3899,
@@ -35031,9 +35037,9 @@
       "breakout_20d": false,
       "previous_high20": 115.0,
       "volume_mean20": 6421511.2,
-      "volume": 3171065.0,
+      "volume": 3121460.0,
       "next_session_high20": 114.0,
-      "next_session_volume_mean20": 6117022.9,
+      "next_session_volume_mean20": 6114542.65,
       "prior_session": {
         "as_of": "2026-10-07",
         "close": 106.0,
@@ -35283,7 +35289,7 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 44.8,
+      "score": 42.5,
       "breadth": 50,
       "rs_5d": -4.02,
       "return_20d": 1.56
@@ -35309,7 +35315,7 @@
       "usable": 5,
       "coverage": 100,
       "status": "ok",
-      "score": 88.4,
+      "score": 88.3,
       "breadth": 100,
       "rs_5d": 8.09,
       "return_20d": 25.24
@@ -35322,7 +35328,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 54.6,
+      "score": 54.2,
       "breadth": 100,
       "rs_5d": 4.71,
       "return_20d": 0.8
@@ -35348,7 +35354,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 36.3,
+      "score": 36.0,
       "breadth": 67,
       "rs_5d": -2.45,
       "return_20d": -2.29
@@ -35374,7 +35380,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 66.1,
+      "score": 65.6,
       "breadth": 100,
       "rs_5d": -1.33,
       "return_20d": 15.75
@@ -35400,7 +35406,7 @@
       "usable": 5,
       "coverage": 100,
       "status": "ok",
-      "score": 47.4,
+      "score": 47.0,
       "breadth": 100,
       "rs_5d": -1.14,
       "return_20d": 2.29
@@ -35426,7 +35432,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 56.5,
+      "score": 56.1,
       "breadth": 100,
       "rs_5d": 4.67,
       "return_20d": 4.63
@@ -35452,7 +35458,7 @@
       "usable": 4,
       "coverage": 100,
       "status": "ok",
-      "score": 65.8,
+      "score": 65.6,
       "breadth": 100,
       "rs_5d": 5.94,
       "return_20d": 32.73
@@ -35478,7 +35484,7 @@
       "usable": 6,
       "coverage": 100,
       "status": "ok",
-      "score": 46.0,
+      "score": 45.8,
       "breadth": 50,
       "rs_5d": -2.59,
       "return_20d": 2.34
@@ -35504,7 +35510,7 @@
       "usable": 5,
       "coverage": 100,
       "status": "ok",
-      "score": 29.5,
+      "score": 29.3,
       "breadth": 60,
       "rs_5d": -4.06,
       "return_20d": -1.1
@@ -35530,7 +35536,7 @@
       "usable": 4,
       "coverage": 100,
       "status": "ok",
-      "score": 47.5,
+      "score": 47.1,
       "breadth": 75,
       "rs_5d": 1.13,
       "return_20d": 7.61
@@ -35543,7 +35549,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 92.6,
+      "score": 92.5,
       "breadth": 100,
       "rs_5d": 17.13,
       "return_20d": 22.24
@@ -35556,7 +35562,7 @@
       "usable": 9,
       "coverage": 100,
       "status": "ok",
-      "score": 78.7,
+      "score": 78.2,
       "breadth": 100,
       "rs_5d": 12.48,
       "return_20d": 22.96
@@ -35582,7 +35588,7 @@
       "usable": 18,
       "coverage": 100,
       "status": "ok",
-      "score": 50.0,
+      "score": 49.6,
       "breadth": 56,
       "rs_5d": 0.03,
       "return_20d": 7.15
@@ -35595,7 +35601,7 @@
       "usable": 8,
       "coverage": 100,
       "status": "ok",
-      "score": 40.3,
+      "score": 40.1,
       "breadth": 62,
       "rs_5d": -1.87,
       "return_20d": -0.13
@@ -35621,7 +35627,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 95.0,
+      "score": 94.9,
       "breadth": 100,
       "rs_5d": 15.02,
       "return_20d": 38.82
@@ -35634,7 +35640,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 52.4,
+      "score": 52.1,
       "breadth": 100,
       "rs_5d": -1.81,
       "return_20d": 10.21
@@ -35647,7 +35653,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 12.1,
+      "score": 11.8,
       "breadth": 0,
       "rs_5d": 0.15,
       "return_20d": -14.95
@@ -35660,7 +35666,7 @@
       "usable": 4,
       "coverage": 100,
       "status": "ok",
-      "score": 38.0,
+      "score": 37.9,
       "breadth": 25,
       "rs_5d": -2.82,
       "return_20d": 0.7
@@ -35673,7 +35679,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 46.5,
+      "score": 46.4,
       "breadth": 100,
       "rs_5d": 0.31,
       "return_20d": -1.43
@@ -35699,7 +35705,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 36.0,
+      "score": 35.8,
       "breadth": 0,
       "rs_5d": -1.38,
       "return_20d": -3.18
@@ -35725,7 +35731,7 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 35.4,
+      "score": 35.0,
       "breadth": 0,
       "rs_5d": -0.83,
       "return_20d": -7.34
@@ -35738,7 +35744,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 55.4,
+      "score": 55.1,
       "breadth": 100,
       "rs_5d": -5.08,
       "return_20d": 11.3
@@ -35751,7 +35757,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 31.2,
+      "score": 30.9,
       "breadth": 0,
       "rs_5d": -1.72,
       "return_20d": -1.84
@@ -36137,15 +36143,11 @@
       "status": "quiet",
       "total": 3,
       "available": 3,
-      "up_count": 1,
+      "up_count": 0,
       "down_count": 0,
-      "up_symbols": [
-        "2408.TW"
-      ],
+      "up_symbols": [],
       "down_symbols": [],
-      "money_confirmed": [
-        "2408.TW"
-      ],
+      "money_confirmed": [],
       "money_divergence": [],
       "baseline_pct": 3.3
     },
@@ -36720,12 +36722,14 @@
       "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [],
+  "institutional_refresh_errors": [
+    "TPEX 2026-10-08 法人資料未更新"
+  ],
   "top100": {
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-10-08",
-    "generated_at": "2026-10-08T14:56:51.665024+00:00",
+    "generated_at": "2026-10-08T19:00:25.141658+00:00",
     "market_size": 1965,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
