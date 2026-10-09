@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-09T02:39:26.851704+00:00",
-  "last_success_at": "2026-10-09T02:39:26.851704+00:00",
-  "status": "partial",
+  "generated_at": "2026-10-09T06:25:28.445370+00:00",
+  "last_success_at": "2026-10-09T06:25:28.445370+00:00",
+  "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
   "markets": {
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-09T02:39:26.851704+00:00",
+    "checked_at": "2026-10-09T06:25:28.445370+00:00",
     "expected_tw_date": "2026-10-08",
     "errors": [
       "TPEX 官方收盤價核對失敗"
@@ -47,7 +47,7 @@
     "repairs": {}
   },
   "coverage": {
-    "available": 132,
+    "available": 133,
     "total": 133
   },
   "stocks": [
@@ -33617,7 +33617,7 @@
           "value": -13.779
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-09-18",
@@ -33687,20 +33687,67 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-08",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-10-02",
+            "foreign": -11199,
+            "trust": -13479,
+            "dealer": -4700,
+            "total": -29378
+          },
+          {
+            "date": "2026-10-05",
+            "foreign": -62061,
+            "trust": -2000,
+            "dealer": -272,
+            "total": -64333
+          },
+          {
+            "date": "2026-10-06",
+            "foreign": -20642,
+            "trust": 2000,
+            "dealer": 1280,
+            "total": -17362
+          },
+          {
+            "date": "2026-10-07",
+            "foreign": 5480,
+            "trust": -609,
+            "dealer": 614,
+            "total": 5485
+          },
+          {
+            "date": "2026-10-08",
+            "foreign": -1362079,
+            "trust": 1000,
+            "dealer": 4705,
+            "total": -1356374
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1450501,
+          "trust": -13088,
+          "dealer": 1627,
+          "total": -1461962
+        },
+        "core_net_5d": -1463589,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": 79,
       "market_cap": 240999997590,
       "market_cap_as_of": "2026-10-08",
-      "shares_as_of": "2026-10-08",
-      "error": "至少需要 65 個完整交易日"
+      "shares_as_of": "2026-10-08"
     },
     {
       "symbol": "1519.TW",
@@ -35762,13 +35809,13 @@
       "name": "電機機械",
       "market": "TW",
       "count": 2,
-      "usable": 1,
-      "coverage": 50,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 2,
+      "coverage": 100,
+      "status": "ok",
+      "score": 35.0,
+      "breadth": 0,
+      "rs_5d": -0.83,
+      "return_20d": -7.34
     },
     {
       "id": "industry-文化創意業",
@@ -36666,11 +36713,13 @@
       "as_of": "2026-10-08",
       "status": "insufficient",
       "total": 2,
-      "available": 1,
+      "available": 2,
       "up_count": 0,
-      "down_count": 0,
+      "down_count": 1,
       "up_symbols": [],
-      "down_symbols": [],
+      "down_symbols": [
+        "1590.TW"
+      ],
       "money_confirmed": [],
       "money_divergence": [],
       "baseline_pct": null
@@ -36761,7 +36810,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-10-08",
-    "generated_at": "2026-10-09T02:32:40.802886+00:00",
+    "generated_at": "2026-10-09T06:22:21.927677+00:00",
     "market_size": 1965,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
