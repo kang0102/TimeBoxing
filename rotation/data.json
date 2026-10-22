@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-22T13:19:39.677495+00:00",
-  "last_success_at": "2026-10-22T13:19:39.677495+00:00",
+  "generated_at": "2026-10-22T17:38:45.477639+00:00",
+  "last_success_at": "2026-10-22T17:38:45.477639+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,32 +20,612 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-22T13:19:39.677495+00:00",
+    "checked_at": "2026-10-22T17:38:45.477639+00:00",
     "expected_tw_date": "2026-10-22",
-    "errors": [
-      "TPEX 官方收盤價核對失敗"
-    ],
-    "cached_symbols": [
-      "3081.TWO",
-      "3105.TWO",
-      "3211.TWO",
-      "3264.TWO",
-      "3265.TWO",
-      "3293.TWO",
-      "3324.TWO",
-      "3363.TWO",
-      "3529.TWO",
-      "4931.TWO",
-      "5274.TWO",
-      "5347.TWO",
-      "6223.TWO",
-      "6274.TWO",
-      "6488.TWO",
-      "6584.TWO",
-      "8069.TWO",
-      "8299.TWO"
-    ],
-    "repairs": {}
+    "errors": [],
+    "cached_symbols": [],
+    "repairs": {
+      "1101.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1216.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1301.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1303.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1326.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1504.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1519.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1590.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1597.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "1802.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2002.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2049.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2059.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2207.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2233.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2301.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2303.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2308.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2313.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2317.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2327.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2330.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2337.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2344.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2345.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2356.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2357.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2360.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2368.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2376.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2379.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2382.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2383.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2395.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2404.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2408.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2409.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2412.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2449.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2454.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2464.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2492.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2603.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2609.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2615.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2618.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2801.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2834.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2880.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2881.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2882.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2883.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2884.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2885.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2886.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2887.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2890.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2891.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2892.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2912.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3008.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3013.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3017.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3034.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3036.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3037.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3044.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3045.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3081.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3105.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3189.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3211.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3231.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3264.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3265.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3293.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3324.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3363.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3443.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3481.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3529.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3533.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3653.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3661.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3665.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3702.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "3711.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "4904.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "4931.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "4938.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "4958.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5274.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5347.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5388.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5871.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5876.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "5880.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6117.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6213.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6223.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6239.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6257.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6274.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6285.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6415.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6446.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6488.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6505.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6515.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6531.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6584.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6669.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6770.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "6781.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "7769.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "8046.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "8069.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "8210.TW": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "8299.TWO": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "^TWII": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      }
+    }
   },
   "coverage": {
     "available": 132,
@@ -307,6 +887,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -626,6 +1211,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -1773,6 +2363,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -2092,6 +2687,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -2411,6 +3011,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -2730,6 +3335,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -3048,6 +3658,11 @@
           "stage": "extended"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -3367,6 +3982,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -3686,6 +4306,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -4005,6 +4630,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -4876,6 +5506,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -5195,6 +5830,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -5514,6 +6154,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -6109,6 +6754,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -6428,6 +7078,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -6747,6 +7402,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -7342,6 +8002,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -7661,6 +8326,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -7980,6 +8650,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -8299,6 +8974,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -8618,6 +9298,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -9213,6 +9898,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -9532,6 +10222,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -9611,7 +10306,7 @@
       "return_5d": -1.0695,
       "return_20d": 1.5089,
       "rs_5d": 0.9254,
-      "rs_20d": 5.2072,
+      "rs_20d": 5.2071,
       "rs_acceleration": -6.2599,
       "volume_ratio": 0.687,
       "ma20_distance": 0.9756,
@@ -9850,6 +10545,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -10721,6 +11421,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -11040,6 +11745,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -11359,6 +12069,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -11678,6 +12393,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -12273,6 +12993,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -12592,6 +13317,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -12910,6 +13640,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -13229,6 +13964,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -13548,6 +14288,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -13867,6 +14612,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -14462,6 +15212,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -14540,7 +15295,7 @@
       "change_1d": -1.2748,
       "return_5d": 0.7225,
       "return_20d": 0.8683,
-      "rs_5d": 2.7536,
+      "rs_5d": 2.7537,
       "rs_20d": 4.5432,
       "rs_acceleration": 2.6459,
       "volume_ratio": 0.9354,
@@ -14781,6 +15536,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -15100,6 +15860,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -15419,6 +16184,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -15738,6 +16508,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -16327,6 +17102,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -16641,6 +17421,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -16955,6 +17740,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -17268,6 +18058,11 @@
           "stage": "extended"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -17581,6 +18376,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -17895,6 +18695,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -18208,6 +19013,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -18521,6 +19331,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -18834,6 +19649,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -19147,6 +19967,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -19223,7 +20048,7 @@
       "as_of": "2026-10-22",
       "close": 72.4,
       "change_1d": 1.5428,
-      "return_5d": -0.4126,
+      "return_5d": -0.4127,
       "return_20d": 2.8409,
       "rs_5d": 1.5956,
       "rs_20d": 6.5877,
@@ -19460,6 +20285,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -19773,6 +20603,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -20087,6 +20922,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -20401,6 +21241,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -20489,7 +21334,7 @@
       "ma200": 34.4796,
       "ma60_slope20": 5.2547,
       "above_ma20": true,
-      "breakout_20d": false,
+      "breakout_20d": true,
       "previous_high20": 46.35,
       "volume_mean20": 22510607.45,
       "volume": 27791367.0,
@@ -20505,6 +21350,7 @@
       "score": 64.6,
       "stage": "watch",
       "reasons": [
+        "收盤突破前 20 日最高價",
         "5 日相對大盤 +3.69%",
         "成交量為前 20 日均量 1.23 倍"
       ],
@@ -20513,7 +21359,7 @@
         "acceleration": 0.8,
         "trend": 20,
         "volume": 7.35,
-        "breakout": 10.0
+        "breakout": 10
       },
       "series": [
         {
@@ -20714,6 +21560,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -21028,6 +21879,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -21342,6 +22198,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -21655,6 +22516,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -21743,7 +22609,7 @@
       "ma200": 21.9727,
       "ma60_slope20": 7.8872,
       "above_ma20": true,
-      "breakout_20d": false,
+      "breakout_20d": true,
       "previous_high20": 29.9,
       "volume_mean20": 19136398.1,
       "volume": 19298177.0,
@@ -21759,6 +22625,7 @@
       "score": 68.2,
       "stage": "watch",
       "reasons": [
+        "收盤突破前 20 日最高價",
         "5 日相對大盤 +4.64%",
         "成交量為前 20 日均量 1.01 倍"
       ],
@@ -21767,7 +22634,7 @@
         "acceleration": 0,
         "trend": 20,
         "volume": 5.08,
-        "breakout": 10.0
+        "breakout": 10
       },
       "series": [
         {
@@ -21968,6 +22835,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -22281,6 +23153,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -22594,6 +23471,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -22908,6 +23790,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -23222,6 +24109,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -23535,6 +24427,11 @@
           "stage": "improving"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -23849,6 +24746,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -24163,6 +25065,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -24476,6 +25383,11 @@
           "stage": "extended"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -24790,6 +25702,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -25104,6 +26021,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -25378,6 +26300,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -25692,6 +26619,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -25771,7 +26703,7 @@
       "return_5d": -1.1082,
       "return_20d": -0.394,
       "rs_5d": 0.886,
-      "rs_20d": 3.235,
+      "rs_20d": 3.2349,
       "rs_acceleration": 4.749,
       "volume_ratio": 1.0772,
       "ma20_distance": -6.1233,
@@ -26006,6 +26938,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -26320,6 +27257,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -26634,6 +27576,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -26948,6 +27895,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -27262,6 +28214,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -27575,6 +28532,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -27888,6 +28850,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -28202,6 +29169,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -28516,6 +29488,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -28830,6 +29807,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -29144,6 +30126,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -29458,6 +30445,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -29772,6 +30764,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -30086,6 +31083,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -30324,6 +31326,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -30638,6 +31645,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -30952,6 +31964,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -31031,7 +32048,7 @@
       "return_5d": -3.4121,
       "return_20d": -14.4186,
       "rs_5d": -1.4643,
-      "rs_20d": -11.3006,
+      "rs_20d": -11.3007,
       "rs_acceleration": 8.3552,
       "volume_ratio": 1.1958,
       "ma20_distance": -11.336,
@@ -31266,6 +32283,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -31580,6 +32602,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -31893,6 +32920,11 @@
           "stage": "improving"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -32207,6 +33239,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -32520,6 +33557,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -32834,6 +33876,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -33147,6 +34194,11 @@
           "stage": "improving"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -33461,6 +34513,11 @@
           "stage": "breakout"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -33774,6 +34831,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -34087,6 +35149,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -34400,6 +35467,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -34714,6 +35786,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -35028,6 +36105,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -35342,6 +36424,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -35585,6 +36672,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -35898,6 +36990,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -36211,6 +37308,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -36289,7 +37391,7 @@
       "change_1d": 0.3567,
       "return_5d": -2.8769,
       "return_20d": 0.5959,
-      "rs_5d": -0.9183,
+      "rs_5d": -0.9184,
       "rs_20d": 4.2609,
       "rs_acceleration": -10.7489,
       "volume_ratio": 0.7302,
@@ -36525,6 +37627,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -36838,6 +37945,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -37152,6 +38264,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -37465,6 +38582,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -37778,6 +38900,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -38091,6 +39218,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -38404,6 +39536,11 @@
           "stage": "improving"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -38718,6 +39855,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -39031,6 +40173,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -39344,6 +40491,11 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -39658,6 +40810,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -39972,6 +41129,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -40047,8 +41209,8 @@
       "laggard_watch": false,
       "as_of": "2026-10-22",
       "close": 27.95,
-      "change_1d": 4.2911,
-      "return_5d": 4.2911,
+      "change_1d": 4.291,
+      "return_5d": 4.291,
       "return_20d": 15.735,
       "rs_5d": 6.3941,
       "rs_20d": 19.9515,
@@ -40286,6 +41448,11 @@
           "stage": "breakout"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -40599,6 +41766,11 @@
           "stage": "improving"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -40913,6 +42085,11 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-10-22",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
         "status": "ok",
@@ -42406,7 +43583,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-10-22",
-    "generated_at": "2026-10-22T13:11:51.425215+00:00",
+    "generated_at": "2026-10-22T17:37:14.085783+00:00",
     "market_size": 1969,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
