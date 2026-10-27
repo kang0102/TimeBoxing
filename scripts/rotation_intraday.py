@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 import json
 import math
 from rotation_money import save_archive
+from rotation_calendar import TW_VERIFIED_CLOSURES, verified_tw_closure_gap
 
 ROOT = Path(__file__).resolve().parents[1]
 ZONE = ZoneInfo('Asia/Taipei')
@@ -46,7 +47,10 @@ def baseline(row, quote):
         base = {'as_of':row.get('as_of'), 'close':row.get('close'), 'ma20':row.get('ma20'),
                 'high20':row.get('next_session_high20'), 'volume_mean20':row.get('next_session_volume_mean20')}
     old = datetime.fromisoformat(base['as_of']).date(); day=datetime.fromisoformat(quote['quote_date']).date()
-    if not 0 < (day-old).days <= 4: raise ValueError('daily baseline too old')
+    if old in TW_VERIFIED_CLOSURES or day in TW_VERIFIED_CLOSURES:
+        raise ValueError('daily baseline or quote is on a verified closure')
+    if not (0 < (day-old).days <= 4 or verified_tw_closure_gap(old, day)):
+        raise ValueError('daily baseline too old')
     for key in ['close','ma20','high20','volume_mean20']: positive(base.get(key))
     # Do not mix an ex-dividend / split reference price with old adjusted levels.
     if abs(base['close']/quote['reference_close']-1) > .001: raise ValueError('reference price changed; require fresh adjusted baseline')

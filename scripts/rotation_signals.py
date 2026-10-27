@@ -2,6 +2,7 @@
 from datetime import datetime, time, timedelta, timezone
 from statistics import mean
 from zoneinfo import ZoneInfo
+from rotation_calendar import TW_VERIFIED_CLOSURES
 
 MARKETS = {"TW": ("Asia/Taipei", time(14, 0)), "US": ("America/New_York", time(16, 30))}
 
@@ -22,6 +23,10 @@ def completed_bars(frame, market, now=None):
     data = data.loc[~data.index.duplicated(keep="last")].sort_index()
     columns = ["Close", "High", "Volume"] + [c for c in ("Low", "Open") if c in data]
     data = data.loc[data.index.date <= end, columns]
+    # Providers can return finite OHLCV on a verified market-wide closure.
+    # Filter before indicators, institutional lookbacks and backtests share bars.
+    if market == "TW":
+        data = data.loc[~data.index.isin(pd.to_datetime(list(TW_VERIFIED_CLOSURES)))]
     data = data.replace([float("inf"), -float("inf")], float("nan")).dropna(subset=["Close", "High", "Volume"])
     return data.loc[(data.Close > 0) & (data.High > 0) & (data.Volume >= 0)]
 

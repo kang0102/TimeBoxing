@@ -42,4 +42,27 @@ class IntradayTests(unittest.TestCase):
         self.assertEqual(assess(self.row,quote,quote,now)['status'],'ok')
         self.assertEqual(session(datetime.fromisoformat('2026-09-20T10:00:00+08:00')),'weekend')
 
+    def test_verified_closures_allow_previous_session_but_not_missing_real_sessions(self):
+        now=datetime.fromisoformat('2026-10-27T10:00:00+08:00')
+        quote=parse_quote({**self.raw,'d':'20261027'},'tse_2330.tw',now)
+        row={**self.row,'as_of':'2026-10-22'}
+        index={**quote,'change_pct':1}
+        self.assertEqual(assess(row,quote,index,now)['status'],'ok')
+        self.assertEqual(baseline(row,quote)['as_of'],'2026-10-22')
+        for change in [{'as_of':'2026-10-21'},{'as_of':'2026-10-23'},
+                       {'as_of':'2026-10-26'},{'close':110}]:
+            self.assertEqual(assess({**row,**change},quote,index,now)['status'],'unavailable')
+        stale={**quote,'quote_at':'2026-10-27T09:39:00+08:00'}
+        self.assertEqual(assess(row,stale,index,now)['status'],'unavailable')
+        with self.assertRaises(ValueError):
+            baseline({**row,'as_of':'2026-10-15'}, {**quote,'quote_date':'2026-10-20'})
+
+    def test_same_day_baseline_after_closure_still_uses_prior_session(self):
+        row={**self.row,'as_of':'2026-10-27',
+             'prior_session':{'as_of':'2026-10-22','close':100,'ma20':98,'high20':104,'volume_mean20':2000000}}
+        quote={**self.quote,'quote_date':'2026-10-27'}
+        self.assertEqual(baseline(row,quote)['as_of'],'2026-10-22')
+        with self.assertRaises(ValueError):
+            baseline(self.row,{**quote,'quote_date':'2026-10-23'})
+
 if __name__=='__main__':unittest.main()
