@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T12:45:46.872297+00:00",
-  "last_success_at": "2026-10-28T12:45:46.872297+00:00",
+  "generated_at": "2026-10-28T14:30:50.323066+00:00",
+  "last_success_at": "2026-10-28T14:30:50.323066+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,11 +20,9 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-28T12:45:46.872297+00:00",
+    "checked_at": "2026-10-28T14:30:50.323066+00:00",
     "expected_tw_date": "2026-10-28",
-    "errors": [
-      "TPEX 官方收盤價核對失敗"
-    ],
+    "errors": [],
     "cached_symbols": [],
     "repairs": {}
   },
@@ -1846,9 +1844,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -1880,9 +1878,27 @@
             "trust": 185000,
             "dealer": 286388,
             "total": 1268584
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -13763111,
+            "trust": 80000,
+            "dealer": -133484,
+            "total": -13816595
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -22313610,
+          "trust": 7159000,
+          "dealer": -247593,
+          "total": -15402203
+        },
+        "core_net_5d": -15154610,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -3144,9 +3160,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -3178,9 +3194,27 @@
             "trust": 0,
             "dealer": 15842,
             "total": 21024
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -604415,
+            "trust": 0,
+            "dealer": 20129,
+            "total": -584286
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -859057,
+          "trust": 0,
+          "dealer": -17235,
+          "total": -876292
+        },
+        "core_net_5d": -859057,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -3784,9 +3818,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -3818,9 +3852,27 @@
             "trust": 447000,
             "dealer": -27475,
             "total": 258238
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -139883,
+            "trust": -257000,
+            "dealer": 16939,
+            "total": -379944
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -496072,
+          "trust": 379200,
+          "dealer": -149375,
+          "total": -266247
+        },
+        "core_net_5d": -116872,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 75,
@@ -4095,9 +4147,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -4129,9 +4181,27 @@
             "trust": 0,
             "dealer": 2726,
             "total": -7501
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 604961,
+            "trust": 0,
+            "dealer": 2901,
+            "total": 607862
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 396201,
+          "trust": -110000,
+          "dealer": 14460,
+          "total": 300661
+        },
+        "core_net_5d": 286201,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -5654,9 +5724,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -5688,9 +5758,27 @@
             "trust": 25872,
             "dealer": 71332,
             "total": 340561
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 1083125,
+            "trust": 170542,
+            "dealer": 120945,
+            "total": 1374612
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2434558,
+          "trust": 170355,
+          "dealer": 277223,
+          "total": 2882136
+        },
+        "core_net_5d": 2604913,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 54,
@@ -6590,9 +6678,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -6624,9 +6712,27 @@
             "trust": 28000,
             "dealer": -6632,
             "total": -219711
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 323521,
+            "trust": 10000,
+            "dealer": 34933,
+            "total": 368454
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 830207,
+          "trust": 72000,
+          "dealer": -399816,
+          "total": 502391
+        },
+        "core_net_5d": 902207,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -8513,9 +8619,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -8547,9 +8653,27 @@
             "trust": 1000,
             "dealer": 9504,
             "total": 353851
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 289782,
+            "trust": 0,
+            "dealer": 5180,
+            "total": 294962
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -511965,
+          "trust": 10000,
+          "dealer": -63467,
+          "total": -565432
+        },
+        "core_net_5d": -501965,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -8824,9 +8948,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -8858,9 +8982,27 @@
             "trust": 0,
             "dealer": -7491,
             "total": 88691
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 126000,
+            "trust": 0,
+            "dealer": 22136,
+            "total": 148136
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -12583,
+          "trust": 0,
+          "dealer": -81615,
+          "total": -94198
+        },
+        "core_net_5d": -12583,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -13933,9 +14075,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -13967,9 +14109,27 @@
             "trust": 0,
             "dealer": -2490,
             "total": 39510
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 24382,
+            "trust": 0,
+            "dealer": -1248,
+            "total": 23134
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 7662,
+          "trust": 9000,
+          "dealer": -10181,
+          "total": 6481
+        },
+        "core_net_5d": 16662,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 2,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -24557,9 +24717,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -24591,9 +24751,27 @@
             "trust": -964000,
             "dealer": -26449,
             "total": -145457
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -426349,
+            "trust": -101000,
+            "dealer": 208196,
+            "total": -319153
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -3829457,
+          "trust": -1526000,
+          "dealer": 83528,
+          "total": -5271929
+        },
+        "core_net_5d": -5355457,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 57,
@@ -27411,9 +27589,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -27445,9 +27623,27 @@
             "trust": 54287,
             "dealer": -3174,
             "total": 14079
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -79216,
+            "trust": 143919,
+            "dealer": 574,
+            "total": 65277
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -172333,
+          "trust": 232906,
+          "dealer": -13131,
+          "total": 47442
+        },
+        "core_net_5d": 60573,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 36,
@@ -27717,9 +27913,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -27751,9 +27947,27 @@
             "trust": 166905,
             "dealer": -16793,
             "total": 116879
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 38723,
+            "trust": 43600,
+            "dealer": 12245,
+            "total": 94568
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -257340,
+          "trust": 243405,
+          "dealer": -26225,
+          "total": -40160
+        },
+        "core_net_5d": -13935,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 49,
@@ -28023,9 +28237,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -28057,9 +28271,27 @@
             "trust": -81956,
             "dealer": 38668,
             "total": -55908
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -8548,
+            "trust": -266666,
+            "dealer": 105872,
+            "total": -169342
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -6467019,
+          "trust": -514996,
+          "dealer": 405993,
+          "total": -6576022
+        },
+        "core_net_5d": -6982015,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 53,
@@ -29298,9 +29530,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -29332,9 +29564,27 @@
             "trust": 822211,
             "dealer": 85310,
             "total": -459023
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 3335900,
+            "trust": 71082,
+            "dealer": 138569,
+            "total": 3545551
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 182586,
+          "trust": 251751,
+          "dealer": 117882,
+          "total": 552219
+        },
+        "core_net_5d": 434337,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 67,
@@ -29927,9 +30177,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -29961,9 +30211,27 @@
             "trust": -150905,
             "dealer": 286398,
             "total": -737441
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 5076659,
+            "trust": 0,
+            "dealer": 314817,
+            "total": 5391476
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 7467572,
+          "trust": -4674905,
+          "dealer": 579512,
+          "total": 3372179
+        },
+        "core_net_5d": 2792667,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
       "market_cap_rank": 86,
@@ -30881,9 +31149,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -30915,9 +31183,27 @@
             "trust": 125000,
             "dealer": 22380,
             "total": 147360
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 10856,
+            "trust": 12000,
+            "dealer": 9119,
+            "total": 31975
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 351120,
+          "trust": -17000,
+          "dealer": -18461,
+          "total": 315659
+        },
+        "core_net_5d": 334120,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 94,
@@ -36540,9 +36826,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -36574,9 +36860,27 @@
             "trust": 45835,
             "dealer": 27710,
             "total": 2486590
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -1036872,
+            "trust": 351261,
+            "dealer": 29193,
+            "total": -656418
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1189640,
+          "trust": 2035740,
+          "dealer": -52654,
+          "total": 3172726
+        },
+        "core_net_5d": 3225380,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 97,
@@ -41260,9 +41564,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-27",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-28",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -41294,9 +41598,27 @@
             "trust": -3000,
             "dealer": 13603,
             "total": 226630
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -3507,
+            "trust": -14000,
+            "dealer": -1828,
+            "total": -19335
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1579420,
+          "trust": -83000,
+          "dealer": 2891,
+          "total": 1499311
+        },
+        "core_net_5d": 1496420,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": true
       },
       "market_cap_rank": 82,
@@ -43699,9 +44021,7 @@
       "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [
-    "TPEX 2026-10-28 法人資料未更新"
-  ],
+  "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
     "status": "stale",
@@ -43714,7 +44034,7 @@
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
     ],
-    "last_attempt_at": "2026-10-28T12:45:22.251982+00:00",
-    "error": "HTTP Error 403: Forbidden"
+    "last_attempt_at": "2026-10-28T14:30:30.671033+00:00",
+    "error": "Expecting value: line 1 column 1 (char 0)"
   }
 }
