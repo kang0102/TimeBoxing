@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-29T06:13:46.395902+00:00",
-  "last_success_at": "2026-10-29T06:13:46.395902+00:00",
+  "generated_at": "2026-10-29T12:57:28.173384+00:00",
+  "last_success_at": "2026-10-29T12:57:28.173384+00:00",
   "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v6-top100",
@@ -20,11 +20,9 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-29T06:13:46.395902+00:00",
+    "checked_at": "2026-10-29T12:57:28.173384+00:00",
     "expected_tw_date": "2026-10-29",
-    "errors": [
-      "TPEX 官方收盤價核對失敗"
-    ],
+    "errors": [],
     "cached_symbols": [],
     "repairs": {}
   },
@@ -305,9 +303,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -339,14 +337,32 @@
             "trust": 844056,
             "dealer": 262175,
             "total": -2068790
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -10199,
+            "trust": 443114,
+            "dealer": -281233,
+            "total": 151682
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -23652175,
+          "trust": 6455048,
+          "dealer": 2035858,
+          "total": -15161269
+        },
+        "core_net_5d": -17197127,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 1,
-      "market_cap": 62885997412475,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 62626673711805,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -621,9 +637,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -655,14 +671,32 @@
             "trust": 551964,
             "dealer": 276340,
             "total": -208555
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1682237,
+            "trust": 366256,
+            "dealer": 93525,
+            "total": -1222456
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -7303858,
+          "trust": 2116981,
+          "dealer": -12529,
+          "total": -5199406
+        },
+        "core_net_5d": -5186877,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 2,
-      "market_cap": 6796974316055,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 6492033319585,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -1839,9 +1873,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -1873,9 +1907,27 @@
             "trust": 80000,
             "dealer": -133484,
             "total": -13816595
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1827205,
+            "trust": 462000,
+            "dealer": 35687,
+            "total": -1329518
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -18252712,
+          "trust": 5424000,
+          "dealer": 211857,
+          "total": -12616855
+        },
+        "core_net_5d": -12828712,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -2155,9 +2207,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -2189,9 +2241,27 @@
             "trust": 11000,
             "dealer": 45319,
             "total": -1263192
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -106553,
+            "trust": 42000,
+            "dealer": -42487,
+            "total": -107040
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -4490362,
+          "trust": 968000,
+          "dealer": -261898,
+          "total": -3784260
+        },
+        "core_net_5d": -3522362,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -2471,9 +2541,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -2505,14 +2575,32 @@
             "trust": 272401,
             "dealer": -345479,
             "total": 1489420
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2549942,
+            "trust": 27199,
+            "dealer": -75885,
+            "total": -2598628
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -5486595,
+          "trust": 2337000,
+          "dealer": 859631,
+          "total": -2289964
+        },
+        "core_net_5d": -3149595,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 62,
-      "market_cap": 356277343245,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 61,
+      "market_cap": 346006284701,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -2787,9 +2875,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -2821,14 +2909,32 @@
             "trust": 5189200,
             "dealer": 409124,
             "total": 5706850
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -3503877,
+            "trust": 1141578,
+            "dealer": 224475,
+            "total": -2137824
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -14048823,
+          "trust": 12635952,
+          "dealer": 1439817,
+          "total": 26946
+        },
+        "core_net_5d": -1412871,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 5,
-      "market_cap": 3119222023885,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 3065364952969,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -3103,9 +3209,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -3137,9 +3243,27 @@
             "trust": 0,
             "dealer": 20129,
             "total": -584286
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 61519,
+            "trust": 0,
+            "dealer": 60966,
+            "total": 122485
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -845960,
+          "trust": 0,
+          "dealer": 55211,
+          "total": -790749
+        },
+        "core_net_5d": -845960,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -3419,9 +3543,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -3453,9 +3577,27 @@
             "trust": 4000,
             "dealer": 3528,
             "total": 368073
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -271133,
+            "trust": -13000,
+            "dealer": -21910,
+            "total": -306043
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -459633,
+          "trust": 354000,
+          "dealer": 27587,
+          "total": -78046
+        },
+        "core_net_5d": -105633,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -3735,9 +3877,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -3769,15 +3911,33 @@
             "trust": -257000,
             "dealer": 16939,
             "total": -379944
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1364080,
+            "trust": 222000,
+            "dealer": -52251,
+            "total": -1194331
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1714553,
+          "trust": 441200,
+          "dealer": -88587,
+          "total": -1361940
+        },
+        "core_net_5d": -1273353,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 76,
-      "market_cap": 262564030320,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 75,
+      "market_cap": 262055185300,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "3363.TWO",
@@ -4051,9 +4211,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -4085,9 +4245,27 @@
             "trust": 0,
             "dealer": 2901,
             "total": 607862
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -683708,
+            "trust": 0,
+            "dealer": -1387,
+            "total": -685095
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -340808,
+          "trust": -110000,
+          "dealer": 12689,
+          "total": -438119
+        },
+        "core_net_5d": -450808,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -4969,9 +5147,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -5003,14 +5181,32 @@
             "trust": 447624,
             "dealer": 652298,
             "total": 6528637
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 5661474,
+            "trust": 623225,
+            "dealer": 104751,
+            "total": 6389450
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 24948891,
+          "trust": -1589361,
+          "dealer": 2843171,
+          "total": 26202701
+        },
+        "core_net_5d": 23359530,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 11,
       "market_cap": 1645748211438,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -5284,9 +5480,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -5318,14 +5514,32 @@
             "trust": 179348,
             "dealer": 1208705,
             "total": 26735864
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 14319329,
+            "trust": 133539,
+            "dealer": -308229,
+            "total": 14144639
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 72174503,
+          "trust": -3101945,
+          "dealer": 5159277,
+          "total": 74231835
+        },
+        "core_net_5d": 69072558,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 32,
-      "market_cap": 774000033196,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 31,
+      "market_cap": 767250032906,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -5599,9 +5813,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -5633,15 +5847,33 @@
             "trust": 170542,
             "dealer": 120945,
             "total": 1374612
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 431325,
+            "trust": 5618,
+            "dealer": -42905,
+            "total": 394038
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2700369,
+          "trust": 160644,
+          "dealer": 229883,
+          "total": 3090896
+        },
+        "core_net_5d": 2861013,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 51,
-      "market_cap": 451621823880,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap": 453835656350,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "MU",
@@ -6215,9 +6447,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -6249,14 +6481,32 @@
             "trust": 236615,
             "dealer": 42599,
             "total": 119430
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -332611,
+            "trust": 23056,
+            "dealer": -36250,
+            "total": -345805
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1841586,
+          "trust": 1298703,
+          "dealer": -120387,
+          "total": -663270
+        },
+        "core_net_5d": -542883,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 15,
-      "market_cap": 1262434394005,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 16,
+      "market_cap": 1219240682235,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -6531,9 +6781,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -6565,9 +6815,27 @@
             "trust": 10000,
             "dealer": 34933,
             "total": 368454
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 235692,
+            "trust": 136000,
+            "dealer": 70805,
+            "total": 442497
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 731040,
+          "trust": 208000,
+          "dealer": -314101,
+          "total": 624939
+        },
+        "core_net_5d": 939040,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 2,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -6847,9 +7115,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -6881,14 +7149,32 @@
             "trust": 112428,
             "dealer": -6938,
             "total": -270460
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -516704,
+            "trust": 88015,
+            "dealer": -2082,
+            "total": -430771
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 19947,
+          "trust": 65243,
+          "dealer": -26673,
+          "total": 58517
+        },
+        "core_net_5d": 85190,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 26,
-      "market_cap": 938424722250,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 23,
+      "market_cap": 942840838590,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -7463,9 +7749,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -7497,14 +7783,32 @@
             "trust": -728101,
             "dealer": -108592,
             "total": -835283
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2431595,
+            "trust": -1533278,
+            "dealer": 64311,
+            "total": -3900562
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -11507214,
+          "trust": -1823481,
+          "dealer": 387599,
+          "total": -12943096
+        },
+        "core_net_5d": -13330695,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 3,
-      "market_cap": 4026192159950,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 3844364126920,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -7779,9 +8083,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -7813,14 +8117,32 @@
             "trust": 115643,
             "dealer": 125104,
             "total": 3347870
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2556466,
+            "trust": 44341,
+            "dealer": -270902,
+            "total": -2783027
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -988249,
+          "trust": 121340,
+          "dealer": 651210,
+          "total": -215699
+        },
+        "core_net_5d": -866909,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 42,
-      "market_cap": 605662180024,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 43,
+      "market_cap": 583659156276,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -8095,9 +8417,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -8129,9 +8451,27 @@
             "trust": 0,
             "dealer": 6700,
             "total": 70302
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 13173,
+            "trust": 0,
+            "dealer": -7032,
+            "total": 6141
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 285177,
+          "trust": 0,
+          "dealer": 4438,
+          "total": 289615
+        },
+        "core_net_5d": 285177,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -8411,9 +8751,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -8445,9 +8785,27 @@
             "trust": 0,
             "dealer": 5180,
             "total": 294962
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -261000,
+            "trust": -13000,
+            "dealer": -23502,
+            "total": -297502
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -706250,
+          "trust": -3000,
+          "dealer": -97706,
+          "total": -806956
+        },
+        "core_net_5d": -709250,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -8727,9 +9085,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -8761,9 +9119,27 @@
             "trust": 0,
             "dealer": 22136,
             "total": 148136
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -229200,
+            "trust": 0,
+            "dealer": -121655,
+            "total": -350855
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -162235,
+          "trust": 0,
+          "dealer": -162473,
+          "total": -324708
+        },
+        "core_net_5d": -162235,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -9344,9 +9720,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -9378,14 +9754,32 @@
             "trust": -11403,
             "dealer": 22447,
             "total": 811774
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -34322,
+            "trust": -174308,
+            "dealer": 34498,
+            "total": -174132
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -542512,
+          "trust": -198035,
+          "dealer": -45245,
+          "total": -785792
+        },
+        "core_net_5d": -740547,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 21,
-      "market_cap": 1018428983055,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 22,
+      "market_cap": 984761909235,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -9660,9 +10054,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -9694,9 +10088,27 @@
             "trust": -4000,
             "dealer": 181984,
             "total": 1698333
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1722690,
+            "trust": 0,
+            "dealer": -201169,
+            "total": -1923859
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -9855782,
+          "trust": -443000,
+          "dealer": -392857,
+          "total": -10691639
+        },
+        "core_net_5d": -10298782,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -9976,9 +10388,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -10010,9 +10422,27 @@
             "trust": 2609,
             "dealer": 1644,
             "total": 599154
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -166000,
+            "trust": 0,
+            "dealer": -13189,
+            "total": -179189
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1747583,
+          "trust": 2609,
+          "dealer": -87944,
+          "total": 1662248
+        },
+        "core_net_5d": 1750192,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -10894,9 +11324,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -10928,14 +11358,32 @@
             "trust": 514522,
             "dealer": 28981,
             "total": -1370164
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2458021,
+            "trust": 476230,
+            "dealer": 96063,
+            "total": -1885728
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -8898158,
+          "trust": 5468081,
+          "dealer": 486741,
+          "total": -2943336
+        },
+        "core_net_5d": -3430077,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 8,
-      "market_cap": 1805420755600,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 10,
+      "market_cap": 1706943259840,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -11210,9 +11658,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -11244,14 +11692,32 @@
             "trust": 278000,
             "dealer": 19727,
             "total": -903360
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -21627,
+            "trust": 123044,
+            "dealer": -22241,
+            "total": 79176
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -3811452,
+          "trust": 1709194,
+          "dealer": 89006,
+          "total": -2013252
+        },
+        "core_net_5d": -2102258,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 29,
-      "market_cap": 840015133100,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 30,
+      "market_cap": 807706858750,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -11526,9 +11992,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -11560,14 +12026,32 @@
             "trust": 30000,
             "dealer": 38659,
             "total": -1920143
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -4466839,
+            "trust": 201000,
+            "dealer": -94666,
+            "total": -4360505
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -8573691,
+          "trust": 1872000,
+          "dealer": -209260,
+          "total": -6910951
+        },
+        "core_net_5d": -6701691,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 45,
-      "market_cap": 545352222600,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 46,
+      "market_cap": 505307035240,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -11842,9 +12326,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -11876,14 +12360,32 @@
             "trust": 1202066,
             "dealer": 71050,
             "total": 138373
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1480042,
+            "trust": 815061,
+            "dealer": -114259,
+            "total": -779240
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -3505650,
+          "trust": 3459799,
+          "dealer": -117741,
+          "total": -163592
+        },
+        "core_net_5d": -45851,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 39,
-      "market_cap": 628755041820,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 40,
+      "market_cap": 591613393780,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -12459,9 +12961,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -12493,9 +12995,27 @@
             "trust": -109000,
             "dealer": -2444,
             "total": -66456
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 148220,
+            "trust": -1000,
+            "dealer": -3168,
+            "total": 144052
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 653476,
+          "trust": -210000,
+          "dealer": -37699,
+          "total": 405777
+        },
+        "core_net_5d": 443476,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -12775,9 +13295,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -12809,9 +13329,27 @@
             "trust": 0,
             "dealer": -6786,
             "total": -16916
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -94980,
+            "trust": 0,
+            "dealer": -25802,
+            "total": -120782
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -760783,
+          "trust": -1000,
+          "dealer": -139575,
+          "total": -901358
+        },
+        "core_net_5d": -761783,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -13090,9 +13628,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -13124,9 +13662,27 @@
             "trust": 0,
             "dealer": -12000,
             "total": 9090
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -26789,
+            "trust": 0,
+            "dealer": -6000,
+            "total": -32789
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 105431,
+          "trust": 0,
+          "dealer": -86000,
+          "total": 19431
+        },
+        "core_net_5d": 105431,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -13406,9 +13962,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -13440,14 +13996,32 @@
             "trust": 17084,
             "dealer": -16507,
             "total": 69464
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 22153,
+            "trust": 50010,
+            "dealer": -14385,
+            "total": 57778
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 127341,
+          "trust": 160774,
+          "dealer": -39391,
+          "total": 248724
+        },
+        "core_net_5d": 288115,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 25,
-      "market_cap": 967265280800,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 24,
+      "market_cap": 941535071360,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -13722,9 +14296,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -13756,9 +14330,27 @@
             "trust": 0,
             "dealer": -1248,
             "total": 23134
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 73860,
+            "trust": 6000,
+            "dealer": -909,
+            "total": 78951
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 133472,
+          "trust": -5000,
+          "dealer": -10977,
+          "total": 117495
+        },
+        "core_net_5d": 128472,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -14038,9 +14630,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -14072,14 +14664,32 @@
             "trust": -1110000,
             "dealer": 40209,
             "total": -29400
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 307314,
+            "trust": -379969,
+            "dealer": 27291,
+            "total": -45364
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2419168,
+          "trust": -2776469,
+          "dealer": 142436,
+          "total": -214865
+        },
+        "core_net_5d": -357301,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 60,
-      "market_cap": 361236913050,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 62,
+      "market_cap": 340281180525,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -14655,9 +15265,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -14689,9 +15299,27 @@
             "trust": 0,
             "dealer": -3551,
             "total": 17705
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 30000,
+            "trust": 0,
+            "dealer": 9510,
+            "total": 39510
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 182293,
+          "trust": 0,
+          "dealer": 12482,
+          "total": 194775
+        },
+        "core_net_5d": 182293,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -14971,9 +15599,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -15005,9 +15633,27 @@
             "trust": 10000,
             "dealer": 78834,
             "total": 1220788
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 589178,
+            "trust": 21000,
+            "dealer": 2829,
+            "total": 613007
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5078240,
+          "trust": 23312,
+          "dealer": 936138,
+          "total": 6037690
+        },
+        "core_net_5d": 5101552,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 2,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -15287,9 +15933,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -15321,9 +15967,27 @@
             "trust": 40000,
             "dealer": 15097,
             "total": -16998
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 8410,
+            "trust": 0,
+            "dealer": -182395,
+            "total": -173985
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2415877,
+          "trust": 42000,
+          "dealer": -160680,
+          "total": 2297197
+        },
+        "core_net_5d": 2457877,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -15603,9 +16267,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -15637,9 +16301,27 @@
             "trust": 0,
             "dealer": -15035,
             "total": 432055
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 43919,
+            "trust": 0,
+            "dealer": -19855,
+            "total": 24064
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1003187,
+          "trust": 0,
+          "dealer": -4498,
+          "total": 998689
+        },
+        "core_net_5d": 1003187,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -15918,9 +16600,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -15952,9 +16634,27 @@
             "trust": 0,
             "dealer": 53681,
             "total": 905992
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 270928,
+            "trust": 43000,
+            "dealer": 4069,
+            "total": 317997
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 4239352,
+          "trust": 41603,
+          "dealer": 62033,
+          "total": 4342988
+        },
+        "core_net_5d": 4280955,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": null,
@@ -16528,9 +17228,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -16562,14 +17262,32 @@
             "trust": 216503,
             "dealer": 566373,
             "total": 12082562
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 3341501,
+            "trust": 512127,
+            "dealer": -116214,
+            "total": 3737414
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 51524775,
+          "trust": 1699126,
+          "dealer": -569167,
+          "total": 52654734
+        },
+        "core_net_5d": 53223901,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 4,
-      "market_cap": 3540050243996,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 3490785131256,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -16839,9 +17557,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -16873,14 +17591,32 @@
             "trust": 3420,
             "dealer": 88575,
             "total": 474124
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -151331,
+            "trust": -105986,
+            "dealer": -2378,
+            "total": -259695
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1134017,
+          "trust": 419199,
+          "dealer": 80588,
+          "total": -634230
+        },
+        "core_net_5d": -714818,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 27,
-      "market_cap": 865375084970,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 28,
+      "market_cap": 827102968190,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -17150,9 +17886,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -17184,14 +17920,32 @@
             "trust": 3000,
             "dealer": 7323,
             "total": 39920
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 78061,
+            "trust": 0,
+            "dealer": -3460,
+            "total": 74601
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -221100,
+          "trust": 195000,
+          "dealer": -16976,
+          "total": -43076
+        },
+        "core_net_5d": -26100,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 87,
-      "market_cap": 209645367800,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 210598301290,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -17460,9 +18214,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -17494,14 +18248,32 @@
             "trust": 559000,
             "dealer": 515852,
             "total": 11878337
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -5521019,
+            "trust": 1255858,
+            "dealer": 45809,
+            "total": -4219352
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -2936318,
+          "trust": 3404558,
+          "dealer": 3720578,
+          "total": 4188818
+        },
+        "core_net_5d": 468240,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": true
       },
       "market_cap_rank": 6,
-      "market_cap": 2529932086891,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 2474416335768,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -17771,9 +18543,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -17805,14 +18577,32 @@
             "trust": 3000,
             "dealer": 774530,
             "total": -1269736
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 524940,
+            "trust": 0,
+            "dealer": -150264,
+            "total": 374676
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -7585683,
+          "trust": 4000,
+          "dealer": 742159,
+          "total": -6839524
+        },
+        "core_net_5d": -7581683,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 49,
-      "market_cap": 479976854887,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 470428243716,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -18082,9 +18872,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -18116,14 +18906,32 @@
             "trust": 0,
             "dealer": 187662,
             "total": -60553
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 137085,
+            "trust": 0,
+            "dealer": -179682,
+            "total": -42597
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5424769,
+          "trust": 2800000,
+          "dealer": -126991,
+          "total": 8097778
+        },
+        "core_net_5d": 8224769,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 54,
-      "market_cap": 442519564970,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 53,
+      "market_cap": 436072260050,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -18392,9 +19200,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -18426,14 +19234,32 @@
             "trust": 190917,
             "dealer": 67295,
             "total": 1791129
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 4943605,
+            "trust": -299547,
+            "dealer": 91732,
+            "total": 4735790
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 18715382,
+          "trust": 346880,
+          "dealer": 1214268,
+          "total": 20276530
+        },
+        "core_net_5d": 19062262,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 7,
-      "market_cap": 2255185757272,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 2269193122224,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -18702,9 +19528,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -18736,14 +19562,32 @@
             "trust": 202930,
             "dealer": 142621,
             "total": 5792439
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2399669,
+            "trust": -489339,
+            "dealer": -65056,
+            "total": 1845274
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 23783474,
+          "trust": 665807,
+          "dealer": 1067861,
+          "total": 25517142
+        },
+        "core_net_5d": 24449281,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 10,
-      "market_cap": 1694293769784,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 9,
+      "market_cap": 1708962979912,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -19012,9 +19856,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -19046,14 +19890,32 @@
             "trust": 576529,
             "dealer": 200375,
             "total": 364647
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 17315259,
+            "trust": -3520918,
+            "dealer": 709405,
+            "total": 14503746
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 45001382,
+          "trust": -7715140,
+          "dealer": 7481032,
+          "total": 44767274
+        },
+        "core_net_5d": 37286242,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 13,
-      "market_cap": 1459954214205,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 12,
+      "market_cap": 1481597740292,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -19322,9 +20184,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -19356,14 +20218,32 @@
             "trust": -174000,
             "dealer": 226961,
             "total": -113160
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 19911707,
+            "trust": -1548918,
+            "dealer": 200746,
+            "total": 18563535
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 42399477,
+          "trust": -3324918,
+          "dealer": 7312501,
+          "total": 46387060
+        },
+        "core_net_5d": 39074559,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 20,
-      "market_cap": 1054832603874,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 18,
+      "market_cap": 1064878628673,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -19632,9 +20512,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -19666,14 +20546,32 @@
             "trust": 1743271,
             "dealer": 393523,
             "total": 9188074
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 3849095,
+            "trust": 768997,
+            "dealer": 410074,
+            "total": 5028166
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 31145967,
+          "trust": 2338108,
+          "dealer": 5169849,
+          "total": 38653924
+        },
+        "core_net_5d": 33484075,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 22,
-      "market_cap": 1012100903912,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 21,
+      "market_cap": 1017646662290,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -19942,9 +20840,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -19976,14 +20874,32 @@
             "trust": 149049,
             "dealer": 386276,
             "total": -7971112
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 5101270,
+            "trust": -372216,
+            "dealer": 363220,
+            "total": 5092274
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 7996711,
+          "trust": 639289,
+          "dealer": 7620768,
+          "total": 16256768
+        },
+        "core_net_5d": 8636000,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 28,
-      "market_cap": 856931731273,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 27,
+      "market_cap": 868452013079,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -20252,9 +21168,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -20286,14 +21202,32 @@
             "trust": -5979962,
             "dealer": 664157,
             "total": -2528499
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 7768271,
+            "trust": -5477941,
+            "dealer": 260236,
+            "total": 2550566
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 24490438,
+          "trust": -18979474,
+          "dealer": 7721619,
+          "total": 13232583
+        },
+        "core_net_5d": 5510964,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 31,
-      "market_cap": 799519089400,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 29,
+      "market_cap": 812869129854,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -20562,9 +21496,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -20596,14 +21530,32 @@
             "trust": 515000,
             "dealer": 425247,
             "total": 305390
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 461779,
+            "trust": 677617,
+            "dealer": 322001,
+            "total": 1461397
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 6326407,
+          "trust": 3125617,
+          "dealer": 8835169,
+          "total": 18287193
+        },
+        "core_net_5d": 9452024,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 35,
-      "market_cap": 692967442633,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 704212350424,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -20872,9 +21824,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -20906,14 +21858,32 @@
             "trust": 344955,
             "dealer": -128131,
             "total": 2327450
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 6077829,
+            "trust": 1077361,
+            "dealer": -52760,
+            "total": 7102430
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 13353678,
+          "trust": 5208987,
+          "dealer": 5914940,
+          "total": 24477605
+        },
+        "core_net_5d": 18562665,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 2,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 36,
-      "market_cap": 684414411782,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 686631737090,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -21182,9 +22152,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -21216,14 +22186,32 @@
             "trust": 741247,
             "dealer": -4817,
             "total": 10424523
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2410211,
+            "trust": 713743,
+            "dealer": -152075,
+            "total": -1848543
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 85612,
+          "trust": 9599254,
+          "dealer": 6143491,
+          "total": 15828357
+        },
+        "core_net_5d": 9684866,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 38,
-      "market_cap": 654371310911,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 37,
+      "market_cap": 653522580288,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -21493,9 +22481,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -21527,14 +22515,32 @@
             "trust": 163442,
             "dealer": 685592,
             "total": -852357
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 3635352,
+            "trust": -536049,
+            "dealer": 268829,
+            "total": 3368132
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 18100522,
+          "trust": -1157111,
+          "dealer": 2717712,
+          "total": 19661123
+        },
+        "core_net_5d": 16943411,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 41,
-      "market_cap": 615441258220,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 39,
+      "market_cap": 639167381492,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -21803,9 +22809,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -21837,14 +22843,32 @@
             "trust": 889000,
             "dealer": 234383,
             "total": -876506
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 5352058,
+            "trust": 889869,
+            "dealer": 228007,
+            "total": 6469934
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 26707929,
+          "trust": 4412659,
+          "dealer": 2401243,
+          "total": 33521831
+        },
+        "core_net_5d": 31120588,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 50,
-      "market_cap": 457275721588,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 464508553739,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -22113,9 +23137,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -22147,14 +23171,32 @@
             "trust": -1583000,
             "dealer": 260092,
             "total": 1393159
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 10427686,
+            "trust": -493000,
+            "dealer": 56000,
+            "total": 9990686
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 40646218,
+          "trust": -3023125,
+          "dealer": 173869,
+          "total": 37796962
+        },
+        "core_net_5d": 37623093,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 61,
-      "market_cap": 361202912400,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 58,
+      "market_cap": 367836020974,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -22423,9 +23465,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -22457,14 +23499,32 @@
             "trust": -330425,
             "dealer": -380095,
             "total": 1346666
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 1787877,
+            "trust": -14000,
+            "dealer": -78719,
+            "total": 1695158
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 16292071,
+          "trust": -723425,
+          "dealer": 1532587,
+          "total": 17101233
+        },
+        "core_net_5d": 15568646,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 75,
-      "market_cap": 264169791400,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 73,
+      "market_cap": 267606944820,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -22733,9 +23793,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -22767,14 +23827,32 @@
             "trust": 0,
             "dealer": 150471,
             "total": 192197
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2044476,
+            "trust": 7000,
+            "dealer": 91110,
+            "total": 2142586
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5427927,
+          "trust": -46542,
+          "dealer": 32943,
+          "total": 5414328
+        },
+        "core_net_5d": 5381385,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 97,
+      "market_cap_rank": 95,
       "market_cap": 187169871222,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -23044,9 +24122,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -23078,14 +24156,32 @@
             "trust": 24346,
             "dealer": 148783,
             "total": -505590
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 223978,
+            "trust": 299051,
+            "dealer": -1663,
+            "total": 521366
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1535857,
+          "trust": 653852,
+          "dealer": 216907,
+          "total": -665098
+        },
+        "core_net_5d": -882005,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 9,
-      "market_cap": 1800563597850,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 8,
+      "market_cap": 1795188781140,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -23355,9 +24451,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -23389,14 +24485,32 @@
             "trust": 26939,
             "dealer": 335933,
             "total": 7431893
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -3852926,
+            "trust": 174274,
+            "dealer": 631564,
+            "total": -3047088
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -3024895,
+          "trust": 720221,
+          "dealer": 1374147,
+          "total": -930527
+        },
+        "core_net_5d": -2304674,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 17,
-      "market_cap": 1128531268714,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 1120278754866,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -23666,9 +24780,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -23700,14 +24814,32 @@
             "trust": 296574,
             "dealer": 440437,
             "total": 681666
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -6139240,
+            "trust": 37138,
+            "dealer": -224111,
+            "total": -6326213
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -16792693,
+          "trust": 2092884,
+          "dealer": 336802,
+          "total": -14363007
+        },
+        "core_net_5d": -14699809,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 40,
-      "market_cap": 623368446250,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 41,
+      "market_cap": 589366531000,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -23977,9 +25109,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -24011,15 +25143,33 @@
             "trust": -101000,
             "dealer": 208196,
             "total": -319153
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 787039,
+            "trust": 82000,
+            "dealer": 57997,
+            "total": 927036
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -2498136,
+          "trust": -1540000,
+          "dealer": 362921,
+          "total": -3675215
+        },
+        "core_net_5d": -4038136,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 55,
-      "market_cap": 411803002875,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap": 416295399270,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "3044.TW",
@@ -24288,9 +25438,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -24322,14 +25472,32 @@
             "trust": 13000,
             "dealer": 64839,
             "total": 288656
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -150319,
+            "trust": 11000,
+            "dealer": -12915,
+            "total": -152234
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 802038,
+          "trust": -622000,
+          "dealer": 185578,
+          "total": 365616
+        },
+        "core_net_5d": 180038,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 71,
-      "market_cap": 285929608512,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 70,
+      "market_cap": 281724761328,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -24599,9 +25767,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -24633,14 +25801,32 @@
             "trust": -6000,
             "dealer": -153820,
             "total": -1562540
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2230107,
+            "trust": 175000,
+            "dealer": -7048,
+            "total": -2062155
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -10547298,
+          "trust": 1475000,
+          "dealer": 452937,
+          "total": -8619361
+        },
+        "core_net_5d": -9072298,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 72,
-      "market_cap": 282878635604,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 270879927410,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -24910,9 +26096,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -24944,14 +26130,32 @@
             "trust": -8391,
             "dealer": 239517,
             "total": 1538361
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -6160616,
+            "trust": -45000,
+            "dealer": -369136,
+            "total": -6574752
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -30667825,
+          "trust": 481726,
+          "dealer": -1402098,
+          "total": -31588197
+        },
+        "core_net_5d": -30186099,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 73,
-      "market_cap": 276375811936,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 74,
+      "market_cap": 263420695752,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -25220,9 +26424,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -25254,14 +26458,32 @@
             "trust": 7200,
             "dealer": -25907,
             "total": -60820
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 355787,
+            "trust": 6362,
+            "dealer": 13783,
+            "total": 375932
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 742298,
+          "trust": 71562,
+          "dealer": -77970,
+          "total": 735890
+        },
+        "core_net_5d": 813860,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 84,
-      "market_cap": 220005320905,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 85,
+      "market_cap": 213815912900,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -25490,9 +26712,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -25524,14 +26746,32 @@
             "trust": 2242000,
             "dealer": 434312,
             "total": 1598017
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2493763,
+            "trust": 2094000,
+            "dealer": 645616,
+            "total": 5233379
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -5327708,
+          "trust": 8762000,
+          "dealer": 218565,
+          "total": 3652857
+        },
+        "core_net_5d": 3434292,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 94,
-      "market_cap": 193111500052,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 89,
+      "market_cap": 205241619402,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -25801,9 +27041,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -25835,14 +27075,32 @@
             "trust": -1172186,
             "dealer": 550711,
             "total": 12265266
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -129271902,
+            "trust": -44816968,
+            "dealer": -8700497,
+            "total": -182789367
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -127554137,
+          "trust": -61631065,
+          "dealer": -9984125,
+          "total": -199169327
+        },
+        "core_net_5d": -189185202,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 12,
-      "market_cap": 1608972019072,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 13,
+      "market_cap": 1451845845334,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -26112,9 +27370,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -26146,14 +27404,32 @@
             "trust": 141150,
             "dealer": 1902,
             "total": -47331
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 53330,
+            "trust": 82114,
+            "dealer": 40448,
+            "total": 175892
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 53397,
+          "trust": 322837,
+          "dealer": 26350,
+          "total": 402584
+        },
+        "core_net_5d": 376234,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 18,
-      "market_cap": 1094877312870,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 20,
+      "market_cap": 1023851000040,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -26423,9 +27699,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -26457,14 +27733,32 @@
             "trust": 64000,
             "dealer": 8663,
             "total": 162274
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 27748,
+            "trust": 1010,
+            "dealer": 1305,
+            "total": 30063
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -118834,
+          "trust": 452620,
+          "dealer": 32956,
+          "total": 366742
+        },
+        "core_net_5d": 333786,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 23,
-      "market_cap": 1001310450000,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 26,
+      "market_cap": 933836700000,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -26734,9 +28028,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -26768,15 +28062,33 @@
             "trust": 143919,
             "dealer": 574,
             "total": 65277
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -95511,
+            "trust": 110120,
+            "dealer": -4682,
+            "total": 9927
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -261969,
+          "trust": 362626,
+          "dealer": -19942,
+          "total": 80715
+        },
+        "core_net_5d": 100657,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 34,
-      "market_cap": 719177172135,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 33,
+      "market_cap": 706078541940,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "6223.TWO",
@@ -27045,9 +28357,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -27079,15 +28391,33 @@
             "trust": 43600,
             "dealer": 12245,
             "total": 94568
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -84522,
+            "trust": 56000,
+            "dealer": 6382,
+            "total": -22140
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -63674,
+          "trust": 279505,
+          "dealer": 3679,
+          "total": 219510
+        },
+        "core_net_5d": 215831,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 47,
-      "market_cap": 501174395535,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 48,
+      "market_cap": 474229535560,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "6488.TWO",
@@ -27356,9 +28686,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -27390,15 +28720,33 @@
             "trust": -266666,
             "dealer": 105872,
             "total": -169342
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2305859,
+            "trust": -56000,
+            "dealer": -132708,
+            "total": -2494567
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -5109088,
+          "trust": -586506,
+          "dealer": 203776,
+          "total": -5491818
+        },
+        "core_net_5d": -5695594,
+        "buy_days": 0,
+        "sell_days": 5,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 52,
-      "market_cap": 448368552525,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 54,
+      "market_cap": 429884572150,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "2379.TW",
@@ -27666,9 +29014,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -27700,14 +29048,32 @@
             "trust": -21771,
             "dealer": -1251,
             "total": 194423
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -77709,
+            "trust": 121830,
+            "dealer": 69820,
+            "total": 113941
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2517097,
+          "trust": -385712,
+          "dealer": 399014,
+          "total": 2530399
+        },
+        "core_net_5d": 2131385,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": true
       },
       "market_cap_rank": 56,
-      "market_cap": 407770499031,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 409317036954,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -27976,9 +29342,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -28010,14 +29376,32 @@
             "trust": 135724,
             "dealer": -23572,
             "total": 249520
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 18471,
+            "trust": 138000,
+            "dealer": 23707,
+            "total": 180178
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 3320814,
+          "trust": -155314,
+          "dealer": 356409,
+          "total": 3521909
+        },
+        "core_net_5d": 3165500,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 59,
-      "market_cap": 365683858462,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 60,
+      "market_cap": 364460835524,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -28287,9 +29671,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -28321,14 +29705,32 @@
             "trust": 369034,
             "dealer": 690845,
             "total": 18493847
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -3061487,
+            "trust": 98000,
+            "dealer": -765880,
+            "total": -3729367
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 74555757,
+          "trust": 7998980,
+          "dealer": 2576205,
+          "total": 85130942
+        },
+        "core_net_5d": 82554737,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 63,
-      "market_cap": 335971365033,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 327489619492,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -28598,9 +30000,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -28632,14 +30034,32 @@
             "trust": 3092,
             "dealer": 125527,
             "total": 639208
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -185178,
+            "trust": 63000,
+            "dealer": -44206,
+            "total": -166384
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 145084,
+          "trust": 137092,
+          "dealer": -20712,
+          "total": 261464
+        },
+        "core_net_5d": 282176,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 65,
-      "market_cap": 327959433200,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 317602819520,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -28909,9 +30329,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -28943,15 +30363,33 @@
             "trust": 71082,
             "dealer": 138569,
             "total": 3545551
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -6902989,
+            "trust": -725779,
+            "dealer": -203551,
+            "total": -7832319
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -5344981,
+          "trust": 130862,
+          "dealer": -72584,
+          "total": -5286703
+        },
+        "core_net_5d": -5214119,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 66,
-      "market_cap": 314649117160,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 68,
+      "market_cap": 293985593048,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "3105.TWO",
@@ -29219,9 +30657,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -29253,15 +30691,33 @@
             "trust": 0,
             "dealer": 314817,
             "total": 5391476
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 21713626,
+            "trust": 1654000,
+            "dealer": 10437,
+            "total": 23378063
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 29018353,
+          "trust": -39905,
+          "dealer": 697585,
+          "total": 29676033
+        },
+        "core_net_5d": 28978448,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 2,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 80,
-      "market_cap": 228927807360,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 77,
+      "market_cap": 251820588096,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "6239.TW",
@@ -29530,9 +30986,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -29564,14 +31020,285 @@
             "trust": 531664,
             "dealer": 206440,
             "total": 5114997
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -399656,
+            "trust": 223000,
+            "dealer": -410570,
+            "total": -587226
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5257498,
+          "trust": 426452,
+          "dealer": 357195,
+          "total": 6041145
+        },
+        "core_net_5d": 5683950,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 88,
-      "market_cap": 206867457765,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 205349164497,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-28"
+    },
+    {
+      "symbol": "6415.TW",
+      "name": "矽力*-KY",
+      "market": "TW",
+      "group": "industry-半導體業",
+      "group_name": "半導體業",
+      "currency": "TWD",
+      "laggard": false,
+      "laggard_watch": false,
+      "as_of": "2026-10-29",
+      "close": 524.0,
+      "change_1d": -0.1905,
+      "return_5d": 13.2973,
+      "return_20d": 23.1492,
+      "rs_5d": 13.1131,
+      "rs_20d": 27.5481,
+      "rs_acceleration": 0.4025,
+      "volume_ratio": 2.92,
+      "ma20_distance": 14.0556,
+      "ma20": 459.425,
+      "ma60": 443.0333,
+      "ma200": 405.2236,
+      "ma60_slope20": -2.3618,
+      "above_ma20": true,
+      "breakout_20d": false,
+      "previous_high20": 525.0,
+      "volume_mean20": 4701564.65,
+      "volume": 13728685.0,
+      "next_session_high20": 551.0,
+      "next_session_volume_mean20": 5313483.75,
+      "prior_session": {
+        "as_of": "2026-10-28",
+        "close": 525.0,
+        "ma20": 454.5,
+        "high20": 525.0,
+        "volume_mean20": 4701564.65
+      },
+      "score": 90.6,
+      "stage": "improving",
+      "reasons": [
+        "5 日相對大盤 +13.11%",
+        "成交量為前 20 日均量 2.92 倍"
+      ],
+      "components": {
+        "relative_strength": 35,
+        "acceleration": 10.8,
+        "trend": 20,
+        "volume": 15,
+        "breakout": 9.81
+      },
+      "series": [
+        {
+          "date": "2026-09-24",
+          "value": 0.0
+        },
+        {
+          "date": "2026-09-29",
+          "value": -3.085
+        },
+        {
+          "date": "2026-09-30",
+          "value": -3.708
+        },
+        {
+          "date": "2026-10-01",
+          "value": -3.598
+        },
+        {
+          "date": "2026-10-02",
+          "value": -1.047
+        },
+        {
+          "date": "2026-10-05",
+          "value": 0.352
+        },
+        {
+          "date": "2026-10-06",
+          "value": 1.828
+        },
+        {
+          "date": "2026-10-07",
+          "value": 3.448
+        },
+        {
+          "date": "2026-10-08",
+          "value": 5.855
+        },
+        {
+          "date": "2026-10-12",
+          "value": 0.729
+        },
+        {
+          "date": "2026-10-13",
+          "value": 0.045
+        },
+        {
+          "date": "2026-10-14",
+          "value": 9.325
+        },
+        {
+          "date": "2026-10-15",
+          "value": 12.098
+        },
+        {
+          "date": "2026-10-16",
+          "value": 17.152
+        },
+        {
+          "date": "2026-10-19",
+          "value": 14.621
+        },
+        {
+          "date": "2026-10-20",
+          "value": 12.762
+        },
+        {
+          "date": "2026-10-21",
+          "value": 17.951
+        },
+        {
+          "date": "2026-10-22",
+          "value": 15.706
+        },
+        {
+          "date": "2026-10-27",
+          "value": 17.038
+        },
+        {
+          "date": "2026-10-28",
+          "value": 25.979
+        },
+        {
+          "date": "2026-10-29",
+          "value": 27.548
+        }
+      ],
+      "status": "ok",
+      "history": [
+        {
+          "date": "2026-10-14",
+          "score": 76.8,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-15",
+          "score": 80.1,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-16",
+          "score": 90.0,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-19",
+          "score": 91.7,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-20",
+          "score": 86.0,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-21",
+          "score": 79.3,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-22",
+          "score": 72.0,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-27",
+          "score": 69.1,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-28",
+          "score": 78.6,
+          "stage": "extended"
+        },
+        {
+          "date": "2026-10-29",
+          "score": 90.6,
+          "stage": "improving"
+        }
+      ],
+      "smart_money": {
+        "method": "institutional",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
+        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+        "source_name": "臺灣證券交易所",
+        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+        "history": [
+          {
+            "date": "2026-10-21",
+            "foreign": 621755,
+            "trust": 12000,
+            "dealer": 236497,
+            "total": 870252
+          },
+          {
+            "date": "2026-10-22",
+            "foreign": -389712,
+            "trust": -51000,
+            "dealer": -98984,
+            "total": -539696
+          },
+          {
+            "date": "2026-10-27",
+            "foreign": -250860,
+            "trust": -75000,
+            "dealer": 38577,
+            "total": -287283
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -305289,
+            "trust": 47000,
+            "dealer": 175757,
+            "total": -82532
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1487848,
+            "trust": 1100000,
+            "dealer": -20078,
+            "total": -407926
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1811954,
+          "trust": 1033000,
+          "dealer": 331769,
+          "total": -447185
+        },
+        "core_net_5d": -778954,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
+        "price_confirmed": true
+      },
+      "market_cap_rank": 90,
+      "market_cap": 204550174796,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -29841,9 +31568,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -29875,249 +31602,32 @@
             "trust": 41000,
             "dealer": 44350,
             "total": -29908828
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -18674046,
+            "trust": 8000,
+            "dealer": -335305,
+            "total": -19001351
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -46141478,
+          "trust": 267000,
+          "dealer": -969582,
+          "total": -46844060
+        },
+        "core_net_5d": -45874478,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 90,
-      "market_cap": 205122162033,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
-    },
-    {
-      "symbol": "6415.TW",
-      "name": "矽力*-KY",
-      "market": "TW",
-      "group": "industry-半導體業",
-      "group_name": "半導體業",
-      "currency": "TWD",
-      "laggard": false,
-      "laggard_watch": false,
-      "as_of": "2026-10-29",
-      "close": 524.0,
-      "change_1d": -0.1905,
-      "return_5d": 13.2973,
-      "return_20d": 23.1492,
-      "rs_5d": 13.1131,
-      "rs_20d": 27.5481,
-      "rs_acceleration": 0.4025,
-      "volume_ratio": 2.92,
-      "ma20_distance": 14.0556,
-      "ma20": 459.425,
-      "ma60": 443.0333,
-      "ma200": 405.2236,
-      "ma60_slope20": -2.3618,
-      "above_ma20": true,
-      "breakout_20d": false,
-      "previous_high20": 525.0,
-      "volume_mean20": 4701564.65,
-      "volume": 13728685.0,
-      "next_session_high20": 551.0,
-      "next_session_volume_mean20": 5313483.75,
-      "prior_session": {
-        "as_of": "2026-10-28",
-        "close": 525.0,
-        "ma20": 454.5,
-        "high20": 525.0,
-        "volume_mean20": 4701564.65
-      },
-      "score": 90.6,
-      "stage": "improving",
-      "reasons": [
-        "5 日相對大盤 +13.11%",
-        "成交量為前 20 日均量 2.92 倍"
-      ],
-      "components": {
-        "relative_strength": 35,
-        "acceleration": 10.8,
-        "trend": 20,
-        "volume": 15,
-        "breakout": 9.81
-      },
-      "series": [
-        {
-          "date": "2026-09-24",
-          "value": 0.0
-        },
-        {
-          "date": "2026-09-29",
-          "value": -3.085
-        },
-        {
-          "date": "2026-09-30",
-          "value": -3.708
-        },
-        {
-          "date": "2026-10-01",
-          "value": -3.598
-        },
-        {
-          "date": "2026-10-02",
-          "value": -1.047
-        },
-        {
-          "date": "2026-10-05",
-          "value": 0.352
-        },
-        {
-          "date": "2026-10-06",
-          "value": 1.828
-        },
-        {
-          "date": "2026-10-07",
-          "value": 3.448
-        },
-        {
-          "date": "2026-10-08",
-          "value": 5.855
-        },
-        {
-          "date": "2026-10-12",
-          "value": 0.729
-        },
-        {
-          "date": "2026-10-13",
-          "value": 0.045
-        },
-        {
-          "date": "2026-10-14",
-          "value": 9.325
-        },
-        {
-          "date": "2026-10-15",
-          "value": 12.098
-        },
-        {
-          "date": "2026-10-16",
-          "value": 17.152
-        },
-        {
-          "date": "2026-10-19",
-          "value": 14.621
-        },
-        {
-          "date": "2026-10-20",
-          "value": 12.762
-        },
-        {
-          "date": "2026-10-21",
-          "value": 17.951
-        },
-        {
-          "date": "2026-10-22",
-          "value": 15.706
-        },
-        {
-          "date": "2026-10-27",
-          "value": 17.038
-        },
-        {
-          "date": "2026-10-28",
-          "value": 25.979
-        },
-        {
-          "date": "2026-10-29",
-          "value": 27.548
-        }
-      ],
-      "status": "ok",
-      "history": [
-        {
-          "date": "2026-10-14",
-          "score": 76.8,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-15",
-          "score": 80.1,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-16",
-          "score": 90.0,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-19",
-          "score": 91.7,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-20",
-          "score": 86.0,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-21",
-          "score": 79.3,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-22",
-          "score": 72.0,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-27",
-          "score": 69.1,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-28",
-          "score": 78.6,
-          "stage": "extended"
-        },
-        {
-          "date": "2026-10-29",
-          "score": 90.6,
-          "stage": "improving"
-        }
-      ],
-      "smart_money": {
-        "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
-        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
-        "source_name": "臺灣證券交易所",
-        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-10-21",
-            "foreign": 621755,
-            "trust": 12000,
-            "dealer": 236497,
-            "total": 870252
-          },
-          {
-            "date": "2026-10-22",
-            "foreign": -389712,
-            "trust": -51000,
-            "dealer": -98984,
-            "total": -539696
-          },
-          {
-            "date": "2026-10-27",
-            "foreign": -250860,
-            "trust": -75000,
-            "dealer": 38577,
-            "total": -287283
-          },
-          {
-            "date": "2026-10-28",
-            "foreign": -305289,
-            "trust": 47000,
-            "dealer": 175757,
-            "total": -82532
-          }
-        ],
-        "coverage": 4,
-        "price_confirmed": true
-      },
       "market_cap_rank": 91,
-      "market_cap": 204940537725,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 198185663800,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -30387,9 +31897,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -30421,15 +31931,33 @@
             "trust": 12000,
             "dealer": 9119,
             "total": 31975
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 9792,
+            "trust": -18000,
+            "dealer": -4157,
+            "total": -12365
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 330044,
+          "trust": -15000,
+          "dealer": -12801,
+          "total": 302243
+        },
+        "core_net_5d": 315044,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 93,
-      "market_cap": 198292636260,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 94,
+      "market_cap": 189703689680,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "6515.TW",
@@ -30698,9 +32226,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -30732,14 +32260,32 @@
             "trust": 23034,
             "dealer": 1143,
             "total": 156891
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 110353,
+            "trust": -33640,
+            "dealer": -23349,
+            "total": 53364
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 494272,
+          "trust": -88006,
+          "dealer": -19046,
+          "total": 387220
+        },
+        "core_net_5d": 406266,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 3,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 99,
-      "market_cap": 179854999170,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 100,
+      "market_cap": 169650460210,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -31009,9 +32555,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -31043,14 +32589,32 @@
             "trust": 2987,
             "dealer": 10820,
             "total": 1418927
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -2921165,
+            "trust": 288460,
+            "dealer": 19377,
+            "total": -2613328
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 6967092,
+          "trust": 2346172,
+          "dealer": 1097228,
+          "total": 10410492
+        },
+        "core_net_5d": 9313264,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 14,
-      "market_cap": 1355517052560,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 1306225523376,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -31320,9 +32884,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -31354,14 +32918,32 @@
             "trust": -211404,
             "dealer": -27590,
             "total": -464369
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -61737,
+            "trust": -122946,
+            "dealer": 1397,
+            "total": -183286
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2216416,
+          "trust": -1717997,
+          "dealer": -223426,
+          "total": 274993
+        },
+        "core_net_5d": 498419,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
       "market_cap_rank": 19,
-      "market_cap": 1092389555400,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 1055976570220,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -31631,9 +33213,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -31665,14 +33247,32 @@
             "trust": -217872,
             "dealer": 38577,
             "total": 543460
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -999626,
+            "trust": 141118,
+            "dealer": 10114,
+            "total": -848394
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -675157,
+          "trust": -445838,
+          "dealer": 572950,
+          "total": -548045
+        },
+        "core_net_5d": -1120995,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 33,
-      "market_cap": 733847156640,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 34,
+      "market_cap": 705622266000,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -31941,9 +33541,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -31975,14 +33575,32 @@
             "trust": 439127,
             "dealer": 974587,
             "total": 10833109
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -8111637,
+            "trust": 619526,
+            "dealer": -136430,
+            "total": -7628541
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 23865979,
+          "trust": -721816,
+          "dealer": 4171360,
+          "total": 27315523
+        },
+        "core_net_5d": 23144163,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 37,
-      "market_cap": 667104317625,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 38,
+      "market_cap": 646525264125,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -32252,9 +33870,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -32286,14 +33904,32 @@
             "trust": -404,
             "dealer": 3508,
             "total": 51010
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 95840,
+            "trust": 28080,
+            "dealer": -4642,
+            "total": 119278
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 117701,
+          "trust": 60676,
+          "dealer": 66438,
+          "total": 244815
+        },
+        "core_net_5d": 178377,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 43,
-      "market_cap": 598772699512,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 42,
+      "market_cap": 584867963384,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -32562,9 +34198,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -32596,14 +34232,32 @@
             "trust": 967329,
             "dealer": -62148,
             "total": 4062798
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 631015,
+            "trust": 8000,
+            "dealer": -177574,
+            "total": 461441
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 12600903,
+          "trust": 567329,
+          "dealer": 552363,
+          "total": 13720595
+        },
+        "core_net_5d": 13168232,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 70,
-      "market_cap": 288976539924,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 71,
+      "market_cap": 279611559464,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -32873,9 +34527,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -32907,14 +34561,32 @@
             "trust": -3209,
             "dealer": 46932,
             "total": 1154640
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -5719677,
+            "trust": 295000,
+            "dealer": 148758,
+            "total": -5275919
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -3557402,
+          "trust": 711240,
+          "dealer": 608677,
+          "total": -2237485
+        },
+        "core_net_5d": -2846162,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 77,
-      "market_cap": 242834721175,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 81,
+      "market_cap": 229771887898,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -33183,9 +34855,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -33217,14 +34889,32 @@
             "trust": -20762,
             "dealer": 123180,
             "total": 11014779
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -6076442,
+            "trust": 1728000,
+            "dealer": -120018,
+            "total": -4468460
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 29767427,
+          "trust": 671544,
+          "dealer": 1200256,
+          "total": 31639227
+        },
+        "core_net_5d": 30438971,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 81,
-      "market_cap": 228880909211,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 83,
+      "market_cap": 220270969052,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -33493,9 +35183,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -33527,14 +35217,32 @@
             "trust": 206474,
             "dealer": -45024,
             "total": 2127573
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 3737908,
+            "trust": 228665,
+            "dealer": -9615,
+            "total": 3956958
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 11450232,
+          "trust": 2969237,
+          "dealer": -208551,
+          "total": 14210918
+        },
+        "core_net_5d": 14419469,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 16,
-      "market_cap": 1214040384292,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 15,
+      "market_cap": 1225676554110,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -33803,9 +35511,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -33837,14 +35545,32 @@
             "trust": 108799,
             "dealer": 305358,
             "total": 2114138
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 3221815,
+            "trust": 350246,
+            "dealer": -135779,
+            "total": 3436282
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 14455378,
+          "trust": -387665,
+          "dealer": -1062575,
+          "total": 13005138
+        },
+        "core_net_5d": 14067713,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 48,
-      "market_cap": 493354609488,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 47,
+      "market_cap": 500801471518,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -34113,9 +35839,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -34147,14 +35873,32 @@
             "trust": 164950,
             "dealer": -102529,
             "total": 605200
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2876281,
+            "trust": -880691,
+            "dealer": -448467,
+            "total": 1547123
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5907978,
+          "trust": 395259,
+          "dealer": 187607,
+          "total": 6490844
+        },
+        "core_net_5d": 6303237,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 57,
-      "market_cap": 404062999984,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 407670705341,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -34424,9 +36168,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -34458,14 +36202,32 @@
             "trust": -2530000,
             "dealer": 25713,
             "total": 2389471
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 5086404,
+            "trust": -3833800,
+            "dealer": 173325,
+            "total": 1425929
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 36687892,
+          "trust": -15886800,
+          "dealer": 84568,
+          "total": 20885660
+        },
+        "core_net_5d": 20801092,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 24,
-      "market_cap": 981173844156,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 25,
+      "market_cap": 939259621687,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -34735,9 +36497,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -34769,14 +36531,32 @@
             "trust": 75130,
             "dealer": 14660,
             "total": 315741
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -677561,
+            "trust": 178016,
+            "dealer": -65315,
+            "total": -564860
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -358256,
+          "trust": 544206,
+          "dealer": -213733,
+          "total": -27783
+        },
+        "core_net_5d": 185950,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 30,
-      "market_cap": 828606577995,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 32,
+      "market_cap": 760591515555,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -35046,9 +36826,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -35080,14 +36860,32 @@
             "trust": 193784,
             "dealer": 3883745,
             "total": 25986032
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -46307224,
+            "trust": 100000,
+            "dealer": -6025274,
+            "total": -52232498
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -2726544,
+          "trust": 316622,
+          "dealer": 7159057,
+          "total": 4749135
+        },
+        "core_net_5d": -2409922,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 58,
-      "market_cap": 387076610978,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 59,
+      "market_cap": 367503077502,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -35357,9 +37155,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -35391,14 +37189,32 @@
             "trust": 181713,
             "dealer": 9162727,
             "total": 77929628
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -50436463,
+            "trust": 23000,
+            "dealer": -5829229,
+            "total": -56242692
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -75234834,
+          "trust": 11873370,
+          "dealer": -329385,
+          "total": -63690849
+        },
+        "core_net_5d": -63361464,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 74,
-      "market_cap": 268299368455,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 76,
+      "market_cap": 256978719997,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -35597,9 +37413,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -35631,15 +37447,33 @@
             "trust": 351261,
             "dealer": 29193,
             "total": -656418
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -532767,
+            "trust": 40000,
+            "dealer": 93824,
+            "total": -398943
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 598863,
+          "trust": 1510214,
+          "dealer": -36624,
+          "total": 2072453
+        },
+        "core_net_5d": 2109077,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 98,
-      "market_cap": 180180078780,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap": 176715077265,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "2603.TW",
@@ -35907,9 +37741,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -35941,14 +37775,32 @@
             "trust": 55814,
             "dealer": 102811,
             "total": 1344042
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 1077089,
+            "trust": 107189,
+            "dealer": 68981,
+            "total": 1253259
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 6647467,
+          "trust": -163518,
+          "dealer": 1344252,
+          "total": 7828201
+        },
+        "core_net_5d": 6483949,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": true
       },
       "market_cap_rank": 44,
-      "market_cap": 569406307948,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 565076221956,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -36218,9 +38070,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -36252,14 +38104,32 @@
             "trust": 7158,
             "dealer": 49047,
             "total": 1116917
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1902032,
+            "trust": 2000,
+            "dealer": -571229,
+            "total": -2471261
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 874837,
+          "trust": 43773,
+          "dealer": -791916,
+          "total": 126694
+        },
+        "core_net_5d": 918610,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
       "market_cap_rank": 64,
-      "market_cap": 332528335720,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 322706823695,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -36528,9 +38398,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -36562,14 +38432,32 @@
             "trust": -72000,
             "dealer": -72569,
             "total": -735215
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2454977,
+            "trust": -44000,
+            "dealer": 31025,
+            "total": 2442002
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 16270527,
+          "trust": -10971260,
+          "dealer": 1317959,
+          "total": 6617226
+        },
+        "core_net_5d": 5299267,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 79,
-      "market_cap": 228978839804,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 78,
+      "market_cap": 230868995321,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -36838,9 +38726,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -36872,14 +38760,32 @@
             "trust": -46000,
             "dealer": 114128,
             "total": 212457
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 949832,
+            "trust": -1000,
+            "dealer": -163167,
+            "total": 785665
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 8455140,
+          "trust": -152647,
+          "dealer": -236006,
+          "total": 8066487
+        },
+        "core_net_5d": 8302493,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 85,
-      "market_cap": 219653358583,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 84,
+      "market_cap": 216510464740,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -37148,9 +39054,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -37182,14 +39088,32 @@
             "trust": 13000,
             "dealer": -56806,
             "total": -110956
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 373904,
+            "trust": 111055,
+            "dealer": 23176,
+            "total": 508135
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 859211,
+          "trust": 208963,
+          "dealer": -20412,
+          "total": 1047762
+        },
+        "core_net_5d": 1068174,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": true,
         "price_confirmed": true
       },
-      "market_cap_rank": 46,
-      "market_cap": 506921563200,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 45,
+      "market_cap": 523818948640,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -37458,9 +39382,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -37492,14 +39416,32 @@
             "trust": 6000,
             "dealer": 153483,
             "total": -249521
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2310448,
+            "trust": -1030139,
+            "dealer": 86440,
+            "total": 1366749
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 15311486,
+          "trust": -4322792,
+          "dealer": 3207618,
+          "total": 14196312
+        },
+        "core_net_5d": 10988694,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 53,
-      "market_cap": 447174613633,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 52,
+      "market_cap": 448879218259,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -37768,9 +39710,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -37802,14 +39744,32 @@
             "trust": 12000,
             "dealer": -269995,
             "total": 4574443
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 869842,
+            "trust": 19000,
+            "dealer": -538923,
+            "total": 349919
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 66605501,
+          "trust": 3494000,
+          "dealer": -2328792,
+          "total": 67770709
+        },
+        "core_net_5d": 70099501,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 67,
-      "market_cap": 310763504691,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 66,
+      "market_cap": 306043046392,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -38078,9 +40038,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -38112,14 +40072,32 @@
             "trust": -5000,
             "dealer": -23000,
             "total": -29325
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1545,
+            "trust": 0,
+            "dealer": -6000,
+            "total": -7545
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 307591,
+          "trust": -19577,
+          "dealer": -32000,
+          "total": 256014
+        },
+        "core_net_5d": 288014,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 68,
-      "market_cap": 298049980880,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 67,
+      "market_cap": 296378672576,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -38388,9 +40366,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -38422,14 +40400,32 @@
             "trust": 28069,
             "dealer": -82431,
             "total": 729684
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1508971,
+            "trust": 8000,
+            "dealer": -25868,
+            "total": -1526839
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 389083,
+          "trust": 266265,
+          "dealer": 338990,
+          "total": 994338
+        },
+        "core_net_5d": 655348,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 69,
-      "market_cap": 291987106117,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 287950418014,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -38699,9 +40695,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -38733,14 +40729,32 @@
             "trust": -46996,
             "dealer": 55464,
             "total": 1458170
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -4530624,
+            "trust": 84000,
+            "dealer": 111193,
+            "total": -4335431
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 5119477,
+          "trust": 559004,
+          "dealer": 853458,
+          "total": 6531939
+        },
+        "core_net_5d": 5678481,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
         "price_confirmed": false
       },
-      "market_cap_rank": 92,
-      "market_cap": 203159419612,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 93,
+      "market_cap": 192651173770,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -38899,9 +40913,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -38933,14 +40947,32 @@
             "trust": -148266,
             "dealer": 16940,
             "total": 264382
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -1641623,
+            "trust": 1072000,
+            "dealer": 26699,
+            "total": -542924
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1345779,
+          "trust": 2250434,
+          "dealer": 777893,
+          "total": 1682548
+        },
+        "core_net_5d": 904655,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 100,
-      "market_cap": 170964564220,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 99,
+      "market_cap": 170130590736,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -39209,9 +41241,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -39243,14 +41275,32 @@
             "trust": -15000,
             "dealer": -51229,
             "total": 278219
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 376292,
+            "trust": 1000,
+            "dealer": 13132,
+            "total": 390424
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 3271334,
+          "trust": -117908,
+          "dealer": 761,
+          "total": 3154187
+        },
+        "core_net_5d": 3153426,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 78,
-      "market_cap": 232875385120,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 79,
+      "market_cap": 230796140610,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -39520,9 +41570,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -39554,14 +41604,32 @@
             "trust": 164,
             "dealer": 2558,
             "total": -108349
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -14575,
+            "trust": 0,
+            "dealer": 1604,
+            "total": -12971
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -233224,
+          "trust": -4326,
+          "dealer": -20523,
+          "total": -258073
+        },
+        "core_net_5d": -237550,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 82,
-      "market_cap": 227999997720,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 80,
+      "market_cap": 229999997700,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -39831,9 +41899,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -39865,14 +41933,32 @@
             "trust": 0,
             "dealer": 9403,
             "total": 82221
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -642487,
+            "trust": 0,
+            "dealer": -13337,
+            "total": -655824
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -1240678,
+          "trust": -1000,
+          "dealer": -40950,
+          "total": -1282628
+        },
+        "core_net_5d": -1241678,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 89,
-      "market_cap": 205701605968,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 92,
+      "market_cap": 195625007027,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -40141,9 +42227,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -40175,15 +42261,33 @@
             "trust": -14000,
             "dealer": -1828,
             "total": -19335
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 773859,
+            "trust": -1000,
+            "dealer": 35441,
+            "total": 808300
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1935067,
+          "trust": -77000,
+          "dealer": 17050,
+          "total": 1875117
+        },
+        "core_net_5d": 1858067,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 1,
+        "joint_buying": false,
         "price_confirmed": true
       },
-      "market_cap_rank": 83,
-      "market_cap": 225441248000,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
+      "market_cap_rank": 82,
+      "market_cap": 227695660480,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-29"
     },
     {
       "symbol": "1101.TW",
@@ -40451,9 +42555,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -40485,14 +42589,360 @@
             "trust": 6000,
             "dealer": 1187160,
             "total": 3339369
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 4047089,
+            "trust": 11000,
+            "dealer": 138163,
+            "total": 4196252
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 26341630,
+          "trust": 9159000,
+          "dealer": 3826740,
+          "total": 39327370
+        },
+        "core_net_5d": 35500630,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 2,
+        "joint_buying": true,
         "price_confirmed": true
       },
       "market_cap_rank": 86,
-      "market_cap": 210649088776,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap": 212153725124,
+      "market_cap_as_of": "2026-10-29",
+      "shares_as_of": "2026-10-28"
+    },
+    {
+      "symbol": "5871.TW",
+      "name": "中租-KY",
+      "market": "TW",
+      "group": "industry-其他業",
+      "group_name": "其他業",
+      "currency": "TWD",
+      "laggard": false,
+      "laggard_watch": false,
+      "as_of": "2026-10-29",
+      "close": 107.0,
+      "change_1d": -0.4651,
+      "return_5d": 0.4695,
+      "return_20d": 0.0,
+      "rs_5d": 0.3061,
+      "rs_20d": 3.572,
+      "rs_acceleration": -4.6113,
+      "volume_ratio": 0.7299,
+      "ma20_distance": 0.2577,
+      "ma20": 106.725,
+      "ma60": 110.3167,
+      "ma200": 105.4752,
+      "ma60_slope20": -1.1644,
+      "above_ma20": true,
+      "breakout_20d": false,
+      "previous_high20": 110.5,
+      "volume_mean20": 6093651.65,
+      "volume": 4447944.0,
+      "next_session_high20": 110.5,
+      "next_session_volume_mean20": 6088580.9,
+      "prior_session": {
+        "as_of": "2026-10-28",
+        "close": 107.5,
+        "ma20": 106.725,
+        "high20": 110.5,
+        "volume_mean20": 6093651.65
+      },
+      "score": 43.7,
+      "stage": "watch",
+      "reasons": [
+        "5 日相對大盤 +0.31%",
+        "成交量為前 20 日均量 0.73 倍"
+      ],
+      "components": {
+        "relative_strength": 23.75,
+        "acceleration": 0.78,
+        "trend": 10,
+        "volume": 2.3,
+        "breakout": 6.83
+      },
+      "series": [
+        {
+          "date": "2026-09-24",
+          "value": 0.0
+        },
+        {
+          "date": "2026-09-29",
+          "value": 0.824
+        },
+        {
+          "date": "2026-09-30",
+          "value": 0.176
+        },
+        {
+          "date": "2026-10-01",
+          "value": -0.216
+        },
+        {
+          "date": "2026-10-02",
+          "value": -1.857
+        },
+        {
+          "date": "2026-10-05",
+          "value": -4.749
+        },
+        {
+          "date": "2026-10-06",
+          "value": -5.41
+        },
+        {
+          "date": "2026-10-07",
+          "value": -4.479
+        },
+        {
+          "date": "2026-10-08",
+          "value": -3.979
+        },
+        {
+          "date": "2026-10-12",
+          "value": -4.412
+        },
+        {
+          "date": "2026-10-13",
+          "value": -1.584
+        },
+        {
+          "date": "2026-10-14",
+          "value": 0.148
+        },
+        {
+          "date": "2026-10-15",
+          "value": 3.679
+        },
+        {
+          "date": "2026-10-16",
+          "value": 2.891
+        },
+        {
+          "date": "2026-10-19",
+          "value": 2.089
+        },
+        {
+          "date": "2026-10-20",
+          "value": 3.256
+        },
+        {
+          "date": "2026-10-21",
+          "value": 2.903
+        },
+        {
+          "date": "2026-10-22",
+          "value": 3.333
+        },
+        {
+          "date": "2026-10-27",
+          "value": 5.157
+        },
+        {
+          "date": "2026-10-28",
+          "value": 2.58
+        },
+        {
+          "date": "2026-10-29",
+          "value": 3.572
+        }
+      ],
+      "status": "ok",
+      "history": [
+        {
+          "date": "2026-09-18",
+          "score": 32.9,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-21",
+          "score": 22.2,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-22",
+          "score": 26.9,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-23",
+          "score": 22.7,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-24",
+          "score": 12.8,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-29",
+          "score": 19.6,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-30",
+          "score": 22.9,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-01",
+          "score": 32.6,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-02",
+          "score": 26.2,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-05",
+          "score": 19.1,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-06",
+          "score": 14.4,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 11.1,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-08",
+          "score": 7.4,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-12",
+          "score": 15.7,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-13",
+          "score": 30.5,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-14",
+          "score": 47.1,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-15",
+          "score": 56.0,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-16",
+          "score": 46.8,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-19",
+          "score": 30.7,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-20",
+          "score": 26.5,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-21",
+          "score": 32.4,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-22",
+          "score": 24.5,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-27",
+          "score": 49.0,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-28",
+          "score": 39.9,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-29",
+          "score": 43.7,
+          "stage": "watch"
+        }
+      ],
+      "smart_money": {
+        "method": "institutional",
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-29",
+        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+        "source_name": "臺灣證券交易所",
+        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+        "history": [
+          {
+            "date": "2026-10-21",
+            "foreign": 530487,
+            "trust": -9305,
+            "dealer": -18105,
+            "total": 503077
+          },
+          {
+            "date": "2026-10-22",
+            "foreign": -1109724,
+            "trust": -62000,
+            "dealer": -89297,
+            "total": -1261021
+          },
+          {
+            "date": "2026-10-27",
+            "foreign": 3019898,
+            "trust": -6853,
+            "dealer": 119546,
+            "total": 3132591
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 69846,
+            "trust": -79999,
+            "dealer": 8000,
+            "total": -2153
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 477625,
+            "trust": -19000,
+            "dealer": -30398,
+            "total": 428227
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 2988132,
+          "trust": -177157,
+          "dealer": -10254,
+          "total": 2800721
+        },
+        "core_net_5d": 2810975,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 1,
+        "joint_buying": false,
+        "price_confirmed": true
+      },
+      "market_cap_rank": 96,
+      "market_cap": 186784505488,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     },
     {
@@ -40762,9 +43212,9 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-29",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
@@ -40796,324 +43246,32 @@
             "trust": -201000,
             "dealer": -2873702,
             "total": -14105527
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -14659964,
+            "trust": 14000,
+            "dealer": -1334314,
+            "total": -15980278
           }
         ],
-        "coverage": 4,
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -32754862,
+          "trust": 3942000,
+          "dealer": -8145608,
+          "total": -36958470
+        },
+        "core_net_5d": -28812862,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
         "price_confirmed": false
       },
-      "market_cap_rank": 95,
-      "market_cap": 190768788480,
-      "market_cap_as_of": "2026-10-28",
-      "shares_as_of": "2026-10-28"
-    },
-    {
-      "symbol": "5871.TW",
-      "name": "中租-KY",
-      "market": "TW",
-      "group": "industry-其他業",
-      "group_name": "其他業",
-      "currency": "TWD",
-      "laggard": false,
-      "laggard_watch": false,
-      "as_of": "2026-10-29",
-      "close": 107.0,
-      "change_1d": -0.4651,
-      "return_5d": 0.4695,
-      "return_20d": 0.0,
-      "rs_5d": 0.3061,
-      "rs_20d": 3.572,
-      "rs_acceleration": -4.6113,
-      "volume_ratio": 0.7299,
-      "ma20_distance": 0.2577,
-      "ma20": 106.725,
-      "ma60": 110.3167,
-      "ma200": 105.4752,
-      "ma60_slope20": -1.1644,
-      "above_ma20": true,
-      "breakout_20d": false,
-      "previous_high20": 110.5,
-      "volume_mean20": 6093651.65,
-      "volume": 4447944.0,
-      "next_session_high20": 110.5,
-      "next_session_volume_mean20": 6088580.9,
-      "prior_session": {
-        "as_of": "2026-10-28",
-        "close": 107.5,
-        "ma20": 106.725,
-        "high20": 110.5,
-        "volume_mean20": 6093651.65
-      },
-      "score": 43.7,
-      "stage": "watch",
-      "reasons": [
-        "5 日相對大盤 +0.31%",
-        "成交量為前 20 日均量 0.73 倍"
-      ],
-      "components": {
-        "relative_strength": 23.75,
-        "acceleration": 0.78,
-        "trend": 10,
-        "volume": 2.3,
-        "breakout": 6.83
-      },
-      "series": [
-        {
-          "date": "2026-09-24",
-          "value": 0.0
-        },
-        {
-          "date": "2026-09-29",
-          "value": 0.824
-        },
-        {
-          "date": "2026-09-30",
-          "value": 0.176
-        },
-        {
-          "date": "2026-10-01",
-          "value": -0.216
-        },
-        {
-          "date": "2026-10-02",
-          "value": -1.857
-        },
-        {
-          "date": "2026-10-05",
-          "value": -4.749
-        },
-        {
-          "date": "2026-10-06",
-          "value": -5.41
-        },
-        {
-          "date": "2026-10-07",
-          "value": -4.479
-        },
-        {
-          "date": "2026-10-08",
-          "value": -3.979
-        },
-        {
-          "date": "2026-10-12",
-          "value": -4.412
-        },
-        {
-          "date": "2026-10-13",
-          "value": -1.584
-        },
-        {
-          "date": "2026-10-14",
-          "value": 0.148
-        },
-        {
-          "date": "2026-10-15",
-          "value": 3.679
-        },
-        {
-          "date": "2026-10-16",
-          "value": 2.891
-        },
-        {
-          "date": "2026-10-19",
-          "value": 2.089
-        },
-        {
-          "date": "2026-10-20",
-          "value": 3.256
-        },
-        {
-          "date": "2026-10-21",
-          "value": 2.903
-        },
-        {
-          "date": "2026-10-22",
-          "value": 3.333
-        },
-        {
-          "date": "2026-10-27",
-          "value": 5.157
-        },
-        {
-          "date": "2026-10-28",
-          "value": 2.58
-        },
-        {
-          "date": "2026-10-29",
-          "value": 3.572
-        }
-      ],
-      "status": "ok",
-      "history": [
-        {
-          "date": "2026-09-18",
-          "score": 32.9,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-21",
-          "score": 22.2,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-22",
-          "score": 26.9,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-23",
-          "score": 22.7,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-24",
-          "score": 12.8,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-29",
-          "score": 19.6,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-30",
-          "score": 22.9,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-01",
-          "score": 32.6,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-02",
-          "score": 26.2,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-05",
-          "score": 19.1,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-06",
-          "score": 14.4,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-07",
-          "score": 11.1,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-08",
-          "score": 7.4,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-12",
-          "score": 15.7,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-13",
-          "score": 30.5,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-14",
-          "score": 47.1,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-15",
-          "score": 56.0,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-16",
-          "score": 46.8,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-19",
-          "score": 30.7,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-20",
-          "score": 26.5,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-21",
-          "score": 32.4,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-22",
-          "score": 24.5,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-27",
-          "score": 49.0,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-28",
-          "score": 39.9,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-29",
-          "score": 43.7,
-          "stage": "watch"
-        }
-      ],
-      "smart_money": {
-        "method": "institutional",
-        "status": "partial",
-        "bias": "unknown",
-        "as_of": "2026-10-28",
-        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
-        "source_name": "臺灣證券交易所",
-        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-10-21",
-            "foreign": 530487,
-            "trust": -9305,
-            "dealer": -18105,
-            "total": 503077
-          },
-          {
-            "date": "2026-10-22",
-            "foreign": -1109724,
-            "trust": -62000,
-            "dealer": -89297,
-            "total": -1261021
-          },
-          {
-            "date": "2026-10-27",
-            "foreign": 3019898,
-            "trust": -6853,
-            "dealer": 119546,
-            "total": 3132591
-          },
-          {
-            "date": "2026-10-28",
-            "foreign": 69846,
-            "trust": -79999,
-            "dealer": 8000,
-            "total": -2153
-          }
-        ],
-        "coverage": 4,
-        "price_confirmed": true
-      },
-      "market_cap_rank": 96,
-      "market_cap": 187657330280,
-      "market_cap_as_of": "2026-10-28",
+      "market_cap_rank": 97,
+      "market_cap": 180299769600,
+      "market_cap_as_of": "2026-10-29",
       "shares_as_of": "2026-10-28"
     }
   ],
@@ -41613,19 +43771,6 @@
       "return_20d": 11.68
     },
     {
-      "id": "industry-玻璃陶瓷",
-      "name": "玻璃陶瓷",
-      "market": "TW",
-      "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 46.9,
-      "breadth": 0,
-      "rs_5d": -8.16,
-      "return_20d": 6.16
-    },
-    {
       "id": "industry-其他業",
       "name": "其他業",
       "market": "TW",
@@ -41637,6 +43782,19 @@
       "breadth": 100,
       "rs_5d": 0.31,
       "return_20d": 0.0
+    },
+    {
+      "id": "industry-玻璃陶瓷",
+      "name": "玻璃陶瓷",
+      "market": "TW",
+      "count": 1,
+      "usable": 1,
+      "coverage": 100,
+      "status": "ok",
+      "score": 46.9,
+      "breadth": 0,
+      "rs_5d": -8.16,
+      "return_20d": 6.16
     }
   ],
   "events": [],
@@ -42242,7 +44400,9 @@
         "2892.TW"
       ],
       "down_symbols": [],
-      "money_confirmed": [],
+      "money_confirmed": [
+        "2892.TW"
+      ],
       "money_divergence": [],
       "baseline_pct": 8.3
     },
@@ -42262,7 +44422,9 @@
       "down_symbols": [
         "6213.TW"
       ],
-      "money_confirmed": [],
+      "money_confirmed": [
+        "2492.TW"
+      ],
       "money_divergence": [],
       "baseline_pct": 12.8
     },
@@ -42283,7 +44445,9 @@
         "2303.TW",
         "2337.TW"
       ],
-      "money_confirmed": [],
+      "money_confirmed": [
+        "3105.TWO"
+      ],
       "money_divergence": [],
       "baseline_pct": 5.9
     },
@@ -42516,22 +44680,6 @@
       "baseline_pct": null
     },
     {
-      "id": "industry-玻璃陶瓷",
-      "name": "玻璃陶瓷",
-      "market": "TW",
-      "as_of": "2026-10-29",
-      "status": "insufficient",
-      "total": 1,
-      "available": 1,
-      "up_count": 0,
-      "down_count": 0,
-      "up_symbols": [],
-      "down_symbols": [],
-      "money_confirmed": [],
-      "money_divergence": [],
-      "baseline_pct": null
-    },
-    {
       "id": "industry-其他業",
       "name": "其他業",
       "market": "TW",
@@ -42546,25 +44694,36 @@
       "money_confirmed": [],
       "money_divergence": [],
       "baseline_pct": null
+    },
+    {
+      "id": "industry-玻璃陶瓷",
+      "name": "玻璃陶瓷",
+      "market": "TW",
+      "as_of": "2026-10-29",
+      "status": "insufficient",
+      "total": 1,
+      "available": 1,
+      "up_count": 0,
+      "down_count": 0,
+      "up_symbols": [],
+      "down_symbols": [],
+      "money_confirmed": [],
+      "money_divergence": [],
+      "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [
-    "TWSE 2026-10-29 法人資料未更新",
-    "TPEX 2026-10-29 法人資料未更新"
-  ],
+  "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
-    "status": "stale",
-    "as_of": "2026-10-28",
-    "generated_at": "2026-10-29T01:56:13.663772+00:00",
-    "market_size": 1980,
+    "status": "ok",
+    "as_of": "2026-10-29",
+    "generated_at": "2026-10-29T12:55:02.796055+00:00",
+    "market_size": 1973,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
       "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
-    ],
-    "last_attempt_at": "2026-10-29T06:03:21.088083+00:00",
-    "error": "全市場市值資料不足或代號重複，保留原百大名單"
+    ]
   }
 }
