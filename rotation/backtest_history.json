@@ -598,5 +598,80 @@
         ]
       }
     ]
+  },
+  {
+    "date": "2026-10-31",
+    "strategy_version": "price-rotation-v1",
+    "config_hash": "6bc89167d97f",
+    "markets": [
+      {
+        "market": "TW",
+        "as_of": "2026-10-30",
+        "results": [
+          {
+            "holding_days": 5,
+            "return_pct": 13.77,
+            "drawdown_pct": -12.91,
+            "trades": 80,
+            "assessment": "forward_test"
+          },
+          {
+            "holding_days": 10,
+            "return_pct": 22.15,
+            "drawdown_pct": -16.68,
+            "trades": 67,
+            "assessment": "forward_test"
+          },
+          {
+            "holding_days": 20,
+            "return_pct": 30.15,
+            "drawdown_pct": -16.62,
+            "trades": 55,
+            "assessment": "forward_test"
+          },
+          {
+            "holding_days": 60,
+            "return_pct": 23.28,
+            "drawdown_pct": -29.81,
+            "trades": 48,
+            "assessment": "forward_test"
+          }
+        ]
+      },
+      {
+        "market": "US",
+        "as_of": "2026-10-30",
+        "results": [
+          {
+            "holding_days": 5,
+            "return_pct": 14.26,
+            "drawdown_pct": -7.47,
+            "trades": 45,
+            "assessment": "forward_test"
+          },
+          {
+            "holding_days": 10,
+            "return_pct": -0.78,
+            "drawdown_pct": -10.34,
+            "trades": 43,
+            "assessment": "needs_revision"
+          },
+          {
+            "holding_days": 20,
+            "return_pct": -0.99,
+            "drawdown_pct": -15.01,
+            "trades": 43,
+            "assessment": "needs_revision"
+          },
+          {
+            "holding_days": 60,
+            "return_pct": 4.29,
+            "drawdown_pct": -18.28,
+            "trades": 39,
+            "assessment": "forward_test"
+          }
+        ]
+      }
+    ]
   }
 ]
