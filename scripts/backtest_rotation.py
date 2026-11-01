@@ -12,6 +12,7 @@ import pandas as pd
 from rotation_prices import adjust_with_verified_close, fetch_official_closes
 from rotation_signals import completed_bars
 from rotation_sync import synchrony_series
+from rotation_universe import LEGACY_IDENTITY_NOTE
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -207,7 +208,7 @@ def main():
     result={"schema_version":1,"status":"ok","refresh_status":"ok","last_attempt_at":now.isoformat(),"generated_at":now.isoformat(),"strategy_version":settings['version'],
             "config_hash":hashlib.sha256(json.dumps(settings,sort_keys=True).encode()).hexdigest()[:12],
             "settings":settings,"markets":reports,"official_check":diagnostics,
-            "limitations":["回測僅涵蓋量價接棒代理規則，不含新聞催化、人工波次或 Smart Money 法人条件。",
+            "limitations":[LEGACY_IDENTITY_NOTE, "回測僅涵蓋量價接棒代理規則，不含新聞催化、人工波次或 Smart Money 法人条件。",
                            "採今天的觀察名單回看歷史，存在存活者及事後選股偏差，不能當作當年可實現的全市場績效。",
                            "成本為研究假設：台股單邊0.3%、美股單邊0.1%，另檢查成本加倍；不是券商實際報價。",
                            "假設可按還原開盤價成交及分割股數；漲跌停排隊、交易衝擊、流動性容量與停牌風險未完整模擬。",
