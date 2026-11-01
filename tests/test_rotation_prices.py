@@ -69,6 +69,42 @@ class ClosingPriceTests(unittest.TestCase):
         self.assertEqual(quotes['^TWII']['previous_date'], '2026-09-30')
         self.assertEqual(quotes['^TWII']['reference_close'], 101)
 
+    def test_month_start_weekend_and_monday_premarket_keep_friday_date(self):
+        def payload(url):
+            if 'MI_5MINS_HIST' not in url: return {}
+            if 'date=20261031' in url:
+                return {'stat':'OK','fields':['日期','最高指數','最低指數','收盤指數'],
+                        'data':[['115/10/29','102','99','101'],['115/10/30','105','101','104']]}
+            return {'stat':'很抱歉，沒有符合條件的資料!'}
+        for now in [datetime(2026,11,1,9,tzinfo=timezone.utc), datetime(2026,11,2,1,tzinfo=timezone.utc)]:
+            with patch('rotation_prices.read_json', side_effect=payload):
+                quotes, check = fetch_official_closes(now)
+            self.assertEqual(check['expected_tw_date'], '2026-10-30')
+            self.assertEqual(quotes['^TWII']['previous_date'], '2026-10-29')
+            self.assertEqual(quotes['^TWII']['reference_close'], 101)
+
+    def test_month_start_fallback_never_masks_missing_weekday_data_or_network_error(self):
+        with patch('rotation_prices.read_json', return_value={'stat':'很抱歉，沒有符合條件的資料!'}) as read:
+            quotes, check = fetch_official_closes(datetime(2026,11,2,9,tzinfo=timezone.utc))
+            self.assertFalse(quotes)
+            self.assertIsNone(check['expected_tw_date'])
+            self.assertEqual(read.call_count, 1)
+        with patch('rotation_prices.read_json', side_effect=OSError('offline')) as read:
+            quotes, check = fetch_official_closes(datetime(2026,11,1,9,tzinfo=timezone.utc))
+            self.assertFalse(quotes)
+            self.assertEqual(read.call_count, 1)
+
+    def test_month_start_rejects_malformed_nonempty_and_stale_previous_month(self):
+        with patch('rotation_prices.read_json', return_value={'stat':'error','data':[['bad']]}) as read:
+            self.assertFalse(fetch_official_closes(datetime(2026,11,1,9,tzinfo=timezone.utc))[0])
+            self.assertEqual(read.call_count, 1)
+        old = {'stat':'OK','fields':['日期','最高指數','最低指數','收盤指數'],
+               'data':[['115/10/19','102','99','101'],['115/10/20','105','101','104']]}
+        with patch('rotation_prices.read_json', side_effect=[{'stat':'很抱歉，沒有符合條件的資料!'}, old]):
+            quotes, check = fetch_official_closes(datetime(2026,11,1,9,tzinfo=timezone.utc))
+            self.assertFalse(quotes)
+            self.assertIsNone(check['expected_tw_date'])
+
 
 if __name__ == "__main__":
     unittest.main()
