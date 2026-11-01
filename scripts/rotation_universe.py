@@ -12,6 +12,7 @@ from rotation_prices import fetch_official_closes, read_json, roc_date, number
 ROOT=Path(__file__).resolve().parents[1]
 COMPANIES='https://openapi.twse.com.tw/v1/opendata/t187ap03_L'
 TPEX_VALUES='https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value'
+LEGACY_IDENTITY_NOTE = '2026-11-01 核對證交所：6531 是愛普*，舊版誤標光聖並放入光通訊。原39檔代碼與歷史分組保留供追溯，台股同步回測含此錯誤分組，暫不據此判斷同步門檻有效；新版每日觀察已移至半導體業，並未換成另一股票回測。'
 
 
 def ordinary(code):
@@ -85,6 +86,22 @@ def expand_universe(base,top100):
         group['stocks'].append([r['symbol'],r['name'],'TW'])
         present.add(r['symbol'])
     config['groups'].extend(extra.values())
+    # Correct live classification without silently changing the frozen backtest
+    # universe or substituting a different security's prices for ticker 6531.
+    moved = False
+    for group in config['groups']:
+        original = group['stocks']
+        group['stocks'] = [s for s in original if s[0] != '6531.TW']
+        moved = moved or len(group['stocks']) != len(original)
+    if moved:
+        target = next((g for g in config['groups'] if g['id'] == 'industry-半導體業'), None)
+        if target is None:
+            target = {'id': 'industry-半導體業', 'name': '半導體業', 'stocks': []}
+            config['groups'].append(target)
+        target['stocks'].append(['6531.TW', '愛普*', 'TW'])
+        config['identity_corrections'] = [{'symbol': '6531.TW', 'verified_at': '2026-11-01',
+            'name': '愛普*', 'previous_group': 'optical', 'source': COMPANIES,
+            'note': LEGACY_IDENTITY_NOTE}]
     config['top100_as_of']=top100.get('as_of')
     return config
 

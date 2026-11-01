@@ -16,6 +16,7 @@
 <section id="holdings" class="portfolio-toolbar"><h2>持股計畫</h2><button id="new-position" type="button">＋ 新增／試算持股</button><label><input id="show-archived" type="checkbox"> 顯示已移出的持股</label></section>
 <div id="portfolio-summary" class="portfolio-summary"></div><section id="positions" class="positions" aria-label="我的持股計畫"></section>
 <p class="evidence-boundary">加減碼是你手動登錄的已成交紀錄，不會下單。加碼費用計入平均成本，減碼費用扣自已實現損益；未填費用視為 0，股息、匯率與未來賣出成本未計入。已實現損益只累計開始追蹤後的紀錄。不同幣別分開統計。個人進退規則尚未回測，不能換算成個股必漲機率。</p>
+<p class="evidence-boundary">11/1 身分更正：6531 為愛普*，舊版曾誤標光聖。研究與行情以股票代碼辨識；原39檔權重模型仍使用相同代碼，未換股或重訓。台股舊同步分組有誤，暫不拿同步績效作有效性證據。</p>
 <section id="training" class="section training-panel" aria-label="權重訓練與驗證"><p class="eyebrow">RESEARCH / FROZEN MODEL</p><h2>權重訓練：有比原版更好嗎？</h2><p>先以三段訓練資料選權重，再比較沒有參與選權重的歷史期間。保留原版，不自動替換。</p>
 <div class="training-controls"><label>市場<select id="train-market"><option value="TW">台股原 39 檔</option><option value="US">美股原 13 檔</option></select></label><label>研究偏好<select id="train-profile"><option value="balanced">平衡</option><option value="conservative">保守</option><option value="aggressive">積極</option></select></label><label>最長持有<select id="train-horizon"><option value="5">5 個交易日</option><option value="10" selected>10 個交易日</option><option value="20">20 個交易日</option><option value="60">60 個交易日</option></select></label></div><div id="training-result" aria-live="polite">正在讀取訓練結果…</div></section>
 <footer>持股計畫僅提供條件觀察；不會連接券商或自動下單。</footer></main>
