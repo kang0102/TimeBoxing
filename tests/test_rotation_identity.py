@@ -1,12 +1,17 @@
 from copy import deepcopy
+from contextlib import ExitStack, redirect_stdout
+import io
 import json
 from pathlib import Path
 import sys
 import unittest
+import tempfile
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from rotation_universe import expand_universe, LEGACY_IDENTITY_NOTE
+import update_rotation_data as updater
 
 
 class IdentityTests(unittest.TestCase):
@@ -45,6 +50,32 @@ class IdentityTests(unittest.TestCase):
         legacy = next(g for g in self.base['groups'] if g['id'] == 'optical')
         self.assertIn(['6531.TW', '愛普*', 'TW'], legacy['stocks'])
         self.assertIn('原39檔', LEGACY_IDENTITY_NOTE)
+
+    def test_publication_keeps_new_methodology_and_does_not_rewrite_prior_observations(self):
+        config = expand_universe(self.base, {'stocks': []})
+        snapshot = updater.build_snapshot(config, {})
+        snapshot.update(status='ok', stocks=[], markets={'TW': {'status': 'ok', 'as_of': '2026-10-30'}})
+        old_record = {'market': 'TW', 'as_of': '2026-10-29', 'methodology_version': 'event-rotation-v6-top100'}
+        with tempfile.TemporaryDirectory() as folder, ExitStack() as stack:
+            root = Path(folder); dest = root / 'rotation'; dest.mkdir()
+            for filename, data in [('universe.json', self.base), ('catalysts.json', {'events': []}),
+                                   ('research_cases.json', {'cases': []}), ('observations.json', [old_record])]:
+                (dest / filename).write_text(json.dumps(data), encoding='utf-8')
+            stack.enter_context(patch.object(updater, 'ROOT', root))
+            stack.enter_context(patch.object(updater, 'refresh_top100', return_value={'stocks': []}))
+            stack.enter_context(patch.object(updater, 'fetch_official_closes', return_value=({}, {'expected_tw_date': '2026-10-30', 'errors': []})))
+            stack.enter_context(patch.object(updater, 'build_snapshot', return_value=snapshot))
+            stack.enter_context(patch.object(updater, 'build_forward_prices', return_value={}))
+            stack.enter_context(patch.dict(sys.modules, {'yfinance': Mock(download=Mock(return_value={}))}))
+            stack.enter_context(patch.object(sys, 'argv', ['update_rotation_data.py', '--output', str(dest / 'data.json')]))
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(updater.main(), 0)
+            published = json.loads((dest / 'data.json').read_text(encoding='utf-8'))
+            records = json.loads((dest / 'observations.json').read_text(encoding='utf-8'))
+            self.assertEqual(records[0], old_record)
+            self.assertEqual(published['methodology_version'], 'event-rotation-v7-identity')
+            self.assertEqual(records[1]['methodology_version'], published['methodology_version'])
+            self.assertEqual(records[1]['identity_corrections'], config['identity_corrections'])
 
 
 if __name__ == '__main__':

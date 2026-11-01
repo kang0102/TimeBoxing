@@ -73,7 +73,7 @@ def build_snapshot(config, downloads, previous=None, now=None, events=None, rese
             "last_success_at": now.isoformat() if count else previous.get("last_success_at"),
             "status": "ok" if count == len(rows) else "partial" if count else "failed",
             "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
-            "methodology_version": "event-rotation-v6-identity", "markets": market_info, "price_check": price_check,
+            "methodology_version": "event-rotation-v7-identity", "markets": market_info, "price_check": price_check,
             "identity_corrections": config.get('identity_corrections', []),
             "coverage": {"available": count, "total": len(rows)},
             "stocks": rows, "groups": sectors,
@@ -146,7 +146,6 @@ def main():
         row.update(market_cap_rank=rank.get('rank'), market_cap=rank.get('market_cap'),
                    market_cap_as_of=top100.get('as_of') if rank else None,
                    shares_as_of=rank.get('shares_as_of'))
-    snapshot['methodology_version'] = 'event-rotation-v6-top100'
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temp = args.output.with_suffix(".tmp")
     temp.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
@@ -163,6 +162,7 @@ def main():
             continue
         observations.append({'market':market,'as_of':info['as_of'],'recorded_at':now.isoformat(),
                              'methodology_version':snapshot['methodology_version'],
+                             'identity_corrections':snapshot.get('identity_corrections', []),
                              'stocks':[{k:r.get(k) for k in ['symbol','close','stage','status','previous_high20','ma20','volume_ratio','rs_5d','smart_money']} for r in snapshot['stocks'] if r['market']==market],
                              'briefings':[b for b in snapshot['briefings'] if b['market']==market],
                              'synchrony':[s for s in snapshot['synchrony'] if s['market']==market]})
