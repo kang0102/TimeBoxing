@@ -1,6 +1,7 @@
 """Dated public ETF risk observations. Units, estimated NAV and holdings are distinct."""
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import json
 import math
 from pathlib import Path
@@ -30,8 +31,10 @@ def domestic_active(basic, day):
             and r['基金代號'].endswith('A') and roc_date(r['出表日期']) <= day}
 
 
-def nav_rows(payload, basic, day):
-    eligible = domestic_active(basic, day)
+def nav_rows(payload, basic, day, *, catalog_cutoff=None):
+    # A directory can be published on a non-trading day. Only the directory
+    # uses the observation-date cutoff; quotes must still match `day` exactly.
+    eligible = domestic_active(basic, catalog_cutoff or day)
     found = {}
     for issuer in payload.get('a1', []):
         if issuer.get('rtCode', issuer.get('rtcode')) != '0000':
@@ -226,7 +229,12 @@ def main():
         day = check['expected_tw_date']
         if not day or '^TWII' not in quotes:
             raise ValueError('官方交易日期未取得')
-        basic = read_json(BASIC); rows = nav_rows(read_json(NAV), basic, day)
+        catalog_cutoff = now.astimezone(ZoneInfo('Asia/Taipei')).date().isoformat()
+        basic = read_json(BASIC)
+        eligible = domestic_active(basic, catalog_cutoff)
+        if not eligible:
+            raise ValueError('ETF基金名錄未取得有效資料')
+        rows = nav_rows(read_json(NAV), basic, day, catalog_cutoff=catalog_cutoff)
         if not rows or not any(r['status'] == 'ok' for r in rows):
             raise ValueError('ETF預估淨值與申贖日期未齊')
         symbols = ['^TWII']
@@ -297,7 +305,7 @@ def main():
         overlaps = overlap(list(holding_now.values()), holding_prev, market['stocks']+extras, caps)
         result = {'schema_version': 1, 'status': 'ok', 'generated_at': now.isoformat(), 'as_of': day,
                   'scope': '台灣上市、投資國內股票的主動式 ETF；不含海外股票與債券型。',
-                  'catalog_as_of': max(roc_date(r['出表日期']) for r in domestic_active(basic, day).values()),
+                  'catalog_as_of': max(roc_date(r['出表日期']) for r in eligible.values()),
                   'funds': rows, 'holdings_coverage': len(holding_now), 'holdings_provider': '野村投信',
                   'holdings_dates': sorted({f['as_of'] for f in holding_now.values()}),
                   'holdings_today_coverage': sum(f['as_of'] == day for f in holding_now.values()),

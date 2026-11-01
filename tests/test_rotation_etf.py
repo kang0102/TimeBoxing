@@ -42,6 +42,26 @@ class ETFTests(unittest.TestCase):
         self.basic[0]['基金類型'] = '國外成分證券主動式交易所交易基金(股票)'
         self.assertEqual(nav_rows({'a1':[]}, self.basic, '2026-09-18'), [])
 
+    def test_weekend_catalog_does_not_change_quote_date_or_accept_future_catalog(self):
+        basic = [{**self.basic[0], '出表日期':'1151031'}]
+        raw = {**self.raw, 'i':'20261030'}
+        payload = {'a1':[{'rtCode':'0000','msgArray':[raw]}]}
+        rows = nav_rows(payload, basic, '2026-10-30', catalog_cutoff='2026-11-01')
+        self.assertEqual(rows[0]['status'], 'ok')
+        self.assertEqual(rows[0]['as_of'], '2026-10-30')
+        # No implicit relaxation for historical callers without an observation date.
+        self.assertEqual(nav_rows(payload, basic, '2026-10-30'), [])
+        basic[0]['出表日期'] = '1151102'
+        self.assertEqual(nav_rows(payload, basic, '2026-10-30', catalog_cutoff='2026-11-01'), [])
+
+    def test_weekend_catalog_still_rejects_misaligned_or_unfinished_quotes(self):
+        basic = [{**self.basic[0], '出表日期':'1151031'}]
+        for changes in [{'i':'20261029'}, {'i':'20261101'}, {'j':'10:00:00'}, {'f':'0'}]:
+            raw = {**self.raw, 'i':'20261030', **changes}
+            payload = {'a1':[{'rtCode':'0000','msgArray':[raw]}]}
+            rows = nav_rows(payload, basic, '2026-10-30', catalog_cutoff='2026-11-01')
+            self.assertEqual(rows[0]['status'], 'unavailable')
+
     def test_official_history_requires_every_session_and_blocks_ex_distribution(self):
         dates = pd.bdate_range('2026-08-21', periods=21)
         prices = {d.date().isoformat():{'close':10+i/10,'corporate_action':False} for i,d in enumerate(dates)}
