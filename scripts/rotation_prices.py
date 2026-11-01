@@ -114,7 +114,22 @@ def fetch_official_closes(now, cache_path=None, symbols=None, persist_cache=True
     diagnostics = {"checked_at": now.isoformat(), "expected_tw_date": None, "errors": []}
     quotes = {}
     try:
-        index = official_index(read_json(f"https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?date={cutoff:%Y%m%d}&response=json"), cutoff.isoformat())
+        monthly = read_json(f"https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?date={cutoff:%Y%m%d}&response=json")
+        try:
+            index = official_index(monthly, cutoff.isoformat())
+        except ValueError:
+            # A month starting on a weekend has no report yet. Only accept this
+            # explicit empty response when no weekday has occurred in the month;
+            # network errors, malformed rows and missing weekday data still fail.
+            weekend_only = all(cutoff.replace(day=d).weekday() >= 5 for d in range(1, cutoff.day + 1))
+            if (not weekend_only or monthly.get('data')
+                    or monthly.get('stat') not in ('OK', '很抱歉，沒有符合條件的資料!')):
+                raise
+            prior_month = cutoff.replace(day=1) - timedelta(days=1)
+            index = official_index(read_json(f"https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?date={prior_month:%Y%m%d}&response=json"), prior_month.isoformat())
+            if not index['date'].startswith(prior_month.strftime('%Y-%m')):
+                raise ValueError('官方月份不符')
+            diagnostics['index_calendar_fallback'] = 'previous_month_before_first_weekday'
         if index['previous_date'] is None:
             prior_month = datetime.fromisoformat(index['date']).date().replace(day=1) - timedelta(days=1)
             prior = official_index(read_json(f"https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?date={prior_month:%Y%m%d}&response=json"), prior_month.isoformat())
