@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T09:14:15.630140+00:00",
-  "last_success_at": "2026-11-01T09:14:15.630140+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-01T09:21:25.088204+00:00",
+  "last_success_at": "2026-11-01T09:21:25.088204+00:00",
+  "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -10,7 +10,7 @@
       "symbol": "^TWII",
       "as_of": "2026-10-30",
       "status": "ok",
-      "expected_as_of": null
+      "expected_as_of": "2026-10-30"
     },
     "US": {
       "symbol": "^GSPC",
@@ -20,11 +20,11 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-01T09:14:15.630140+00:00",
-    "expected_tw_date": null,
-    "errors": [
-      "官方交易日期核對暫時無法完成"
-    ],
+    "checked_at": "2026-11-01T09:21:25.088204+00:00",
+    "expected_tw_date": "2026-10-30",
+    "errors": [],
+    "index_calendar_fallback": "previous_month_before_first_weekday",
+    "cached_symbols": [],
     "repairs": {}
   },
   "identity_corrections": [
@@ -38,7 +38,7 @@
     }
   ],
   "coverage": {
-    "available": 132,
+    "available": 133,
     "total": 133
   },
   "stocks": [
@@ -39876,7 +39876,7 @@
           "value": 14.334
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-09-18",
@@ -40011,20 +40011,67 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-10-30",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-10-22",
+            "foreign": 3718157,
+            "trust": -1775653,
+            "dealer": 1890317,
+            "total": 3832821
+          },
+          {
+            "date": "2026-10-27",
+            "foreign": 5177550,
+            "trust": 213000,
+            "dealer": 632650,
+            "total": 6023200
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": -409004,
+            "trust": 6000,
+            "dealer": 153483,
+            "total": -249521
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": 2310448,
+            "trust": -1030139,
+            "dealer": 86440,
+            "total": 1366749
+          },
+          {
+            "date": "2026-10-30",
+            "foreign": 6527377,
+            "trust": -1094000,
+            "dealer": 1310840,
+            "total": 6744217
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 17324528,
+          "trust": -3680792,
+          "dealer": 4073730,
+          "total": 17717466
+        },
+        "core_net_5d": 13643736,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 2,
+        "joint_buying": false,
+        "price_confirmed": true
       },
       "market_cap_rank": 50,
       "market_cap": 455697636764,
       "market_cap_as_of": "2026-10-30",
-      "shares_as_of": "2026-10-30",
-      "error": "至少需要 65 個完整交易日"
+      "shares_as_of": "2026-10-30"
     },
     {
       "symbol": "2002.TW",
@@ -44316,13 +44363,13 @@
       "name": "食品工業",
       "market": "TW",
       "count": 1,
-      "usable": 0,
-      "coverage": 0,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 1,
+      "coverage": 100,
+      "status": "ok",
+      "score": 82.0,
+      "breadth": 100,
+      "rs_5d": 5.95,
+      "return_20d": 8.53
     },
     {
       "id": "industry-鋼鐵工業",
@@ -45205,7 +45252,7 @@
       "as_of": "2026-10-30",
       "status": "insufficient",
       "total": 1,
-      "available": 0,
+      "available": 1,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -45372,7 +45419,7 @@
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
     ],
-    "last_attempt_at": "2026-11-01T09:14:08.039786+00:00",
-    "error": "官方完整交易日期未取得"
+    "last_attempt_at": "2026-11-01T09:20:30.374866+00:00",
+    "error": "全市場市值資料不足或代號重複，保留原百大名單"
   }
 }
