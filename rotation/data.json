@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-31T01:46:52.503077+00:00",
-  "last_success_at": "2026-10-31T01:46:52.503077+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-01T09:14:15.630140+00:00",
+  "last_success_at": "2026-11-01T09:14:15.630140+00:00",
+  "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
-  "methodology_version": "event-rotation-v6-top100",
+  "methodology_version": "event-rotation-v7-identity",
   "markets": {
     "TW": {
       "symbol": "^TWII",
       "as_of": "2026-10-30",
       "status": "ok",
-      "expected_as_of": "2026-10-30"
+      "expected_as_of": null
     },
     "US": {
       "symbol": "^GSPC",
@@ -20,14 +20,25 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-10-31T01:46:52.503077+00:00",
-    "expected_tw_date": "2026-10-30",
-    "errors": [],
-    "cached_symbols": [],
+    "checked_at": "2026-11-01T09:14:15.630140+00:00",
+    "expected_tw_date": null,
+    "errors": [
+      "官方交易日期核對暫時無法完成"
+    ],
     "repairs": {}
   },
+  "identity_corrections": [
+    {
+      "symbol": "6531.TW",
+      "verified_at": "2026-11-01",
+      "name": "愛普*",
+      "previous_group": "optical",
+      "source": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+      "note": "2026-11-01 核對證交所：6531 是愛普*，舊版誤標光聖並放入光通訊。原39檔代碼與歷史分組保留供追溯，台股同步回測含此錯誤分組，暫不據此判斷同步門檻有效；新版每日觀察已移至半導體業，並未換成另一股票回測。"
+    }
+  ],
   "coverage": {
-    "available": 133,
+    "available": 132,
     "total": 133
   },
   "stocks": [
@@ -3313,345 +3324,6 @@
         "core_net_5d": 36874,
         "buy_days": 3,
         "sell_days": 2,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
-      },
-      "market_cap_rank": null,
-      "market_cap": null,
-      "market_cap_as_of": null,
-      "shares_as_of": null
-    },
-    {
-      "symbol": "6531.TW",
-      "name": "光聖",
-      "market": "TW",
-      "group": "optical",
-      "group_name": "光通訊／CPO",
-      "currency": "TWD",
-      "laggard": false,
-      "laggard_watch": false,
-      "as_of": "2026-10-30",
-      "close": 776.0,
-      "change_1d": -7.7289,
-      "return_5d": -6.6185,
-      "return_20d": -16.4693,
-      "rs_5d": -3.157,
-      "rs_20d": -11.998,
-      "rs_acceleration": 3.4731,
-      "volume_ratio": 0.8635,
-      "ma20_distance": -13.6338,
-      "ma20": 898.5,
-      "ma60": 908.0667,
-      "ma200": 766.2264,
-      "ma60_slope20": 2.2252,
-      "above_ma20": false,
-      "breakout_20d": false,
-      "previous_high20": 1090.0,
-      "volume_mean20": 4013414.45,
-      "volume": 3465627.0,
-      "next_session_high20": 1090.0,
-      "next_session_volume_mean20": 3960632.45,
-      "prior_session": {
-        "as_of": "2026-10-29",
-        "close": 841.0,
-        "ma20": 906.15,
-        "high20": 1090.0,
-        "volume_mean20": 4013414.45
-      },
-      "score": 20.6,
-      "stage": "weakening",
-      "reasons": [
-        "5 日相對大盤 -3.16%",
-        "成交量為前 20 日均量 0.86 倍",
-        "收盤低於 20 日均線"
-      ],
-      "components": {
-        "relative_strength": 0,
-        "acceleration": 16.95,
-        "trend": 0,
-        "volume": 3.64,
-        "breakout": 0
-      },
-      "series": [
-        {
-          "date": "2026-09-29",
-          "value": 0.0
-        },
-        {
-          "date": "2026-09-30",
-          "value": -0.857
-        },
-        {
-          "date": "2026-10-01",
-          "value": -1.068
-        },
-        {
-          "date": "2026-10-02",
-          "value": 5.769
-        },
-        {
-          "date": "2026-10-05",
-          "value": 8.811
-        },
-        {
-          "date": "2026-10-06",
-          "value": 7.541
-        },
-        {
-          "date": "2026-10-07",
-          "value": 2.943
-        },
-        {
-          "date": "2026-10-08",
-          "value": 1.893
-        },
-        {
-          "date": "2026-10-12",
-          "value": -1.515
-        },
-        {
-          "date": "2026-10-13",
-          "value": -1.786
-        },
-        {
-          "date": "2026-10-14",
-          "value": -2.677
-        },
-        {
-          "date": "2026-10-15",
-          "value": -9.288
-        },
-        {
-          "date": "2026-10-16",
-          "value": -4.01
-        },
-        {
-          "date": "2026-10-19",
-          "value": -10.097
-        },
-        {
-          "date": "2026-10-20",
-          "value": -11.395
-        },
-        {
-          "date": "2026-10-21",
-          "value": -9.129
-        },
-        {
-          "date": "2026-10-22",
-          "value": -11.468
-        },
-        {
-          "date": "2026-10-27",
-          "value": -9.46
-        },
-        {
-          "date": "2026-10-28",
-          "value": -8.107
-        },
-        {
-          "date": "2026-10-29",
-          "value": -7.005
-        },
-        {
-          "date": "2026-10-30",
-          "value": -11.998
-        }
-      ],
-      "status": "ok",
-      "history": [
-        {
-          "date": "2026-09-17",
-          "score": 32.7,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-18",
-          "score": 49.2,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-09-21",
-          "score": 46.8,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-09-22",
-          "score": 41.0,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-23",
-          "score": 76.0,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-09-24",
-          "score": 70.9,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-09-29",
-          "score": 45.6,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-09-30",
-          "score": 36.9,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-01",
-          "score": 25.7,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-02",
-          "score": 65.5,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-05",
-          "score": 73.9,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-06",
-          "score": 84.0,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-07",
-          "score": 60.2,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-08",
-          "score": 61.2,
-          "stage": "improving"
-        },
-        {
-          "date": "2026-10-12",
-          "score": 21.3,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-13",
-          "score": 25,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-14",
-          "score": 17.6,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-15",
-          "score": 24.5,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-16",
-          "score": 26.0,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-19",
-          "score": 21.7,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-20",
-          "score": 22.0,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-21",
-          "score": 26.9,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-22",
-          "score": 32.3,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-27",
-          "score": 23.0,
-          "stage": "weakening"
-        },
-        {
-          "date": "2026-10-28",
-          "score": 34.5,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-29",
-          "score": 22.2,
-          "stage": "watch"
-        },
-        {
-          "date": "2026-10-30",
-          "score": 20.6,
-          "stage": "weakening"
-        }
-      ],
-      "smart_money": {
-        "method": "institutional",
-        "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-10-30",
-        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
-        "source_name": "臺灣證券交易所",
-        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-10-22",
-            "foreign": -622851,
-            "trust": 52000,
-            "dealer": -46356,
-            "total": -617207
-          },
-          {
-            "date": "2026-10-27",
-            "foreign": 237721,
-            "trust": 72000,
-            "dealer": 62921,
-            "total": 372642
-          },
-          {
-            "date": "2026-10-28",
-            "foreign": 360545,
-            "trust": 4000,
-            "dealer": 3528,
-            "total": 368073
-          },
-          {
-            "date": "2026-10-29",
-            "foreign": -271133,
-            "trust": -13000,
-            "dealer": -21910,
-            "total": -306043
-          },
-          {
-            "date": "2026-10-30",
-            "foreign": -139851,
-            "trust": 17000,
-            "dealer": -51535,
-            "total": -174386
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -435569,
-          "trust": 132000,
-          "dealer": -53352,
-          "total": -356921
-        },
-        "core_net_5d": -303569,
-        "buy_days": 2,
-        "sell_days": 3,
         "buy_streak": 0,
         "joint_buying": false,
         "price_confirmed": false
@@ -32794,6 +32466,345 @@
       "shares_as_of": "2026-10-30"
     },
     {
+      "symbol": "6531.TW",
+      "name": "愛普*",
+      "market": "TW",
+      "group": "industry-半導體業",
+      "group_name": "半導體業",
+      "currency": "TWD",
+      "laggard": false,
+      "laggard_watch": true,
+      "as_of": "2026-10-30",
+      "close": 776.0,
+      "change_1d": -7.7289,
+      "return_5d": -6.6185,
+      "return_20d": -16.4693,
+      "rs_5d": -3.157,
+      "rs_20d": -11.998,
+      "rs_acceleration": 3.4731,
+      "volume_ratio": 0.8635,
+      "ma20_distance": -13.6338,
+      "ma20": 898.5,
+      "ma60": 908.0667,
+      "ma200": 766.2264,
+      "ma60_slope20": 2.2252,
+      "above_ma20": false,
+      "breakout_20d": false,
+      "previous_high20": 1090.0,
+      "volume_mean20": 4013414.45,
+      "volume": 3465627.0,
+      "next_session_high20": 1090.0,
+      "next_session_volume_mean20": 3960632.45,
+      "prior_session": {
+        "as_of": "2026-10-29",
+        "close": 841.0,
+        "ma20": 906.15,
+        "high20": 1090.0,
+        "volume_mean20": 4013414.45
+      },
+      "score": 20.6,
+      "stage": "weakening",
+      "reasons": [
+        "5 日相對大盤 -3.16%",
+        "成交量為前 20 日均量 0.86 倍",
+        "收盤低於 20 日均線"
+      ],
+      "components": {
+        "relative_strength": 0,
+        "acceleration": 16.95,
+        "trend": 0,
+        "volume": 3.64,
+        "breakout": 0
+      },
+      "series": [
+        {
+          "date": "2026-09-29",
+          "value": 0.0
+        },
+        {
+          "date": "2026-09-30",
+          "value": -0.857
+        },
+        {
+          "date": "2026-10-01",
+          "value": -1.068
+        },
+        {
+          "date": "2026-10-02",
+          "value": 5.769
+        },
+        {
+          "date": "2026-10-05",
+          "value": 8.811
+        },
+        {
+          "date": "2026-10-06",
+          "value": 7.541
+        },
+        {
+          "date": "2026-10-07",
+          "value": 2.943
+        },
+        {
+          "date": "2026-10-08",
+          "value": 1.893
+        },
+        {
+          "date": "2026-10-12",
+          "value": -1.515
+        },
+        {
+          "date": "2026-10-13",
+          "value": -1.786
+        },
+        {
+          "date": "2026-10-14",
+          "value": -2.677
+        },
+        {
+          "date": "2026-10-15",
+          "value": -9.288
+        },
+        {
+          "date": "2026-10-16",
+          "value": -4.01
+        },
+        {
+          "date": "2026-10-19",
+          "value": -10.097
+        },
+        {
+          "date": "2026-10-20",
+          "value": -11.395
+        },
+        {
+          "date": "2026-10-21",
+          "value": -9.129
+        },
+        {
+          "date": "2026-10-22",
+          "value": -11.468
+        },
+        {
+          "date": "2026-10-27",
+          "value": -9.46
+        },
+        {
+          "date": "2026-10-28",
+          "value": -8.107
+        },
+        {
+          "date": "2026-10-29",
+          "value": -7.005
+        },
+        {
+          "date": "2026-10-30",
+          "value": -11.998
+        }
+      ],
+      "status": "ok",
+      "history": [
+        {
+          "date": "2026-09-17",
+          "score": 32.7,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-18",
+          "score": 49.2,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-09-21",
+          "score": 46.8,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-09-22",
+          "score": 41.0,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-23",
+          "score": 76.0,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-09-24",
+          "score": 70.9,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-09-29",
+          "score": 45.6,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-09-30",
+          "score": 36.9,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-01",
+          "score": 25.7,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-02",
+          "score": 65.5,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-05",
+          "score": 73.9,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-06",
+          "score": 84.0,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-07",
+          "score": 60.2,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-08",
+          "score": 61.2,
+          "stage": "improving"
+        },
+        {
+          "date": "2026-10-12",
+          "score": 21.3,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-13",
+          "score": 25,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-14",
+          "score": 17.6,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-15",
+          "score": 24.5,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-16",
+          "score": 26.0,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-19",
+          "score": 21.7,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-20",
+          "score": 22.0,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-21",
+          "score": 26.9,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-22",
+          "score": 32.3,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-27",
+          "score": 23.0,
+          "stage": "weakening"
+        },
+        {
+          "date": "2026-10-28",
+          "score": 34.5,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-29",
+          "score": 22.2,
+          "stage": "watch"
+        },
+        {
+          "date": "2026-10-30",
+          "score": 20.6,
+          "stage": "weakening"
+        }
+      ],
+      "smart_money": {
+        "method": "institutional",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-10-30",
+        "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+        "source_name": "臺灣證券交易所",
+        "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+        "history": [
+          {
+            "date": "2026-10-22",
+            "foreign": -622851,
+            "trust": 52000,
+            "dealer": -46356,
+            "total": -617207
+          },
+          {
+            "date": "2026-10-27",
+            "foreign": 237721,
+            "trust": 72000,
+            "dealer": 62921,
+            "total": 372642
+          },
+          {
+            "date": "2026-10-28",
+            "foreign": 360545,
+            "trust": 4000,
+            "dealer": 3528,
+            "total": 368073
+          },
+          {
+            "date": "2026-10-29",
+            "foreign": -271133,
+            "trust": -13000,
+            "dealer": -21910,
+            "total": -306043
+          },
+          {
+            "date": "2026-10-30",
+            "foreign": -139851,
+            "trust": 17000,
+            "dealer": -51535,
+            "total": -174386
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -435569,
+          "trust": 132000,
+          "dealer": -53352,
+          "total": -356921
+        },
+        "core_net_5d": -303569,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 0,
+        "joint_buying": false,
+        "price_confirmed": false
+      },
+      "market_cap_rank": null,
+      "market_cap": null,
+      "market_cap_as_of": null,
+      "shares_as_of": null
+    },
+    {
       "symbol": "2382.TW",
       "name": "廣達",
       "market": "TW",
@@ -39865,7 +39876,7 @@
           "value": 14.334
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-18",
@@ -40000,67 +40011,20 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "buying",
-        "as_of": "2026-10-30",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-10-22",
-            "foreign": 3718157,
-            "trust": -1775653,
-            "dealer": 1890317,
-            "total": 3832821
-          },
-          {
-            "date": "2026-10-27",
-            "foreign": 5177550,
-            "trust": 213000,
-            "dealer": 632650,
-            "total": 6023200
-          },
-          {
-            "date": "2026-10-28",
-            "foreign": -409004,
-            "trust": 6000,
-            "dealer": 153483,
-            "total": -249521
-          },
-          {
-            "date": "2026-10-29",
-            "foreign": 2310448,
-            "trust": -1030139,
-            "dealer": 86440,
-            "total": 1366749
-          },
-          {
-            "date": "2026-10-30",
-            "foreign": 6527377,
-            "trust": -1094000,
-            "dealer": 1310840,
-            "total": 6744217
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": 17324528,
-          "trust": -3680792,
-          "dealer": 4073730,
-          "total": 17717466
-        },
-        "core_net_5d": 13643736,
-        "buy_days": 4,
-        "sell_days": 1,
-        "buy_streak": 2,
-        "joint_buying": false,
-        "price_confirmed": true
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 50,
       "market_cap": 455697636764,
       "market_cap_as_of": "2026-10-30",
-      "shares_as_of": "2026-10-30"
+      "shares_as_of": "2026-10-30",
+      "error": "至少需要 65 個完整交易日"
     },
     {
       "symbol": "2002.TW",
@@ -44000,14 +43964,14 @@
       "id": "optical",
       "name": "光通訊／CPO",
       "market": "TW",
-      "count": 3,
-      "usable": 3,
+      "count": 2,
+      "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 16.6,
+      "score": 14.6,
       "breadth": 0,
-      "rs_5d": -6.63,
-      "return_20d": -18.09
+      "rs_5d": -8.37,
+      "return_20d": -18.89
     },
     {
       "id": "optical",
@@ -44260,14 +44224,14 @@
       "id": "industry-半導體業",
       "name": "半導體業",
       "market": "TW",
-      "count": 17,
-      "usable": 17,
+      "count": 18,
+      "usable": 18,
       "coverage": 100,
       "status": "ok",
-      "score": 42.1,
-      "breadth": 24,
-      "rs_5d": -0.92,
-      "return_20d": -8.58
+      "score": 40.9,
+      "breadth": 22,
+      "rs_5d": -1.04,
+      "return_20d": -9.02
     },
     {
       "id": "industry-電腦及週邊設備業",
@@ -44352,13 +44316,13 @@
       "name": "食品工業",
       "market": "TW",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 82.0,
-      "breadth": 100,
-      "rs_5d": 5.95,
-      "return_20d": 8.53
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "industry-鋼鐵工業",
@@ -44783,16 +44747,16 @@
       "name": "光通訊／CPO",
       "market": "TW",
       "as_of": "2026-10-30",
-      "status": "quiet",
-      "total": 3,
-      "available": 3,
+      "status": "insufficient",
+      "total": 2,
+      "available": 2,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 6.7
+      "baseline_pct": null
     },
     {
       "id": "optical",
@@ -45115,8 +45079,8 @@
       "market": "TW",
       "as_of": "2026-10-30",
       "status": "quiet",
-      "total": 17,
-      "available": 17,
+      "total": 18,
+      "available": 18,
       "up_count": 1,
       "down_count": 2,
       "up_symbols": [
@@ -45130,7 +45094,7 @@
         "2379.TW"
       ],
       "money_divergence": [],
-      "baseline_pct": 6.2
+      "baseline_pct": 6.1
     },
     {
       "id": "industry-電腦及週邊設備業",
@@ -45241,7 +45205,7 @@
       "as_of": "2026-10-30",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -45398,7 +45362,7 @@
   "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
-    "status": "ok",
+    "status": "stale",
     "as_of": "2026-10-30",
     "generated_at": "2026-10-31T01:46:18.734490+00:00",
     "market_size": 1977,
@@ -45407,6 +45371,8 @@
       "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
-    ]
+    ],
+    "last_attempt_at": "2026-11-01T09:14:08.039786+00:00",
+    "error": "官方完整交易日期未取得"
   }
 }
