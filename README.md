@@ -29,3 +29,5 @@ python scripts/backtest_rotation.py
 ```
 
 研究方法參考：[The Probability of Backtest Overfitting](https://escholarship.org/uc/item/4w1110bb)。目前版本只使用時間分割與固定候選對照，未實作該論文的完整 PBO 評估。
+
+2026-11-01 ETF 日期修正：證交所基金名錄的出表日為 10/31，最近交易日為 10/30；兩者原先共用日期上限，導致 23 檔基金被誤排除。最新觀察改以台北實際讀取日核對名錄發布日期，`catalog_as_of` 保留其實際日期；預估淨值、申贖與行情仍須符合官方交易日及收盤時間，持股比較日期不變。未提供讀取日的歷史呼叫沿用原日期限制，不把新版名錄用於策略回測，也不改任何交易門檻。
