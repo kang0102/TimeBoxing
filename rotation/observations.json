@@ -217463,5 +217463,447 @@
         "baseline_pct": null
       }
     ]
+  },
+  {
+    "market": "US",
+    "as_of": "2026-11-02",
+    "recorded_at": "2026-11-02T21:56:15.375587+00:00",
+    "methodology_version": "event-rotation-v7-identity",
+    "identity_corrections": [
+      {
+        "symbol": "6531.TW",
+        "verified_at": "2026-11-01",
+        "name": "愛普*",
+        "previous_group": "optical",
+        "source": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+        "note": "2026-11-01 核對證交所：6531 是愛普*，舊版誤標光聖並放入光通訊。原39檔代碼與歷史分組保留供追溯，台股同步回測含此錯誤分組，暫不據此判斷同步門檻有效；新版每日觀察已移至半導體業，並未換成另一股票回測。"
+      }
+    ],
+    "stocks": [
+      {
+        "symbol": "NVDA",
+        "close": 202.06,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 243.37,
+        "ma20": 219.6175,
+        "volume_ratio": 1.158,
+        "rs_5d": -4.7745,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.2283,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "AMD",
+        "close": 466.84,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 658.52,
+        "ma20": 562.195,
+        "volume_ratio": 1.5398,
+        "rs_5d": -10.5519,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "mixed",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.034,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "AVGO",
+        "close": 322.23,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 380.84,
+        "ma20": 343.6835,
+        "volume_ratio": 0.8872,
+        "rs_5d": -0.3512,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.0535,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "MRVL",
+        "close": 171.41,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 301.2042,
+        "ma20": 242.9893,
+        "volume_ratio": 2.6387,
+        "rs_5d": -25.3628,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.102,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "GFS",
+        "close": 41.82,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 51.45,
+        "ma20": 46.484,
+        "volume_ratio": 0.7801,
+        "rs_5d": -5.3985,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.0611,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "MU",
+        "close": 833.59,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1089.0486,
+        "ma20": 939.0422,
+        "volume_ratio": 1.1155,
+        "rs_5d": -6.1023,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.1026,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "VRT",
+        "close": 224.24,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 258.1,
+        "ma20": 223.6215,
+        "volume_ratio": 0.8487,
+        "rs_5d": 14.2583,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "buying",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": 0.0625,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "ETN",
+        "close": 366.07,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 446.73,
+        "ma20": 398.472,
+        "volume_ratio": 1.2571,
+        "rs_5d": 0.1939,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "mixed",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.0388,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "ANET",
+        "close": 164.14,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 217.41,
+        "ma20": 189.6185,
+        "volume_ratio": 1.1754,
+        "rs_5d": -5.7288,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.0541,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "CSCO",
+        "close": 101.61,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 118.65,
+        "ma20": 110.419,
+        "volume_ratio": 1.3444,
+        "rs_5d": -6.1739,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.1639,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "TTMI",
+        "close": 76.58,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 137.88,
+        "ma20": 99.269,
+        "volume_ratio": 1.1133,
+        "rs_5d": -8.825,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.0633,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "APH",
+        "close": 79.84,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 89.93,
+        "ma20": 81.298,
+        "volume_ratio": 1.3428,
+        "rs_5d": 7.9755,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "selling",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": -0.1216,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "ROK",
+        "close": 440.16,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 460.2,
+        "ma20": 433.935,
+        "volume_ratio": 1.0135,
+        "rs_5d": 4.2269,
+        "smart_money": {
+          "method": "cmf_proxy",
+          "status": "ok",
+          "bias": "mixed",
+          "as_of": "2026-11-02",
+          "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
+          "source_name": "CMF 指標說明",
+          "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
+          "cmf_20d": 0.0433,
+          "price_confirmed": true
+        }
+      }
+    ],
+    "briefings": [],
+    "synchrony": [
+      {
+        "id": "chips",
+        "name": "AI 晶片／晶圓",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 1,
+        "up_symbols": [],
+        "down_symbols": [
+          "AMD"
+        ],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 0.0
+      },
+      {
+        "id": "optical",
+        "name": "光通訊／CPO",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 2,
+        "available": 2,
+        "up_count": 0,
+        "down_count": 1,
+        "up_symbols": [],
+        "down_symbols": [
+          "MRVL"
+        ],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "memory",
+        "name": "記憶體",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "cooling",
+        "name": "散熱",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "power",
+        "name": "電源／BBU",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "network",
+        "name": "網通／交換器",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 2,
+        "available": 2,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "pcb",
+        "name": "PCB／載板",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "components",
+        "name": "機殼／滑軌／連接",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "robotics",
+        "name": "機器人／自動化",
+        "market": "US",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      }
+    ]
   }
 ]
