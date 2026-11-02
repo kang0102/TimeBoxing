@@ -210755,5 +210755,6713 @@
         "baseline_pct": null
       }
     ]
+  },
+  {
+    "market": "TW",
+    "as_of": "2026-11-02",
+    "recorded_at": "2026-11-02T06:29:22.298080+00:00",
+    "methodology_version": "event-rotation-v7-identity",
+    "identity_corrections": [
+      {
+        "symbol": "6531.TW",
+        "verified_at": "2026-11-01",
+        "name": "愛普*",
+        "previous_group": "optical",
+        "source": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
+        "note": "2026-11-01 核對證交所：6531 是愛普*，舊版誤標光聖並放入光通訊。原39檔代碼與歷史分組保留供追溯，台股同步回測含此錯誤分組，暫不據此判斷同步門檻有效；新版每日觀察已移至半導體業，並未換成另一股票回測。"
+      }
+    ],
+    "stocks": [
+      {
+        "symbol": "2330.TW",
+        "close": 2330.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 2590.0,
+        "ma20": 2462.75,
+        "volume_ratio": 1.5953,
+        "rs_5d": 0.1325,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1618431,
+              "trust": 2420415,
+              "dealer": 1907049,
+              "total": 2709033
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -3175021,
+              "trust": 844056,
+              "dealer": 262175,
+              "total": -2068790
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -10199,
+              "trust": 443114,
+              "dealer": -281233,
+              "total": 151682
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -8632834,
+              "trust": 1854677,
+              "dealer": 922012,
+              "total": -5856145
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2454.TW",
+        "close": 3970.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 5165.0,
+        "ma20": 4410.5,
+        "volume_ratio": 1.6768,
+        "rs_5d": 1.4738,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2339361,
+              "trust": 674536,
+              "dealer": 173317,
+              "total": -1491508
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1036859,
+              "trust": 551964,
+              "dealer": 276340,
+              "total": -208555
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1682237,
+              "trust": 366256,
+              "dealer": 93525,
+              "total": -1222456
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -2953353,
+              "trust": 673479,
+              "dealer": 92586,
+              "total": -2187288
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3264.TWO",
+        "close": 216.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 291.5,
+        "ma20": 250.25,
+        "volume_ratio": 0.6393,
+        "rs_5d": -9.978,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 797196,
+              "trust": 185000,
+              "dealer": 286388,
+              "total": 1268584
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -13763111,
+              "trust": 80000,
+              "dealer": -133484,
+              "total": -13816595
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1827205,
+              "trust": 462000,
+              "dealer": 35687,
+              "total": -1329518
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1998782,
+              "trust": 561000,
+              "dealer": -486540,
+              "total": -1924322
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6257.TW",
+        "close": 210.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 293.5,
+        "ma20": 252.675,
+        "volume_ratio": 0.26,
+        "rs_5d": -7.0024,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -424928,
+              "trust": 378000,
+              "dealer": 9330,
+              "total": -37598
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1319511,
+              "trust": 11000,
+              "dealer": 45319,
+              "total": -1263192
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -106553,
+              "trust": 42000,
+              "dealer": -42487,
+              "total": -107040
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1421021,
+              "trust": 553000,
+              "dealer": -33394,
+              "total": -901415
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2449.TW",
+        "close": 263.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 310.0,
+        "ma20": 281.6,
+        "volume_ratio": 0.5092,
+        "rs_5d": 2.6914,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 4801012,
+              "trust": 744000,
+              "dealer": 477839,
+              "total": 6022851
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1562498,
+              "trust": 272401,
+              "dealer": -345479,
+              "total": 1489420
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2549942,
+              "trust": 27199,
+              "dealer": -75885,
+              "total": -2598628
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -564769,
+              "trust": 75049,
+              "dealer": -409757,
+              "total": -899477
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3711.TW",
+        "close": 674.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 765.0,
+        "ma20": 700.85,
+        "volume_ratio": 1.5369,
+        "rs_5d": 5.6306,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -5280946,
+              "trust": 3786227,
+              "dealer": 645473,
+              "total": -849246
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 108526,
+              "trust": 5189200,
+              "dealer": 409124,
+              "total": 5706850
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -3503877,
+              "trust": 1141578,
+              "dealer": 224475,
+              "total": -2137824
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -12156113,
+              "trust": 7173554,
+              "dealer": -72409,
+              "total": -5054968
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3265.TWO",
+        "close": 194.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 292.5,
+        "ma20": 229.825,
+        "volume_ratio": 0.3461,
+        "rs_5d": -12.2108,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5182,
+              "trust": 0,
+              "dealer": 15842,
+              "total": 21024
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -604415,
+              "trust": 0,
+              "dealer": 20129,
+              "total": -584286
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 61519,
+              "trust": 0,
+              "dealer": 60966,
+              "total": 122485
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -35461,
+              "trust": 0,
+              "dealer": -7340,
+              "total": -42801
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3081.TWO",
+        "close": 2415.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 3210.0,
+        "ma20": 2696.0,
+        "volume_ratio": 1.052,
+        "rs_5d": 4.2224,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -161287,
+              "trust": 447000,
+              "dealer": -27475,
+              "total": 258238
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -139883,
+              "trust": -257000,
+              "dealer": 16939,
+              "total": -379944
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1364080,
+              "trust": 222000,
+              "dealer": -52251,
+              "total": -1194331
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -297050,
+              "trust": 97257,
+              "dealer": 6947,
+              "total": -192846
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3363.TWO",
+        "close": 458.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 693.0,
+        "ma20": 564.65,
+        "volume_ratio": 1.62,
+        "rs_5d": -7.2268,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -10227,
+              "trust": 0,
+              "dealer": 2726,
+              "total": -7501
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 604961,
+              "trust": 0,
+              "dealer": 2901,
+              "total": 607862
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -683708,
+              "trust": 0,
+              "dealer": -1387,
+              "total": -685095
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 366699,
+              "trust": 0,
+              "dealer": 4146,
+              "total": 370845
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2408.TW",
+        "close": 456.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 537.0,
+        "ma20": 477.15,
+        "volume_ratio": 0.7797,
+        "rs_5d": 13.0181,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 11566360,
+              "trust": 490683,
+              "dealer": 866374,
+              "total": 12923417
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 5428715,
+              "trust": 447624,
+              "dealer": 652298,
+              "total": 6528637
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 5661474,
+              "trust": 623225,
+              "dealer": 104751,
+              "total": 6389450
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3374333,
+              "trust": 151345,
+              "dealer": -478038,
+              "total": -3701026
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2344.TW",
+        "close": 162.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 184.0,
+        "ma20": 167.25,
+        "volume_ratio": 0.848,
+        "rs_5d": 7.4717,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 22488997,
+              "trust": -302687,
+              "dealer": 1677774,
+              "total": 23864084
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 25347811,
+              "trust": 179348,
+              "dealer": 1208705,
+              "total": 26735864
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 14319329,
+              "trust": 133539,
+              "dealer": -308229,
+              "total": 14144639
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3186253,
+              "trust": 270562,
+              "dealer": -175840,
+              "total": -3091531
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "8299.TWO",
+        "close": 1875.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 2215.0,
+        "ma20": 1976.25,
+        "volume_ratio": 1.1015,
+        "rs_5d": 2.2236,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 243357,
+              "trust": 25872,
+              "dealer": 71332,
+              "total": 340561
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1083125,
+              "trust": 170542,
+              "dealer": 120945,
+              "total": 1374612
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 431325,
+              "trust": 5618,
+              "dealer": -42905,
+              "total": 394038
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -68525,
+              "trust": 8453,
+              "dealer": -114339,
+              "total": -174411
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3017.TW",
+        "close": 3060.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 3700.0,
+        "ma20": 3310.75,
+        "volume_ratio": 0.6939,
+        "rs_5d": -0.274,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -246714,
+              "trust": 375029,
+              "dealer": -1880,
+              "total": 126435
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -159784,
+              "trust": 236615,
+              "dealer": 42599,
+              "total": 119430
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -332611,
+              "trust": 23056,
+              "dealer": -36250,
+              "total": -345805
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -399132,
+              "trust": 477666,
+              "dealer": 39519,
+              "total": 118053
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3324.TWO",
+        "close": 1395.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 1645.0,
+        "ma20": 1448.25,
+        "volume_ratio": 1.3728,
+        "rs_5d": 5.134,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -241079,
+              "trust": 28000,
+              "dealer": -6632,
+              "total": -219711
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 323521,
+              "trust": 10000,
+              "dealer": 34933,
+              "total": 368454
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 235692,
+              "trust": 136000,
+              "dealer": 70805,
+              "total": 442497
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -748111,
+              "trust": 163167,
+              "dealer": 29998,
+              "total": -554946
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3653.TW",
+        "close": 6320.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 7440.0,
+        "ma20": 6686.75,
+        "volume_ratio": 0.9494,
+        "rs_5d": 6.7176,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 780229,
+              "trust": 58300,
+              "dealer": 19038,
+              "total": 857567
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -375950,
+              "trust": 112428,
+              "dealer": -6938,
+              "total": -270460
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -516704,
+              "trust": 88015,
+              "dealer": -2082,
+              "total": -430771
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -233022,
+              "trust": 126265,
+              "dealer": 10600,
+              "total": -96157
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2308.TW",
+        "close": 1355.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 2115.0,
+        "ma20": 1709.25,
+        "volume_ratio": 2.041,
+        "rs_5d": -10.9729,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -3333809,
+              "trust": 7342,
+              "dealer": 664916,
+              "total": -2661551
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1410,
+              "trust": -728101,
+              "dealer": -108592,
+              "total": -835283
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2431595,
+              "trust": -1533278,
+              "dealer": 64311,
+              "total": -3900562
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -10953626,
+              "trust": -464205,
+              "dealer": 32841,
+              "total": -11384990
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2301.TW",
+        "close": 243.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 304.5,
+        "ma20": 271.75,
+        "volume_ratio": 1.8222,
+        "rs_5d": -2.3177,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 283379,
+              "trust": 100349,
+              "dealer": 456927,
+              "total": 840655
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 3107123,
+              "trust": 115643,
+              "dealer": 125104,
+              "total": 3347870
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2556466,
+              "trust": 44341,
+              "dealer": -270902,
+              "total": -2783027
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -4512016,
+              "trust": 1115321,
+              "dealer": 195908,
+              "total": -3200787
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6781.TW",
+        "close": 888.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 1060.0,
+        "ma20": 960.6,
+        "volume_ratio": 0.7153,
+        "rs_5d": 1.8083,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 52933,
+              "trust": 0,
+              "dealer": 8091,
+              "total": 61024
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 63602,
+              "trust": 0,
+              "dealer": 6700,
+              "total": 70302
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 13173,
+              "trust": 0,
+              "dealer": -7032,
+              "total": 6141
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 4180,
+              "trust": 0,
+              "dealer": -5606,
+              "total": -1426
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3211.TWO",
+        "close": 302.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 406.5,
+        "ma20": 354.6,
+        "volume_ratio": 1.0386,
+        "rs_5d": -3.2692,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 343347,
+              "trust": 1000,
+              "dealer": 9504,
+              "total": 353851
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 289782,
+              "trust": 0,
+              "dealer": 5180,
+              "total": 294962
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -261000,
+              "trust": -13000,
+              "dealer": -23502,
+              "total": -297502
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 481650,
+              "trust": 477300,
+              "dealer": -47358,
+              "total": 911592
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "4931.TWO",
+        "close": 201.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 264.0,
+        "ma20": 224.325,
+        "volume_ratio": 1.0676,
+        "rs_5d": 3.0087,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 96182,
+              "trust": 0,
+              "dealer": -7491,
+              "total": 88691
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 126000,
+              "trust": 0,
+              "dealer": 22136,
+              "total": 148136
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -229200,
+              "trust": 0,
+              "dealer": -121655,
+              "total": -350855
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 179297,
+              "trust": 0,
+              "dealer": -82216,
+              "total": 97081
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2345.TW",
+        "close": 1615.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 2145.0,
+        "ma20": 1917.5,
+        "volume_ratio": 0.8018,
+        "rs_5d": -6.7429,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 475662,
+              "trust": 21737,
+              "dealer": 55193,
+              "total": 552592
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 800730,
+              "trust": -11403,
+              "dealer": 22447,
+              "total": 811774
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -34322,
+              "trust": -174308,
+              "dealer": 34498,
+              "total": -174132
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 360678,
+              "trust": -128230,
+              "dealer": 26268,
+              "total": 258716
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6285.TW",
+        "close": 219.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 270.0,
+        "ma20": 242.35,
+        "volume_ratio": 0.4908,
+        "rs_5d": -2.183,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -673105,
+              "trust": 6000,
+              "dealer": 16106,
+              "total": -650999
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1520349,
+              "trust": -4000,
+              "dealer": 181984,
+              "total": 1698333
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1722690,
+              "trust": 0,
+              "dealer": -201169,
+              "total": -1923859
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -757084,
+              "trust": 11830,
+              "dealer": -158111,
+              "total": -903365
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "5388.TW",
+        "close": 70.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 77.0,
+        "ma20": 73.38,
+        "volume_ratio": 0.6653,
+        "rs_5d": -2.3516,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 26125,
+              "trust": 0,
+              "dealer": -3263,
+              "total": 22862
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 594901,
+              "trust": 2609,
+              "dealer": 1644,
+              "total": 599154
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -166000,
+              "trust": 0,
+              "dealer": -13189,
+              "total": -179189
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -767096,
+              "trust": 0,
+              "dealer": -65655,
+              "total": -832751
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3037.TW",
+        "close": 997.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1420.0,
+        "ma20": 1153.05,
+        "volume_ratio": 1.2473,
+        "rs_5d": -5.8169,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2867456,
+              "trust": 2092020,
+              "dealer": 289792,
+              "total": -485644
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1913667,
+              "trust": 514522,
+              "dealer": 28981,
+              "total": -1370164
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2458021,
+              "trust": 476230,
+              "dealer": 96063,
+              "total": -1885728
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3230164,
+              "trust": 710387,
+              "dealer": 54267,
+              "total": -2465510
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "8046.TW",
+        "close": 1185.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1560.0,
+        "ma20": 1365.75,
+        "volume_ratio": 0.8461,
+        "rs_5d": -3.9858,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -790229,
+              "trust": 793000,
+              "dealer": 51898,
+              "total": 54669
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1201087,
+              "trust": 278000,
+              "dealer": 19727,
+              "total": -903360
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -21627,
+              "trust": 123044,
+              "dealer": -22241,
+              "total": 79176
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -62916,
+              "trust": 425901,
+              "dealer": 42682,
+              "total": 405667
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3189.TW",
+        "close": 910.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1150.0,
+        "ma20": 1011.45,
+        "volume_ratio": 1.0776,
+        "rs_5d": -5.4041,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2283285,
+              "trust": 310000,
+              "dealer": 2403,
+              "total": -1970882
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1988802,
+              "trust": 30000,
+              "dealer": 38659,
+              "total": -1920143
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -4466839,
+              "trust": 201000,
+              "dealer": -94666,
+              "total": -4360505
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1455313,
+              "trust": 830000,
+              "dealer": -10094,
+              "total": -635407
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2368.TW",
+        "close": 1060.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1310.0,
+        "ma20": 1175.5,
+        "volume_ratio": 0.6707,
+        "rs_5d": -2.5597,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -264972,
+              "trust": 541902,
+              "dealer": 12602,
+              "total": 289532
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1134743,
+              "trust": 1202066,
+              "dealer": 71050,
+              "total": 138373
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1480042,
+              "trust": 815061,
+              "dealer": -114259,
+              "total": -779240
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -666378,
+              "trust": 526666,
+              "dealer": -45134,
+              "total": -184846
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "8210.TW",
+        "close": 705.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 907.0,
+        "ma20": 816.95,
+        "volume_ratio": 0.8739,
+        "rs_5d": -5.4191,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 17289,
+              "trust": -100000,
+              "dealer": 4243,
+              "total": -78468
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 44988,
+              "trust": -109000,
+              "dealer": -2444,
+              "total": -66456
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 148220,
+              "trust": -1000,
+              "dealer": -3168,
+              "total": 144052
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 252133,
+              "trust": 1000,
+              "dealer": -11221,
+              "total": 241912
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3013.TW",
+        "close": 84.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 100.0,
+        "ma20": 92.71,
+        "volume_ratio": 0.2832,
+        "rs_5d": -5.3451,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -126254,
+              "trust": 0,
+              "dealer": -48538,
+              "total": -174792
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -10130,
+              "trust": 0,
+              "dealer": -6786,
+              "total": -16916
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -94980,
+              "trust": 0,
+              "dealer": -25802,
+              "total": -120782
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -402176,
+              "trust": 0,
+              "dealer": -52367,
+              "total": -454543
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6117.TW",
+        "close": 64.4,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 78.2,
+        "ma20": 66.71,
+        "volume_ratio": 0.1665,
+        "rs_5d": 0.0114,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 52130,
+              "trust": 0,
+              "dealer": -32000,
+              "total": 20130
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 21090,
+              "trust": 0,
+              "dealer": -12000,
+              "total": 9090
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -26789,
+              "trust": 0,
+              "dealer": -6000,
+              "total": -32789
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 15503,
+              "trust": 0,
+              "dealer": -16000,
+              "total": -497
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2059.TW",
+        "close": 9420.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 13500.0,
+        "ma20": 10596.25,
+        "volume_ratio": 0.6619,
+        "rs_5d": -1.0237,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 64023,
+              "trust": 32100,
+              "dealer": 12455,
+              "total": 108578
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 68887,
+              "trust": 17084,
+              "dealer": -16507,
+              "total": 69464
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 22153,
+              "trust": 50010,
+              "dealer": -14385,
+              "total": 57778
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -15011,
+              "trust": 37173,
+              "dealer": -785,
+              "total": 21377
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6584.TWO",
+        "close": 402.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 560.0,
+        "ma20": 482.675,
+        "volume_ratio": 0.5849,
+        "rs_5d": -6.4519,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 42000,
+              "trust": 0,
+              "dealer": -2490,
+              "total": 39510
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 24382,
+              "trust": 0,
+              "dealer": -1248,
+              "total": 23134
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 73860,
+              "trust": 6000,
+              "dealer": -909,
+              "total": 78951
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 2407,
+              "trust": 4000,
+              "dealer": -3549,
+              "total": 2858
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3665.TW",
+        "close": 1625.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 2685.0,
+        "ma20": 2084.25,
+        "volume_ratio": 0.824,
+        "rs_5d": -11.17,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1611801,
+              "trust": -1189500,
+              "dealer": 48688,
+              "total": 470989
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1040391,
+              "trust": -1110000,
+              "dealer": 40209,
+              "total": -29400
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 307314,
+              "trust": -379969,
+              "dealer": 27291,
+              "total": -45364
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 470706,
+              "trust": -269844,
+              "dealer": 16495,
+              "total": 217357
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2233.TW",
+        "close": 140.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 173.0,
+        "ma20": 156.175,
+        "volume_ratio": 0.6221,
+        "rs_5d": -0.6957,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 117890,
+              "trust": 0,
+              "dealer": 6952,
+              "total": 124842
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 21256,
+              "trust": 0,
+              "dealer": -3551,
+              "total": 17705
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 30000,
+              "trust": 0,
+              "dealer": 9510,
+              "total": 39510
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 46160,
+              "trust": 0,
+              "dealer": 16145,
+              "total": 62305
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1504.TW",
+        "close": 69.3,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 73.9,
+        "ma20": 70.005,
+        "volume_ratio": 1.2129,
+        "rs_5d": 1.908,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1130040,
+              "trust": -8688,
+              "dealer": -115433,
+              "total": -1254161
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1131954,
+              "trust": 10000,
+              "dealer": 78834,
+              "total": 1220788
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 589178,
+              "trust": 21000,
+              "dealer": 2829,
+              "total": 613007
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1587072,
+              "trust": 67274,
+              "dealer": 5819,
+              "total": -1513979
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2464.TW",
+        "close": 163.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 209.5,
+        "ma20": 179.775,
+        "volume_ratio": 0.5673,
+        "rs_5d": 4.0877,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2122937,
+              "trust": 0,
+              "dealer": 204758,
+              "total": 2327695
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -72095,
+              "trust": 40000,
+              "dealer": 15097,
+              "total": -16998
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 8410,
+              "trust": 0,
+              "dealer": -182395,
+              "total": -173985
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -157535,
+              "trust": 0,
+              "dealer": -60675,
+              "total": -218210
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1597.TW",
+        "close": 134.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 160.5,
+        "ma20": 144.475,
+        "volume_ratio": 0.3699,
+        "rs_5d": 1.737,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 451919,
+              "trust": 0,
+              "dealer": 62444,
+              "total": 514363
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 447090,
+              "trust": 0,
+              "dealer": -15035,
+              "total": 432055
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 43919,
+              "trust": 0,
+              "dealer": -19855,
+              "total": 24064
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -326465,
+              "trust": 0,
+              "dealer": -26220,
+              "total": -352685
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2049.TW",
+        "close": 321.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 357.0,
+        "ma20": 325.85,
+        "volume_ratio": 0.7744,
+        "rs_5d": 10.2091,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2547279,
+              "trust": -397,
+              "dealer": 66101,
+              "total": 2612983
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 852311,
+              "trust": 0,
+              "dealer": 53681,
+              "total": 905992
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 270928,
+              "trust": 43000,
+              "dealer": 4069,
+              "total": 317997
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -145408,
+              "trust": 0,
+              "dealer": -19422,
+              "total": -164830
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2317.TW",
+        "close": 251.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 266.5,
+        "ma20": 247.325,
+        "volume_ratio": 1.2449,
+        "rs_5d": 5.0063,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 4971884,
+              "trust": 828167,
+              "dealer": 1323907,
+              "total": 7123958
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 11299686,
+              "trust": 216503,
+              "dealer": 566373,
+              "total": 12082562
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 3341501,
+              "trust": 512127,
+              "dealer": -116214,
+              "total": 3737414
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3392427,
+              "trust": 1373663,
+              "dealer": 124298,
+              "total": -1894466
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2360.TW",
+        "close": 1715.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 2560.0,
+        "ma20": 2095.75,
+        "volume_ratio": 1.4767,
+        "rs_5d": -11.2217,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -169275,
+              "trust": 78215,
+              "dealer": 49595,
+              "total": -41465
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 382129,
+              "trust": 3420,
+              "dealer": 88575,
+              "total": 474124
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -151331,
+              "trust": -105986,
+              "dealer": -2378,
+              "total": -259695
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -156568,
+              "trust": -47223,
+              "dealer": -75779,
+              "total": -279570
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2404.TW",
+        "close": 1060.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1355.0,
+        "ma20": 1171.25,
+        "volume_ratio": 0.5993,
+        "rs_5d": -0.3248,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -117581,
+              "trust": 85000,
+              "dealer": 4733,
+              "total": -27848
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 29597,
+              "trust": 3000,
+              "dealer": 7323,
+              "total": 39920
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 78061,
+              "trust": 0,
+              "dealer": -3460,
+              "total": 74601
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -21026,
+              "trust": 79921,
+              "dealer": -29175,
+              "total": 29720
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1303.TW",
+        "close": 301.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 350.5,
+        "ma20": 302.8,
+        "volume_ratio": 0.8699,
+        "rs_5d": 2.4962,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -11967985,
+              "trust": 1879000,
+              "dealer": 806857,
+              "total": -9282128
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 10803485,
+              "trust": 559000,
+              "dealer": 515852,
+              "total": 11878337
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -5521019,
+              "trust": 1255858,
+              "dealer": 45809,
+              "total": -4219352
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -15973583,
+              "trust": 2245000,
+              "dealer": 245330,
+              "total": -13483253
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1301.TW",
+        "close": 73.1,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 89.4,
+        "ma20": 75.82,
+        "volume_ratio": 0.2567,
+        "rs_5d": 1.524,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 4994150,
+              "trust": 0,
+              "dealer": 2662,
+              "total": 4996812
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -2047266,
+              "trust": 3000,
+              "dealer": 774530,
+              "total": -1269736
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 524940,
+              "trust": 0,
+              "dealer": -150264,
+              "total": 374676
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -383736,
+              "trust": 0,
+              "dealer": -146135,
+              "total": -529871
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1326.TW",
+        "close": 73.6,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 86.1,
+        "ma20": 75.105,
+        "volume_ratio": 0.4151,
+        "rs_5d": 3.3386,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 9101675,
+              "trust": 2000000,
+              "dealer": 155136,
+              "total": 11256811
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -248215,
+              "trust": 0,
+              "dealer": 187662,
+              "total": -60553
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 137085,
+              "trust": 0,
+              "dealer": -179682,
+              "total": -42597
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3494841,
+              "trust": 2100000,
+              "dealer": -165998,
+              "total": -1560839
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2881.TW",
+        "close": 159.5,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 164.5,
+        "ma20": 157.55,
+        "volume_ratio": 1.2202,
+        "rs_5d": 3.1428,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 3301733,
+              "trust": 394537,
+              "dealer": 571366,
+              "total": 4267636
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1532917,
+              "trust": 190917,
+              "dealer": 67295,
+              "total": 1791129
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 4943605,
+              "trust": -299547,
+              "dealer": 91732,
+              "total": 4735790
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1305079,
+              "trust": 1929171,
+              "dealer": 615938,
+              "total": 1240030
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2882.TW",
+        "close": 116.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 118.0,
+        "ma20": 113.475,
+        "volume_ratio": 1.3301,
+        "rs_5d": 4.7538,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 3613215,
+              "trust": 371999,
+              "dealer": 846892,
+              "total": 4832106
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 5446888,
+              "trust": 202930,
+              "dealer": 142621,
+              "total": 5792439
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2399669,
+              "trust": -489339,
+              "dealer": -65056,
+              "total": 1845274
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1836205,
+              "trust": 3321000,
+              "dealer": 764758,
+              "total": 2249553
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2891.TW",
+        "close": 75.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 76.9,
+        "ma20": 71.815,
+        "volume_ratio": 1.2859,
+        "rs_5d": 2.633,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 7216239,
+              "trust": -480870,
+              "dealer": 1634748,
+              "total": 8370117
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -412257,
+              "trust": 576529,
+              "dealer": 200375,
+              "total": 364647
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 17315259,
+              "trust": -3520918,
+              "dealer": 709405,
+              "total": 14503746
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 3577096,
+              "trust": 10429000,
+              "dealer": 2322366,
+              "total": 16328462
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2887.TW",
+        "close": 41.7,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 43.5,
+        "ma20": 41.895,
+        "volume_ratio": 0.9728,
+        "rs_5d": 1.5224,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -263004,
+              "trust": 1394000,
+              "dealer": 2161907,
+              "total": 3292903
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -166121,
+              "trust": -174000,
+              "dealer": 226961,
+              "total": -113160
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 19911707,
+              "trust": -1548918,
+              "dealer": 200746,
+              "total": 18563535
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -14208722,
+              "trust": 13184000,
+              "dealer": 2825258,
+              "total": 1800536
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2885.TW",
+        "close": 71.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 74.2,
+        "ma20": 70.905,
+        "volume_ratio": 0.8919,
+        "rs_5d": 1.2221,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 6057978,
+              "trust": 1390795,
+              "dealer": 1006497,
+              "total": 8455270
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 7051280,
+              "trust": 1743271,
+              "dealer": 393523,
+              "total": 9188074
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 3849095,
+              "trust": 768997,
+              "dealer": 410074,
+              "total": 5028166
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -4125660,
+              "trust": 2448000,
+              "dealer": 1498486,
+              "total": -179174
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2884.TW",
+        "close": 48.7,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 50.1,
+        "ma20": 47.5325,
+        "volume_ratio": 1.1198,
+        "rs_5d": 0.3329,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2301402,
+              "trust": 2716940,
+              "dealer": 1551540,
+              "total": 1967078
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -8506437,
+              "trust": 149049,
+              "dealer": 386276,
+              "total": -7971112
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 5101270,
+              "trust": -372216,
+              "dealer": 363220,
+              "total": 5092274
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3755794,
+              "trust": 5449000,
+              "dealer": 2206719,
+              "total": 3899925
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2886.TW",
+        "close": 54.1,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 56.0,
+        "ma20": 52.0675,
+        "volume_ratio": 1.0205,
+        "rs_5d": 0.4537,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2088345,
+              "trust": -4554806,
+              "dealer": 1216406,
+              "total": -1250055
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 2787306,
+              "trust": -5979962,
+              "dealer": 664157,
+              "total": -2528499
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 7768271,
+              "trust": -5477941,
+              "dealer": 260236,
+              "total": 2550566
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 1633875,
+              "trust": 730000,
+              "dealer": 2384798,
+              "total": 4748673
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2880.TW",
+        "close": 49.6,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 51.0,
+        "ma20": 48.185,
+        "volume_ratio": 0.8542,
+        "rs_5d": 1.0698,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -36147,
+              "trust": 872000,
+              "dealer": 1603881,
+              "total": 2439734
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -634857,
+              "trust": 515000,
+              "dealer": 425247,
+              "total": 305390
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 461779,
+              "trust": 677617,
+              "dealer": 322001,
+              "total": 1461397
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1017274,
+              "trust": 692000,
+              "dealer": 2811282,
+              "total": 2486008
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2890.TW",
+        "close": 45.8,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 47.5,
+        "ma20": 45.1206,
+        "volume_ratio": 1.4284,
+        "rs_5d": 1.2799,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -6288188,
+              "trust": 1963717,
+              "dealer": 1175472,
+              "total": -3148999
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 2110626,
+              "trust": 344955,
+              "dealer": -128131,
+              "total": 2327450
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 6077829,
+              "trust": 1077361,
+              "dealer": -52760,
+              "total": 7102430
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -2244257,
+              "trust": 3556000,
+              "dealer": 1746960,
+              "total": 3058703
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2883.TW",
+        "close": 37.25,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 39.5,
+        "ma20": 38.0475,
+        "volume_ratio": 0.763,
+        "rs_5d": 1.1386,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -35961,
+              "trust": 4144989,
+              "dealer": 1579189,
+              "total": 5688217
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 9688093,
+              "trust": 741247,
+              "dealer": -4817,
+              "total": 10424523
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2410211,
+              "trust": 713743,
+              "dealer": -152075,
+              "total": -1848543
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -8169500,
+              "trust": 1045000,
+              "dealer": 2768600,
+              "total": -4355900
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2892.TW",
+        "close": 43.65,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 44.7,
+        "ma20": 40.975,
+        "volume_ratio": 0.9632,
+        "rs_5d": 5.6425,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1462985,
+              "trust": 1274326,
+              "dealer": 815101,
+              "total": 3552412
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1701391,
+              "trust": 163442,
+              "dealer": 685592,
+              "total": -852357
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 3635352,
+              "trust": -536049,
+              "dealer": 268829,
+              "total": 3368132
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1466016,
+              "trust": 5049000,
+              "dealer": 625738,
+              "total": 4208722
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "5880.TW",
+        "close": 29.05,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 29.1,
+        "ma20": 27.485,
+        "volume_ratio": 1.2043,
+        "rs_5d": 5.5856,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 10719322,
+              "trust": 1042790,
+              "dealer": 1037225,
+              "total": 12799337
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1999889,
+              "trust": 889000,
+              "dealer": 234383,
+              "total": -876506
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 5352058,
+              "trust": 889869,
+              "dealer": 228007,
+              "total": 6469934
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 7940268,
+              "trust": 967000,
+              "dealer": 564523,
+              "total": 9471791
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2801.TW",
+        "close": 30.85,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 30.7,
+        "ma20": 28.97,
+        "volume_ratio": 1.4221,
+        "rs_5d": 5.7528,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5808589,
+              "trust": -638125,
+              "dealer": -8000,
+              "total": 5162464
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 2716067,
+              "trust": -1583000,
+              "dealer": 260092,
+              "total": 1393159
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 10427686,
+              "trust": -493000,
+              "dealer": 56000,
+              "total": 9990686
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 6407158,
+              "trust": 1014000,
+              "dealer": 33001,
+              "total": 7454159
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "5876.TW",
+        "close": 54.3,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 56.5,
+        "ma20": 52.2175,
+        "volume_ratio": 1.1163,
+        "rs_5d": 1.933,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5463986,
+              "trust": -146000,
+              "dealer": 253671,
+              "total": 5571657
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 2057186,
+              "trust": -330425,
+              "dealer": -380095,
+              "total": 1346666
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 1787877,
+              "trust": -14000,
+              "dealer": -78719,
+              "total": 1695158
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 3141539,
+              "trust": -247539,
+              "dealer": 793112,
+              "total": 3687112
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2834.TW",
+        "close": 18.05,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 18.2,
+        "ma20": 17.75,
+        "volume_ratio": 0.9041,
+        "rs_5d": 3.3551,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2979109,
+              "trust": -36542,
+              "dealer": 47000,
+              "total": -2968651
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 41726,
+              "trust": 0,
+              "dealer": 150471,
+              "total": 192197
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2044476,
+              "trust": 7000,
+              "dealer": 91110,
+              "total": 2142586
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 9125405,
+              "trust": 0,
+              "dealer": -62367,
+              "total": 9063038
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2383.TW",
+        "close": 4705.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 6325.0,
+        "ma20": 5280.0,
+        "volume_ratio": 1.0976,
+        "rs_5d": -4.8827,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1054978,
+              "trust": 146954,
+              "dealer": 148242,
+              "total": -759782
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -678719,
+              "trust": 24346,
+              "dealer": 148783,
+              "total": -505590
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 223978,
+              "trust": 299051,
+              "dealer": -1663,
+              "total": 521366
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -696290,
+              "trust": 310503,
+              "dealer": -98427,
+              "total": -484214
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2327.TW",
+        "close": 498.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 686.0,
+        "ma20": 574.025,
+        "volume_ratio": 0.7127,
+        "rs_5d": 0.7778,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5327823,
+              "trust": 469721,
+              "dealer": 501711,
+              "total": 6299255
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 7069021,
+              "trust": 26939,
+              "dealer": 335933,
+              "total": 7431893
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -3852926,
+              "trust": 174274,
+              "dealer": 631564,
+              "total": -3047088
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -16111182,
+              "trust": 690830,
+              "dealer": -1046164,
+              "total": -16466516
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "4958.TW",
+        "close": 487.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 614.0,
+        "ma20": 549.3,
+        "volume_ratio": 0.5672,
+        "rs_5d": -11.9654,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -8894894,
+              "trust": 906077,
+              "dealer": -351610,
+              "total": -8340427
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -55345,
+              "trust": 296574,
+              "dealer": 440437,
+              "total": 681666
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -6139240,
+              "trust": 37138,
+              "dealer": -224111,
+              "total": -6326213
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -4952438,
+              "trust": 621000,
+              "dealer": -464357,
+              "total": -4795795
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6274.TWO",
+        "close": 1210.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1835.0,
+        "ma20": 1556.75,
+        "volume_ratio": 1.2288,
+        "rs_5d": -12.6617,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 844992,
+              "trust": -964000,
+              "dealer": -26449,
+              "total": -145457
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -426349,
+              "trust": -101000,
+              "dealer": 208196,
+              "total": -319153
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 787039,
+              "trust": 82000,
+              "dealer": 57997,
+              "total": 927036
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -5141,
+              "trust": -142000,
+              "dealer": -98275,
+              "total": -245416
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3044.TW",
+        "close": 527.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 604.0,
+        "ma20": 560.95,
+        "volume_ratio": 0.9504,
+        "rs_5d": -2.8498,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -651108,
+              "trust": 308000,
+              "dealer": 39870,
+              "total": -303238
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 210817,
+              "trust": 13000,
+              "dealer": 64839,
+              "total": 288656
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -150319,
+              "trust": 11000,
+              "dealer": -12915,
+              "total": -152234
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -109382,
+              "trust": 57000,
+              "dealer": -17936,
+              "total": -70318
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6213.TW",
+        "close": 656.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 885.0,
+        "ma20": 761.45,
+        "volume_ratio": 1.264,
+        "rs_5d": -13.4653,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2824764,
+              "trust": 269000,
+              "dealer": 382192,
+              "total": -2173572
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1402720,
+              "trust": -6000,
+              "dealer": -153820,
+              "total": -1562540
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2230107,
+              "trust": 175000,
+              "dealer": -7048,
+              "total": -2062155
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -434553,
+              "trust": -15000,
+              "dealer": -31693,
+              "total": -481246
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2313.TW",
+        "close": 205.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 266.0,
+        "ma20": 234.2,
+        "volume_ratio": 0.4647,
+        "rs_5d": -6.4066,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -5362056,
+              "trust": 271081,
+              "dealer": -157986,
+              "total": -5248961
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1307235,
+              "trust": -8391,
+              "dealer": 239517,
+              "total": 1538361
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -6160616,
+              "trust": -45000,
+              "dealer": -369136,
+              "total": -6574752
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3073635,
+              "trust": 1367000,
+              "dealer": -548986,
+              "total": -2255621
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3533.TW",
+        "close": 1820.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 2035.0,
+        "ma20": 1859.0,
+        "volume_ratio": 1.3022,
+        "rs_5d": 3.9237,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 453392,
+              "trust": 56000,
+              "dealer": 33506,
+              "total": 542898
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -42113,
+              "trust": 7200,
+              "dealer": -25907,
+              "total": -60820
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 355787,
+              "trust": 6362,
+              "dealer": 13783,
+              "total": 375932
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -43843,
+              "trust": 39207,
+              "dealer": 2706,
+              "total": -1930
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2492.TW",
+        "close": 356.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 431.5,
+        "ma20": 388.5,
+        "volume_ratio": 0.6486,
+        "rs_5d": -0.8461,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -665182,
+              "trust": 2103000,
+              "dealer": -20109,
+              "total": 1417709
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1078295,
+              "trust": 2242000,
+              "dealer": 434312,
+              "total": 1598017
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2493763,
+              "trust": 2094000,
+              "dealer": 645616,
+              "total": 5233379
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -9228659,
+              "trust": 11000,
+              "dealer": -1254414,
+              "total": -10472073
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2303.TW",
+        "close": 110.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 165.0,
+        "ma20": 135.7,
+        "volume_ratio": 0.8829,
+        "rs_5d": -10.1627,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1975157,
+              "trust": -2721754,
+              "dealer": 663967,
+              "total": -82630
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 12886741,
+              "trust": -1172186,
+              "dealer": 550711,
+              "total": 12265266
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -129271902,
+              "trust": -44816968,
+              "dealer": -8700497,
+              "total": -182789367
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 4870526,
+              "trust": -35437533,
+              "dealer": 380095,
+              "total": -30186912
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3443.TW",
+        "close": 7285.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 8750.0,
+        "ma20": 7925.25,
+        "volume_ratio": 1.5802,
+        "rs_5d": -1.5577,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 207042,
+              "trust": -69824,
+              "dealer": 25984,
+              "total": 163202
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -190383,
+              "trust": 141150,
+              "dealer": 1902,
+              "total": -47331
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 53330,
+              "trust": 82114,
+              "dealer": 40448,
+              "total": 175892
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -124735,
+              "trust": 133576,
+              "dealer": 25307,
+              "total": 34148
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "7769.TW",
+        "close": 4915.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 6515.0,
+        "ma20": 5514.5,
+        "volume_ratio": 0.8703,
+        "rs_5d": -4.4988,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -238001,
+              "trust": 287110,
+              "dealer": 52,
+              "total": 49161
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 89611,
+              "trust": 64000,
+              "dealer": 8663,
+              "total": 162274
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 27748,
+              "trust": 1010,
+              "dealer": 1305,
+              "total": 30063
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -23068,
+              "trust": 1952,
+              "dealer": -3682,
+              "total": -24798
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "5274.TWO",
+        "close": 15625.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 19895.0,
+        "ma20": 17144.0,
+        "volume_ratio": 0.8987,
+        "rs_5d": 0.0314,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -37034,
+              "trust": 54287,
+              "dealer": -3174,
+              "total": 14079
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -79216,
+              "trust": 143919,
+              "dealer": 574,
+              "total": 65277
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -95511,
+              "trust": 110120,
+              "dealer": -4682,
+              "total": 9927
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -93224,
+              "trust": 28267,
+              "dealer": 4606,
+              "total": -60351
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6223.TWO",
+        "close": 4655.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 6160.0,
+        "ma20": 5256.75,
+        "volume_ratio": 0.6393,
+        "rs_5d": -2.4295,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -33233,
+              "trust": 166905,
+              "dealer": -16793,
+              "total": 116879
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 38723,
+              "trust": 43600,
+              "dealer": 12245,
+              "total": 94568
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -84522,
+              "trust": 56000,
+              "dealer": 6382,
+              "total": -22140
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 172797,
+              "trust": 120945,
+              "dealer": -14470,
+              "total": 279272
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2379.TW",
+        "close": 785.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 808.0,
+        "ma20": 771.15,
+        "volume_ratio": 1.7899,
+        "rs_5d": 4.2222,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1176392,
+              "trust": -287915,
+              "dealer": 3244,
+              "total": 891721
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 217445,
+              "trust": -21771,
+              "dealer": -1251,
+              "total": 194423
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -77709,
+              "trust": 121830,
+              "dealer": 69820,
+              "total": 113941
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 1473768,
+              "trust": 134217,
+              "dealer": 52598,
+              "total": 1660583
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6488.TWO",
+        "close": 760.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1260.0,
+        "ma20": 970.25,
+        "volume_ratio": 0.7933,
+        "rs_5d": -5.6936,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -12620,
+              "trust": -81956,
+              "dealer": 38668,
+              "total": -55908
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -8548,
+              "trust": -266666,
+              "dealer": 105872,
+              "total": -169342
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2305859,
+              "trust": -56000,
+              "dealer": -132708,
+              "total": -2494567
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1321062,
+              "trust": 209863,
+              "dealer": -196726,
+              "total": -1307925
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3034.TW",
+        "close": 571.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 608.0,
+        "ma20": 563.3,
+        "volume_ratio": 1.1404,
+        "rs_5d": 0.3865,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1267978,
+              "trust": -294465,
+              "dealer": 71208,
+              "total": 1044721
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 137368,
+              "trust": 135724,
+              "dealer": -23572,
+              "total": 249520
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 18471,
+              "trust": 138000,
+              "dealer": 23707,
+              "total": 180178
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -207640,
+              "trust": 354468,
+              "dealer": -31769,
+              "total": 115059
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6770.TW",
+        "close": 65.3,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 78.1,
+        "ma20": 69.67,
+        "volume_ratio": 0.6221,
+        "rs_5d": 0.7982,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 56011795,
+              "trust": 4937138,
+              "dealer": 1686688,
+              "total": 62635621
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 17433968,
+              "trust": 369034,
+              "dealer": 690845,
+              "total": 18493847
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -3061487,
+              "trust": 98000,
+              "dealer": -765880,
+              "total": -3729367
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -22447232,
+              "trust": 367486,
+              "dealer": -1896581,
+              "total": -23976327
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3661.TW",
+        "close": 3395.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 4490.0,
+        "ma20": 3818.75,
+        "volume_ratio": 0.5647,
+        "rs_5d": -0.4365,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -59569,
+              "trust": 23000,
+              "dealer": -1602,
+              "total": -38171
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 510589,
+              "trust": 3092,
+              "dealer": 125527,
+              "total": 639208
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -185178,
+              "trust": 63000,
+              "dealer": -44206,
+              "total": -166384
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -567238,
+              "trust": 119190,
+              "dealer": -24279,
+              "total": -472327
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "5347.TWO",
+        "close": 145.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 195.0,
+        "ma20": 170.475,
+        "volume_ratio": 1.0511,
+        "rs_5d": -7.6898,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1366544,
+              "trust": 822211,
+              "dealer": 85310,
+              "total": -459023
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 3335900,
+              "trust": 71082,
+              "dealer": 138569,
+              "total": 3545551
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -6902989,
+              "trust": -725779,
+              "dealer": -203551,
+              "total": -7832319
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 1213646,
+              "trust": 1222000,
+              "dealer": 194425,
+              "total": 2630071
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3105.TWO",
+        "close": 588.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 630.0,
+        "ma20": 547.35,
+        "volume_ratio": 1.1908,
+        "rs_5d": 24.0077,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -872934,
+              "trust": -150905,
+              "dealer": 286398,
+              "total": -737441
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 5076659,
+              "trust": 0,
+              "dealer": 314817,
+              "total": 5391476
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 21713626,
+              "trust": 1654000,
+              "dealer": 10437,
+              "total": 23378063
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -762590,
+              "trust": 434180,
+              "dealer": -248823,
+              "total": -577233
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6415.TW",
+        "close": 501.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 551.0,
+        "ma20": 468.675,
+        "volume_ratio": 1.017,
+        "rs_5d": 8.7936,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -250860,
+              "trust": -75000,
+              "dealer": 38577,
+              "total": -287283
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -305289,
+              "trust": 47000,
+              "dealer": 175757,
+              "total": -82532
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1487848,
+              "trust": 1100000,
+              "dealer": -20078,
+              "total": -407926
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 219159,
+              "trust": 241000,
+              "dealer": -81993,
+              "total": 378166
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6239.TW",
+        "close": 257.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 316.0,
+        "ma20": 280.575,
+        "volume_ratio": 0.4483,
+        "rs_5d": 6.4224,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 6598614,
+              "trust": -177778,
+              "dealer": 458052,
+              "total": 6878888
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 4376893,
+              "trust": 531664,
+              "dealer": 206440,
+              "total": 5114997
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -399656,
+              "trust": 223000,
+              "dealer": -410570,
+              "total": -587226
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1573694,
+              "trust": 382000,
+              "dealer": -175875,
+              "total": -1367569
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2337.TW",
+        "close": 96.2,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 123.0,
+        "ma20": 108.205,
+        "volume_ratio": 0.9839,
+        "rs_5d": -0.9032,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 4000201,
+              "trust": 169000,
+              "dealer": 269781,
+              "total": 4438982
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -29994178,
+              "trust": 41000,
+              "dealer": 44350,
+              "total": -29908828
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -18674046,
+              "trust": 8000,
+              "dealer": -335305,
+              "total": -19001351
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -877904,
+              "trust": 24000,
+              "dealer": -183000,
+              "total": -1036904
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3529.TWO",
+        "close": 2395.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 3635.0,
+        "ma20": 2778.75,
+        "volume_ratio": 1.761,
+        "rs_5d": -1.216,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -20,
+              "trust": 125000,
+              "dealer": 22380,
+              "total": 147360
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 10856,
+              "trust": 12000,
+              "dealer": 9119,
+              "total": 31975
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 9792,
+              "trust": -18000,
+              "dealer": -4157,
+              "total": -12365
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 53352,
+              "trust": -1934,
+              "dealer": 6967,
+              "total": 58385
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6515.TW",
+        "close": 4485.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 6285.0,
+        "ma20": 5308.25,
+        "volume_ratio": 0.7678,
+        "rs_5d": -4.1303,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 228760,
+              "trust": -14200,
+              "dealer": 248,
+              "total": 214808
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 132714,
+              "trust": 23034,
+              "dealer": 1143,
+              "total": 156891
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 110353,
+              "trust": -33640,
+              "dealer": -23349,
+              "total": 53364
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 6132,
+              "trust": -64930,
+              "dealer": -4507,
+              "total": -63305
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6531.TW",
+        "close": 775.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1090.0,
+        "ma20": 890.9,
+        "volume_ratio": 0.4844,
+        "rs_5d": -0.0823,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 237721,
+              "trust": 72000,
+              "dealer": 62921,
+              "total": 372642
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 360545,
+              "trust": 4000,
+              "dealer": 3528,
+              "total": 368073
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -271133,
+              "trust": -13000,
+              "dealer": -21910,
+              "total": -306043
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -139851,
+              "trust": 17000,
+              "dealer": -51535,
+              "total": -174386
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2382.TW",
+        "close": 318.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 340.5,
+        "ma20": 324.725,
+        "volume_ratio": 0.7116,
+        "rs_5d": 1.2229,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 3957450,
+              "trust": 589986,
+              "dealer": 343302,
+              "total": 4890738
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1405120,
+              "trust": 2987,
+              "dealer": 10820,
+              "total": 1418927
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -2921165,
+              "trust": 288460,
+              "dealer": 19377,
+              "total": -2613328
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -2927113,
+              "trust": 1347730,
+              "dealer": 317867,
+              "total": -1261516
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "6669.TW",
+        "close": 1820.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 2335.0,
+        "ma20": 2019.75,
+        "volume_ratio": 0.8771,
+        "rs_5d": 1.3821,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1396325,
+              "trust": -317787,
+              "dealer": 84681,
+              "total": 1163219
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -225375,
+              "trust": -211404,
+              "dealer": -27590,
+              "total": -464369
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -61737,
+              "trust": -122946,
+              "dealer": 1397,
+              "total": -183286
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 392306,
+              "trust": -4921,
+              "dealer": -36471,
+              "total": 350914
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2357.TW",
+        "close": 912.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 1010.0,
+        "ma20": 970.55,
+        "volume_ratio": 1.0062,
+        "rs_5d": -1.1876,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 341304,
+              "trust": -24796,
+              "dealer": 69032,
+              "total": 385540
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 722755,
+              "trust": -217872,
+              "dealer": 38577,
+              "total": 543460
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -999626,
+              "trust": 141118,
+              "dealer": 10114,
+              "total": -848394
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -1043510,
+              "trust": 280677,
+              "dealer": 126230,
+              "total": -636603
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3231.TW",
+        "close": 181.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 199.5,
+        "ma20": 187.2,
+        "volume_ratio": 0.4678,
+        "rs_5d": -2.0892,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1879956,
+              "trust": 1112617,
+              "dealer": 316743,
+              "total": -450596
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 9419395,
+              "trust": 439127,
+              "dealer": 974587,
+              "total": 10833109
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -8111637,
+              "trust": 619526,
+              "dealer": -136430,
+              "total": -7628541
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -12964533,
+              "trust": 529586,
+              "dealer": -1011877,
+              "total": -13446824
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2395.TW",
+        "close": 655.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 752.0,
+        "ma20": 700.65,
+        "volume_ratio": 1.4707,
+        "rs_5d": 0.2015,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -1388,
+              "trust": 44000,
+              "dealer": 72233,
+              "total": 114845
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 47906,
+              "trust": -404,
+              "dealer": 3508,
+              "total": 51010
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 95840,
+              "trust": 28080,
+              "dealer": -4642,
+              "total": 119278
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -125919,
+              "trust": 65232,
+              "dealer": 62955,
+              "total": 2268
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "4938.TW",
+        "close": 102.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 114.0,
+        "ma20": 98.85,
+        "volume_ratio": 0.6017,
+        "rs_5d": 1.5059,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2461903,
+              "trust": 4000,
+              "dealer": 117033,
+              "total": 2582936
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 3157617,
+              "trust": 967329,
+              "dealer": -62148,
+              "total": 4062798
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 631015,
+              "trust": 8000,
+              "dealer": -177574,
+              "total": 461441
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -37405,
+              "trust": 1272056,
+              "dealer": 350056,
+              "total": 1584707
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2376.TW",
+        "close": 339.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 396.5,
+        "ma20": 358.2,
+        "volume_ratio": 0.6391,
+        "rs_5d": -0.2938,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 909247,
+              "trust": 15105,
+              "dealer": 43359,
+              "total": 967711
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1110917,
+              "trust": -3209,
+              "dealer": 46932,
+              "total": 1154640
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -5719677,
+              "trust": 295000,
+              "dealer": 148758,
+              "total": -5275919
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -908409,
+              "trust": 292000,
+              "dealer": 32241,
+              "total": -584168
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2356.TW",
+        "close": 59.6,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 63.9,
+        "ma20": 59.485,
+        "volume_ratio": 0.6524,
+        "rs_5d": 0.9714,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 16601289,
+              "trust": 969165,
+              "dealer": 191080,
+              "total": 17761534
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 10912361,
+              "trust": -20762,
+              "dealer": 123180,
+              "total": 11014779
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -6076442,
+              "trust": 1728000,
+              "dealer": -120018,
+              "total": -4468460
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -2932016,
+              "trust": 1098000,
+              "dealer": 391546,
+              "total": -1442470
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2412.TW",
+        "close": 159.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 160.0,
+        "ma20": 151.8,
+        "volume_ratio": 0.8681,
+        "rs_5d": 3.4692,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 556963,
+              "trust": 830119,
+              "dealer": 71720,
+              "total": 1458802
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1966123,
+              "trust": 206474,
+              "dealer": -45024,
+              "total": 2127573
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 3737908,
+              "trust": 228665,
+              "dealer": -9615,
+              "total": 3956958
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 8200538,
+              "trust": -401543,
+              "dealer": 155760,
+              "total": 7954755
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "3045.TW",
+        "close": 133.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 135.5,
+        "ma20": 128.15,
+        "volume_ratio": 1.149,
+        "rs_5d": 2.4962,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1732412,
+              "trust": 681096,
+              "dealer": -133495,
+              "total": 2280013
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1699981,
+              "trust": 108799,
+              "dealer": 305358,
+              "total": 2114138
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 3221815,
+              "trust": 350246,
+              "dealer": -135779,
+              "total": 3436282
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 2089533,
+              "trust": 555554,
+              "dealer": 145296,
+              "total": 2790383
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "4904.TW",
+        "close": 113.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 116.0,
+        "ma20": 109.925,
+        "volume_ratio": 1.2073,
+        "rs_5d": 1.1593,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -2799,
+              "trust": 582000,
+              "dealer": 66501,
+              "total": 645702
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 542779,
+              "trust": 164950,
+              "dealer": -102529,
+              "total": 605200
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2876281,
+              "trust": -880691,
+              "dealer": -448467,
+              "total": 1547123
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 2328717,
+              "trust": 566101,
+              "dealer": 641206,
+              "total": 3536024
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6505.TW",
+        "close": 103.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 129.0,
+        "ma20": 107.01,
+        "volume_ratio": 0.6785,
+        "rs_5d": -0.8722,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2284311,
+              "trust": -1093000,
+              "dealer": -68693,
+              "total": 1122618
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 4893758,
+              "trust": -2530000,
+              "dealer": 25713,
+              "total": 2389471
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 5086404,
+              "trust": -3833800,
+              "dealer": 173325,
+              "total": 1425929
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 340437,
+              "trust": 54000,
+              "dealer": 350679,
+              "total": 745116
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3008.TW",
+        "close": 5490.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 7460.0,
+        "ma20": 6385.25,
+        "volume_ratio": 0.7361,
+        "rs_5d": -8.8738,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -65827,
+              "trust": 184550,
+              "dealer": 225,
+              "total": 118948
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 225951,
+              "trust": 75130,
+              "dealer": 14660,
+              "total": 315741
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -677561,
+              "trust": 178016,
+              "dealer": -65315,
+              "total": -564860
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 573114,
+              "trust": -444281,
+              "dealer": -30912,
+              "total": 97921
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3481.TW",
+        "close": 44.55,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 56.2,
+        "ma20": 48.8775,
+        "volume_ratio": 0.9022,
+        "rs_5d": -2.3272,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 310243,
+              "trust": 240345,
+              "dealer": -1133181,
+              "total": -582593
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 21908503,
+              "trust": 193784,
+              "dealer": 3883745,
+              "total": 25986032
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -46307224,
+              "trust": 100000,
+              "dealer": -6025274,
+              "total": -52232498
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -12940101,
+              "trust": 170299,
+              "dealer": -4352804,
+              "total": -17122606
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2409.TW",
+        "close": 30.75,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 43.55,
+        "ma20": 35.805,
+        "volume_ratio": 0.5337,
+        "rs_5d": -10.9673,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -95959953,
+              "trust": 3520162,
+              "dealer": -2775267,
+              "total": -95215058
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 68585188,
+              "trust": 181713,
+              "dealer": 9162727,
+              "total": 77929628
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -50436463,
+              "trust": 23000,
+              "dealer": -5829229,
+              "total": -56242692
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -28002424,
+              "trust": -1612217,
+              "dealer": -6870569,
+              "total": -36485210
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "8069.TWO",
+        "close": 152.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 162.0,
+        "ma20": 150.55,
+        "volume_ratio": 0.7802,
+        "rs_5d": 1.8285,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 2413045,
+              "trust": 45835,
+              "dealer": 27710,
+              "total": 2486590
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1036872,
+              "trust": 351261,
+              "dealer": 29193,
+              "total": -656418
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -532767,
+              "trust": 40000,
+              "dealer": 93824,
+              "total": -398943
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 66060,
+              "trust": 47572,
+              "dealer": -93768,
+              "total": 19864
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2603.TW",
+        "close": 274.5,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 271.5,
+        "ma20": 254.475,
+        "volume_ratio": 0.9047,
+        "rs_5d": 8.2123,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1230622,
+              "trust": 80489,
+              "dealer": 102428,
+              "total": 1413539
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1185417,
+              "trust": 55814,
+              "dealer": 102811,
+              "total": 1344042
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 1077089,
+              "trust": 107189,
+              "dealer": 68981,
+              "total": 1253259
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 7919899,
+              "trust": 1861200,
+              "dealer": 790880,
+              "total": 10571979
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2615.TW",
+        "close": 119.5,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 129.5,
+        "ma20": 117.025,
+        "volume_ratio": 0.7024,
+        "rs_5d": 2.4962,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -867175,
+              "trust": -9257,
+              "dealer": 79173,
+              "total": -797259
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1060712,
+              "trust": 7158,
+              "dealer": 49047,
+              "total": 1116917
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1902032,
+              "trust": 2000,
+              "dealer": -571229,
+              "total": -2471261
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 2557782,
+              "trust": 47000,
+              "dealer": 151617,
+              "total": 2756399
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2618.TW",
+        "close": 43.15,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 44.05,
+        "ma20": 42.5075,
+        "volume_ratio": 0.8017,
+        "rs_5d": 4.8036,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 8645247,
+              "trust": -2773260,
+              "dealer": 201681,
+              "total": 6073668
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -590646,
+              "trust": -72000,
+              "dealer": -72569,
+              "total": -735215
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2454977,
+              "trust": -44000,
+              "dealer": 31025,
+              "total": 2442002
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 3523722,
+              "trust": 2242000,
+              "dealer": 714763,
+              "total": 6480485
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2609.TW",
+        "close": 64.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 66.5,
+        "ma20": 62.07,
+        "volume_ratio": 0.6023,
+        "rs_5d": 5.9734,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5768280,
+              "trust": -44647,
+              "dealer": 152677,
+              "total": 5876310
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 144329,
+              "trust": -46000,
+              "dealer": 114128,
+              "total": 212457
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 949832,
+              "trust": -1000,
+              "dealer": -163167,
+              "total": 785665
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 16598249,
+              "trust": -30000,
+              "dealer": 284025,
+              "total": 16852274
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "6446.TW",
+        "close": 1190.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 1300.0,
+        "ma20": 1188.25,
+        "volume_ratio": 0.6402,
+        "rs_5d": 5.1469,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 287899,
+              "trust": 68000,
+              "dealer": 8307,
+              "total": 364206
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -67150,
+              "trust": 13000,
+              "dealer": -56806,
+              "total": -110956
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 373904,
+              "trust": 111055,
+              "dealer": 23176,
+              "total": 508135
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -682542,
+              "trust": 448000,
+              "dealer": 16284,
+              "total": -218258
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "1216.TW",
+        "close": 80.6,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 83.0,
+        "ma20": 77.465,
+        "volume_ratio": 0.8884,
+        "rs_5d": 3.7838,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 5177550,
+              "trust": 213000,
+              "dealer": 632650,
+              "total": 6023200
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -409004,
+              "trust": 6000,
+              "dealer": 153483,
+              "total": -249521
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 2310448,
+              "trust": -1030139,
+              "dealer": 86440,
+              "total": 1366749
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 6527377,
+              "trust": -1094000,
+              "dealer": 1310840,
+              "total": 6744217
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2002.TW",
+        "close": 19.4,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 19.75,
+        "ma20": 19.31,
+        "volume_ratio": 0.6934,
+        "rs_5d": 1.7098,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 29598484,
+              "trust": 0,
+              "dealer": 485486,
+              "total": 30083970
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 4832438,
+              "trust": 12000,
+              "dealer": -269995,
+              "total": 4574443
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 869842,
+              "trust": 19000,
+              "dealer": -538923,
+              "total": 349919
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 927936,
+              "trust": 209000,
+              "dealer": 89340,
+              "total": 1226276
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "2207.TW",
+        "close": 536.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 553.0,
+        "ma20": 530.45,
+        "volume_ratio": 1.0724,
+        "rs_5d": 3.6565,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 227790,
+              "trust": -5577,
+              "dealer": -2000,
+              "total": 220213
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -1325,
+              "trust": -5000,
+              "dealer": -23000,
+              "total": -29325
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1545,
+              "trust": 0,
+              "dealer": -6000,
+              "total": -7545
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 35841,
+              "trust": 0,
+              "dealer": 3000,
+              "total": 38841
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "3036.TW",
+        "close": 204.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 223.5,
+        "ma20": 212.175,
+        "volume_ratio": 0.8219,
+        "rs_5d": -1.594,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 1442942,
+              "trust": -279724,
+              "dealer": 930,
+              "total": 1164148
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 784046,
+              "trust": 28069,
+              "dealer": -82431,
+              "total": 729684
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1508971,
+              "trust": 8000,
+              "dealer": -25868,
+              "total": -1526839
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -479162,
+              "trust": 10000,
+              "dealer": 126819,
+              "total": -342343
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "3702.TW",
+        "close": 105.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 122.0,
+        "ma20": 115.575,
+        "volume_ratio": 0.8797,
+        "rs_5d": -5.5603,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 4700110,
+              "trust": 106000,
+              "dealer": 167094,
+              "total": 4973204
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 1449702,
+              "trust": -46996,
+              "dealer": 55464,
+              "total": 1458170
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -4530624,
+              "trust": 84000,
+              "dealer": 111193,
+              "total": -4335431
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -389205,
+              "trust": 659000,
+              "dealer": 273704,
+              "total": 543499
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2347.TW",
+        "close": 94.5,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 104.0,
+        "ma20": 99.27,
+        "volume_ratio": 0.667,
+        "rs_5d": -2.4583,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 532305,
+              "trust": -74000,
+              "dealer": 79213,
+              "total": 537518
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 395708,
+              "trust": -148266,
+              "dealer": 16940,
+              "total": 264382
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -1641623,
+              "trust": 1072000,
+              "dealer": 26699,
+              "total": -542924
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 878159,
+              "trust": 328000,
+              "dealer": 229459,
+              "total": 1435618
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "2912.TW",
+        "close": 225.5,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 229.5,
+        "ma20": 219.95,
+        "volume_ratio": 0.5317,
+        "rs_5d": 2.2694,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 785544,
+              "trust": -4908,
+              "dealer": 195,
+              "total": 780831
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 344448,
+              "trust": -15000,
+              "dealer": -51229,
+              "total": 278219
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 376292,
+              "trust": 1000,
+              "dealer": 13132,
+              "total": 390424
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 1672913,
+              "trust": 0,
+              "dealer": -26984,
+              "total": 1645929
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "3293.TWO",
+        "close": 797.0,
+        "stage": "improving",
+        "status": "ok",
+        "previous_high20": 819.0,
+        "ma20": 794.75,
+        "volume_ratio": 0.3649,
+        "rs_5d": 3.7985,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
+          "source_name": "櫃買中心",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 216027,
+              "trust": -3000,
+              "dealer": 13603,
+              "total": 226630
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -3507,
+              "trust": -14000,
+              "dealer": -1828,
+              "total": -19335
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 773859,
+              "trust": -1000,
+              "dealer": 35441,
+              "total": 808300
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 691923,
+              "trust": -18000,
+              "dealer": 26139,
+              "total": 700062
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "1590.TW",
+        "close": 1090.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 1255.0,
+        "ma20": 1157.0,
+        "volume_ratio": 1.8652,
+        "rs_5d": 1.5644,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 71369,
+              "trust": 0,
+              "dealer": 5101,
+              "total": 76470
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -111071,
+              "trust": 164,
+              "dealer": 2558,
+              "total": -108349
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -14575,
+              "trust": 0,
+              "dealer": 1604,
+              "total": -12971
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -110651,
+              "trust": 340,
+              "dealer": -12792,
+              "total": -123103
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1519.TW",
+        "close": 555.0,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 745.0,
+        "ma20": 645.25,
+        "volume_ratio": 1.3821,
+        "rs_5d": -7.5034,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -384467,
+              "trust": 0,
+              "dealer": -8444,
+              "total": -392911
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 72818,
+              "trust": 0,
+              "dealer": 9403,
+              "total": 82221
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -642487,
+              "trust": 0,
+              "dealer": -13337,
+              "total": -655824
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 74916,
+              "trust": -114,
+              "dealer": -15561,
+              "total": 59241
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1101.TW",
+        "close": 28.1,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 28.5,
+        "ma20": 26.8125,
+        "volume_ratio": 0.9283,
+        "rs_5d": 3.0463,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -10863660,
+              "trust": 2800000,
+              "dealer": -868400,
+              "total": -8932060
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 2146209,
+              "trust": 6000,
+              "dealer": 1187160,
+              "total": 3339369
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 4047089,
+              "trust": 11000,
+              "dealer": 138163,
+              "total": 4196252
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 13122966,
+              "trust": -4560000,
+              "dealer": 988080,
+              "total": 9551046
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": true
+        }
+      },
+      {
+        "symbol": "5871.TW",
+        "close": 105.0,
+        "stage": "watch",
+        "status": "ok",
+        "previous_high20": 110.5,
+        "ma20": 106.55,
+        "volume_ratio": 1.1789,
+        "rs_5d": 1.5292,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": 3019898,
+              "trust": -6853,
+              "dealer": 119546,
+              "total": 3132591
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": 69846,
+              "trust": -79999,
+              "dealer": 8000,
+              "total": -2153
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": 477625,
+              "trust": -19000,
+              "dealer": -30398,
+              "total": 428227
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": -3234572,
+              "trust": 28921,
+              "dealer": -9000,
+              "total": -3214651
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      },
+      {
+        "symbol": "1802.TW",
+        "close": 63.7,
+        "stage": "weakening",
+        "status": "ok",
+        "previous_high20": 73.6,
+        "ma20": 63.77,
+        "volume_ratio": 0.7379,
+        "rs_5d": -2.6974,
+        "smart_money": {
+          "method": "institutional",
+          "status": "partial",
+          "bias": "unknown",
+          "as_of": "2026-10-30",
+          "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
+          "source_name": "臺灣證券交易所",
+          "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
+          "history": [
+            {
+              "date": "2026-10-27",
+              "foreign": -14090066,
+              "trust": 1124000,
+              "dealer": -2613816,
+              "total": -15579882
+            },
+            {
+              "date": "2026-10-28",
+              "foreign": -11030825,
+              "trust": -201000,
+              "dealer": -2873702,
+              "total": -14105527
+            },
+            {
+              "date": "2026-10-29",
+              "foreign": -14659964,
+              "trust": 14000,
+              "dealer": -1334314,
+              "total": -15980278
+            },
+            {
+              "date": "2026-10-30",
+              "foreign": 5634882,
+              "trust": 340000,
+              "dealer": -1470991,
+              "total": 4503891
+            }
+          ],
+          "coverage": 4,
+          "price_confirmed": false
+        }
+      }
+    ],
+    "briefings": [
+      {
+        "id": "asic-testing-20260918",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "expired",
+        "focus_symbols": [],
+        "items": [
+          {
+            "symbol": "2330.TW",
+            "name": "台積電",
+            "wave": 1,
+            "role": "大型股錨點",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "3264.TWO",
+            "name": "欣銓",
+            "wave": 2,
+            "role": "領先觀察",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "6257.TW",
+            "name": "矽格",
+            "wave": 2,
+            "role": "領先觀察",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "2449.TW",
+            "name": "京元電",
+            "wave": 3,
+            "role": "接棒候選",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "3711.TW",
+            "name": "日月光投控",
+            "wave": 3,
+            "role": "接棒候選",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "3037.TW",
+            "name": "欣興",
+            "wave": 3,
+            "role": "落後觀察",
+            "category": "unavailable",
+            "checks": []
+          },
+          {
+            "symbol": "2308.TW",
+            "name": "台達電",
+            "wave": 0,
+            "role": "另一路：電源／散熱",
+            "category": "unavailable",
+            "checks": []
+          }
+        ]
+      }
+    ],
+    "synchrony": [
+      {
+        "id": "chips",
+        "name": "AI 晶片／晶圓",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 2,
+        "available": 2,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "testing",
+        "name": "封測／AI ASIC 測試",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 5,
+        "available": 5,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 11.0
+      },
+      {
+        "id": "optical",
+        "name": "光通訊／CPO",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 2,
+        "available": 2,
+        "up_count": 0,
+        "down_count": 1,
+        "up_symbols": [],
+        "down_symbols": [
+          "3363.TWO"
+        ],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "memory",
+        "name": "記憶體",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 0.0
+      },
+      {
+        "id": "cooling",
+        "name": "散熱",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 0.0
+      },
+      {
+        "id": "power",
+        "name": "電源／BBU",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 5,
+        "available": 5,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 4.0
+      },
+      {
+        "id": "network",
+        "name": "網通／交換器",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 11.7
+      },
+      {
+        "id": "pcb",
+        "name": "PCB／載板",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 4,
+        "available": 4,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 6.2
+      },
+      {
+        "id": "components",
+        "name": "機殼／滑軌／連接",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 6,
+        "available": 6,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 8.3
+      },
+      {
+        "id": "robotics",
+        "name": "機器人／自動化",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 5,
+        "available": 5,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 6.0
+      },
+      {
+        "id": "industry-其他電子業",
+        "name": "其他電子業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 3.3
+      },
+      {
+        "id": "industry-塑膠工業",
+        "name": "塑膠工業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 25.0
+      },
+      {
+        "id": "industry-金融保險業",
+        "name": "金融保險業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 15,
+        "available": 15,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 9.0
+      },
+      {
+        "id": "industry-電子零組件業",
+        "name": "電子零組件業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 9,
+        "available": 9,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 12.2
+      },
+      {
+        "id": "industry-半導體業",
+        "name": "半導體業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 18,
+        "available": 18,
+        "up_count": 0,
+        "down_count": 2,
+        "up_symbols": [],
+        "down_symbols": [
+          "3443.TW",
+          "3529.TWO"
+        ],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 6.1
+      },
+      {
+        "id": "industry-電腦及週邊設備業",
+        "name": "電腦及週邊設備業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 8,
+        "available": 8,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 6.2
+      },
+      {
+        "id": "industry-通信網路業",
+        "name": "通信網路業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 11.7
+      },
+      {
+        "id": "industry-油電燃氣業",
+        "name": "油電燃氣業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-光電業",
+        "name": "光電業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 4,
+        "available": 4,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 5.0
+      },
+      {
+        "id": "industry-航運業",
+        "name": "航運業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 4,
+        "available": 4,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 13.8
+      },
+      {
+        "id": "industry-生技醫療業",
+        "name": "生技醫療業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-食品工業",
+        "name": "食品工業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-鋼鐵工業",
+        "name": "鋼鐵工業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-汽車工業",
+        "name": "汽車工業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-電子通路業",
+        "name": "電子通路業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "quiet",
+        "total": 3,
+        "available": 3,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": 10.0
+      },
+      {
+        "id": "industry-貿易百貨業",
+        "name": "貿易百貨業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-文化創意業",
+        "name": "文化創意業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-電機機械",
+        "name": "電機機械",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 2,
+        "available": 2,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-水泥工業",
+        "name": "水泥工業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-其他業",
+        "name": "其他業",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      },
+      {
+        "id": "industry-玻璃陶瓷",
+        "name": "玻璃陶瓷",
+        "market": "TW",
+        "as_of": "2026-11-02",
+        "status": "insufficient",
+        "total": 1,
+        "available": 1,
+        "up_count": 0,
+        "down_count": 0,
+        "up_symbols": [],
+        "down_symbols": [],
+        "money_confirmed": [],
+        "money_divergence": [],
+        "baseline_pct": null
+      }
+    ]
   }
 ]
