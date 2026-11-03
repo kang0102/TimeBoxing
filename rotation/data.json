@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-03T13:26:40.185784+00:00",
-  "last_success_at": "2026-11-03T13:26:40.185784+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-03T14:16:49.880865+00:00",
+  "last_success_at": "2026-11-03T14:16:49.880865+00:00",
+  "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -20,11 +20,9 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-03T13:26:40.185784+00:00",
+    "checked_at": "2026-11-03T14:16:49.880865+00:00",
     "expected_tw_date": "2026-11-03",
-    "errors": [
-      "TPEX 官方收盤價核對失敗"
-    ],
+    "errors": [],
     "cached_symbols": [],
     "repairs": {}
   },
@@ -39,7 +37,7 @@
     }
   ],
   "coverage": {
-    "available": 132,
+    "available": 131,
     "total": 132
   },
   "stocks": [
@@ -15239,7 +15237,7 @@
       "group_name": "機器人／自動化",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-11-03",
       "close": 130.0,
       "change_1d": -7.1429,
@@ -15717,7 +15715,7 @@
           "value": 6.966
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-09-17",
@@ -15867,67 +15865,20 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-11-03",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-10-28",
-            "foreign": 1131954,
-            "trust": 10000,
-            "dealer": 78834,
-            "total": 1220788
-          },
-          {
-            "date": "2026-10-29",
-            "foreign": 589178,
-            "trust": 21000,
-            "dealer": 2829,
-            "total": 613007
-          },
-          {
-            "date": "2026-10-30",
-            "foreign": -1587072,
-            "trust": 67274,
-            "dealer": 5819,
-            "total": -1513979
-          },
-          {
-            "date": "2026-11-02",
-            "foreign": 1123571,
-            "trust": 0,
-            "dealer": -70083,
-            "total": 1053488
-          },
-          {
-            "date": "2026-11-03",
-            "foreign": -2036943,
-            "trust": 16000,
-            "dealer": -204776,
-            "total": -2225719
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -779312,
-          "trust": 114274,
-          "dealer": -187377,
-          "total": -852415
-        },
-        "core_net_5d": -665038,
-        "buy_days": 3,
-        "sell_days": 2,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 98,
       "market_cap": 157320373281,
       "market_cap_as_of": "2026-11-03",
-      "shares_as_of": "2026-11-02"
+      "shares_as_of": "2026-11-02",
+      "error": "至少需要 65 個完整交易日"
     },
     {
       "symbol": "2464.TW",
@@ -45042,13 +44993,13 @@
       "name": "機器人／自動化",
       "market": "TW",
       "count": 5,
-      "usable": 5,
-      "coverage": 100,
+      "usable": 4,
+      "coverage": 80,
       "status": "ok",
-      "score": 20.5,
+      "score": 14.1,
       "breadth": 0,
-      "rs_5d": -4.45,
-      "return_20d": -15.32
+      "rs_5d": -6.09,
+      "return_20d": -18.1
     },
     {
       "id": "robotics",
@@ -45890,7 +45841,7 @@
       "as_of": "2026-11-03",
       "status": "quiet",
       "total": 5,
-      "available": 5,
+      "available": 4,
       "up_count": 0,
       "down_count": 1,
       "up_symbols": [],
@@ -45899,7 +45850,7 @@
       ],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 6.0
+      "baseline_pct": 5.0
     },
     {
       "id": "robotics",
@@ -46294,7 +46245,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-03",
-    "generated_at": "2026-11-03T13:23:27.889179+00:00",
+    "generated_at": "2026-11-03T14:05:02.917055+00:00",
     "market_size": 1975,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
