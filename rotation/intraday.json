@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-03T07:18:14.161113+00:00",
+  "generated_at": "2026-11-03T07:50:25.735405+00:00",
   "session_date": "2026-11-03",
   "phase": "after_close",
   "status": "ok",
@@ -2746,34 +2746,77 @@
       "volume_progress_ratio": 1.2557
     },
     {
+      "quote_at": "2026-11-03T13:30:00+08:00",
+      "quote_date": "2026-11-03",
+      "price": 1360.0,
+      "reference_close": 1510.0,
+      "high": 1495.0,
+      "low": 1360.0,
+      "change_pct": -9.9338,
+      "volume_shares": 3263000.0,
       "symbol": "8996.TW",
       "name": "高力熱處理工業",
-      "status": "unavailable",
-      "signal": "unknown",
-      "reason": "本次沒有可驗證的成交報價"
+      "group": "etf-additions",
+      "group_name": "ETF 布局補充",
+      "status": "ok",
+      "signal": "defend",
+      "reason": "報價落在前一交易日月線下，先防守",
+      "baseline_as_of": "2026-11-02",
+      "ma20": 1583.25,
+      "high20": 1800.0,
+      "relative_today_pct": -6.3439,
+      "volume_progress_ratio": 0.8829
     },
     {
+      "quote_at": "2026-11-03T13:30:00+08:00",
+      "quote_date": "2026-11-03",
+      "price": 1125.0,
+      "reference_close": 1250.0,
+      "high": 1215.0,
+      "low": 1125.0,
+      "change_pct": -10.0,
+      "volume_shares": 274000.0,
       "symbol": "7751.TWO",
       "name": "竑騰科技",
-      "status": "unavailable",
-      "signal": "unknown",
-      "reason": "本次沒有可驗證的成交報價"
+      "group": "etf-additions",
+      "group_name": "ETF 布局補充",
+      "status": "ok",
+      "signal": "defend",
+      "reason": "報價落在前一交易日月線下，先防守",
+      "baseline_as_of": "2026-11-02",
+      "ma20": 1504.75,
+      "high20": 1795.0,
+      "relative_today_pct": -6.4101,
+      "volume_progress_ratio": 1.7837
     },
     {
+      "quote_at": "2026-11-03T13:30:00+08:00",
+      "quote_date": "2026-11-03",
+      "price": 327.5,
+      "reference_close": 363.5,
+      "high": 356.0,
+      "low": 327.5,
+      "change_pct": -9.9037,
+      "volume_shares": 651000.0,
       "symbol": "6831.TW",
       "name": "邁科科技",
-      "status": "unavailable",
-      "signal": "unknown",
-      "reason": "本次沒有可驗證的成交報價"
+      "group": "etf-additions",
+      "group_name": "ETF 布局補充",
+      "status": "ok",
+      "signal": "defend",
+      "reason": "報價落在前一交易日月線下，先防守",
+      "baseline_as_of": "2026-11-02",
+      "ma20": 437.525,
+      "high20": 515.0,
+      "relative_today_pct": -6.3138,
+      "volume_progress_ratio": 0.9702
     }
   ],
   "coverage": {
-    "available": 124,
+    "available": 127,
     "total": 127
   },
-  "errors": [
-    "報價批次 6 未取得"
-  ],
+  "errors": [],
   "max_age_minutes": 20,
   "method": "交易時段目標每15分鐘更新，GitHub排程可能延遲。盤中價位與前一完整交易日比較；暫時突破不等於收盤訊號。整股累計量除以歷史全日均量僅供進度參考，不當成同時段量比。ETF及法人為最新已公布持股／籌碼，不是即時交易。"
 }
