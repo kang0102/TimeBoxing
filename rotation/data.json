@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-07T02:21:25.498290+00:00",
-  "last_success_at": "2026-11-07T02:21:25.498290+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-07T14:46:26.420877+00:00",
+  "last_success_at": "2026-11-07T14:46:26.420877+00:00",
+  "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -10,7 +10,7 @@
       "symbol": "^TWII",
       "as_of": "2026-11-06",
       "status": "ok",
-      "expected_as_of": null
+      "expected_as_of": "2026-11-06"
     },
     "US": {
       "symbol": "^GSPC",
@@ -20,11 +20,10 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-07T02:21:25.498290+00:00",
-    "expected_tw_date": null,
-    "errors": [
-      "官方交易日期核對暫時無法完成"
-    ],
+    "checked_at": "2026-11-07T14:46:26.420877+00:00",
+    "expected_tw_date": "2026-11-06",
+    "errors": [],
+    "cached_symbols": [],
     "repairs": {}
   },
   "identity_corrections": [
@@ -38,7 +37,7 @@
     }
   ],
   "coverage": {
-    "available": 128,
+    "available": 132,
     "total": 132
   },
   "stocks": [
@@ -394,7 +393,7 @@
       "market_cap_rank": 1,
       "market_cap": 55365610093045,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2454.TW",
@@ -748,7 +747,7 @@
       "market_cap_rank": 2,
       "market_cap": 5440789358070,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "NVDA",
@@ -2728,7 +2727,7 @@
       "market_cap_rank": 64,
       "market_cap": 264479757508,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3711.TW",
@@ -3082,7 +3081,7 @@
       "market_cap_rank": 5,
       "market_cap": 2365223031061,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3265.TWO",
@@ -4154,7 +4153,7 @@
       "group_name": "光通訊／CPO",
       "currency": "USD",
       "laggard": false,
-      "laggard_watch": false,
+      "laggard_watch": true,
       "as_of": "2026-11-06",
       "close": 141.2,
       "change_1d": 5.7282,
@@ -4461,141 +4460,136 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-11-05",
-      "close": 36.36,
-      "change_1d": -9.8661,
-      "return_5d": -20.6979,
-      "return_20d": -26.3371,
-      "rs_5d": -16.7439,
-      "rs_20d": -22.2138,
-      "rs_acceleration": -21.6822,
-      "volume_ratio": 2.1375,
-      "ma20_distance": -19.4872,
-      "ma20": 45.1605,
-      "ma60": 46.4737,
-      "ma200": 54.9563,
-      "ma60_slope20": -5.2327,
+      "as_of": "2026-11-06",
+      "close": 38.62,
+      "change_1d": 6.2156,
+      "return_5d": -7.8282,
+      "return_20d": -19.942,
+      "rs_5d": -5.2891,
+      "rs_20d": -15.2246,
+      "rs_acceleration": -0.2228,
+      "volume_ratio": 0.7651,
+      "ma20_distance": -13.5622,
+      "ma20": 44.6795,
+      "ma60": 46.2414,
+      "ma200": 54.9252,
+      "ma60_slope20": -5.3896,
       "above_ma20": false,
       "breakout_20d": false,
-      "previous_high20": 51.45,
-      "volume_mean20": 6404800.0,
-      "volume": 13690300.0,
-      "next_session_high20": 50.898,
-      "next_session_volume_mean20": 6566000.0,
+      "previous_high20": 50.898,
+      "volume_mean20": 6566000.0,
+      "volume": 5023700.0,
+      "next_session_high20": 49.8,
+      "next_session_volume_mean20": 6520345.0,
       "prior_session": {
-        "as_of": "2026-11-04",
-        "close": 40.34000015258789,
-        "ma20": 45.81049995422363,
-        "high20": 51.45000076293945,
-        "volume_mean20": 6404800.0
+        "as_of": "2026-11-05",
+        "close": 36.36000061035156,
+        "ma20": 45.16049995422363,
+        "high20": 50.89799880981445,
+        "volume_mean20": 6566000.0
       },
-      "score": 15,
+      "score": 12.2,
       "stage": "weakening",
       "reasons": [
-        "5 日相對大盤 -16.74%",
-        "成交量為前 20 日均量 2.14 倍",
+        "5 日相對大盤 -5.29%",
+        "成交量為前 20 日均量 0.77 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
-        "acceleration": 0,
+        "acceleration": 9.55,
         "trend": 0,
-        "volume": 15,
+        "volume": 2.65,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-10-08",
+          "date": "2026-10-09",
           "value": 0.0
         },
         {
-          "date": "2026-10-09",
-          "value": -2.847
-        },
-        {
           "date": "2026-10-12",
-          "value": -2.592
+          "value": 0.262
         },
         {
           "date": "2026-10-13",
-          "value": -5.875
+          "value": -3.117
         },
         {
           "date": "2026-10-14",
-          "value": -0.255
+          "value": 2.668
         },
         {
           "date": "2026-10-15",
-          "value": -0.944
+          "value": 1.959
         },
         {
           "date": "2026-10-16",
-          "value": -4.122
+          "value": -1.312
         },
         {
           "date": "2026-10-19",
-          "value": -5.678
+          "value": -2.914
         },
         {
           "date": "2026-10-20",
-          "value": -4.109
+          "value": -1.299
         },
         {
           "date": "2026-10-21",
-          "value": -3.261
+          "value": -0.426
         },
         {
           "date": "2026-10-22",
-          "value": -10.967
+          "value": -8.358
         },
         {
           "date": "2026-10-23",
-          "value": -8.398
+          "value": -5.713
         },
         {
           "date": "2026-10-26",
-          "value": -7.781
+          "value": -5.079
         },
         {
           "date": "2026-10-27",
-          "value": -4.865
+          "value": -2.077
         },
         {
           "date": "2026-10-28",
-          "value": -6.326
+          "value": -3.582
         },
         {
           "date": "2026-10-29",
-          "value": -6.57
+          "value": -3.832
         },
         {
           "date": "2026-10-30",
-          "value": -13.038
+          "value": -10.49
         },
         {
           "date": "2026-11-02",
-          "value": -12.759
+          "value": -10.203
         },
         {
           "date": "2026-11-03",
-          "value": -10.853
+          "value": -8.24
         },
         {
           "date": "2026-11-04",
-          "value": -17.458
+          "value": -15.04
         },
         {
           "date": "2026-11-05",
-          "value": -22.214
+          "value": -19.934
+        },
+        {
+          "date": "2026-11-06",
+          "value": -15.225
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
-        {
-          "date": "2026-09-25",
-          "score": 63.4,
-          "stage": "watch"
-        },
         {
           "date": "2026-09-28",
           "score": 49.9,
@@ -4740,23 +4734,28 @@
           "date": "2026-11-05",
           "score": 15,
           "stage": "weakening"
+        },
+        {
+          "date": "2026-11-06",
+          "score": 12.2,
+          "stage": "weakening"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": "2026-11-05",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-11-06",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "price_confirmed": null
+        "cmf_20d": -0.0914,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null,
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": null
     },
     {
       "symbol": "2408.TW",
@@ -5110,7 +5109,7 @@
       "market_cap_rank": 14,
       "market_cap": 1185145724589,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2344.TW",
@@ -5464,7 +5463,7 @@
       "market_cap_rank": 37,
       "market_cap": 542250023256,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "8299.TWO",
@@ -6478,7 +6477,7 @@
       "market_cap_rank": 18,
       "market_cap": 907067947170,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3324.TWO",
@@ -7186,7 +7185,7 @@
       "market_cap_rank": 25,
       "market_cap": 769140262550,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "VRT",
@@ -7197,141 +7196,136 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-11-05",
-      "close": 176.73,
-      "change_1d": -14.0209,
-      "return_5d": -28.1352,
-      "return_20d": -27.4894,
-      "rs_5d": -24.552,
-      "rs_20d": -23.4306,
-      "rs_acceleration": -49.3567,
-      "volume_ratio": 2.5199,
-      "ma20_distance": -18.6947,
-      "ma20": 217.366,
-      "ma60": 244.0482,
-      "ma200": 271.1197,
-      "ma60_slope20": -7.4269,
+      "as_of": "2026-11-06",
+      "close": 182.86,
+      "change_1d": 3.4686,
+      "return_5d": -21.3505,
+      "return_20d": -24.6808,
+      "rs_5d": -19.184,
+      "rs_20d": -20.2426,
+      "rs_acceleration": -39.5204,
+      "volume_ratio": 1.1549,
+      "ma20_distance": -14.6989,
+      "ma20": 214.37,
+      "ma60": 242.3126,
+      "ma200": 271.129,
+      "ma60_slope20": -7.7864,
       "above_ma20": false,
       "breakout_20d": false,
       "previous_high20": 254.73,
-      "volume_mean20": 7662760.0,
-      "volume": 19309600.0,
+      "volume_mean20": 8334565.0,
+      "volume": 9625500.0,
       "next_session_high20": 254.73,
-      "next_session_volume_mean20": 8334565.0,
+      "next_session_volume_mean20": 8644745.0,
       "prior_session": {
-        "as_of": "2026-11-04",
-        "close": 205.5500030517578,
-        "ma20": 220.71599960327148,
+        "as_of": "2026-11-05",
+        "close": 176.72999572753906,
+        "ma20": 217.3659996032715,
         "high20": 254.72999572753906,
-        "volume_mean20": 7662760.0
+        "volume_mean20": 8334565.0
       },
-      "score": 15,
+      "score": 6.5,
       "stage": "weakening",
       "reasons": [
-        "5 日相對大盤 -24.55%",
-        "成交量為前 20 日均量 2.52 倍",
+        "5 日相對大盤 -19.18%",
+        "成交量為前 20 日均量 1.15 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 0,
-        "volume": 15,
+        "volume": 6.55,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-10-08",
+          "date": "2026-10-09",
           "value": 0.0
         },
         {
-          "date": "2026-10-09",
-          "value": -0.979
-        },
-        {
           "date": "2026-10-12",
-          "value": -2.32
+          "value": -1.354
         },
         {
           "date": "2026-10-13",
-          "value": -3.142
+          "value": -2.185
         },
         {
           "date": "2026-10-14",
-          "value": -8.025
+          "value": -7.116
         },
         {
           "date": "2026-10-15",
-          "value": -11.648
+          "value": -10.775
         },
         {
           "date": "2026-10-16",
-          "value": -14.137
+          "value": -13.288
         },
         {
           "date": "2026-10-19",
-          "value": -14.627
+          "value": -13.783
         },
         {
           "date": "2026-10-20",
-          "value": -15.91
+          "value": -15.079
         },
         {
           "date": "2026-10-21",
-          "value": -12.865
+          "value": -12.004
         },
         {
           "date": "2026-10-22",
-          "value": -18.684
+          "value": -17.88
         },
         {
           "date": "2026-10-23",
-          "value": -18.791
+          "value": -17.988
         },
         {
           "date": "2026-10-26",
-          "value": -17.086
+          "value": -16.267
         },
         {
           "date": "2026-10-27",
-          "value": -13.956
+          "value": -13.106
         },
         {
           "date": "2026-10-28",
-          "value": -0.049
+          "value": 0.939
         },
         {
           "date": "2026-10-29",
-          "value": 1.486
+          "value": 2.489
         },
         {
           "date": "2026-10-30",
-          "value": -2.276
+          "value": -1.31
         },
         {
           "date": "2026-11-02",
-          "value": -5.264
+          "value": -4.328
         },
         {
           "date": "2026-11-03",
-          "value": -0.671
+          "value": 0.311
         },
         {
           "date": "2026-11-04",
-          "value": -14.823
+          "value": -13.981
         },
         {
           "date": "2026-11-05",
-          "value": -23.431
+          "value": -22.674
+        },
+        {
+          "date": "2026-11-06",
+          "value": -20.243
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
-        {
-          "date": "2026-09-25",
-          "score": 26.0,
-          "stage": "watch"
-        },
         {
           "date": "2026-09-28",
           "score": 12.2,
@@ -7476,23 +7470,28 @@
           "date": "2026-11-05",
           "score": 15,
           "stage": "weakening"
+        },
+        {
+          "date": "2026-11-06",
+          "score": 6.5,
+          "stage": "weakening"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": "2026-11-05",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-11-06",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "price_confirmed": null
+        "cmf_20d": -0.0747,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null,
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": null
     },
     {
       "symbol": "2308.TW",
@@ -7846,7 +7845,7 @@
       "market_cap_rank": 4,
       "market_cap": 2740408212095,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2301.TW",
@@ -8200,7 +8199,7 @@
       "market_cap_rank": 44,
       "market_cap": 450669337074,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6781.TW",
@@ -9922,7 +9921,7 @@
       "market_cap_rank": 27,
       "market_cap": 718230908160,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6285.TW",
@@ -10641,141 +10640,136 @@
       "currency": "USD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-11-05",
-      "close": 159.16,
-      "change_1d": -10.8247,
-      "return_5d": -13.6033,
-      "return_20d": -24.558,
-      "rs_5d": -9.2955,
-      "rs_20d": -20.3351,
-      "rs_acceleration": -16.1879,
-      "volume_ratio": 2.0697,
-      "ma20_distance": -12.9741,
-      "ma20": 182.888,
-      "ma60": 193.3382,
-      "ma200": 165.9509,
-      "ma60_slope20": 0.4139,
+      "as_of": "2026-11-06",
+      "close": 170.8,
+      "change_1d": 7.3134,
+      "return_5d": 1.1489,
+      "return_20d": -21.1959,
+      "rs_5d": 3.9352,
+      "rs_20d": -16.5524,
+      "rs_acceleration": 5.4079,
+      "volume_ratio": 1.5601,
+      "ma20_distance": -5.4216,
+      "ma20": 180.591,
+      "ma60": 192.7912,
+      "ma200": 166.1128,
+      "ma60_slope20": -0.2861,
       "above_ma20": false,
       "breakout_20d": false,
       "previous_high20": 217.41,
-      "volume_mean20": 7178375.0,
-      "volume": 14856900.0,
-      "next_session_high20": 217.41,
-      "next_session_volume_mean20": 7677465.0,
+      "volume_mean20": 7677465.0,
+      "volume": 11977700.0,
+      "next_session_high20": 216.485,
+      "next_session_volume_mean20": 8059890.0,
       "prior_session": {
-        "as_of": "2026-11-04",
-        "close": 178.47999572753906,
-        "ma20": 185.4785011291504,
+        "as_of": "2026-11-05",
+        "close": 159.16000366210938,
+        "ma20": 182.88800125122071,
         "high20": 217.41000366210938,
-        "volume_mean20": 7178375.0
+        "volume_mean20": 7677465.0
       },
-      "score": 15,
-      "stage": "weakening",
+      "score": 30.6,
+      "stage": "watch",
       "reasons": [
-        "5 日相對大盤 -9.30%",
-        "成交量為前 20 日均量 2.07 倍",
+        "5 日相對大盤 +3.94%",
+        "成交量為前 20 日均量 1.56 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
-        "acceleration": 0,
+        "acceleration": 20,
         "trend": 0,
-        "volume": 15,
+        "volume": 10.6,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-10-08",
+          "date": "2026-10-09",
           "value": 0.0
         },
         {
-          "date": "2026-10-09",
-          "value": 2.128
-        },
-        {
           "date": "2026-10-12",
-          "value": -0.579
+          "value": -2.65
         },
         {
           "date": "2026-10-13",
-          "value": -3.555
+          "value": -5.564
         },
         {
           "date": "2026-10-14",
-          "value": -6.814
+          "value": -8.755
         },
         {
           "date": "2026-10-15",
-          "value": -11.793
+          "value": -13.631
         },
         {
           "date": "2026-10-16",
-          "value": -14.951
+          "value": -16.723
         },
         {
           "date": "2026-10-19",
-          "value": -12.44
+          "value": -14.264
         },
         {
           "date": "2026-10-20",
-          "value": -13.528
+          "value": -15.329
         },
         {
           "date": "2026-10-21",
-          "value": -12.535
+          "value": -14.357
         },
         {
           "date": "2026-10-22",
-          "value": -17.834
+          "value": -19.546
         },
         {
           "date": "2026-10-23",
-          "value": -16.778
+          "value": -18.512
         },
         {
           "date": "2026-10-26",
-          "value": -15.019
+          "value": -16.789
         },
         {
           "date": "2026-10-27",
-          "value": -10.871
+          "value": -12.728
         },
         {
           "date": "2026-10-28",
-          "value": -11.25
+          "value": -13.099
         },
         {
           "date": "2026-10-29",
-          "value": -12.171
+          "value": -14.001
         },
         {
           "date": "2026-10-30",
-          "value": -18.004
+          "value": -19.712
         },
         {
           "date": "2026-11-02",
-          "value": -19.887
+          "value": -21.556
         },
         {
           "date": "2026-11-03",
-          "value": -17.372
+          "value": -19.094
         },
         {
           "date": "2026-11-04",
-          "value": -14.556
+          "value": -16.336
         },
         {
           "date": "2026-11-05",
-          "value": -20.335
+          "value": -21.995
+        },
+        {
+          "date": "2026-11-06",
+          "value": -16.552
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
-        {
-          "date": "2026-09-25",
-          "score": 70.0,
-          "stage": "improving"
-        },
         {
           "date": "2026-09-28",
           "score": 55.6,
@@ -10920,23 +10914,28 @@
           "date": "2026-11-05",
           "score": 15,
           "stage": "weakening"
+        },
+        {
+          "date": "2026-11-06",
+          "score": 30.6,
+          "stage": "watch"
         }
       ],
       "smart_money": {
         "method": "cmf_proxy",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": "2026-11-05",
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-11-06",
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "price_confirmed": null
+        "cmf_20d": -0.2141,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null,
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": null
     },
     {
       "symbol": "CSCO",
@@ -10958,9 +10957,9 @@
       "volume_ratio": 1.2889,
       "ma20_distance": -12.1222,
       "ma20": 106.796,
-      "ma60": 109.2343,
-      "ma200": 101.516,
-      "ma60_slope20": -2.8458,
+      "ma60": 108.9946,
+      "ma200": 101.1786,
+      "ma60_slope20": -2.722,
       "above_ma20": false,
       "breakout_20d": false,
       "previous_high20": 118.65,
@@ -11596,7 +11595,7 @@
       "market_cap_rank": 13,
       "market_cap": 1193218990292,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "8046.TW",
@@ -11950,7 +11949,7 @@
       "market_cap_rank": 35,
       "market_cap": 565394801125,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3189.TW",
@@ -12304,7 +12303,7 @@
       "market_cap_rank": 53,
       "market_cap": 353556851560,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2368.TW",
@@ -12658,7 +12657,7 @@
       "market_cap_rank": 47,
       "market_cap": 431373712236,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "TTMI",
@@ -14380,7 +14379,7 @@
       "market_cap_rank": 26,
       "market_cap": 720922349680,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6584.TWO",
@@ -15088,7 +15087,7 @@
       "market_cap_rank": 65,
       "market_cap": 264441386625,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "APH",
@@ -16102,7 +16101,7 @@
       "market_cap_rank": 99,
       "market_cap": 141873508835,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2464.TW",
@@ -17824,7 +17823,7 @@
       "market_cap_rank": 3,
       "market_cap": 3160005088576,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2360.TW",
@@ -18178,7 +18177,7 @@
       "market_cap_rank": 40,
       "market_cap": 512421119110,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2404.TW",
@@ -18532,7 +18531,7 @@
       "market_cap_rank": 89,
       "market_cap": 168859814428,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2881.TW",
@@ -18886,7 +18885,7 @@
       "market_cap_rank": 6,
       "market_cap": 2073090012896,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2882.TW",
@@ -19240,7 +19239,7 @@
       "market_cap_rank": 8,
       "market_cap": 1554936273568,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2891.TW",
@@ -19593,7 +19592,7 @@
       "market_cap_rank": 9,
       "market_cap": 1444213467960,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2887.TW",
@@ -19947,7 +19946,7 @@
       "market_cap_rank": 16,
       "market_cap": 965674133785,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2885.TW",
@@ -20301,7 +20300,7 @@
       "market_cap_rank": 17,
       "market_cap": 927528088654,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2884.TW",
@@ -20655,7 +20654,7 @@
       "market_cap_rank": 20,
       "market_cap": 833004992137,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2886.TW",
@@ -21008,7 +21007,7 @@
       "market_cap_rank": 23,
       "market_cap": 793585738087,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2880.TW",
@@ -21362,7 +21361,7 @@
       "market_cap_rank": 28,
       "market_cap": 688047795474,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2890.TW",
@@ -21716,7 +21715,7 @@
       "market_cap_rank": 31,
       "market_cap": 616416435666,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2892.TW",
@@ -22070,7 +22069,7 @@
       "market_cap_rank": 32,
       "market_cap": 588839241218,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2883.TW",
@@ -22424,7 +22423,7 @@
       "market_cap_rank": 34,
       "market_cap": 571195709784,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "5880.TW",
@@ -22778,7 +22777,7 @@
       "market_cap_rank": 45,
       "market_cap": 448435593402,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2801.TW",
@@ -23132,7 +23131,7 @@
       "market_cap_rank": 55,
       "market_cap": 336479507711,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "5876.TW",
@@ -23486,7 +23485,7 @@
       "market_cap_rank": 66,
       "market_cap": 250421177721,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2834.TW",
@@ -23840,7 +23839,7 @@
       "market_cap_rank": 83,
       "market_cap": 180410959206,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1303.TW",
@@ -24194,7 +24193,7 @@
       "market_cap_rank": 7,
       "market_cap": 1899431770566,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1301.TW",
@@ -24548,7 +24547,7 @@
       "market_cap_rank": 50,
       "market_cap": 399131946969,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1326.TW",
@@ -24902,7 +24901,7 @@
       "market_cap_rank": 51,
       "market_cap": 367496380446,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2383.TW",
@@ -25256,7 +25255,7 @@
       "market_cap_rank": 10,
       "market_cap": 1368786655480,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2327.TW",
@@ -25610,7 +25609,7 @@
       "market_cap_rank": 24,
       "market_cap": 771610044788,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "4958.TW",
@@ -25964,7 +25963,7 @@
       "market_cap_rank": 48,
       "market_cap": 423545254991,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6274.TWO",
@@ -26672,7 +26671,7 @@
       "market_cap_rank": 74,
       "market_cap": 217338038823,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2313.TW",
@@ -27026,7 +27025,7 @@
       "market_cap_rank": 81,
       "market_cap": 196177473651,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6213.TW",
@@ -27380,7 +27379,7 @@
       "market_cap_rank": 84,
       "market_cap": 180344220128,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3533.TW",
@@ -27734,7 +27733,7 @@
       "market_cap_rank": 85,
       "market_cap": 178367485235,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2412.TW",
@@ -28087,7 +28086,7 @@
       "market_cap_rank": 11,
       "market_cap": 1268342510108,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3045.TW",
@@ -28440,7 +28439,7 @@
       "market_cap_rank": 41,
       "market_cap": 495216324995,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "4904.TW",
@@ -28793,7 +28792,7 @@
       "market_cap_rank": 49,
       "market_cap": 404062999984,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2382.TW",
@@ -29147,7 +29146,7 @@
       "market_cap_rank": 12,
       "market_cap": 1193265768996,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6669.TW",
@@ -29501,7 +29500,7 @@
       "market_cap_rank": 19,
       "market_cap": 871110645460,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2357.TW",
@@ -29855,7 +29854,7 @@
       "market_cap_rank": 30,
       "market_cap": 638031080520,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3231.TW",
@@ -30209,7 +30208,7 @@
       "market_cap_rank": 36,
       "market_cap": 548774760000,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2395.TW",
@@ -30563,7 +30562,7 @@
       "market_cap_rank": 42,
       "market_cap": 479713396416,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "4938.TW",
@@ -30917,7 +30916,7 @@
       "market_cap_rank": 69,
       "market_cap": 248573338509,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2376.TW",
@@ -31271,7 +31270,7 @@
       "market_cap_rank": 79,
       "market_cap": 199626888028,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2356.TW",
@@ -31625,7 +31624,7 @@
       "market_cap_rank": 82,
       "market_cap": 188701188472,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2303.TW",
@@ -31979,7 +31978,7 @@
       "market_cap_rank": 15,
       "market_cap": 1156448638708,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3443.TW",
@@ -32333,7 +32332,7 @@
       "market_cap_rank": 21,
       "market_cap": 831543907755,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "7769.TW",
@@ -32687,7 +32686,7 @@
       "market_cap_rank": 29,
       "market_cap": 661242750000,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "5274.TWO",
@@ -33395,7 +33394,7 @@
       "market_cap_rank": 52,
       "market_cap": 364982949828,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6223.TWO",
@@ -34103,7 +34102,7 @@
       "market_cap_rank": 57,
       "market_cap": 303003932890,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6488.TWO",
@@ -34811,7 +34810,7 @@
       "market_cap_rank": 68,
       "market_cap": 249269077282,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3661.TW",
@@ -35163,9 +35162,9 @@
         "price_confirmed": false
       },
       "market_cap_rank": 70,
-      "market_cap": 244369407620,
+      "market_cap": 244465344620,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "5347.TWO",
@@ -36227,7 +36226,7 @@
       "market_cap_rank": 94,
       "market_cap": 154486340019,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "6415.TW",
@@ -36511,7 +36510,7 @@
       "market_cap_rank": 95,
       "market_cap": 151851179381,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2337.TW",
@@ -36865,7 +36864,7 @@
       "market_cap_rank": 96,
       "market_cap": 150224733160,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3529.TWO",
@@ -37927,7 +37926,7 @@
       "market_cap_rank": 22,
       "market_cap": 816374742176,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3008.TW",
@@ -38281,7 +38280,7 @@
       "market_cap_rank": 33,
       "market_cap": 585975922560,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3481.TW",
@@ -38635,7 +38634,7 @@
       "market_cap_rank": 61,
       "market_cap": 288010563999,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2409.TW",
@@ -38989,7 +38988,7 @@
       "market_cap_rank": 78,
       "market_cap": 200375477707,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "8069.TWO",
@@ -39631,7 +39630,7 @@
       "market_cap_rank": 38,
       "market_cap": 536491987720,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2603.TW",
@@ -39985,7 +39984,7 @@
       "market_cap_rank": 39,
       "market_cap": 533683098514,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2615.TW",
@@ -40339,7 +40338,7 @@
       "market_cap_rank": 58,
       "market_cap": 301660726498,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2618.TW",
@@ -40692,7 +40691,7 @@
       "market_cap_rank": 71,
       "market_cap": 235459373006,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2609.TW",
@@ -41046,7 +41045,7 @@
       "market_cap_rank": 80,
       "market_cap": 199399153817,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2633.TW",
@@ -41260,7 +41259,7 @@
       "market_cap_rank": 98,
       "market_cap": 144084302285,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1216.TW",
@@ -41279,7 +41278,7 @@
       "rs_5d": 9.0512,
       "rs_20d": 30.7709,
       "rs_acceleration": 3.0985,
-      "volume_ratio": 1.2979,
+      "volume_ratio": 1.2914,
       "ma20_distance": -2.5381,
       "ma20": 78.8,
       "ma60": 76.655,
@@ -41289,9 +41288,9 @@
       "breakout_20d": false,
       "previous_high20": 83.0,
       "volume_mean20": 13866156.9,
-      "volume": 17997111.0,
+      "volume": 17906931.0,
       "next_session_high20": 83.0,
-      "next_session_volume_mean20": 14127980.45,
+      "next_session_volume_mean20": 14123471.45,
       "prior_session": {
         "as_of": "2026-11-05",
         "close": 80.9000015258789,
@@ -41299,18 +41298,18 @@
         "high20": 83.0,
         "volume_mean20": 13866156.9
       },
-      "score": 71.7,
+      "score": 71.6,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +9.05%",
-        "成交量為前 20 日均量 1.30 倍",
+        "成交量為前 20 日均量 1.29 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 35,
         "acceleration": 16.2,
         "trend": 10,
-        "volume": 7.98,
+        "volume": 7.91,
         "breakout": 2.53
       },
       "series": [
@@ -41399,7 +41398,7 @@
           "value": 30.771
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-09-21",
@@ -41548,31 +41547,73 @@
         },
         {
           "date": "2026-11-06",
-          "score": 71.7,
+          "score": 71.6,
           "stage": "watch"
         }
       ],
-      "price_repair": {
-        "date": "2026-11-06",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-11-06",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-02",
+            "foreign": 2587008,
+            "trust": 1004824,
+            "dealer": 667162,
+            "total": 4258994
+          },
+          {
+            "date": "2026-11-03",
+            "foreign": 4657046,
+            "trust": -212000,
+            "dealer": 1792583,
+            "total": 6237629
+          },
+          {
+            "date": "2026-11-04",
+            "foreign": 1914509,
+            "trust": 131941,
+            "dealer": 1571916,
+            "total": 3618366
+          },
+          {
+            "date": "2026-11-05",
+            "foreign": 2186492,
+            "trust": 183810,
+            "dealer": 2362685,
+            "total": 4732987
+          },
+          {
+            "date": "2026-11-06",
+            "foreign": -2353257,
+            "trust": 457820,
+            "dealer": 3789261,
+            "total": 1893824
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 8991798,
+          "trust": 1566395,
+          "dealer": 10183607,
+          "total": 20741800
+        },
+        "core_net_5d": 10558193,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 0,
+        "joint_buying": true,
+        "price_confirmed": false
       },
       "market_cap_rank": 46,
       "market_cap": 436378784333,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05",
-      "error": "至少需要 65 個完整交易日"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2207.TW",
@@ -41926,7 +41967,7 @@
       "market_cap_rank": 59,
       "market_cap": 294150261504,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2002.TW",
@@ -42280,7 +42321,7 @@
       "market_cap_rank": 60,
       "market_cap": 291881671494,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3036.TW",
@@ -42634,7 +42675,7 @@
       "market_cap_rank": 67,
       "market_cap": 249601881036,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3702.TW",
@@ -42988,7 +43029,7 @@
       "market_cap_rank": 92,
       "market_cap": 157973962491,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "2912.TW",
@@ -43342,7 +43383,7 @@
       "market_cap_rank": 73,
       "market_cap": 218840484678,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "3293.TWO",
@@ -44050,7 +44091,7 @@
       "market_cap_rank": 76,
       "market_cap": 201999997980,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1519.TW",
@@ -44404,7 +44445,7 @@
       "market_cap_rank": 93,
       "market_cap": 157055955908,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1101.TW",
@@ -44758,7 +44799,7 @@
       "market_cap_rank": 77,
       "market_cap": 201245111598,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "5871.TW",
@@ -45112,7 +45153,7 @@
       "market_cap_rank": 87,
       "market_cap": 178056257568,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1802.TW",
@@ -45466,7 +45507,7 @@
       "market_cap_rank": 90,
       "market_cap": 168085914240,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     },
     {
       "symbol": "1402.TW",
@@ -45680,7 +45721,7 @@
       "market_cap_rank": 97,
       "market_cap": 148542287549,
       "market_cap_as_of": "2026-11-06",
-      "shares_as_of": "2026-11-05"
+      "shares_as_of": "2026-11-06"
     }
   ],
   "groups": [
@@ -45741,13 +45782,13 @@
       "name": "光通訊／CPO",
       "market": "US",
       "count": 2,
-      "usable": 1,
-      "coverage": 50,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 2,
+      "coverage": 100,
+      "status": "ok",
+      "score": 9.6,
+      "breadth": 0,
+      "rs_5d": -15.71,
+      "return_20d": -34.32
     },
     {
       "id": "memory",
@@ -45793,13 +45834,13 @@
       "name": "散熱",
       "market": "US",
       "count": 1,
-      "usable": 0,
-      "coverage": 0,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 1,
+      "coverage": 100,
+      "status": "ok",
+      "score": 6.5,
+      "breadth": 0,
+      "rs_5d": -19.18,
+      "return_20d": -24.68
     },
     {
       "id": "power",
@@ -45845,13 +45886,13 @@
       "name": "網通／交換器",
       "market": "US",
       "count": 2,
-      "usable": 1,
-      "coverage": 50,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 2,
+      "coverage": 100,
+      "status": "ok",
+      "score": 19.2,
+      "breadth": 0,
+      "rs_5d": -1.9,
+      "return_20d": -20.96
     },
     {
       "id": "pcb",
@@ -46079,13 +46120,13 @@
       "name": "食品工業",
       "market": "TW",
       "count": 1,
-      "usable": 0,
-      "coverage": 0,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 1,
+      "coverage": 100,
+      "status": "ok",
+      "score": 71.6,
+      "breadth": 0,
+      "rs_5d": 9.05,
+      "return_20d": 4.21
     },
     {
       "id": "industry-汽車工業",
@@ -46538,7 +46579,7 @@
       "as_of": "2026-11-06",
       "status": "insufficient",
       "total": 2,
-      "available": 1,
+      "available": 2,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -46602,7 +46643,7 @@
       "as_of": "2026-11-06",
       "status": "insufficient",
       "total": 1,
-      "available": 0,
+      "available": 1,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -46672,7 +46713,7 @@
       "as_of": "2026-11-06",
       "status": "insufficient",
       "total": 2,
-      "available": 1,
+      "available": 2,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -46990,7 +47031,7 @@
       "as_of": "2026-11-06",
       "status": "insufficient",
       "total": 1,
-      "available": 0,
+      "available": 1,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -47160,22 +47201,18 @@
       "baseline_pct": null
     }
   ],
-  "institutional_refresh_errors": [
-    "TWSE 2026-11-06 法人資料未更新"
-  ],
+  "institutional_refresh_errors": [],
   "top100": {
     "schema_version": 1,
-    "status": "stale",
+    "status": "ok",
     "as_of": "2026-11-06",
-    "generated_at": "2026-11-06T19:40:43.611594+00:00",
+    "generated_at": "2026-11-07T14:45:41.337973+00:00",
     "market_size": 1977,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
       "https://openapi.twse.com.tw/v1/opendata/t187ap03_L",
       "https://www.tpex.org.tw/openapi/v1/tpex_daily_market_value",
       "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html"
-    ],
-    "last_attempt_at": "2026-11-07T02:20:11.182331+00:00",
-    "error": "官方完整交易日期未取得"
+    ]
   }
 }
