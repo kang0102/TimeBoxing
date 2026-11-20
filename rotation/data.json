@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-20T15:28:55.211525+00:00",
-  "last_success_at": "2026-11-20T15:28:55.211525+00:00",
-  "status": "partial",
+  "generated_at": "2026-11-20T15:35:39.874971+00:00",
+  "last_success_at": "2026-11-20T15:35:39.874971+00:00",
+  "status": "ok",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-20T15:28:55.211525+00:00",
+    "checked_at": "2026-11-20T15:35:39.874971+00:00",
     "expected_tw_date": "2026-11-20",
     "errors": [],
     "cached_symbols": [],
@@ -37,7 +37,7 @@
     }
   ],
   "coverage": {
-    "available": 131,
+    "available": 132,
     "total": 132
   },
   "stocks": [
@@ -23849,7 +23849,7 @@
       "group_name": "塑膠工業",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": false,
+      "laggard_watch": true,
       "as_of": "2026-11-20",
       "close": 206.0,
       "change_1d": -9.8468,
@@ -24686,7 +24686,7 @@
           "value": -2.151
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-10-07",
@@ -24841,20 +24841,67 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-11-20",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-16",
+            "foreign": -3895493,
+            "trust": 307000,
+            "dealer": -366305,
+            "total": -3954798
+          },
+          {
+            "date": "2026-11-17",
+            "foreign": -11168687,
+            "trust": 12535230,
+            "dealer": 283218,
+            "total": 1649761
+          },
+          {
+            "date": "2026-11-18",
+            "foreign": -9937925,
+            "trust": 5103000,
+            "dealer": 128745,
+            "total": -4706180
+          },
+          {
+            "date": "2026-11-19",
+            "foreign": -4650627,
+            "trust": 28000,
+            "dealer": -302947,
+            "total": -4925574
+          },
+          {
+            "date": "2026-11-20",
+            "foreign": 449617,
+            "trust": 84000,
+            "dealer": -284605,
+            "total": 249012
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -29203115,
+          "trust": 18057230,
+          "dealer": -541894,
+          "total": -11687779
+        },
+        "core_net_5d": -11145885,
+        "buy_days": 2,
+        "sell_days": 3,
+        "buy_streak": 1,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": 52,
       "market_cap": 335845974474,
       "market_cap_as_of": "2026-11-20",
-      "shares_as_of": "2026-11-19",
-      "error": "至少需要 65 個完整交易日"
+      "shares_as_of": "2026-11-19"
     },
     {
       "symbol": "2412.TW",
@@ -45835,13 +45882,13 @@
       "name": "塑膠工業",
       "market": "TW",
       "count": 3,
-      "usable": 2,
-      "coverage": 67,
+      "usable": 3,
+      "coverage": 100,
       "status": "ok",
-      "score": 16.4,
+      "score": 17.0,
       "breadth": 0,
-      "rs_5d": -11.11,
-      "return_20d": -31.43
+      "rs_5d": -9.88,
+      "return_20d": -29.22
     },
     {
       "id": "industry-通信網路業",
@@ -46710,16 +46757,16 @@
       "name": "塑膠工業",
       "market": "TW",
       "as_of": "2026-11-20",
-      "status": "insufficient",
+      "status": "quiet",
       "total": 3,
-      "available": 2,
+      "available": 3,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": null
+      "baseline_pct": 1.7
     },
     {
       "id": "industry-通信網路業",
@@ -47054,7 +47101,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-20",
-    "generated_at": "2026-11-20T15:21:45.866747+00:00",
+    "generated_at": "2026-11-20T15:32:04.851441+00:00",
     "market_size": 1981,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
