@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-23T16:44:12.445388+00:00",
-  "last_success_at": "2026-11-23T16:44:12.445388+00:00",
+  "generated_at": "2026-11-23T18:05:42.624196+00:00",
+  "last_success_at": "2026-11-23T18:05:42.624196+00:00",
   "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-23T16:44:12.445388+00:00",
+    "checked_at": "2026-11-23T18:05:42.624196+00:00",
     "expected_tw_date": "2026-11-23",
     "errors": [],
     "cached_symbols": [],
@@ -56,11 +56,6 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "1504.TW": {
-        "date": "2026-11-23",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "1519.TW": {
         "date": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -628,7 +623,7 @@
     }
   ],
   "coverage": {
-    "available": 130,
+    "available": 129,
     "total": 132
   },
   "stocks": [
@@ -45038,7 +45033,7 @@
       "group_name": "電機機械",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-11-23",
       "close": 425.0,
       "change_1d": 0.8304,
@@ -45167,7 +45162,7 @@
           "value": -13.568
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-08",
@@ -45327,67 +45322,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-11-23",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-17",
-            "foreign": -162270,
-            "trust": 85143,
-            "dealer": 10209,
-            "total": -66918
-          },
-          {
-            "date": "2026-11-18",
-            "foreign": -84156,
-            "trust": 285805,
-            "dealer": 12822,
-            "total": 214471
-          },
-          {
-            "date": "2026-11-19",
-            "foreign": -385031,
-            "trust": 13362,
-            "dealer": -9027,
-            "total": -380696
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": -14951,
-            "trust": 10248,
-            "dealer": -18288,
-            "total": -22991
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 279317,
-            "trust": -99000,
-            "dealer": -14176,
-            "total": 166141
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -367091,
-          "trust": 295558,
-          "dealer": -18460,
-          "total": -89993
-        },
-        "core_net_5d": -71533,
-        "buy_days": 2,
-        "sell_days": 3,
-        "buy_streak": 1,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 88,
       "market_cap": 147674294825,
       "market_cap_as_of": "2026-11-23",
-      "shares_as_of": "2026-11-22"
+      "shares_as_of": "2026-11-22",
+      "error": "至少需要 65 個完整交易日"
     },
     {
       "symbol": "1101.TW",
@@ -47180,13 +47128,13 @@
       "name": "電機機械",
       "market": "TW",
       "count": 2,
-      "usable": 2,
-      "coverage": 100,
-      "status": "ok",
-      "score": 28.3,
-      "breadth": 0,
-      "rs_5d": -1.12,
-      "return_20d": -22.54
+      "usable": 1,
+      "coverage": 50,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "industry-水泥工業",
@@ -48098,7 +48046,7 @@
       "as_of": "2026-11-23",
       "status": "insufficient",
       "total": 2,
-      "available": 2,
+      "available": 1,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -48177,7 +48125,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-23",
-    "generated_at": "2026-11-23T16:40:03.825289+00:00",
+    "generated_at": "2026-11-23T17:58:14.045270+00:00",
     "market_size": 1982,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
