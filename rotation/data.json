@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-23T18:05:42.624196+00:00",
-  "last_success_at": "2026-11-23T18:05:42.624196+00:00",
+  "generated_at": "2026-11-23T19:35:29.394763+00:00",
+  "last_success_at": "2026-11-23T19:35:29.394763+00:00",
   "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-23T18:05:42.624196+00:00",
+    "checked_at": "2026-11-23T19:35:29.394763+00:00",
     "expected_tw_date": "2026-11-23",
     "errors": [],
     "cached_symbols": [],
@@ -51,11 +51,6 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "1402.TW": {
-        "date": "2026-11-23",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "1504.TW": {
         "date": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -131,11 +126,6 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "2330.TW": {
-        "date": "2026-11-23",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "2344.TW": {
         "date": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -216,6 +206,16 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "2454.TW": {
+        "date": "2026-11-23",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2464.TW": {
+        "date": "2026-11-23",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2603.TW": {
         "date": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -341,11 +341,6 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "3037.TW": {
-        "date": "2026-11-23",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "3044.TW": {
         "date": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -623,7 +618,7 @@
     }
   ],
   "coverage": {
-    "available": 129,
+    "available": 128,
     "total": 132
   },
   "stocks": [
@@ -5755,7 +5750,7 @@
       "group_name": "記憶體",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-11-23",
       "close": 95.5,
       "change_1d": 7.0628,
@@ -5884,7 +5879,7 @@
           "value": -21.265
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-08",
@@ -6044,67 +6039,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-11-23",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-17",
-            "foreign": -70301,
-            "trust": -1394172,
-            "dealer": 1775843,
-            "total": 311370
-          },
-          {
-            "date": "2026-11-18",
-            "foreign": -2831308,
-            "trust": -1160328,
-            "dealer": 2017456,
-            "total": -1974180
-          },
-          {
-            "date": "2026-11-19",
-            "foreign": 9515409,
-            "trust": -221828,
-            "dealer": 484378,
-            "total": 9777959
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": 10569477,
-            "trust": -1931158,
-            "dealer": 1483719,
-            "total": 10122038
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": -690021,
-            "trust": 657439,
-            "dealer": -230367,
-            "total": -262949
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": 16493256,
-          "trust": -4050047,
-          "dealer": 5531029,
-          "total": 17974238
-        },
-        "core_net_5d": 12443209,
-        "buy_days": 2,
-        "sell_days": 3,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 40,
       "market_cap": 450806871591,
       "market_cap_as_of": "2026-11-23",
-      "shares_as_of": "2026-11-22"
+      "shares_as_of": "2026-11-22",
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "8299.TWO",
@@ -16642,7 +16590,7 @@
           "value": -3.998
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-08",
@@ -16802,67 +16750,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "buying",
-        "as_of": "2026-11-23",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-17",
-            "foreign": -433271,
-            "trust": 87266,
-            "dealer": 92511,
-            "total": -253494
-          },
-          {
-            "date": "2026-11-18",
-            "foreign": -1309470,
-            "trust": 31121,
-            "dealer": 264578,
-            "total": -1013771
-          },
-          {
-            "date": "2026-11-19",
-            "foreign": 238440,
-            "trust": 228300,
-            "dealer": -48082,
-            "total": 418658
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": 1450649,
-            "trust": -18424,
-            "dealer": -34135,
-            "total": 1398090
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 991511,
-            "trust": -9000,
-            "dealer": 71533,
-            "total": 1054044
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": 937859,
-          "trust": 319263,
-          "dealer": 346405,
-          "total": 1603527
-        },
-        "core_net_5d": 1257122,
-        "buy_days": 3,
-        "sell_days": 2,
-        "buy_streak": 3,
-        "joint_buying": true,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 100,
       "market_cap": 127139576594,
       "market_cap_as_of": "2026-11-23",
-      "shares_as_of": "2026-11-22"
+      "shares_as_of": "2026-11-22",
+      "error": "至少需要 65 個完整交易日"
     },
     {
       "symbol": "2464.TW",
@@ -16873,141 +16774,136 @@
       "currency": "TWD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-11-20",
-      "close": 117.5,
-      "change_1d": -9.9617,
-      "return_5d": -26.3323,
-      "return_20d": -30.8824,
-      "rs_5d": -10.7091,
-      "rs_20d": -10.0617,
-      "rs_acceleration": -18.1083,
-      "volume_ratio": 1.0269,
-      "ma20_distance": -23.5151,
-      "ma20": 153.625,
-      "ma60": 177.6764,
-      "ma200": 137.4504,
-      "ma60_slope20": -2.385,
+      "as_of": "2026-11-23",
+      "close": 127.0,
+      "change_1d": 8.0851,
+      "return_5d": -12.1107,
+      "return_20d": -21.118,
+      "rs_5d": -2.0158,
+      "rs_20d": -1.3406,
+      "rs_acceleration": -0.7961,
+      "volume_ratio": 1.0859,
+      "ma20_distance": -16.4061,
+      "ma20": 151.925,
+      "ma60": 176.676,
+      "ma200": 137.7527,
+      "ma60_slope20": -3.1019,
       "above_ma20": false,
       "breakout_20d": false,
       "previous_high20": 182.0,
-      "volume_mean20": 6431106.95,
-      "volume": 6603783.0,
+      "volume_mean20": 6546120.75,
+      "volume": 7108339.0,
       "next_session_high20": 182.0,
-      "next_session_volume_mean20": 6546120.75,
+      "next_session_volume_mean20": 6606998.3,
       "prior_session": {
-        "as_of": "2026-11-19",
-        "close": 130.5,
-        "ma20": 156.25,
+        "as_of": "2026-11-20",
+        "close": 117.5,
+        "ma20": 153.625,
         "high20": 182.0,
-        "volume_mean20": 6431106.95
+        "volume_mean20": 6546120.75
       },
-      "score": 5.3,
+      "score": 29.4,
       "stage": "weakening",
       "reasons": [
-        "5 日相對大盤 -10.71%",
-        "成交量為前 20 日均量 1.03 倍",
+        "5 日相對大盤 -2.02%",
+        "成交量為前 20 日均量 1.09 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
-        "relative_strength": 0,
-        "acceleration": 0,
+        "relative_strength": 15.15,
+        "acceleration": 8.41,
         "trend": 0,
-        "volume": 5.27,
+        "volume": 5.86,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-10-21",
+          "date": "2026-10-22",
           "value": 0.0
         },
         {
-          "date": "2026-10-22",
-          "value": -3.553
-        },
-        {
           "date": "2026-10-27",
-          "value": 5.905
+          "value": 9.807
         },
         {
           "date": "2026-10-28",
-          "value": 5.256
+          "value": 9.134
         },
         {
           "date": "2026-10-29",
-          "value": 4.094
+          "value": 7.929
         },
         {
           "date": "2026-10-30",
-          "value": 1.877
+          "value": 5.63
         },
         {
           "date": "2026-11-02",
-          "value": 0.389
+          "value": 4.088
         },
         {
           "date": "2026-11-03",
-          "value": 0.306
+          "value": 4.002
         },
         {
           "date": "2026-11-04",
-          "value": 2.428
+          "value": 6.202
         },
         {
           "date": "2026-11-05",
-          "value": -3.806
+          "value": -0.262
         },
         {
           "date": "2026-11-06",
-          "value": -6.214
+          "value": -2.759
         },
         {
           "date": "2026-11-09",
-          "value": -1.689
+          "value": 1.932
         },
         {
           "date": "2026-11-10",
-          "value": 0.736
+          "value": 4.448
         },
         {
           "date": "2026-11-11",
-          "value": 1.582
+          "value": 5.324
         },
         {
           "date": "2026-11-12",
-          "value": -1.112
+          "value": 2.531
         },
         {
           "date": "2026-11-13",
-          "value": 0.725
+          "value": 4.436
         },
         {
           "date": "2026-11-16",
-          "value": -2.889
+          "value": 0.689
         },
         {
           "date": "2026-11-17",
-          "value": -5.752
+          "value": -2.28
         },
         {
           "date": "2026-11-18",
-          "value": -2.905
+          "value": 0.672
         },
         {
           "date": "2026-11-19",
-          "value": -6.333
+          "value": -2.882
         },
         {
           "date": "2026-11-20",
-          "value": -10.062
+          "value": -6.748
+        },
+        {
+          "date": "2026-11-23",
+          "value": -1.341
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
-        {
-          "date": "2026-10-07",
-          "score": 30.1,
-          "stage": "watch"
-        },
         {
           "date": "2026-10-08",
           "score": 13.2,
@@ -17152,24 +17048,81 @@
           "date": "2026-11-20",
           "score": 5.3,
           "stage": "weakening"
+        },
+        {
+          "date": "2026-11-23",
+          "score": 29.4,
+          "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-11-23",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-17",
+            "foreign": -83786,
+            "trust": 1000,
+            "dealer": 4643,
+            "total": -78143
+          },
+          {
+            "date": "2026-11-18",
+            "foreign": -3003,
+            "trust": 6000,
+            "dealer": 43770,
+            "total": 46767
+          },
+          {
+            "date": "2026-11-19",
+            "foreign": 684723,
+            "trust": -112000,
+            "dealer": -82507,
+            "total": 490216
+          },
+          {
+            "date": "2026-11-20",
+            "foreign": 1093987,
+            "trust": -443776,
+            "dealer": -77952,
+            "total": 572259
+          },
+          {
+            "date": "2026-11-23",
+            "foreign": 3654,
+            "trust": 136000,
+            "dealer": 35441,
+            "total": 175095
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 1695575,
+          "trust": -412776,
+          "dealer": -76605,
+          "total": 1206194
+        },
+        "core_net_5d": 1282799,
+        "buy_days": 4,
+        "sell_days": 1,
+        "buy_streak": 4,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null,
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": null
     },
     {
       "symbol": "1597.TW",
@@ -33622,7 +33575,7 @@
           "value": -0.46
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-08",
@@ -33782,67 +33735,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-11-23",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-17",
-            "foreign": -589254,
-            "trust": 170000,
-            "dealer": 133738,
-            "total": -285516
-          },
-          {
-            "date": "2026-11-18",
-            "foreign": -1981619,
-            "trust": 595000,
-            "dealer": 95045,
-            "total": -1291574
-          },
-          {
-            "date": "2026-11-19",
-            "foreign": -807911,
-            "trust": 327000,
-            "dealer": 153420,
-            "total": -327491
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": -665420,
-            "trust": 1177000,
-            "dealer": 35494,
-            "total": 547074
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": -1310997,
-            "trust": 147000,
-            "dealer": 119670,
-            "total": -1044327
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -5355201,
-          "trust": 2416000,
-          "dealer": 537367,
-          "total": -2401834
-        },
-        "core_net_5d": -2939201,
-        "buy_days": 1,
-        "sell_days": 4,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 67,
       "market_cap": 232580609865,
       "market_cap_as_of": "2026-11-23",
-      "shares_as_of": "2026-11-22"
+      "shares_as_of": "2026-11-22",
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "6274.TWO",
@@ -38520,141 +38426,136 @@
       "currency": "TWD",
       "laggard": false,
       "laggard_watch": false,
-      "as_of": "2026-11-20",
-      "close": 233.0,
-      "change_1d": -5.668,
-      "return_5d": -9.5146,
-      "return_20d": -9.5146,
-      "rs_5d": 9.6753,
-      "rs_20d": 17.7428,
-      "rs_acceleration": 14.7166,
-      "volume_ratio": 1.5554,
-      "ma20_distance": -9.5146,
-      "ma20": 257.5,
-      "ma60": 246.9917,
-      "ma200": 210.5599,
-      "ma60_slope20": 5.8687,
+      "as_of": "2026-11-23",
+      "close": 234.5,
+      "change_1d": 0.6438,
+      "return_5d": -8.7549,
+      "return_20d": -9.8077,
+      "rs_5d": 1.7255,
+      "rs_20d": 12.8055,
+      "rs_acceleration": -4.5444,
+      "volume_ratio": 2.2188,
+      "ma20_distance": -8.4789,
+      "ma20": 256.225,
+      "ma60": 246.725,
+      "ma200": 210.8467,
+      "ma60_slope20": 5.3293,
       "above_ma20": false,
       "breakout_20d": false,
       "previous_high20": 274.5,
-      "volume_mean20": 10598801.55,
-      "volume": 16485131.0,
+      "volume_mean20": 10913219.45,
+      "volume": 24214122.0,
       "next_session_high20": 274.5,
-      "next_session_volume_mean20": 10913219.45,
+      "next_session_volume_mean20": 11702439.95,
       "prior_session": {
-        "as_of": "2026-11-19",
-        "close": 247.0,
-        "ma20": 258.725,
+        "as_of": "2026-11-20",
+        "close": 233.0,
+        "ma20": 257.5,
         "high20": 274.5,
-        "volume_mean20": 10598801.55
+        "volume_mean20": 10913219.45
       },
-      "score": 75.6,
+      "score": 60.9,
       "stage": "watch",
       "reasons": [
-        "5 日相對大盤 +9.68%",
-        "成交量為前 20 日均量 1.56 倍",
+        "5 日相對大盤 +1.73%",
+        "成交量為前 20 日均量 2.22 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 35,
-        "acceleration": 20,
+        "acceleration": 0.91,
         "trend": 10,
-        "volume": 10.55,
+        "volume": 15,
         "breakout": 0
       },
       "series": [
         {
-          "date": "2026-10-21",
+          "date": "2026-10-22",
           "value": 0.0
         },
         {
-          "date": "2026-10-22",
-          "value": 2.827
-        },
-        {
           "date": "2026-10-27",
-          "value": 3.297
+          "value": 0.457
         },
         {
           "date": "2026-10-28",
-          "value": 1.815
+          "value": -0.984
         },
         {
           "date": "2026-10-29",
-          "value": 2.495
+          "value": -0.323
         },
         {
           "date": "2026-10-30",
-          "value": 9.345
+          "value": 6.339
         },
         {
           "date": "2026-11-02",
-          "value": 11.271
+          "value": 8.212
         },
         {
           "date": "2026-11-03",
-          "value": 12.051
+          "value": 8.971
         },
         {
           "date": "2026-11-04",
-          "value": 13.623
+          "value": 10.499
         },
         {
           "date": "2026-11-05",
-          "value": 13.436
+          "value": 10.318
         },
         {
           "date": "2026-11-06",
-          "value": 13.055
+          "value": 9.947
         },
         {
           "date": "2026-11-09",
-          "value": 7.299
+          "value": 4.349
         },
         {
           "date": "2026-11-10",
-          "value": 8.924
+          "value": 5.93
         },
         {
           "date": "2026-11-11",
-          "value": 5.944
+          "value": 3.031
         },
         {
           "date": "2026-11-12",
-          "value": 6.273
+          "value": 3.352
         },
         {
           "date": "2026-11-13",
-          "value": 7.356
+          "value": 4.404
         },
         {
           "date": "2026-11-16",
-          "value": 14.027
+          "value": 10.892
         },
         {
           "date": "2026-11-17",
-          "value": 16.496
+          "value": 13.293
         },
         {
           "date": "2026-11-18",
-          "value": 16.651
+          "value": 13.444
         },
         {
           "date": "2026-11-19",
-          "value": 17.043
+          "value": 13.825
         },
         {
           "date": "2026-11-20",
-          "value": 17.743
+          "value": 14.506
+        },
+        {
+          "date": "2026-11-23",
+          "value": 12.805
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
-        {
-          "date": "2026-10-07",
-          "score": 29.4,
-          "stage": "weakening"
-        },
         {
           "date": "2026-10-08",
           "score": 38.6,
@@ -38799,24 +38700,81 @@
           "date": "2026-11-20",
           "score": 75.6,
           "stage": "watch"
+        },
+        {
+          "date": "2026-11-23",
+          "score": 60.9,
+          "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-11-23",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "mixed",
+        "as_of": "2026-11-23",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-17",
+            "foreign": -2199519,
+            "trust": 2601700,
+            "dealer": 448004,
+            "total": 850185
+          },
+          {
+            "date": "2026-11-18",
+            "foreign": 343969,
+            "trust": -239000,
+            "dealer": 382392,
+            "total": 487361
+          },
+          {
+            "date": "2026-11-19",
+            "foreign": -660974,
+            "trust": -263000,
+            "dealer": 381430,
+            "total": -542544
+          },
+          {
+            "date": "2026-11-20",
+            "foreign": 4441094,
+            "trust": -4014592,
+            "dealer": 185429,
+            "total": 611931
+          },
+          {
+            "date": "2026-11-23",
+            "foreign": 9965110,
+            "trust": -11367797,
+            "dealer": 572731,
+            "total": -829956
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 11889680,
+          "trust": -13282689,
+          "dealer": 1969986,
+          "total": 576977
+        },
+        "core_net_5d": -1393009,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 0,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": 34,
       "market_cap": 507702582562,
       "market_cap_as_of": "2026-11-23",
-      "shares_as_of": "2026-11-22",
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": "2026-11-22"
     },
     {
       "symbol": "2615.TW",
@@ -45335,7 +45293,7 @@
       "market_cap": 147674294825,
       "market_cap_as_of": "2026-11-23",
       "shares_as_of": "2026-11-22",
-      "error": "至少需要 65 個完整交易日"
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "1101.TW",
@@ -46725,13 +46683,13 @@
       "name": "記憶體",
       "market": "TW",
       "count": 3,
-      "usable": 3,
-      "coverage": 100,
+      "usable": 2,
+      "coverage": 67,
       "status": "ok",
-      "score": 30.3,
+      "score": 29.5,
       "breadth": 0,
-      "rs_5d": -1.73,
-      "return_20d": -30.68
+      "rs_5d": -0.58,
+      "return_20d": -27.5
     },
     {
       "id": "memory",
@@ -46884,10 +46842,10 @@
       "usable": 4,
       "coverage": 80,
       "status": "ok",
-      "score": 30.1,
+      "score": 28.3,
       "breadth": 0,
-      "rs_5d": -3.85,
-      "return_20d": -27.52
+      "rs_5d": -4.0,
+      "return_20d": -26.99
     },
     {
       "id": "robotics",
@@ -46972,13 +46930,13 @@
       "name": "電子零組件業",
       "market": "TW",
       "count": 8,
-      "usable": 8,
-      "coverage": 100,
+      "usable": 7,
+      "coverage": 88,
       "status": "ok",
-      "score": 16.8,
+      "score": 15.7,
       "breadth": 0,
-      "rs_5d": -7.72,
-      "return_20d": -36.64
+      "rs_5d": -9.22,
+      "return_20d": -38.95
     },
     {
       "id": "industry-電腦及週邊設備業",
@@ -47011,13 +46969,13 @@
       "name": "航運業",
       "market": "TW",
       "count": 6,
-      "usable": 5,
-      "coverage": 83,
+      "usable": 6,
+      "coverage": 100,
       "status": "ok",
-      "score": 45.7,
+      "score": 48.2,
       "breadth": 0,
-      "rs_5d": 2.98,
-      "return_20d": -5.98
+      "rs_5d": 2.77,
+      "return_20d": -6.62
     },
     {
       "id": "industry-光電業",
@@ -47527,16 +47485,16 @@
       "name": "記憶體",
       "market": "TW",
       "as_of": "2026-11-23",
-      "status": "quiet",
+      "status": "insufficient",
       "total": 3,
-      "available": 3,
+      "available": 2,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 0.0
+      "baseline_pct": null
     },
     {
       "id": "memory",
@@ -47852,14 +47810,14 @@
       "as_of": "2026-11-23",
       "status": "quiet",
       "total": 8,
-      "available": 8,
+      "available": 7,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 0.6
+      "baseline_pct": 0.0
     },
     {
       "id": "industry-電腦及週邊設備業",
@@ -47900,14 +47858,14 @@
       "as_of": "2026-11-23",
       "status": "quiet",
       "total": 6,
-      "available": 5,
+      "available": 6,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 5.8
+      "baseline_pct": 6.7
     },
     {
       "id": "industry-光電業",
@@ -48125,7 +48083,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-23",
-    "generated_at": "2026-11-23T17:58:14.045270+00:00",
+    "generated_at": "2026-11-23T19:29:09.221136+00:00",
     "market_size": 1982,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
