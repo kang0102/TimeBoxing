@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-25T17:08:43.626246+00:00",
-  "last_success_at": "2026-11-25T17:08:43.626246+00:00",
+  "generated_at": "2026-11-25T18:12:50.806425+00:00",
+  "last_success_at": "2026-11-25T18:12:50.806425+00:00",
   "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-25T17:08:43.626246+00:00",
+    "checked_at": "2026-11-25T18:12:50.806425+00:00",
     "expected_tw_date": "2026-11-25",
     "errors": [],
     "cached_symbols": [],
@@ -45,27 +45,17 @@
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
+      "1326.TW": {
+        "date": "2026-11-25",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "1402.TW": {
         "date": "2026-11-25",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "1504.TW": {
-        "date": "2026-11-25",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "1519.TW": {
-        "date": "2026-11-25",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "1590.TW": {
-        "date": "2026-11-25",
-        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "1597.TW": {
         "date": "2026-11-25",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -633,7 +623,7 @@
     }
   ],
   "coverage": {
-    "available": 131,
+    "available": 129,
     "total": 132
   },
   "stocks": [
@@ -17239,7 +17229,7 @@
       "group_name": "機器人／自動化",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-11-25",
       "close": 92.0,
       "change_1d": -5.641,
@@ -17368,7 +17358,7 @@
           "value": -23.964
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-13",
@@ -17528,67 +17518,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "buying",
-        "as_of": "2026-11-25",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-19",
-            "foreign": 71947,
-            "trust": 0,
-            "dealer": -11585,
-            "total": 60362
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": -187010,
-            "trust": 0,
-            "dealer": 303,
-            "total": -186707
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 176496,
-            "trust": 0,
-            "dealer": -4827,
-            "total": 171669
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": 41000,
-            "trust": 0,
-            "dealer": 0,
-            "total": 41000
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": -18404,
-            "trust": 0,
-            "dealer": -1507,
-            "total": -19911
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": 84029,
-          "trust": 0,
-          "dealer": -17616,
-          "total": 66413
-        },
-        "core_net_5d": 84029,
-        "buy_days": 3,
-        "sell_days": 2,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": null,
       "market_cap": null,
       "market_cap_as_of": null,
-      "shares_as_of": null
+      "shares_as_of": null,
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "2049.TW",
@@ -25796,7 +25739,7 @@
           "value": -3.605
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-10-13",
@@ -25949,22 +25892,74 @@
           "stage": "weakening"
         }
       ],
+      "price_repair": {
+        "date": "2026-11-25",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "selling",
+        "as_of": "2026-11-25",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-19",
+            "foreign": -4650627,
+            "trust": 28000,
+            "dealer": -302947,
+            "total": -4925574
+          },
+          {
+            "date": "2026-11-20",
+            "foreign": 449617,
+            "trust": 84000,
+            "dealer": -284605,
+            "total": 249012
+          },
+          {
+            "date": "2026-11-23",
+            "foreign": -1128367,
+            "trust": 40000,
+            "dealer": 159591,
+            "total": -928776
+          },
+          {
+            "date": "2026-11-24",
+            "foreign": -1909058,
+            "trust": 0,
+            "dealer": -89716,
+            "total": -1998774
+          },
+          {
+            "date": "2026-11-25",
+            "foreign": -4583244,
+            "trust": 39000,
+            "dealer": -229273,
+            "total": -4773517
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": -11821679,
+          "trust": 191000,
+          "dealer": -746950,
+          "total": -12377629
+        },
+        "core_net_5d": -11630679,
+        "buy_days": 1,
+        "sell_days": 4,
+        "buy_streak": 0,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": 53,
       "market_cap": 346396109798,
       "market_cap_as_of": "2026-11-25",
-      "shares_as_of": "2026-11-24",
-      "error": "至少需要 65 個完整交易日"
+      "shares_as_of": "2026-11-24"
     },
     {
       "symbol": "2412.TW",
@@ -44755,7 +44750,7 @@
           "value": 4.673
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-13",
@@ -44915,67 +44910,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-11-25",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-19",
-            "foreign": 42187,
-            "trust": -30000,
-            "dealer": 102,
-            "total": 12289
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": 48479,
-            "trust": -4000,
-            "dealer": -14290,
-            "total": 30189
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 5018,
-            "trust": 0,
-            "dealer": 3775,
-            "total": 8793
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": -249167,
-            "trust": 179725,
-            "dealer": 1162,
-            "total": -68280
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": 4473,
-            "trust": -1000,
-            "dealer": -6163,
-            "total": -2690
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -149010,
-          "trust": 144725,
-          "dealer": -15414,
-          "total": -19699
-        },
-        "core_net_5d": -4285,
-        "buy_days": 4,
-        "sell_days": 1,
-        "buy_streak": 1,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 77,
       "market_cap": 193799998062,
       "market_cap_as_of": "2026-11-25",
-      "shares_as_of": "2026-11-24"
+      "shares_as_of": "2026-11-24",
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "1519.TW",
@@ -44985,7 +44933,7 @@
       "group_name": "電機機械",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": true,
+      "laggard_watch": false,
       "as_of": "2026-11-25",
       "close": 433.0,
       "change_1d": -7.3797,
@@ -45114,7 +45062,7 @@
           "value": -9.93
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-13",
@@ -45274,67 +45222,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-11-25",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-19",
-            "foreign": -385031,
-            "trust": 13362,
-            "dealer": -9027,
-            "total": -380696
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": -14951,
-            "trust": 10248,
-            "dealer": -18288,
-            "total": -22991
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 279317,
-            "trust": -99000,
-            "dealer": -14176,
-            "total": 166141
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": 59000,
-            "trust": -2116,
-            "dealer": 13274,
-            "total": 70158
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": 119990,
-            "trust": 896,
-            "dealer": -16160,
-            "total": 104726
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": 58325,
-          "trust": -76610,
-          "dealer": -44377,
-          "total": -62662
-        },
-        "core_net_5d": -18285,
-        "buy_days": 3,
-        "sell_days": 2,
-        "buy_streak": 3,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 88,
       "market_cap": 150454046257,
       "market_cap_as_of": "2026-11-25",
-      "shares_as_of": "2026-11-24"
+      "shares_as_of": "2026-11-24",
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "1101.TW",
@@ -46890,13 +46791,13 @@
       "name": "機器人／自動化",
       "market": "TW",
       "count": 5,
-      "usable": 5,
-      "coverage": 100,
+      "usable": 4,
+      "coverage": 80,
       "status": "ok",
-      "score": 12.7,
+      "score": 15.3,
       "breadth": 0,
-      "rs_5d": -4.79,
-      "return_20d": -30.54
+      "rs_5d": -4.26,
+      "return_20d": -28.61
     },
     {
       "id": "robotics",
@@ -46942,13 +46843,13 @@
       "name": "塑膠工業",
       "market": "TW",
       "count": 3,
-      "usable": 2,
-      "coverage": 67,
+      "usable": 3,
+      "coverage": 100,
       "status": "ok",
-      "score": 23.2,
+      "score": 21.0,
       "breadth": 0,
-      "rs_5d": -6.58,
-      "return_20d": -26.83
+      "rs_5d": -7.19,
+      "return_20d": -25.13
     },
     {
       "id": "industry-通信網路業",
@@ -47137,13 +47038,13 @@
       "name": "電機機械",
       "market": "TW",
       "count": 2,
-      "usable": 2,
-      "coverage": 100,
-      "status": "ok",
-      "score": 15.1,
-      "breadth": 0,
-      "rs_5d": -3.31,
-      "return_20d": -20.93
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     },
     {
       "id": "industry-水泥工業",
@@ -47734,14 +47635,14 @@
       "as_of": "2026-11-25",
       "status": "quiet",
       "total": 5,
-      "available": 5,
+      "available": 4,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 4.0
+      "baseline_pct": 3.0
     },
     {
       "id": "robotics",
@@ -47803,16 +47704,16 @@
       "name": "塑膠工業",
       "market": "TW",
       "as_of": "2026-11-25",
-      "status": "insufficient",
+      "status": "quiet",
       "total": 3,
-      "available": 2,
+      "available": 3,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": null
+      "baseline_pct": 1.7
     },
     {
       "id": "industry-通信網路業",
@@ -48056,7 +47957,7 @@
       "as_of": "2026-11-25",
       "status": "insufficient",
       "total": 2,
-      "available": 2,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -48137,7 +48038,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-25",
-    "generated_at": "2026-11-25T17:07:30.063335+00:00",
+    "generated_at": "2026-11-25T18:11:04.300056+00:00",
     "market_size": 1981,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
