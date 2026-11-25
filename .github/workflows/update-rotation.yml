@@ -24,6 +24,8 @@ on:
       - 'scripts/rotation_decisions.js'
       - 'tests/test_rotation_decisions.js'
       - 'scripts/update_rotation_data.py'
+      - 'scripts/run_rotation_update.py'
+      - 'tests/test_rotation_update_runner.py'
       - 'rotation/universe.json'
       - 'rotation/catalysts.json'
       - 'rotation/research_cases.json'
@@ -42,7 +44,8 @@ jobs:
   update:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15m daily + 5m ETF producer budgets leave time to publish and report failures.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,11 +66,11 @@ jobs:
       - name: Calculate completed-session signals
         id: calculate
         continue-on-error: true
-        run: python scripts/update_rotation_data.py
+        run: python scripts/run_rotation_update.py daily
       - name: Observe active ETF risks
         id: etf
         continue-on-error: true
-        run: python scripts/rotation_etf.py
+        run: python scripts/run_rotation_update.py etf
       - name: Save results and request Pages refresh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -94,5 +97,5 @@ jobs:
       - name: Report data-source failure
         if: steps.calculate.outcome == 'failure' || steps.etf.outcome == 'failure'
         run: |
-          echo '行情更新失敗；已保留舊值並發布資料狀態。請檢查更新紀錄。'
+          echo '部分更新失敗；該部分保留上次日期並標示失敗，其他成功結果已發布。請檢查更新紀錄。'
           exit 1
