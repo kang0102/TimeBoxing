@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-26T16:52:10.305821+00:00",
-  "last_success_at": "2026-11-26T16:52:10.305821+00:00",
+  "generated_at": "2026-11-26T17:54:37.542420+00:00",
+  "last_success_at": "2026-11-26T17:54:37.542420+00:00",
   "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
@@ -20,7 +20,7 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-26T16:52:10.305821+00:00",
+    "checked_at": "2026-11-26T17:54:37.542420+00:00",
     "expected_tw_date": "2026-11-26",
     "errors": [],
     "cached_symbols": [],
@@ -126,6 +126,11 @@
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "2317.TW": {
+        "date": "2026-11-26",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
+      "2327.TW": {
         "date": "2026-11-26",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
@@ -400,6 +405,11 @@
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
+      "3293.TWO": {
+        "date": "2026-11-26",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "3324.TWO": {
         "date": "2026-11-26",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
@@ -418,11 +428,6 @@
       "3481.TW": {
         "date": "2026-11-26",
         "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      },
-      "3529.TWO": {
-        "date": "2026-11-26",
-        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
         "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
       },
       "3533.TW": {
@@ -628,7 +633,7 @@
     }
   ],
   "coverage": {
-    "available": 130,
+    "available": 131,
     "total": 132
   },
   "stocks": [
@@ -26380,7 +26385,7 @@
       "group_name": "電子零組件業",
       "currency": "TWD",
       "laggard": false,
-      "laggard_watch": false,
+      "laggard_watch": true,
       "as_of": "2026-11-26",
       "close": 339.5,
       "change_1d": 9.8706,
@@ -26509,7 +26514,7 @@
           "value": -25.953
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-10-14",
@@ -26662,22 +26667,74 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-11-26",
+        "source": "https://www.twse.com.tw/zh/trading/exchange/MI_INDEX.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-11-26",
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-20",
+            "foreign": 3140948,
+            "trust": -2598741,
+            "dealer": 96312,
+            "total": 638519
+          },
+          {
+            "date": "2026-11-23",
+            "foreign": 79698,
+            "trust": -6239285,
+            "dealer": 493938,
+            "total": -5665649
+          },
+          {
+            "date": "2026-11-24",
+            "foreign": -995764,
+            "trust": -16342,
+            "dealer": 100109,
+            "total": -911997
+          },
+          {
+            "date": "2026-11-25",
+            "foreign": 5270303,
+            "trust": -1140814,
+            "dealer": -183239,
+            "total": 3946250
+          },
+          {
+            "date": "2026-11-26",
+            "foreign": 8776861,
+            "trust": -179225,
+            "dealer": 167457,
+            "total": 8765093
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 16272046,
+          "trust": -10174407,
+          "dealer": 674577,
+          "total": 6772216
+        },
+        "core_net_5d": 6097639,
+        "buy_days": 3,
+        "sell_days": 2,
+        "buy_streak": 2,
+        "joint_buying": false,
+        "price_confirmed": false
       },
       "market_cap_rank": 25,
       "market_cap": 700432112849,
       "market_cap_as_of": "2026-11-26",
-      "shares_as_of": "2026-11-25",
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": "2026-11-25"
     },
     {
       "symbol": "4958.TW",
@@ -37582,7 +37639,7 @@
           "value": -8.145
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-14",
@@ -37742,67 +37799,20 @@
       },
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "mixed",
-        "as_of": "2026-11-26",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-20",
-            "foreign": 116186,
-            "trust": 1179,
-            "dealer": -56598,
-            "total": 60767
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 6536,
-            "trust": 2144,
-            "dealer": 7150,
-            "total": 15830
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": -1569205,
-            "trust": 163000,
-            "dealer": 57029,
-            "total": -1349176
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": 412173,
-            "trust": -154000,
-            "dealer": -22621,
-            "total": 235552
-          },
-          {
-            "date": "2026-11-26",
-            "foreign": 120746,
-            "trust": 14855,
-            "dealer": -49345,
-            "total": 86256
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -913564,
-          "trust": 27178,
-          "dealer": -64385,
-          "total": -950771
-        },
-        "core_net_5d": -886386,
-        "buy_days": 4,
-        "sell_days": 1,
-        "buy_streak": 2,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 93,
       "market_cap": 147132389240,
       "market_cap_as_of": "2026-11-26",
-      "shares_as_of": "2026-11-26"
+      "shares_as_of": "2026-11-26",
+      "error": "個股與指數資料日期不一致"
     },
     {
       "symbol": "6531.TW",
@@ -44044,7 +44054,7 @@
           "value": 14.914
         }
       ],
-      "status": "stale",
+      "status": "ok",
       "history": [
         {
           "date": "2026-10-14",
@@ -44197,22 +44207,74 @@
           "stage": "watch"
         }
       ],
+      "price_repair": {
+        "date": "2026-11-26",
+        "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/info/pricing.html",
+        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
+      },
       "smart_money": {
         "method": "institutional",
-        "status": "unavailable",
-        "bias": "unknown",
-        "as_of": null,
+        "status": "ok",
+        "bias": "buying",
+        "as_of": "2026-11-26",
         "source": "https://www.tpex.org.tw/zh-tw/mainboard/trading/major-institutional/detail/day.html",
         "source_name": "櫃買中心",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [],
-        "price_confirmed": null
+        "history": [
+          {
+            "date": "2026-11-20",
+            "foreign": 159115,
+            "trust": 59000,
+            "dealer": -34347,
+            "total": 183768
+          },
+          {
+            "date": "2026-11-23",
+            "foreign": 174525,
+            "trust": 32000,
+            "dealer": -8001,
+            "total": 198524
+          },
+          {
+            "date": "2026-11-24",
+            "foreign": -383810,
+            "trust": 533000,
+            "dealer": 33378,
+            "total": 182568
+          },
+          {
+            "date": "2026-11-25",
+            "foreign": 198536,
+            "trust": 31000,
+            "dealer": -45875,
+            "total": 183661
+          },
+          {
+            "date": "2026-11-26",
+            "foreign": 93411,
+            "trust": -2000,
+            "dealer": 36419,
+            "total": 127830
+          }
+        ],
+        "coverage": 5,
+        "net_5d": {
+          "foreign": 241777,
+          "trust": 653000,
+          "dealer": -18426,
+          "total": 876351
+        },
+        "core_net_5d": 894777,
+        "buy_days": 5,
+        "sell_days": 0,
+        "buy_streak": 5,
+        "joint_buying": true,
+        "price_confirmed": false
       },
       "market_cap_rank": 74,
       "market_cap": 220932423040,
       "market_cap_as_of": "2026-11-26",
-      "shares_as_of": "2026-11-26",
-      "error": "個股與指數資料日期不一致"
+      "shares_as_of": "2026-11-26"
     },
     {
       "symbol": "2912.TW",
@@ -46915,13 +46977,13 @@
       "name": "電子零組件業",
       "market": "TW",
       "count": 8,
-      "usable": 7,
-      "coverage": 88,
+      "usable": 8,
+      "coverage": 100,
       "status": "ok",
-      "score": 32.7,
-      "breadth": 14,
-      "rs_5d": 6.11,
-      "return_20d": -27.08
+      "score": 31.3,
+      "breadth": 12,
+      "rs_5d": 5.76,
+      "return_20d": -28.38
     },
     {
       "id": "industry-通信網路業",
@@ -46954,13 +47016,13 @@
       "name": "半導體業",
       "market": "TW",
       "count": 15,
-      "usable": 15,
-      "coverage": 100,
+      "usable": 14,
+      "coverage": 93,
       "status": "ok",
-      "score": 24.6,
+      "score": 26.0,
       "breadth": 7,
-      "rs_5d": -0.15,
-      "return_20d": -25.14
+      "rs_5d": 0.06,
+      "return_20d": -25.34
     },
     {
       "id": "industry-油電燃氣業",
@@ -47071,13 +47133,13 @@
       "name": "文化創意業",
       "market": "TW",
       "count": 1,
-      "usable": 0,
-      "coverage": 0,
-      "status": "insufficient",
-      "score": null,
-      "breadth": null,
-      "rs_5d": null,
-      "return_20d": null
+      "usable": 1,
+      "coverage": 100,
+      "status": "ok",
+      "score": 61.1,
+      "breadth": 100,
+      "rs_5d": -2.84,
+      "return_20d": -2.97
     },
     {
       "id": "industry-貿易百貨業",
@@ -47769,7 +47831,7 @@
       "as_of": "2026-11-26",
       "status": "quiet",
       "total": 8,
-      "available": 7,
+      "available": 8,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -47817,7 +47879,7 @@
       "as_of": "2026-11-26",
       "status": "quiet",
       "total": 15,
-      "available": 15,
+      "available": 14,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -47961,7 +48023,7 @@
       "as_of": "2026-11-26",
       "status": "insufficient",
       "total": 1,
-      "available": 0,
+      "available": 1,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -48076,7 +48138,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-26",
-    "generated_at": "2026-11-26T16:47:48.449496+00:00",
+    "generated_at": "2026-11-26T17:53:57.222180+00:00",
     "market_size": 1983,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
