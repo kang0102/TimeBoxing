@@ -52,11 +52,18 @@
     }
     return {...result,action:'wait',reason:row.close<=row.ma20?'ETF 增加曝險，但價格尚未站回月線；先等轉強。':'ETF 增加曝險，但突破、成交量或相對大盤條件尚未齊；先等確認。'};
   }
+  // NYSE full-session closures, verified 2026-11-26:
+  // https://www.nyse.com/trade/hours-calendars
+  // Unknown dates remain weekdays; this is not a blanket grace period.
+  const usClosures2026=new Set([
+    '2026-01-01','2026-01-19','2026-02-16','2026-04-03','2026-05-25',
+    '2026-06-19','2026-07-03','2026-09-07','2026-11-26','2026-12-25'
+  ]);
   function expectedDaily(market,now=Date.now(),early=false){
     const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:market==='TW'?'Asia/Taipei':'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(now)).map(p=>[p.type,p.value]));
     const date=new Date(`${parts.year}-${parts.month}-${parts.day}T12:00:00Z`),cutoff=market==='TW'?(early?14*60:16*60+30):(early?16*60+30:18*60);
     if(Number(parts.hour)*60+Number(parts.minute)<cutoff)date.setUTCDate(date.getUTCDate()-1);
-    while([0,6].includes(date.getUTCDay()))date.setUTCDate(date.getUTCDate()-1);
+    while([0,6].includes(date.getUTCDay())||(market==='US'&&usClosures2026.has(date.toISOString().slice(0,10))))date.setUTCDate(date.getUTCDate()-1);
     return date.toISOString().slice(0,10);
   }
   function dailyFresh(data,market,now=Date.now()){
