@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-25T21:58:47.996019+00:00",
-  "last_success_at": "2026-11-25T21:58:47.996019+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-26T04:34:54.323051+00:00",
+  "last_success_at": "2026-11-26T04:34:54.323051+00:00",
+  "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -20,17 +20,11 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-25T21:58:47.996019+00:00",
+    "checked_at": "2026-11-26T04:34:54.323051+00:00",
     "expected_tw_date": "2026-11-25",
     "errors": [],
     "cached_symbols": [],
-    "repairs": {
-      "^TWII": {
-        "date": "2026-11-25",
-        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      }
-    }
+    "repairs": {}
   },
   "identity_corrections": [
     {
@@ -43,7 +37,7 @@
     }
   ],
   "coverage": {
-    "available": 132,
+    "available": 131,
     "total": 132
   },
   "stocks": [
@@ -772,7 +766,7 @@
       "rs_5d": 0.8397,
       "rs_20d": -25.2646,
       "rs_acceleration": 10.4373,
-      "volume_ratio": 1.0577,
+      "volume_ratio": 1.0773,
       "ma20_distance": -13.438,
       "ma20": 172.4775,
       "ma60": 206.4626,
@@ -782,9 +776,9 @@
       "breakout_20d": false,
       "previous_high20": 219.99,
       "volume_mean20": 337302960.0,
-      "volume": 356754671.0,
+      "volume": 363377300.0,
       "next_session_high20": 215.33,
-      "next_session_volume_mean20": 350489183.55,
+      "next_session_volume_mean20": 350820315.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 155.3800048828125,
@@ -792,18 +786,18 @@
         "high20": 219.99000549316406,
         "volume_mean20": 337302960.0
       },
-      "score": 25.6,
+      "score": 25.8,
       "stage": "watch",
       "reasons": [
         "5 日相對大盤 +0.84%",
-        "成交量為前 20 日均量 1.06 倍",
+        "成交量為前 20 日均量 1.08 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 20,
         "trend": 0,
-        "volume": 5.58,
+        "volume": 5.77,
         "breakout": 0
       },
       "series": [
@@ -1041,7 +1035,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 25.6,
+          "score": 25.8,
           "stage": "watch"
         }
       ],
@@ -1053,7 +1047,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1289,
+        "cmf_20d": -0.128,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -1078,7 +1072,7 @@
       "rs_5d": -21.9089,
       "rs_20d": -24.3217,
       "rs_acceleration": -21.6645,
-      "volume_ratio": 1.12,
+      "volume_ratio": 1.129,
       "ma20_distance": -17.0046,
       "ma20": 489.22,
       "ma60": 539.4167,
@@ -1088,9 +1082,9 @@
       "breakout_20d": false,
       "previous_high20": 594.0,
       "volume_mean20": 45475050.0,
-      "volume": 50932771.0,
+      "volume": 51340800.0,
       "next_session_high20": 594.0,
-      "next_session_volume_mean20": 47079258.55,
+      "next_session_volume_mean20": 47099660.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 413.2699890136719,
@@ -1098,18 +1092,18 @@
         "high20": 594.0,
         "volume_mean20": 45475050.0
       },
-      "score": 6.2,
+      "score": 6.3,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -21.91%",
-        "成交量為前 20 日均量 1.12 倍",
+        "成交量為前 20 日均量 1.13 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 0,
-        "volume": 6.2,
+        "volume": 6.29,
         "breakout": 0
       },
       "series": [
@@ -1347,7 +1341,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 6.2,
+          "score": 6.3,
           "stage": "weakening"
         }
       ],
@@ -1359,7 +1353,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0993,
+        "cmf_20d": -0.0989,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -1384,7 +1378,7 @@
       "rs_5d": -13.357,
       "rs_20d": -7.8006,
       "rs_acceleration": -20.0563,
-      "volume_ratio": 1.0306,
+      "volume_ratio": 1.0771,
       "ma20_distance": -7.9909,
       "ma20": 326.9895,
       "ma60": 343.0229,
@@ -1394,9 +1388,9 @@
       "breakout_20d": false,
       "previous_high20": 369.82,
       "volume_mean20": 31805955.0,
-      "volume": 32778460.0,
+      "volume": 34256900.0,
       "next_session_high20": 369.82,
-      "next_session_volume_mean20": 32308968.0,
+      "next_session_volume_mean20": 32382890.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 301.0799865722656,
@@ -1404,18 +1398,18 @@
         "high20": 369.82000732421875,
         "volume_mean20": 31805955.0
       },
-      "score": 9.2,
+      "score": 9.6,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -13.36%",
-        "成交量為前 20 日均量 1.03 倍",
+        "成交量為前 20 日均量 1.08 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 3.85,
         "acceleration": 0,
         "trend": 0,
-        "volume": 5.31,
+        "volume": 5.77,
         "breakout": 0
       },
       "series": [
@@ -1653,7 +1647,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 9.2,
+          "score": 9.6,
           "stage": "weakening"
         }
       ],
@@ -1665,7 +1659,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1212,
+        "cmf_20d": -0.1187,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -4168,7 +4162,7 @@
       "rs_5d": -8.2744,
       "rs_20d": -43.9063,
       "rs_acceleration": 2.0234,
-      "volume_ratio": 0.814,
+      "volume_ratio": 0.8241,
       "ma20_distance": -15.51,
       "ma20": 154.965,
       "ma60": 216.3637,
@@ -4178,9 +4172,9 @@
       "breakout_20d": false,
       "previous_high20": 253.66,
       "volume_mean20": 34630945.0,
-      "volume": 28189577.0,
+      "volume": 28539800.0,
       "next_session_high20": 225.68,
-      "next_session_volume_mean20": 35223308.85,
+      "next_session_volume_mean20": 35240820.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 131.57000732421875,
@@ -4188,18 +4182,18 @@
         "high20": 253.66000366210938,
         "volume_mean20": 34630945.0
       },
-      "score": 17.2,
+      "score": 17.3,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -8.27%",
-        "成交量為前 20 日均量 0.81 倍",
+        "成交量為前 20 日均量 0.82 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 14.05,
         "trend": 0,
-        "volume": 3.14,
+        "volume": 3.24,
         "breakout": 0
       },
       "series": [
@@ -4437,7 +4431,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 17.2,
+          "score": 17.3,
           "stage": "weakening"
         }
       ],
@@ -4449,7 +4443,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.2177,
+        "cmf_20d": -0.218,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -4474,7 +4468,7 @@
       "rs_5d": -7.3315,
       "rs_20d": -15.3582,
       "rs_acceleration": -4.0374,
-      "volume_ratio": 0.6043,
+      "volume_ratio": 0.6046,
       "ma20_distance": -9.587,
       "ma20": 40.0385,
       "ma60": 44.4981,
@@ -4484,9 +4478,9 @@
       "breakout_20d": false,
       "previous_high20": 47.2,
       "volume_mean20": 5052750.0,
-      "volume": 3053183.0,
+      "volume": 3055000.0,
       "next_session_high20": 46.46,
-      "next_session_volume_mean20": 4933859.15,
+      "next_session_volume_mean20": 4933950.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 36.41999816894531,
@@ -4505,7 +4499,7 @@
         "relative_strength": 0,
         "acceleration": 1.93,
         "trend": 0,
-        "volume": 1.04,
+        "volume": 1.05,
         "breakout": 0
       },
       "series": [
@@ -5842,7 +5836,7 @@
       "rs_5d": -13.0772,
       "rs_20d": -34.0717,
       "rs_acceleration": -3.5186,
-      "volume_ratio": 1.4469,
+      "volume_ratio": 1.46,
       "ma20_distance": -19.0564,
       "ma20": 742.8015,
       "ma60": 907.6468,
@@ -5852,9 +5846,9 @@
       "breakout_20d": false,
       "previous_high20": 990.0,
       "volume_mean20": 35938945.0,
-      "volume": 51998939.0,
+      "volume": 52470000.0,
       "next_session_high20": 971.01,
-      "next_session_volume_mean20": 37003326.95,
+      "next_session_volume_mean20": 37026880.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 629.7899780273438,
@@ -5862,18 +5856,18 @@
         "high20": 990.0,
         "volume_mean20": 35938945.0
       },
-      "score": 12.4,
+      "score": 12.6,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -13.08%",
-        "成交量為前 20 日均量 1.45 倍",
+        "成交量為前 20 日均量 1.46 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 2.96,
         "trend": 0,
-        "volume": 9.47,
+        "volume": 9.6,
         "breakout": 0
       },
       "series": [
@@ -6111,7 +6105,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 12.4,
+          "score": 12.6,
           "stage": "weakening"
         }
       ],
@@ -6123,7 +6117,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.1679,
+        "cmf_20d": -0.1673,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -7210,7 +7204,7 @@
       "rs_5d": -9.0577,
       "rs_20d": -23.0197,
       "rs_acceleration": -7.0354,
-      "volume_ratio": 0.8336,
+      "volume_ratio": 0.8361,
       "ma20_distance": -12.7264,
       "ma20": 198.6512,
       "ma60": 225.6958,
@@ -7220,9 +7214,9 @@
       "breakout_20d": false,
       "previous_high20": 254.5933,
       "volume_mean20": 8759935.0,
-      "volume": 7302448.0,
+      "volume": 7323900.0,
       "next_session_high20": 254.5933,
-      "next_session_volume_mean20": 8148067.4,
+      "next_session_volume_mean20": 8149140.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 173.82000732421875,
@@ -7230,18 +7224,18 @@
         "high20": 254.59329456501519,
         "volume_mean20": 8759935.0
       },
-      "score": 3.3,
+      "score": 3.4,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -9.06%",
-        "成交量為前 20 日均量 0.83 倍",
+        "成交量為前 20 日均量 0.84 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 0,
-        "volume": 3.34,
+        "volume": 3.36,
         "breakout": 0
       },
       "series": [
@@ -7479,7 +7473,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 3.3,
+          "score": 3.4,
           "stage": "weakening"
         }
       ],
@@ -9286,7 +9280,7 @@
       "rs_5d": -4.2259,
       "rs_20d": -12.5196,
       "rs_acceleration": -1.8365,
-      "volume_ratio": 1.0241,
+      "volume_ratio": 1.0247,
       "ma20_distance": -8.5201,
       "ma20": 347.4097,
       "ma60": 390.3767,
@@ -9296,9 +9290,9 @@
       "breakout_20d": false,
       "previous_high20": 398.0775,
       "volume_mean20": 3434205.0,
-      "volume": 3517024.0,
+      "volume": 3519000.0,
       "next_session_high20": 397.2601,
-      "next_session_volume_mean20": 3473771.2,
+      "next_session_volume_mean20": 3473870.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 319.2699890136719,
@@ -9317,7 +9311,7 @@
         "relative_strength": 0,
         "acceleration": 6.33,
         "trend": 0,
-        "volume": 5.24,
+        "volume": 5.25,
         "breakout": 0
       },
       "series": [
@@ -10653,7 +10647,7 @@
       "rs_5d": -13.7848,
       "rs_20d": -5.3113,
       "rs_acceleration": -16.3737,
-      "volume_ratio": 0.8002,
+      "volume_ratio": 0.8709,
       "ma20_distance": -8.9655,
       "ma20": 180.1405,
       "ma60": 190.9883,
@@ -10663,9 +10657,9 @@
       "breakout_20d": false,
       "previous_high20": 212.155,
       "volume_mean20": 9489390.0,
-      "volume": 7593236.0,
+      "volume": 8264300.0,
       "next_session_high20": 212.155,
-      "next_session_volume_mean20": 9618811.8,
+      "next_session_volume_mean20": 9652365.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 168.55999755859375,
@@ -10673,18 +10667,18 @@
         "high20": 212.15499877929688,
         "volume_mean20": 9489390.0
       },
-      "score": 11.2,
+      "score": 11.9,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -13.78%",
-        "成交量為前 20 日均量 0.80 倍",
+        "成交量為前 20 日均量 0.87 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 8.21,
         "acceleration": 0,
         "trend": 0,
-        "volume": 3.0,
+        "volume": 3.71,
         "breakout": 0
       },
       "series": [
@@ -10922,7 +10916,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 11.2,
+          "score": 11.9,
           "stage": "weakening"
         }
       ],
@@ -10934,7 +10928,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.2161,
+        "cmf_20d": -0.2125,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -10959,7 +10953,7 @@
       "rs_5d": -1.1657,
       "rs_20d": -7.9155,
       "rs_acceleration": -1.5075,
-      "volume_ratio": 0.7802,
+      "volume_ratio": 0.804,
       "ma20_distance": -4.0347,
       "ma20": 98.1605,
       "ma60": 105.9037,
@@ -10969,9 +10963,9 @@
       "breakout_20d": false,
       "previous_high20": 112.12,
       "volume_mean20": 23051440.0,
-      "volume": 17985059.0,
+      "volume": 18532700.0,
       "next_session_high20": 111.1,
-      "next_session_volume_mean20": 23352697.95,
+      "next_session_volume_mean20": 23380080.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 93.98999786376953,
@@ -10979,18 +10973,18 @@
         "high20": 112.12000274658203,
         "volume_mean20": 23051440.0
       },
-      "score": 13.4,
+      "score": 13.7,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -1.17%",
-        "成交量為前 20 日均量 0.78 倍",
+        "成交量為前 20 日均量 0.80 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 3.65,
         "acceleration": 6.99,
         "trend": 0,
-        "volume": 2.8,
+        "volume": 3.04,
         "breakout": 0
       },
       "series": [
@@ -11228,7 +11222,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 13.4,
+          "score": 13.7,
           "stage": "weakening"
         }
       ],
@@ -11240,7 +11234,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.2144,
+        "cmf_20d": -0.2132,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -12681,7 +12675,7 @@
       "rs_5d": -14.5502,
       "rs_20d": -30.9231,
       "rs_acceleration": -6.3075,
-      "volume_ratio": 1.2537,
+      "volume_ratio": 1.2608,
       "ma20_distance": -18.3533,
       "ma20": 71.246,
       "ma60": 99.8223,
@@ -12691,9 +12685,9 @@
       "breakout_20d": false,
       "previous_high20": 92.07,
       "volume_mean20": 4557370.0,
-      "volume": 5713533.0,
+      "volume": 5746000.0,
       "next_session_high20": 91.5,
-      "next_session_volume_mean20": 4631236.65,
+      "next_session_volume_mean20": 4632860.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 59.41999816894531,
@@ -12701,18 +12695,18 @@
         "high20": 92.06999969482422,
         "volume_mean20": 4557370.0
       },
-      "score": 7.5,
+      "score": 7.6,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -14.55%",
-        "成交量為前 20 日均量 1.25 倍",
+        "成交量為前 20 日均量 1.26 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 0,
         "acceleration": 0,
         "trend": 0,
-        "volume": 7.54,
+        "volume": 7.61,
         "breakout": 0
       },
       "series": [
@@ -12950,7 +12944,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 7.5,
+          "score": 7.6,
           "stage": "weakening"
         }
       ],
@@ -12962,7 +12956,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.2316,
+        "cmf_20d": -0.2314,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -15110,7 +15104,7 @@
       "rs_5d": -2.3804,
       "rs_20d": -2.6805,
       "rs_acceleration": -2.5095,
-      "volume_ratio": 0.9888,
+      "volume_ratio": 0.9925,
       "ma20_distance": -5.4519,
       "ma20": 77.294,
       "ma60": 80.2771,
@@ -15120,9 +15114,9 @@
       "breakout_20d": false,
       "previous_high20": 85.66,
       "volume_mean20": 16493230.0,
-      "volume": 16309324.0,
+      "volume": 16370000.0,
       "next_session_high20": 85.66,
-      "next_session_volume_mean20": 16288131.2,
+      "next_session_volume_mean20": 16291165.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 73.47000122070312,
@@ -15141,7 +15135,7 @@
         "relative_strength": 12.81,
         "acceleration": 4.98,
         "trend": 0,
-        "volume": 4.89,
+        "volume": 4.93,
         "breakout": 0
       },
       "series": [
@@ -15391,7 +15385,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.0947,
+        "cmf_20d": -0.0946,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -16122,7 +16116,7 @@
       "return_5d": -6.3604,
       "return_20d": -26.1838,
       "rs_5d": -1.4585,
-      "rs_20d": -9.0995,
+      "rs_20d": -9.0994,
       "rs_acceleration": 2.9584,
       "volume_ratio": 0.9168,
       "ma20_distance": -10.2911,
@@ -17186,7 +17180,7 @@
       "rs_5d": -0.8594,
       "rs_20d": -6.1571,
       "rs_acceleration": -2.6185,
-      "volume_ratio": 0.7446,
+      "volume_ratio": 0.7533,
       "ma20_distance": -4.044,
       "ma20": 401.1319,
       "ma60": 419.7083,
@@ -17196,9 +17190,9 @@
       "breakout_20d": false,
       "previous_high20": 452.4938,
       "volume_mean20": 1146935.0,
-      "volume": 853985.0,
+      "volume": 864000.0,
       "next_session_high20": 452.4938,
-      "next_session_volume_mean20": 1150414.25,
+      "next_session_volume_mean20": 1150915.0,
       "prior_session": {
         "as_of": "2026-11-24",
         "close": 381.8299865722656,
@@ -17206,18 +17200,18 @@
         "high20": 452.4938368476255,
         "volume_mean20": 1146935.0
       },
-      "score": 13.9,
+      "score": 14.0,
       "stage": "weakening",
       "reasons": [
         "5 日相對大盤 -0.86%",
-        "成交量為前 20 日均量 0.74 倍",
+        "成交量為前 20 日均量 0.75 倍",
         "收盤低於 20 日均線"
       ],
       "components": {
         "relative_strength": 6.73,
         "acceleration": 4.76,
         "trend": 0,
-        "volume": 2.45,
+        "volume": 2.53,
         "breakout": 0
       },
       "series": [
@@ -17455,7 +17449,7 @@
         },
         {
           "date": "2026-11-25",
-          "score": 13.9,
+          "score": 14.0,
           "stage": "weakening"
         }
       ],
@@ -17467,7 +17461,7 @@
         "source": "https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf",
         "source_name": "CMF 指標說明",
         "note": "CMF20 是量價推估，不能辨識交易者身分，不是已確認的機構資金流。",
-        "cmf_20d": -0.2207,
+        "cmf_20d": -0.2208,
         "price_confirmed": false
       },
       "market_cap_rank": null,
@@ -20540,7 +20534,7 @@
       "change_1d": -9.6364,
       "return_5d": -5.5133,
       "return_20d": -7.7922,
-      "rs_5d": -0.5671,
+      "rs_5d": -0.567,
       "rs_20d": 13.5488,
       "rs_acceleration": -7.423,
       "volume_ratio": 3.2806,
@@ -39781,7 +39775,7 @@
       "change_1d": -8.1203,
       "return_5d": -16.4159,
       "return_20d": -36.9453,
-      "rs_5d": -12.0404,
+      "rs_5d": -12.0403,
       "rs_20d": -22.3516,
       "rs_acceleration": -11.1632,
       "volume_ratio": 0.8409,
@@ -44238,7 +44232,7 @@
       "return_5d": -7.0476,
       "return_20d": -12.8571,
       "rs_5d": -2.1817,
-      "rs_20d": 7.3116,
+      "rs_20d": 7.3117,
       "rs_acceleration": -6.5243,
       "volume_ratio": 0.7389,
       "ma20_distance": -8.46,
@@ -45422,7 +45416,7 @@
           "value": 13.52
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-11-16",
@@ -45467,67 +45461,20 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-11-25",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-19",
-            "foreign": 107739,
-            "trust": -1920000,
-            "dealer": 66340,
-            "total": -1745921
-          },
-          {
-            "date": "2026-11-20",
-            "foreign": -903615,
-            "trust": -864718,
-            "dealer": 53735,
-            "total": -1714598
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": 1169892,
-            "trust": -42000,
-            "dealer": 355558,
-            "total": 1483450
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": -337292,
-            "trust": 2173265,
-            "dealer": 79929,
-            "total": 1915902
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": -1474003,
-            "trust": -105074,
-            "dealer": -411415,
-            "total": -1990492
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -1437279,
-          "trust": -758527,
-          "dealer": 144147,
-          "total": -2051659
-        },
-        "core_net_5d": -2195806,
-        "buy_days": 2,
-        "sell_days": 3,
-        "buy_streak": 0,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 95,
       "market_cap": 138907112141,
       "market_cap_as_of": "2026-11-25",
-      "shares_as_of": "2026-11-25"
+      "shares_as_of": "2026-11-25",
+      "error": "至少需要 65 個完整交易日"
     }
   ],
   "groups": [
@@ -45552,7 +45499,7 @@
       "usable": 3,
       "coverage": 100,
       "status": "ok",
-      "score": 13.7,
+      "score": 13.9,
       "breadth": 0,
       "rs_5d": -11.48,
       "return_20d": -24.99
@@ -45591,7 +45538,7 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 10.1,
+      "score": 10.2,
       "breadth": 0,
       "rs_5d": -7.8,
       "return_20d": -34.73
@@ -45617,7 +45564,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 12.4,
+      "score": 12.6,
       "breadth": 0,
       "rs_5d": -13.08,
       "return_20d": -38.85
@@ -45643,7 +45590,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 3.3,
+      "score": 3.4,
       "breadth": 0,
       "rs_5d": -9.06,
       "return_20d": -28.6
@@ -45695,7 +45642,7 @@
       "usable": 2,
       "coverage": 100,
       "status": "ok",
-      "score": 12.3,
+      "score": 12.8,
       "breadth": 0,
       "rs_5d": -7.48,
       "return_20d": -13.38
@@ -45721,7 +45668,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 7.5,
+      "score": 7.6,
       "breadth": 0,
       "rs_5d": -14.55,
       "return_20d": -35.93
@@ -45773,7 +45720,7 @@
       "usable": 1,
       "coverage": 100,
       "status": "ok",
-      "score": 13.9,
+      "score": 14.0,
       "breadth": 0,
       "rs_5d": -0.86,
       "return_20d": -12.96
@@ -46056,13 +46003,13 @@
       "name": "紡織纖維",
       "market": "TW",
       "count": 1,
-      "usable": 1,
-      "coverage": 100,
-      "status": "ok",
-      "score": 39.5,
-      "breadth": 0,
-      "rs_5d": 0.77,
-      "return_20d": -7.82
+      "usable": 0,
+      "coverage": 0,
+      "status": "insufficient",
+      "score": null,
+      "breadth": null,
+      "rs_5d": null,
+      "return_20d": null
     }
   ],
   "events": [],
@@ -46988,7 +46935,7 @@
       "as_of": "2026-11-25",
       "status": "insufficient",
       "total": 1,
-      "available": 1,
+      "available": 0,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
@@ -47003,7 +46950,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-25",
-    "generated_at": "2026-11-25T21:58:10.788418+00:00",
+    "generated_at": "2026-11-26T04:21:00.175042+00:00",
     "market_size": 1981,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
