@@ -53,3 +53,30 @@ test('older ETF movements and older institutional flows cannot produce follow',(
   assert.equal(etfAction(r,row.as_of,{increased_funds:[{as_of:'2026-09-17'}]}).action,'wait');
   assert.equal(etfAction({...r,smart_money:{...r.smart_money,as_of:'2026-09-17'}},row.as_of,{increased_funds:[{as_of:row.as_of}]}).action,'wait');
 });
+
+
+test('verified Thanksgiving closure accepts the last real US session, not a holiday quote',()=>{
+  const {dailyFresh,expectedDaily}=require('../scripts/rotation_decisions.js');
+  const now=Date.parse('2026-11-26T19:00:00-05:00');
+  const data={generated_at:'2026-11-27T00:00:00Z',markets:{US:{as_of:'2026-11-25',status:'ok'}}};
+  assert.equal(expectedDaily('US',now),'2026-11-25');
+  assert.equal(expectedDaily('US',now,true),'2026-11-25');
+  assert.equal(dailyFresh(data,'US',now),true);
+  assert.equal(dailyFresh({...data,markets:{US:{as_of:'2026-11-26',status:'ok'}}},'US',now),false);
+  assert.equal(dailyFresh({...data,markets:{US:{as_of:'2026-11-24',status:'ok'}}},'US',now),false);
+  assert.equal(dailyFresh({...data,markets:{US:{as_of:'2026-11-25',status:'delayed'}}},'US',now),false);
+});
+test('holiday handling never masks missing prices after the next actual trading day',()=>{
+  const {dailyFresh,expectedDaily}=require('../scripts/rotation_decisions.js');
+  const now=Date.parse('2026-11-27T19:00:00-05:00');
+  const data={generated_at:'2026-11-28T00:00:00Z',markets:{US:{as_of:'2026-11-25',status:'ok'}}};
+  assert.equal(expectedDaily('US',now),'2026-11-27');
+  assert.equal(dailyFresh(data,'US',now),false);
+  assert.equal(dailyFresh({...data,markets:{US:{as_of:'2026-11-27',status:'ok'}}},'US',now),true);
+  assert.equal(expectedDaily('US',Date.parse('2026-11-30T19:00:00-05:00')),'2026-11-30');
+});
+test('a verified Friday closure crosses the weekend without closing Taiwan',()=>{
+  const {expectedDaily}=require('../scripts/rotation_decisions.js');
+  assert.equal(expectedDaily('US',Date.parse('2026-12-27T19:00:00-05:00')),'2026-12-24');
+  assert.equal(expectedDaily('TW',Date.parse('2026-11-26T19:00:00+08:00')),'2026-11-26');
+});
