@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-26T21:55:19.597453+00:00",
-  "last_success_at": "2026-11-26T21:55:19.597453+00:00",
-  "status": "ok",
+  "generated_at": "2026-11-27T04:36:16.602045+00:00",
+  "last_success_at": "2026-11-27T04:36:16.602045+00:00",
+  "status": "partial",
   "source": "Yahoo Finance 還原日線；台股最新缺失收盤價以官方同日資料核對補齊，成交量沿用 Yahoo",
   "methodology_version": "event-rotation-v7-identity",
   "markets": {
@@ -20,17 +20,11 @@
     }
   },
   "price_check": {
-    "checked_at": "2026-11-26T21:55:19.597453+00:00",
+    "checked_at": "2026-11-27T04:36:16.602045+00:00",
     "expected_tw_date": "2026-11-26",
     "errors": [],
     "cached_symbols": [],
-    "repairs": {
-      "^TWII": {
-        "date": "2026-11-26",
-        "source": "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?response=html",
-        "note": "Yahoo 收盤欄位缺值；以官方同日收盤補齊，歷史還原及成交量沿用 Yahoo。"
-      }
-    }
+    "repairs": {}
   },
   "identity_corrections": [
     {
@@ -43,7 +37,7 @@
     }
   ],
   "coverage": {
-    "available": 132,
+    "available": 131,
     "total": 132
   },
   "stocks": [
@@ -5133,7 +5127,7 @@
       "return_20d": -38.1772,
       "rs_5d": 3.6568,
       "rs_20d": -26.782,
-      "rs_acceleration": 15.8741,
+      "rs_acceleration": 15.8742,
       "volume_ratio": 0.7882,
       "ma20_distance": -13.8996,
       "ma20": 120.2085,
@@ -10294,7 +10288,7 @@
       "return_5d": -4.7486,
       "return_20d": -7.0845,
       "rs_5d": -6.5122,
-      "rs_20d": 10.0418,
+      "rs_20d": 10.0419,
       "rs_acceleration": -20.8885,
       "volume_ratio": 0.5427,
       "ma20_distance": -0.9872,
@@ -17487,7 +17481,7 @@
       "return_20d": -12.7016,
       "rs_5d": -3.632,
       "rs_20d": 3.3894,
-      "rs_acceleration": -6.6606,
+      "rs_acceleration": -6.6605,
       "volume_ratio": 0.9739,
       "ma20_distance": -5.6542,
       "ma20": 229.475,
@@ -23374,7 +23368,7 @@
       "return_20d": -8.7156,
       "rs_5d": -8.5602,
       "rs_20d": 8.1101,
-      "rs_acceleration": -22.4057,
+      "rs_acceleration": -22.4056,
       "volume_ratio": 1.5317,
       "ma20_distance": -4.3361,
       "ma20": 52.005,
@@ -24911,7 +24905,7 @@
           "value": 0.126
         }
       ],
-      "status": "ok",
+      "status": "stale",
       "history": [
         {
           "date": "2026-10-14",
@@ -25066,67 +25060,20 @@
       ],
       "smart_money": {
         "method": "institutional",
-        "status": "ok",
-        "bias": "selling",
-        "as_of": "2026-11-26",
+        "status": "unavailable",
+        "bias": "unknown",
+        "as_of": null,
         "source": "https://www.twse.com.tw/zh/trading/foreign/t86.html",
         "source_name": "臺灣證券交易所",
         "note": "偏向依外資（不含外資自營商）＋投信判斷；自營商含避險，另列參考。",
-        "history": [
-          {
-            "date": "2026-11-20",
-            "foreign": 449617,
-            "trust": 84000,
-            "dealer": -284605,
-            "total": 249012
-          },
-          {
-            "date": "2026-11-23",
-            "foreign": -1128367,
-            "trust": 40000,
-            "dealer": 159591,
-            "total": -928776
-          },
-          {
-            "date": "2026-11-24",
-            "foreign": -1909058,
-            "trust": 0,
-            "dealer": -89716,
-            "total": -1998774
-          },
-          {
-            "date": "2026-11-25",
-            "foreign": -4583244,
-            "trust": 39000,
-            "dealer": -229273,
-            "total": -4773517
-          },
-          {
-            "date": "2026-11-26",
-            "foreign": 3231174,
-            "trust": 90000,
-            "dealer": 536880,
-            "total": 3858054
-          }
-        ],
-        "coverage": 5,
-        "net_5d": {
-          "foreign": -3939878,
-          "trust": 253000,
-          "dealer": 92877,
-          "total": -3594001
-        },
-        "core_net_5d": -3686878,
-        "buy_days": 2,
-        "sell_days": 3,
-        "buy_streak": 1,
-        "joint_buying": false,
-        "price_confirmed": false
+        "history": [],
+        "price_confirmed": null
       },
       "market_cap_rank": 53,
       "market_cap": 368668617704,
       "market_cap_as_of": "2026-11-26",
-      "shares_as_of": "2026-11-26"
+      "shares_as_of": "2026-11-26",
+      "error": "至少需要 65 個完整交易日"
     },
     {
       "symbol": "2383.TW",
@@ -32221,7 +32168,7 @@
       "return_20d": -29.4503,
       "rs_5d": -11.83,
       "rs_20d": -16.4464,
-      "rs_acceleration": 2.567,
+      "rs_acceleration": 2.5671,
       "volume_ratio": 0.6007,
       "ma20_distance": -19.3536,
       "ma20": 6683.5,
@@ -32927,7 +32874,7 @@
       "change_1d": 9.1512,
       "return_5d": 4.0455,
       "return_20d": -14.9793,
-      "rs_5d": 2.119,
+      "rs_5d": 2.1191,
       "rs_20d": 0.6918,
       "rs_acceleration": 6.8423,
       "volume_ratio": 0.9486,
@@ -45826,13 +45773,13 @@
       "name": "塑膠工業",
       "market": "TW",
       "count": 3,
-      "usable": 3,
-      "coverage": 100,
+      "usable": 2,
+      "coverage": 67,
       "status": "ok",
-      "score": 24.6,
+      "score": 23.3,
       "breadth": 0,
-      "rs_5d": 0.36,
-      "return_20d": -18.6
+      "rs_5d": 1.31,
+      "return_20d": -20.17
     },
     {
       "id": "industry-電子零組件業",
@@ -46675,16 +46622,16 @@
       "name": "塑膠工業",
       "market": "TW",
       "as_of": "2026-11-26",
-      "status": "quiet",
+      "status": "insufficient",
       "total": 3,
-      "available": 3,
+      "available": 2,
       "up_count": 0,
       "down_count": 0,
       "up_symbols": [],
       "down_symbols": [],
       "money_confirmed": [],
       "money_divergence": [],
-      "baseline_pct": 1.7
+      "baseline_pct": null
     },
     {
       "id": "industry-電子零組件業",
@@ -47000,7 +46947,7 @@
     "schema_version": 1,
     "status": "ok",
     "as_of": "2026-11-26",
-    "generated_at": "2026-11-26T21:54:41.484220+00:00",
+    "generated_at": "2026-11-27T04:31:03.142131+00:00",
     "market_size": 1983,
     "method": "上市＋上櫃普通股；最近公告普通股股數 × 同日官方收盤價估算市值，依市值排序取前100，不含ETF與TDR。",
     "sources": [
